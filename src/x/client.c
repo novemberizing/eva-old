@@ -93,49 +93,36 @@ extern xint64 xclientsend(xclient * client, const void * data, xuint64 len)
     {
         if(data && len)
         {
+            xint64 n = 0;
             if(client->descriptor->stream.out)
             {
                 xstreampush(client->descriptor->stream.out, data, len);
 
-                xint64 n = xdescriptorwrite((xdescriptor *) client->descriptor, xstreamfront(client->descriptor->stream.out), xstreamlen(client->descriptor->stream.out));
-
-                if(client->descriptor->on)
-                {
-                    n = client->descriptor->on(client->descriptor, xsocketeventtype_out, xstreamfront(client->descriptor->stream.out), n);
-                    if(n < 0)
-                    {
-                        client->descriptor->status |= xdescriptorstatus_exception;
-                        xexceptionset(xaddressof(client->descriptor->exception), xdescriptorwrite, errno, xexceptiontype_descriptor, "");
-                        if(client->descriptor->subscription == xnil)
-                        {
-                            // TODO:
-                        }
-                    }
-                }
-
-                return n;
+                n = xdescriptorwrite((xdescriptor *) client->descriptor, xstreamfront(client->descriptor->stream.out), xstreamlen(client->descriptor->stream.out));
             }
             else
             {
-                xint64 n = xdescriptorwrite((xdescriptor *) client->descriptor, data, len);
+                n = xdescriptorwrite((xdescriptor *) client->descriptor, data, len);
+            }
 
-                if(n > 0)
+            if(client->descriptor->on && client->descriptor->subscription == xnil)
+            {
+                n = client->descriptor->on(client->descriptor, xsocketeventtype_out, xstreamfront(client->descriptor->stream.out), n);
+            }
+
+            if(n < 0)
+            {
+                client->descriptor->status |= xdescriptorstatus_exception;
+                xexceptionset(xaddressof(client->descriptor->exception), xdescriptorwrite, errno, xexceptiontype_descriptor, "");
+                if(client->descriptor->on && client->descriptor->subscription == xnil)
                 {
-
-                }
-                else if(n == 0)
-                {
-
-                }
-                else
-                {
-                    if(errno == EAGAIN)
-                    {
-
-                    }
+                    client->descriptor->on(client->descriptor, xsocketeventtype_exception, xnil, 0);
                 }
             }
+
+            return n;
         }
+        return xsuccess;
     }
     return xfail;
 }
