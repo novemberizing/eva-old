@@ -50,3 +50,17 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+/autom4te.cache
+/config.h
+/config.log
+/config.status
+/stamp-h1
+
+Makefile
+.deps
+.libs
+*.o
+*.a
+.dirstamp
+.vscode
