@@ -24,4 +24,6 @@ extern xclient * xclientnew(xint32 domain, xint32 type, xint32 protocol, const v
  */
 extern xint64 xclientconnect(xclient * client);
 
+extern xint64 xclientsend(xclient * client, const void * data, xuint64 len);
+
 #endif // __NOVEMBERIZING_X__CLIENT__H__
