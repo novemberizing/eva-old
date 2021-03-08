@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
 
 #include "thread.h"
 
@@ -17,6 +20,19 @@ extern xclient * xclientnew(xint32 domain, xint32 type, xint32 protocol, const v
     client->on         = on;
 
     return client;
+}
+
+extern xclient * xclientrem(xclient * client)
+{
+    if(client)
+    {
+        if(client->descriptor)
+        {
+            client->descriptor = xclientsocket_rem(client->descriptor);
+        }
+        free(client);
+    }
+    return xnil;
 }
 
 /**
@@ -125,4 +141,82 @@ extern xint64 xclientsend(xclient * client, const void * data, xuint64 len)
         return xsuccess;
     }
     return xfail;
+}
+
+extern xint64 xclientrecv(xclient * client, void * buffer, xuint64 len)
+{
+    if(xclientsocketcheck_open(client->descriptor))
+    {
+        if(buffer && len)
+        {
+            xint64 n = 0;
+            if(client->descriptor->stream.in)
+            {
+                if(len <= xstreamlen(client->descriptor->stream.in))
+                {
+                    memcpy(buffer, xstreamfront(client->descriptor->stream.in), len);
+                    xstreampos_set(client->descriptor->stream.in, xstreampos_get(client->descriptor->stream.in) + len);
+                    xstreamadjust(client->descriptor->stream.in, xfalse);
+                    return len;
+                }
+                else
+                {
+                    n = xsocketread((xsocket *) client->descriptor, xstreamback(client->descriptor->stream.in), xstreamlen(client->descriptor->stream.in) - len);
+                    if(n > 0)
+                    {
+                        xstreamsize_set(client->descriptor->stream.in, xstreamsize_get(client->descriptor->stream.in) + n);
+                        n = xstreamlen(client->descriptor->stream.in);
+                        memcpy(buffer, xstreamfront(client->descriptor->stream.in), n);
+                        xstreampos_set(client->descriptor->stream.in, xstreampos_get(client->descriptor->stream.in) + n);
+                        xstreamadjust(client->descriptor->stream.in, xfalse);
+                        return n;
+                    }
+                    else if(n == 0)
+                    {
+                        return xsuccess;
+                    }
+                    else
+                    {
+                        client->descriptor->status |= xdescriptorstatus_exception;
+                        xexceptionset(xaddressof(client->descriptor->exception), xsocketread, errno, xexceptiontype_descriptor, "");
+                        if(client->descriptor->on && client->descriptor->subscription == xnil)
+                        {
+                            client->descriptor->on(client->descriptor, xsocketeventtype_exception, xnil, 0);
+                        }
+                        return xfail;
+                    }
+                }
+            }
+            else
+            {
+                n = xsocketread((xsocket *) client->descriptor, buffer, len);
+                if(n >= 0)
+                {
+                    return n;
+                }
+                else
+                {
+                    client->descriptor->status |= xdescriptorstatus_exception;
+                    xexceptionset(xaddressof(client->descriptor->exception), xsocketread, errno, xexceptiontype_descriptor, "");
+                    if(client->descriptor->on && client->descriptor->subscription == xnil)
+                    {
+                        client->descriptor->on(client->descriptor, xsocketeventtype_exception, xnil, 0);
+                    }
+                    return xfail;
+                }
+            }
+        }
+        return xsuccess;
+    }
+    return xfail;
+}
+
+extern xint64 xclientclose(xclient * client)
+{
+    return xsocketclose((xsocket *) client->descriptor);
+}
+
+extern xint64 xclientshutdown(xclient * client, xuint64 how)
+{
+    return xsocketshutdown((xsocket *) client->descriptor, how);
 }

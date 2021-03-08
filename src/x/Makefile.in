@@ -150,7 +150,8 @@ am_libnovemberizing_a_OBJECTS = std.$(OBJEXT) object.$(OBJEXT) \
 	descriptor/event/generator/subscription/list.$(OBJEXT) \
 	console.$(OBJEXT) socket.$(OBJEXT) server.$(OBJEXT) \
 	server/socket.$(OBJEXT) session.$(OBJEXT) \
-	session/socket.$(OBJEXT)
+	session/socket.$(OBJEXT) client.$(OBJEXT) \
+	client/socket.$(OBJEXT)
 libnovemberizing_a_OBJECTS = $(am_libnovemberizing_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -167,11 +168,12 @@ am__v_at_1 =
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
-am__depfiles_remade = ./$(DEPDIR)/console.Po ./$(DEPDIR)/descriptor.Po \
-	./$(DEPDIR)/exception.Po ./$(DEPDIR)/object.Po \
-	./$(DEPDIR)/server.Po ./$(DEPDIR)/session.Po \
-	./$(DEPDIR)/socket.Po ./$(DEPDIR)/std.Po ./$(DEPDIR)/stream.Po \
-	./$(DEPDIR)/sync.Po ./$(DEPDIR)/thread.Po \
+am__depfiles_remade = ./$(DEPDIR)/client.Po ./$(DEPDIR)/console.Po \
+	./$(DEPDIR)/descriptor.Po ./$(DEPDIR)/exception.Po \
+	./$(DEPDIR)/object.Po ./$(DEPDIR)/server.Po \
+	./$(DEPDIR)/session.Po ./$(DEPDIR)/socket.Po \
+	./$(DEPDIR)/std.Po ./$(DEPDIR)/stream.Po ./$(DEPDIR)/sync.Po \
+	./$(DEPDIR)/thread.Po client/$(DEPDIR)/socket.Po \
 	descriptor/event/$(DEPDIR)/generator.Po \
 	descriptor/event/generator/$(DEPDIR)/epoll.Po \
 	descriptor/event/generator/subscription/$(DEPDIR)/list.Po \
@@ -379,7 +381,9 @@ libnovemberizing_a_SOURCES = std.c                                          \
                              server.c                                       \
                              server/socket.c                                \
                              session.c                                      \
-                             session/socket.c
+                             session/socket.c                               \
+                             client.c                                       \
+                             client/socket.c
 
 all: all-am
 
@@ -544,6 +548,14 @@ session/$(DEPDIR)/$(am__dirstamp):
 	@: > session/$(DEPDIR)/$(am__dirstamp)
 session/socket.$(OBJEXT): session/$(am__dirstamp) \
 	session/$(DEPDIR)/$(am__dirstamp)
+client/$(am__dirstamp):
+	@$(MKDIR_P) client
+	@: > client/$(am__dirstamp)
+client/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) client/$(DEPDIR)
+	@: > client/$(DEPDIR)/$(am__dirstamp)
+client/socket.$(OBJEXT): client/$(am__dirstamp) \
+	client/$(DEPDIR)/$(am__dirstamp)
 
 libnovemberizing.a: $(libnovemberizing_a_OBJECTS) $(libnovemberizing_a_DEPENDENCIES) $(EXTRA_libnovemberizing_a_DEPENDENCIES) 
 	$(AM_V_at)-rm -f libnovemberizing.a
@@ -552,6 +564,7 @@ libnovemberizing.a: $(libnovemberizing_a_OBJECTS) $(libnovemberizing_a_DEPENDENC
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f client/*.$(OBJEXT)
 	-rm -f descriptor/event/*.$(OBJEXT)
 	-rm -f descriptor/event/generator/*.$(OBJEXT)
 	-rm -f descriptor/event/generator/subscription/*.$(OBJEXT)
@@ -567,6 +580,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/client.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/console.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/descriptor.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/exception.Po@am__quote@ # am--include-marker
@@ -578,6 +592,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stream.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sync.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/thread.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@client/$(DEPDIR)/socket.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@descriptor/event/$(DEPDIR)/generator.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@descriptor/event/generator/$(DEPDIR)/epoll.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@descriptor/event/generator/subscription/$(DEPDIR)/list.Po@am__quote@ # am--include-marker
@@ -748,6 +763,8 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f client/$(DEPDIR)/$(am__dirstamp)
+	-rm -f client/$(am__dirstamp)
 	-rm -f descriptor/event/$(DEPDIR)/$(am__dirstamp)
 	-rm -f descriptor/event/$(am__dirstamp)
 	-rm -f descriptor/event/generator/$(DEPDIR)/$(am__dirstamp)
@@ -780,7 +797,8 @@ clean-am: clean-generic clean-libLIBRARIES clean-libtool \
 	mostlyclean-am
 
 distclean: distclean-am
-		-rm -f ./$(DEPDIR)/console.Po
+		-rm -f ./$(DEPDIR)/client.Po
+	-rm -f ./$(DEPDIR)/console.Po
 	-rm -f ./$(DEPDIR)/descriptor.Po
 	-rm -f ./$(DEPDIR)/exception.Po
 	-rm -f ./$(DEPDIR)/object.Po
@@ -791,6 +809,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/stream.Po
 	-rm -f ./$(DEPDIR)/sync.Po
 	-rm -f ./$(DEPDIR)/thread.Po
+	-rm -f client/$(DEPDIR)/socket.Po
 	-rm -f descriptor/event/$(DEPDIR)/generator.Po
 	-rm -f descriptor/event/generator/$(DEPDIR)/epoll.Po
 	-rm -f descriptor/event/generator/subscription/$(DEPDIR)/list.Po
@@ -851,7 +870,8 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-		-rm -f ./$(DEPDIR)/console.Po
+		-rm -f ./$(DEPDIR)/client.Po
+	-rm -f ./$(DEPDIR)/console.Po
 	-rm -f ./$(DEPDIR)/descriptor.Po
 	-rm -f ./$(DEPDIR)/exception.Po
 	-rm -f ./$(DEPDIR)/object.Po
@@ -862,6 +882,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/stream.Po
 	-rm -f ./$(DEPDIR)/sync.Po
 	-rm -f ./$(DEPDIR)/thread.Po
+	-rm -f client/$(DEPDIR)/socket.Po
 	-rm -f descriptor/event/$(DEPDIR)/generator.Po
 	-rm -f descriptor/event/generator/$(DEPDIR)/epoll.Po
 	-rm -f descriptor/event/generator/subscription/$(DEPDIR)/list.Po

@@ -22,7 +22,7 @@ int main(int argc, char ** argv)
         {
             char buffer[64];
             buffer[0] = 0;
-            if(xclientread(client, buffer, 12) == 12)
+            if(xclientrecv(client, buffer, 12) == 12)
             {
                 buffer[12] = 0;
                 printf("%s\n", buffer);
