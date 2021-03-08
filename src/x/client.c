@@ -140,6 +140,10 @@ extern xint64 xclientsend(xclient * client, const void * data, xuint64 len)
         }
         return xsuccess;
     }
+    else if(xclientsocketcheck_connecting(client->descriptor))
+    {
+        return xsuccess;
+    }
     return xfail;
 }
 
@@ -206,6 +210,10 @@ extern xint64 xclientrecv(xclient * client, void * buffer, xuint64 len)
                 }
             }
         }
+        return xsuccess;
+    }
+    else if(xclientsocketcheck_connecting(client->descriptor))
+    {
         return xsuccess;
     }
     return xfail;

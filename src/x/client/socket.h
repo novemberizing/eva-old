@@ -9,6 +9,7 @@
 #include <x/client/socket/event.h>
 #include <x/client/socket/event/subscription.h>
 
+
 struct xclientsocket;
 
 typedef struct xclientsocket xclientsocket;
@@ -49,5 +50,6 @@ extern xclientsocket * xclientsocket_rem(xclientsocket * o);
 
 
 extern xint32 xclientsocketcheck_open(xclientsocket * o);
+extern xint32 xclientsocketcheck_connecting(xclientsocket * o);
 
 #endif // __NOVEMBERIZING_X__CLIENT__SOCKET__H__

@@ -4,7 +4,10 @@
 #include <netinet/in.h>
 
 #include "../thread.h"
+
 #include "socket.h"
+
+#include "../socket/status.h"
 
 static xint64 xclientsocketprocessor_tcp(xclientsocket * o, xuint32 event, void * parameter);
 static xint64 xclientsocketsubscriber_tcp(xclientsocket * o, xuint32 event, void * parameter, xint64 result);
@@ -81,4 +84,27 @@ static xint32 xclientsocketcheck_tcp(xclientsocket * o, xuint32 event)
 static void xclientsocketeventhandler_tcp(xclientsocketevent * event)
 {
     xassertion(xtrue, "implement this");
+}
+
+extern xint32 xclientsocketcheck_open(xclientsocket * o)
+{
+    xassertion(o == xnil, "");
+    if(o->handle.f < 0)
+    {
+        return xfalse;
+    }
+    if(o->status & (xsocketstatus_exception | xsocketstatus_rem | xsocketstatus_close))
+    {
+        return xfalse;
+    }
+    if((o->status & (xsocketstatus_open | xsocketstatus_connecting | xsocketstatus_connect)) == xsocketstatus_void)
+    {
+        return xfalse;
+    }
+    return xtrue;
+}
+
+extern xint32 xclientsocketcheck_connecting(xclientsocket * o)
+{
+    return o->status & xsocketstatus_connecting;
 }
