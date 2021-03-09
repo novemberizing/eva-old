@@ -47,4 +47,6 @@ extern xint64 xsocketconnect(xsocket * o, void * addr, xuint32 addrlen);
 
 extern xint32 xsocketresuseaddr_set(xsocket * o, xint32 on);
 
+extern const char * xsocketeventtype_str(xuint32 event);
+
 #endif // __NOVEMBERIZING_X__SOCKET__H__

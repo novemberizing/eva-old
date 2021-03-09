@@ -228,3 +228,26 @@ extern xint32 xsocketresuseaddr_set(xsocket * o, xint32 on)
 
     return xsuccess;
 }
+
+extern const char * xsocketeventtype_str(xuint32 event)
+{
+    switch(event)
+    {
+        case xsocketeventtype_open:         return "open";
+        case xsocketeventtype_in:           return "in";
+        case xsocketeventtype_out:          return "out";
+        case xsocketeventtype_close:        return "close";
+        case xsocketeventtype_exception:    return "exception";
+        case xsocketeventtype_rem:          return "rem";
+        case xsocketeventtype_register:     return "register";
+        case xsocketeventtype_create:       return "create";
+        case xsocketeventtype_bind:         return "bind";
+        case xsocketeventtype_connect:      return "connect";
+        case xsocketeventtype_connecting:   return "connecting";
+        case xsocketeventtype_listen:       return "listen";
+        case xsocketeventtype_offin:        return "off in";
+        case xsocketeventtype_offout:       return "off out";
+        case xsocketeventtype_offall:       return "off all";
+        default:                            return "unknown";
+    }
+}

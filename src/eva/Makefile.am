@@ -5,7 +5,8 @@ LIBS = $(top_srcdir)/src/x/libnovemberizing.a             \
 
 noinst_PROGRAMS = eva
 
-eva_SOURCES  = eva.c \
+eva_SOURCES  = eva.c        \
+               console.c    \
                echo.c
 
 eva_LDADD    = $(LIBS)

@@ -13,11 +13,13 @@
 #include <x/console.h>
 
 #include "echo.h"
+#include "console.h"
 
 static xint64 xsessionsubscriber_echo(xsession * session, xuint64 event, void * data, xint64 result);
 
 int main(int argc, char ** argv)
 {
+    xconsolesubscriber_set(evacli);
     xeventengine * engine = xeventengine_new();
 
     xeventengine_server_register(engine, evaechoserver_get(xtransmissioncontrolprotocol));
