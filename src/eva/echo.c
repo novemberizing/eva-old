@@ -55,7 +55,7 @@ extern xserver * evaechoserver_get(xuint32 protocol)
     return xnil;
 }
 
-extern void evaechoserver_rem(void)
+extern void evaechoserver_term(void)
 {
     if(service.tcp != xnil)
     {

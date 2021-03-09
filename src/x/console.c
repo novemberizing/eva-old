@@ -60,6 +60,18 @@ static xconsole console = { xnil, xnil, xnil };
 static xconsoledescriptor * consoledescriptorsingleton_in = xnil;
 static xconsoledescriptor * consoledescriptorsingleton_out = xnil;
 
+extern void xconsoledescriptor_term(void)
+{
+    if(console.in)
+    {
+        console.in = xconsoledescriptor_rem(console.in);
+    }
+    if(console.out)
+    {
+        console.out = xconsoledescriptor_rem(console.out);
+    }
+}
+
 extern void xconsolesubscriber_set(xconsolesubscriber subscriber)
 {
     if(console.in == xnil)

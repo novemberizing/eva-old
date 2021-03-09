@@ -10,6 +10,7 @@
 #include <x/session.h>
 #include <x/thread.h>
 #include <x/event/engine.h>
+#include <x/console.h>
 
 #include "echo.h"
 
@@ -20,10 +21,13 @@ int main(int argc, char ** argv)
     xeventengine * engine = xeventengine_new();
 
     xeventengine_server_register(engine, evaechoserver_get(xtransmissioncontrolprotocol));
+    xeventengine_descriptor_register(engine, xconsoledescriptorout_get());
+    xeventengine_descriptor_register(engine, xconsoledescriptorin_get());
 
     int ret = xeventengine_run(engine);
 
-    evaechoserver_rem();
+    xconsoledescriptor_term();
+    evaechoserver_term();
     
     return ret;
 }
