@@ -383,7 +383,7 @@ extern void xdescriptoreventgenerator_queue_once(xdescriptoreventgenerator * o)
                 if(descriptor->status & xdescriptorstatus_rem)
                 {
                     xdescriptorevent_processor_rem(descriptor);
-                    xassertion(xtrue, "implement this");
+                    // TODO: CHECK GENERATOR QUEUE SIZE
                 }
                 __xsynclock(generator->queue->sync);
                 continue;

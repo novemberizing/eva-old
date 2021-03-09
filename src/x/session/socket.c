@@ -37,7 +37,7 @@ extern xsessionsocket * xsessionsocket_rem(xsessionsocket * descriptor)
     {
         // 세션 소켓의 경우 SUBSCRIPTION 이 존재할 수 있다.
         xassertion(descriptor->subscription, "");
-        xassertion(descriptor->status != xdescriptorstatus_void && descriptor->status != xdescriptorstatus_rem, "");
+        xassertion(descriptor->status != xdescriptorstatus_void && descriptor->status != xdescriptorstatus_rem, "0x%08x", descriptor->status);
         xassertion(descriptor->handle.f >= 0, "");
         xassertion(descriptor->event.queue || descriptor->event.prev || descriptor->event.next, "");
 
@@ -56,11 +56,13 @@ extern xstream * xsessionsocketstreamin_get(xsessionsocket * descriptor)
     return descriptor->stream.in;
 }
 
-extern void xsessionsocketstreamin_set(xsessionsocket * descriptor, xstream * stream)
+extern xstream * xsessionsocketstreamin_set(xsessionsocket * descriptor, xstream * stream)
 {
-    xcheck(descriptor->stream.in, "check memory leak");
+    xstream * prev = descriptor->stream.in;
 
     descriptor->stream.in = stream;
+
+    return prev;
 }
 
 extern void xsessionsocketstreamin_del(xsessionsocket * descriptor)
@@ -78,11 +80,13 @@ extern void xsessionsocketstreamout_del(xsessionsocket * descriptor)
     descriptor->stream.out = xstreamrem(descriptor->stream.out);
 }
 
-extern void xsessionsocketstreamout_set(xsessionsocket * descriptor, xstream * stream)
+extern xstream * xsessionsocketstreamout_set(xsessionsocket * descriptor, xstream * stream)
 {
-    xcheck(descriptor->stream.out, "check memory leak");
+    xstream * prev = descriptor->stream.out;
 
     descriptor->stream.out = stream;
+
+    return prev;
 }
 
 static void xsessionsocketeventhandler_tcp(xsessionsocketevent * event)
@@ -103,7 +107,7 @@ static inline xint64 xsessionsocketprocessor_tcp_in(xsessionsocket * descriptor,
     if(xdescriptorcheck_open((xdescriptor *) descriptor))
     {
         xstreamadjust(descriptor->stream.in, xfalse);
-        xcheck(xtrue, "8192 change optimized value");
+        // TODO: 8192 CHANGE OPTIMIZED VALUE
         xstreamcapacity_set(descriptor->stream.in, xstreamcapacity_get(descriptor->stream.in) + 8192);
 
         xint64 n = xdescriptorread((xdescriptor *) descriptor, xstreamback(descriptor->stream.in), xstreamremain(descriptor->stream.in));
@@ -137,18 +141,14 @@ static inline xint64 xsessionsocketprocessor_tcp_out(xsessionsocket * descriptor
 
 static inline xint64 xsessionsocketprocessor_tcp_close(xsessionsocket * descriptor, void * data)
 {
-    // xassertion(xtrue, "implement this");
-    // SHUTDOWN ...
-    descriptor->status |= xsessionsocketstatus_rem;
-    xcheck(xtrue, "force shutdown ...");
+    descriptor->status |= xsessionsocketstatus_rem; // FORCE SHUTDOWN
     xsocketshutdown((xsocket *) descriptor, xsocketeventtype_offall);
     return xdescriptorclose((xdescriptor *) descriptor);
 }
 
 static inline xint64 xsessionsocketprocessor_tcp_exception(xsessionsocket * descriptor, void * data)
 {
-    xcheck(xtrue, "force shutdown ...");
-    descriptor->status |= xsessionsocketstatus_rem;
+    descriptor->status |= xsessionsocketstatus_rem; // FORCE SHUTDOWN
     xsocketshutdown((xsocket *) descriptor, xsocketeventtype_offall);
     return xdescriptorclose((xdescriptor *) descriptor);
 }

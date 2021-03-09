@@ -34,6 +34,8 @@
 // #define xserversocketstatus_connecting  xsocketstatus_connecting
 #define xserversocketstatus_listen      xsocketstatus_listen
 
+extern const char * xserversocketeventtype_str(xuint32 event);
+
 typedef xserversocket * (*xserversocketdestructor)(xserversocket *);
 typedef xint64 (*xserversocketprocessor)(xserversocket *, xuint32, void *);
 typedef xint64 (*xserversocketsubscriber)(xserversocket *, xuint32, void *, xint64);

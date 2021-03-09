@@ -153,15 +153,14 @@ extern xint64 xdescriptorevent_processor_rem(xdescriptor * descriptor)
 
         xeventengine_descriptor_unregister(engine, descriptor);
 
-        xcheck(xtrue, "checkout subscription");
-
-        // xassertion(subscription->descriptor, "");
+        // TODO: CHECK SUBSCRIPTION
         xassertion(subscription->enginenode.engine || subscription->enginenode.prev || subscription->enginenode.next, "");
         xassertion(subscription->generatornode.prev || subscription->generatornode.next || subscription->generatornode.list, "");
 
         descriptor->subscription = xnil;
         descriptor->on(descriptor, xdescriptoreventtype_rem, xnil, 0);
 
+        descriptor->status = xdescriptorstatus_void;
         descriptor = descriptor->rem(descriptor);
 
         free(subscription);

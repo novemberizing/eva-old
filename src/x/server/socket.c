@@ -228,7 +228,8 @@ static xint64 xserversocketsubscriber_tcp(xserversocket * descriptor, xuint32 ev
     {
         xcheck(xtrue, "exception errno => %d", descriptor->exception.number);
     }
-    xcheck(xtrue, "event => 0x%08x, result => %ld", event, result);
+
+    xcheck(xtrue, "event: %s, result: %ld", xserversocketeventtype_str(event), result);
 
     return server->on(server, event, data, result);
 }
@@ -236,4 +237,27 @@ static xint64 xserversocketsubscriber_tcp(xserversocket * descriptor, xuint32 ev
 static xint32 xserversocketcheck_tcp(xserversocket * descriptor, xuint32 event)
 {
     xassertion(xtrue, "implement this");
+}
+
+extern const char * xserversocketeventtype_str(xuint32 event)
+{
+    switch(event)
+    {
+        case xsocketeventtype_open:         return "open";
+        case xsocketeventtype_in:           return "in";
+        case xsocketeventtype_out:          return "out";
+        case xsocketeventtype_close:        return "close";
+        case xsocketeventtype_exception:    return "exception";
+        case xsocketeventtype_rem:          return "rem";
+        case xsocketeventtype_register:     return "register";
+        case xsocketeventtype_create:       return "create";
+        case xsocketeventtype_bind:         return "bind";
+        case xsocketeventtype_connect:      return "connect";
+        case xsocketeventtype_connecting:   return "connecting";
+        case xsocketeventtype_listen:       return "listen";
+        case xsocketeventtype_offin:        return "off in";
+        case xsocketeventtype_offout:       return "off out";
+        case xsocketeventtype_offall:       return "off all";
+        default:                            return "unknown";
+    }
 }

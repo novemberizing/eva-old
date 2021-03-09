@@ -70,7 +70,9 @@ extern xint64 xsocketlisten(xsocket * o, xint32 backlog)
     xassertion(o->handle.f < 0 || (o->status & xsocketstatus_create) == xsocketstatus_void, "");
     xassertion((o->status & xsocketstatus_bind) == xsocketstatus_void, "");
     xassertion((o->status & (xsocketstatus_connect | xsocketstatus_connecting)) != xsocketstatus_void, "");
-    xcheck(xtrue, "implement this");    // 클라이언트 소켓과 서버 소켓 세션 소켓을 구분할 수 있도록 마스크를 세팅하자.
+
+    // TODO: 클라이언트 소켓과 서버 소켓, 세션 소켓을 구분할 필요가 있을까? - 구분할 필요성을 찾고 요구사항이 존재하면 반영하도록 하자.
+    // o->process 로 체크하도록 하자.
 
     if((o->status & xsocketstatus_exception) == xsocketstatus_void)
     {
