@@ -34,297 +34,140 @@ The registration procedures for service names and port numbers are described in 
 
 Assigned ports both System and User ports SHOULD NOT be used without or prior to IANA registration.
 
-| SERVICE NAME | PORT NUMBER | TRANSPORT | DESCRIPTION                   | REFERENCE                                                    |
-| ------------ | ----------- | --------- | ----------------------------- | ------------------------------------------------------------ |
-| -            | 0           | TCP       | Reserved                      | -                                                            |
-| -            | 0           | UDP       | Reserved                      | -                                                            |
-| tcpmux       | 1           | TCP       | TCP Port Service Multiplexer. | [RFC1078](https://tools.ietf.org/html/rfc1078): _Deprecated_ |
-| tcpmux       | 1           | UDP       | TCP Port Service Multiplexer. | [RFC1078](https://tools.ietf.org/html/rfc1078): _Deprecated_ |
+| SERVICE NAME | PORT NUMBER | TRANSPORT | DESCRIPTION                       | REFERENCE                                                            |
+| ------------ | ----------- | --------- | --------------------------------- | -------------------------------------------------------------------- |
+| -            | 0           | TCP       | Reserved                          | -                                                                    |
+| -            | 0           | UDP       | Reserved                          | -                                                                    |
+| tcpmux       | 1           | TCP       | TCP Port Service Multiplexer      | [RFC1078](https://tools.ietf.org/html/rfc1078): _Deprecated_         |
+| tcpmux       | 1           | UDP       | TCP Port Service Multiplexer      | [RFC1078](https://tools.ietf.org/html/rfc1078): _Deprecated_         |
+| compressnet  | 2           | TCP       | Management Utility                | -                                                                    |
+| compressnet  | 2           | UDP       | Management Utility                | -                                                                    |
+| compressnet  | 3           | TCP       | Compression Process               | -                                                                    |
+| compressnet  | 3           | UDP       | Compression Process               | -                                                                    |
+| rje          | 5           | TCP       | Remote Job Entry                  | [REMOTE JOB ENTRY PROTOCOL](https://tools.ietf.org/html/rfc407)      |
+| rje          | 5           | UDP       | Remote Job Entry                  | [REMOTE JOB ENTRY PROTOCOL](https://tools.ietf.org/html/rfc407)      |
+| -            | 7           | TCP       | Echo                              | [ECHO PROTOCOL](https://tools.ietf.org/html/rfc862)                  |
+| -            | 7           | UDP       | Echo                              | [ECHO PROTOCOL](https://tools.ietf.org/html/rfc862)                  |
+| systat       | 11          | TCP       | Active Users                      | [ACTIVE USERS](https://tools.ietf.org/html/rfc866)                   |
+| systat       | 11          | UDP       | Active Users                      | [ACTIVE USERS](https://tools.ietf.org/html/rfc866)                   |
+| daytime      | 13          | TCP       | Daytime                           | [DAYTIME PROTOCOL](https://tools.ietf.org/html/rfc867)               |
+| daytime      | 13          | UDP       | Daytime                           | [DAYTIME PROTOCOL](https://tools.ietf.org/html/rfc867)               |
+| qotd         | 17          | TCP       | Quote of the Day                  | [QUOTE OF THE DAY PROTOCOL](https://tools.ietf.org/html/rfc865)      |
+| qotd         | 17          | UDP       | Quote of the Day                  | [QUOTE OF THE DAY PROTOCOL](https://tools.ietf.org/html/rfc865)      |
+| msp          | 18          | TCP       | Message Send Protocol             | [MESSAGE SEND PROTOCOL](https://tools.ietf.org/html/rfc1312)         |
+| msp          | 18          | UDP       | Message Send Protocol             | [MESSAGE SEND PROTOCOL](https://tools.ietf.org/html/rfc1312)         |
+| chargen      | 19          | TCP       | Character Generator               | [CHARACTER GENERATOR PROTOCOL](https://tools.ietf.org/html/rfc864)   |
+| chargen      | 19          | UDP       | Character Generator               | [CHARACTER GENERATOR PROTOCOL](https://tools.ietf.org/html/rfc864)   |
+| ftp-data     | 20          | TCP       | File Transfer [Default Data]      | -                                                                    |
+| ftp-data     | 20          | UDP       | File Transfer [Default Data]      | -                                                                    |
+| ftp-data     | 20          | SCTP      | FTP                               | -                                                                    |
+| ftp          | 21          | TCP       | File Transfer Protocol            | [FILE TRANSFER PROTOCOL](https://tools.ietf.org/html/rfc959)         |
+| ftp          | 21          | UDP       | File Transfer Protocol            | [FILE TRANSFER PROTOCOL](https://tools.ietf.org/html/rfc959)         |
+| ftp          | 21          | SCTP      | File Transfer Protocol            | [FILE TRANSFER PROTOCOL](https://tools.ietf.org/html/rfc959)         |
+| ssh          | 22          | TCP       | The Secure Shell                  | -                                                                    |
+| ssh          | 22          | UDP       | The Secure Shell                  | -                                                                    |
+| ssh          | 22          | SCTP      | The Secure Shell                  | -                                                                    |
+| telnet       | 23          | TCP       | Telnet                            | [TELNET PROTOCOL](https://tools.ietf.org/html/rfc854)                |
+| telnet       | 23          | UDP       | Telnet                            | [TELNET PROTOCOL](https://tools.ietf.org/html/rfc854)                |
+| -            | 24          | TCP       | Any private mail system           | -                                                                    |
+| -            | 24          | UDP       | Any private mail system           | -                                                                    |
+| smtp         | 25          | TCP       | Simple Mail Transfer              | [SIMPLE MAIL TRANSFER PROTOCOL](https://tools.ietf.org/html/rfc5321) |
+| smtp         | 25          | UDP       | Simple Mail Transfer              | [SIMPLE MAIL TRANSFER PROTOCOL](https://tools.ietf.org/html/rfc5321) |
+| nsw-fe       | 27          | TCP       | NSW User System FE                | -                                                                    |
+| nsw-fe       | 27          | UDP       | NSW User System FE                | -                                                                    |
+| msg-icp      | 29          | TCP       | MSG ICP                           | -                                                                    |
+| msg-icp      | 29          | UDP       | MSG ICP                           | -                                                                    |
+| msg-auth     | 31          | TCP       | MSG Authentication                | -                                                                    |
+| msg-auth     | 31          | UDP       | MSG Authentication                | -                                                                    |
+| dsp          | 33          | TCP       | Display Support Protocol          | -                                                                    |
+| dsp          | 33          | UDP       | Display Support Protocol          | -                                                                    |
+| -            | 35          | TCP       | Any private printer server        | -                                                                    |
+| -            | 35          | UDP       | Any private printer server        | -                                                                    |
+| time         | 37          | TCP       | Time                              | [TIME PROTOCOL](https://tools.ietf.org/html/rfc868)                  |
+| time         | 37          | UDP       | Time                              | [TIME PROTOCOL](https://tools.ietf.org/html/rfc868)                  |
+| rap          | 38          | TCP       | Route Access Protocol             | [ROUTE ACCESS PROTOCOL](https://tools.ietf.org/html/rfc1476)         |
+| rap          | 38          | UDP       | Route Access Protocol             | [ROUTE ACCESS PROTOCOL](https://tools.ietf.org/html/rfc1476)         |
+| rlp          | 39          | TCP       | Resource Location Protocol        | [RESOURCE LOCATION PROTOCOL](https://tools.ietf.org/html/rfc887)     |
+| rlp          | 39          | UDP       | Resource Location Protocol        | [RESOURCE LOCATION PROTOCOL](https://tools.ietf.org/html/rfc887)     |
+| graphics     | 41          | TCP       | Graphics                          | [GRAPHICS PROTOCOL](https://tools.ietf.org/html/rfc493)              |
+| graphics     | 41          | UDP       | Graphics                          | [GRAPHICS PROTOCOL](https://tools.ietf.org/html/rfc493)              |
+| name         | 42          | TCP       | Graphics                          | [HOSTNAME SERVER](https://tools.ietf.org/html/rfc953)                |
+| name         | 42          | UDP       | Graphics                          | [HOSTNAME SERVER](https://tools.ietf.org/html/rfc953)                |
+| nameserver   | 42          | TCP       | Graphics                          | [HOSTNAME SERVER](https://tools.ietf.org/html/rfc953)                |
+| nameserver   | 42          | UDP       | Graphics                          | [HOSTNAME SERVER](https://tools.ietf.org/html/rfc953)                |
+| nicname      | 43          | TCP       | Who Is                            | -                                                                    |
+| nicname      | 43          | UDP       | Who Is                            | -                                                                    |
+| mpm-flags    | 44          | TCP       | MPM FLAGS Protocol                | -                                                                    |
+| mpm-flags    | 44          | UDP       | MPM FLAGS Protocol                | -                                                                    |
+| mpm          | 45          | TCP       | Message Processing Module         | -                                                                    |
+| mpm          | 45          | UDP       | Message Processing Module         | -                                                                    |
+| mpm-snd      | 46          | TCP       | MPM [default send]                | -                                                                    |
+| mpm-snd      | 46          | UDP       | MPM [default send]                | -                                                                    |
+| auditd       | 48          | TCP       | Digital Audit Deamon              | -                                                                    |
+| auditd       | 48          | UDP       | Digital Audit Deamon              | -                                                                    |
+| tacacs       | 49          | TCP       | Login Host Protocol (TACACS)      | -                                                                    |
+| tacacs       | 49          | UDP       | Login Host Protocol (TACACS)      | -                                                                    |
+| re-mail-ck   | 50          | TCP       | Remote Mail Checking Protocol     | -                                                                    |
+| re-mail-ck   | 50          | UDP       | Remote Mail Checking Protocol     | -                                                                    |
+| xns-time     | 52          | TCP       | XNS Time Protocol                 | -                                                                    |
+| xns-time     | 52          | UDP       | XNS Time Protocol                 | -                                                                    |
+| domain       | 53          | TCP       | Domain Name Server                | [DOMAIN NAMES](https://tools.ietf.org/html/rfc1035)                  |
+| domain       | 53          | UDP       | Domain Name Server                | [DOMAIN NAMES](https://tools.ietf.org/html/rfc1035)                  |
+| xns-ch       | 54          | TCP       | XNS Clearinghouse                 | -                                                                    |
+| xns-ch       | 54          | UDP       | XNS Clearinghouse                 | -                                                                    |
+| isi-gl       | 55          | TCP       | ISI Graphics Language             | -                                                                    |
+| isi-gl       | 55          | UDP       | ISI Graphics Language             | -                                                                    |
+| xns-auth     | 56          | TCP       | XNS Authentication                | -                                                                    |
+| xns-auth     | 56          | UDP       | XNS Authentication                | -                                                                    |
+| -            | 57          | TCP       | Any private terminal access       | -                                                                    |
+| -            | 57          | UDP       | Any private terminal access       | -                                                                    |
+| xns-mail     | 56          | TCP       | XNS Mail                          | -                                                                    |
+| xns-mail     | 56          | UDP       | XNS Mail                          | -                                                                    |
+| -            | 59          | TCP       | Any private file service          | -                                                                    |
+| -            | 59          | UDP       | Any private file service          | -                                                                    |
+| acas         | 62          | TCP       | ACA Services                      | -                                                                    |
+| acas         | 62          | UDP       | ACA Services                      | -                                                                    |
+| whois++      | 63          | TCP       | whois++                           | -                                                                    |
+| whois++      | 63          | UDP       | whois++                           | -                                                                    |
+| covia        | 64          | TCP       | Communications Integrator (CI)    | -                                                                    |
+| covia        | 64          | UDP       | Communications Integrator (CI)    | -                                                                    |
+| tacacs-ds    | 65          | TCP       | TACACS-Database Service           | -                                                                    |
+| tacacs-ds    | 65          | UDP       | TACACS-Database Service           | -                                                                    |
+| sql\*net     | 66          | TCP       | Oracle SQL*NET                    | -                                                                    |
+| sql\*net     | 66          | UDP       | Oracle SQL*NET                    | -                                                                    |
+| bootps       | 67          | TCP       | Bootstrap Protocol Server         | -                                                                    |
+| bootps       | 67          | UDP       | Bootstrap Protocol Server         | -                                                                    |
+| bootpc       | 68          | TCP       | Bootstrap Protocol Client         | -                                                                    |
+| bootpc       | 68          | UDP       | Bootstrap Protocol Client         | -                                                                    |
+| tftp         | 69          | TCP       | Trivial File Transfer             | -                                                                    |
+| tftp         | 69          | UDP       | Trivial File Transfer             | -                                                                    |
+| gopher       | 70          | TCP       | Gopher                            | -                                                                    |
+| gopher       | 70          | UDP       | Gopher                            | -                                                                    |
+| netrjs-1     | 71          | TCP       | Remote Job Service                | -                                                                    |
+| netrjs-1     | 71          | UDP       | Remote Job Service                | -                                                                    |
+| netrjs-2     | 72          | TCP       | Remote Job Service                | -                                                                    |
+| netrjs-2     | 72          | UDP       | Remote Job Service                | -                                                                    |
+| netrjs-3     | 73          | TCP       | Remote Job Service                | -                                                                    |
+| netrjs-3     | 73          | UDP       | Remote Job Service                | -                                                                    |
+| netrjs-4     | 74          | TCP       | Remote Job Service                | -                                                                    |
+| netrjs-4     | 74          | UDP       | Remote Job Service                | -                                                                    |
+| -            | 75          | TCP       | Any private dial out service      | -                                                                    |
+| -            | 75          | UDP       | Any private dial out service      | -                                                                    |
+| deos         | 76          | TCP       | Distributed External Object Store | -                                                                    |
+| deos         | 76          | UDP       | Distributed External Object Store | -                                                                    |
+| -            | 77          | TCP       | Any private RJE service           | -                                                                    |
+| -            | 77          | UDP       | Any private RJE service           | -                                                                    |
+| vettcp       | 78          | TCP       | vettcp                            | -                                                                    |
+| vettcp       | 78          | UDP       | vettcp                            | -                                                                    |
+| finger       | 79          | TCP       | Finger                            | [Simple New Mail Notification](https://tools.ietf.org/html/rfc4146)  |
+| finger       | 79          | UDP       | Finger                            | [Simple New Mail Notification](https://tools.ietf.org/html/rfc4146)  |
+| http         | 80          | TCP       | World Wide Web                    | -                                                                    |
+| http         | 80          | UDP       | World Wide Web                    | -                                                                    |
+| http         | 80          | SCTP      | World Wide Web                    | -                                                                    |
 
-https://tools.ietf.org/html/rfc1078
 -----
 
-TODO: BELOW TEXT CLEANING
 
- Service Name   Port Number Transport         Description                                Assignee                                                 Contact                          Registration Modification                    Reference                     Service   Unauthorized                       Assignment Notes
-                            Protocol                                                                                                                                                   Date         Date                                                        Code    Use Reported
-                     0         tcp    Reserved                     [Jon_Postel]                                          [Jon_Postel]
-                     0         udp    Reserved                     [Jon_Postel]                                          [Jon_Postel]
-tcpmux               1         tcp    TCP Port Service Multiplexer [Mark_Lottor]                                         [Mark_Lottor]
-tcpmux               1         udp    TCP Port Service Multiplexer [Mark_Lottor]                                         [Mark_Lottor]
-compressnet          2         tcp    Management Utility
-compressnet          2         udp    Management Utility
-compressnet          3         tcp    Compression Process          [Bernie_Volz]                                         [Bernie_Volz]
-compressnet          3         udp    Compression Process          [Bernie_Volz]                                         [Bernie_Volz]
-                     4         tcp    Unassigned
-                     4         udp    Unassigned
-rje                  5         tcp    Remote Job Entry             [Jon_Postel]                                          [Jon_Postel]
-rje                  5         udp    Remote Job Entry             [Jon_Postel]                                          [Jon_Postel]
-                     6         tcp    Unassigned
-                     6         udp    Unassigned
-echo                 7         tcp    Echo                         [Jon_Postel]                                          [Jon_Postel]
-echo                 7         udp    Echo                         [Jon_Postel]                                          [Jon_Postel]
-                     8         tcp    Unassigned
-                     8         udp    Unassigned
-discard              9         tcp    Discard                      [Jon_Postel]                                          [Jon_Postel]
-discard              9         udp    Discard                      [Jon_Postel]                                          [Jon_Postel]
-discard              9        sctp    Discard                      [Randall_Stewart]                                     [Randall_Stewart]                                                                   [RFC4960]
-discard              9        dccp    Discard                      [Eddie_Kohler]                                        [Eddie_Kohler]                                                                      [RFC4340]                                       1145656131
-                    10         tcp    Unassigned
-                    10         udp    Unassigned
-systat              11         tcp    Active Users                 [Jon_Postel]                                          [Jon_Postel]
-systat              11         udp    Active Users                 [Jon_Postel]                                          [Jon_Postel]
-                    12         tcp    Unassigned
-                    12         udp    Unassigned
-daytime             13         tcp    Daytime                      [Jon_Postel]                                          [Jon_Postel]                                                                        [RFC867]
-daytime             13         udp    Daytime                      [Jon_Postel]                                          [Jon_Postel]                                                                        [RFC867]
-                    14         tcp    Unassigned
-                    14         udp    Unassigned
-                    15         tcp    Unassigned [was netstat]
-                    15         udp    Unassigned
-                    16         tcp    Unassigned
-                    16         udp    Unassigned
-qotd                17         tcp    Quote of the Day             [Jon_Postel]                                          [Jon_Postel]
-qotd                17         udp    Quote of the Day             [Jon_Postel]                                          [Jon_Postel]
-msp                 18         tcp    Message Send Protocol        [Rina_Nethaniel]                                      [Rina_Nethaniel]
-                                      (historic)
-msp                 18         udp    Message Send Protocol        [Rina_Nethaniel]                                      [Rina_Nethaniel]
-                                      (historic)
-chargen             19         tcp    Character Generator
-chargen             19         udp    Character Generator
-ftp-data            20         tcp    File Transfer [Default Data] [Jon_Postel]                                          [Jon_Postel]
-ftp-data            20         udp    File Transfer [Default Data] [Jon_Postel]                                          [Jon_Postel]
-ftp-data            20        sctp    FTP                          [Randall_Stewart]                                     [Randall_Stewart]                                                                   [RFC4960]
-ftp                 21         tcp    File Transfer Protocol       [Jon_Postel]                                          [Jon_Postel]                                                                        [RFC959]                                                                Defined TXT keys: u=<username> p=<password> path=<path>
-                                      [Control]
-ftp                 21         udp    File Transfer Protocol       [Jon_Postel]                                          [Jon_Postel]                                                                        [RFC959]                                                                Defined TXT keys: u=<username> p=<password> path=<path>
-                                      [Control]
-ftp                 21        sctp    FTP                          [Randall_Stewart]                                     [Randall_Stewart]                                                                   [RFC4960]                                                               Defined TXT keys: u=<username> p=<password> path=<path>
-ssh                 22         tcp    The Secure Shell (SSH)                                                                                                                                                 [RFC4251]                                                               Defined TXT keys: u=<username> p=<password>
-                                      Protocol
-ssh                 22         udp    The Secure Shell (SSH)                                                                                                                                                 [RFC4251]                                                               Defined TXT keys: u=<username> p=<password>
-                                      Protocol
-ssh                 22        sctp    SSH                          [Randall_Stewart]                                     [Randall_Stewart]                                                                   [RFC4960]                                                               Defined TXT keys: u=<username> p=<password>
-telnet              23         tcp    Telnet                       [Jon_Postel]                                          [Jon_Postel]                                                                        [RFC854]                                                                Defined TXT keys: u=<username> p=<password>
-telnet              23         udp    Telnet                       [Jon_Postel]                                          [Jon_Postel]                                                                        [RFC854]                                                                Defined TXT keys: u=<username> p=<password>
-                    24         tcp    any private mail system      [Rick_Adams]                                          [Rick_Adams]
-                    24         udp    any private mail system      [Rick_Adams]                                          [Rick_Adams]
-smtp                25         tcp    Simple Mail Transfer         [IESG]                                                [IETF_Chair]                                                           2017-06-05   [RFC5321]
-smtp                25         udp    Simple Mail Transfer         [IESG]                                                [IETF_Chair]                                                           2017-06-05   [RFC5321]
-                    26         tcp    Unassigned
-                    26         udp    Unassigned
-nsw-fe              27         tcp    NSW User System FE           [Robert_Thomas]                                       [Robert_Thomas]
-nsw-fe              27         udp    NSW User System FE           [Robert_Thomas]                                       [Robert_Thomas]
-                    28         tcp    Unassigned
-                    28         udp    Unassigned
-msg-icp             29         tcp    MSG ICP                      [Robert_Thomas]                                       [Robert_Thomas]
-msg-icp             29         udp    MSG ICP                      [Robert_Thomas]                                       [Robert_Thomas]
-                    30         tcp    Unassigned
-                    30         udp    Unassigned
-msg-auth            31         tcp    MSG Authentication           [Robert_Thomas]                                       [Robert_Thomas]
-msg-auth            31         udp    MSG Authentication           [Robert_Thomas]                                       [Robert_Thomas]
-                    32         tcp    Unassigned
-                    32         udp    Unassigned
-dsp                 33         tcp    Display Support Protocol     [Ed_Cain]                                             [Ed_Cain]
-dsp                 33         udp    Display Support Protocol     [Ed_Cain]                                             [Ed_Cain]
-                    34         tcp    Unassigned
-                    34         udp    Unassigned
-                    35         tcp    any private printer server   [Jon_Postel]                                          [Jon_Postel]
-                    35         udp    any private printer server   [Jon_Postel]                                          [Jon_Postel]
-                    36         tcp    Unassigned
-                    36         udp    Unassigned
-time                37         tcp    Time                         [Jon_Postel]                                          [Jon_Postel]
-time                37         udp    Time                         [Jon_Postel]                                          [Jon_Postel]
-rap                 38         tcp    Route Access Protocol        [Robert_Ullmann]                                      [Robert_Ullmann]
-rap                 38         udp    Route Access Protocol        [Robert_Ullmann]                                      [Robert_Ullmann]
-rlp                 39         tcp    Resource Location Protocol   [Mike_Accetta]                                        [Mike_Accetta]
-rlp                 39         udp    Resource Location Protocol   [Mike_Accetta]                                        [Mike_Accetta]
-                    40         tcp    Unassigned
-                    40         udp    Unassigned
-graphics            41         tcp    Graphics
-graphics            41         udp    Graphics
-name                42         tcp    Host Name Server
-name                42         udp    Host Name Server
-nameserver          42         tcp    Host Name Server
-nameserver          42         udp    Host Name Server
-nicname             43         tcp    Who Is
-nicname             43         udp    Who Is
-mpm-flags           44         tcp    MPM FLAGS Protocol
-mpm-flags           44         udp    MPM FLAGS Protocol
-mpm                 45         tcp    Message Processing Module
-                                      [recv]
-mpm                 45         udp    Message Processing Module
-                                      [recv]
-mpm-snd             46         tcp    MPM [default send]           [Jon_Postel]                                          [Jon_Postel]
-mpm-snd             46         udp    MPM [default send]           [Jon_Postel]                                          [Jon_Postel]
-                    47         tcp    Reserved                                                                                                                                                  2017-05-18                                                                           This entry has been removed on 2017-05-18.
-                    47         udp    Reserved                                                                                                                                                  2017-05-18                                                                           This entry has been removed on 2017-05-18.
-auditd              48         tcp    Digital Audit Daemon         [Larry_Scott]                                         [Larry_Scott]
-auditd              48         udp    Digital Audit Daemon         [Larry_Scott]                                         [Larry_Scott]
-tacacs              49         tcp    Login Host Protocol (TACACS) [Pieter_Ditmars]                                      [Pieter_Ditmars]
-tacacs              49         udp    Login Host Protocol (TACACS) [Pieter_Ditmars]                                      [Pieter_Ditmars]
-re-mail-ck          50         tcp    Remote Mail Checking         [Steve_Dorner]                                        [Steve_Dorner]
-                                      Protocol
-re-mail-ck          50         udp    Remote Mail Checking         [Steve_Dorner]                                        [Steve_Dorner]
-                                      Protocol
-                    51                Reserved                                                                                                                                                  2013-05-24                                                                           This entry is being removed on 2013-05-24.
-xns-time            52         tcp    XNS Time Protocol            [Susie_Armstrong]                                     [Susie_Armstrong]
-xns-time            52         udp    XNS Time Protocol            [Susie_Armstrong]                                     [Susie_Armstrong]
-domain              53         tcp    Domain Name Server           [Paul_Mockapetris]                                    [Paul_Mockapetris]
-domain              53         udp    Domain Name Server           [Paul_Mockapetris]                                    [Paul_Mockapetris]
-xns-ch              54         tcp    XNS Clearinghouse            [Susie_Armstrong]                                     [Susie_Armstrong]
-xns-ch              54         udp    XNS Clearinghouse            [Susie_Armstrong]                                     [Susie_Armstrong]
-isi-gl              55         tcp    ISI Graphics Language
-isi-gl              55         udp    ISI Graphics Language
-xns-auth            56         tcp    XNS Authentication           [Susie_Armstrong]                                     [Susie_Armstrong]
-xns-auth            56         udp    XNS Authentication           [Susie_Armstrong]                                     [Susie_Armstrong]
-                    57         tcp    any private terminal access  [Jon_Postel]                                          [Jon_Postel]
-                    57         udp    any private terminal access  [Jon_Postel]                                          [Jon_Postel]
-xns-mail            58         tcp    XNS Mail                     [Susie_Armstrong]                                     [Susie_Armstrong]
-xns-mail            58         udp    XNS Mail                     [Susie_Armstrong]                                     [Susie_Armstrong]
-                    59         tcp    any private file service     [Jon_Postel]                                          [Jon_Postel]
-                    59         udp    any private file service     [Jon_Postel]                                          [Jon_Postel]
-                    60         tcp    Unassigned
-                    60         udp    Unassigned
-                    61         tcp    Reserved                                                                                                                                                  2017-05-18                                                                           This entry has been removed on 2017-05-18.
-                    61         udp    Reserved                                                                                                                                                  2017-05-18                                                                           This entry has been removed on 2017-05-18.
-acas                62         tcp    ACA Services                 [E_Wald]                                              [E_Wald]
-acas                62         udp    ACA Services                 [E_Wald]                                              [E_Wald]
-                                      whois++
-
-whoispp             63         tcp    IANA assigned this           [Rickard_Schoultz]                                    [Rickard_Schoultz]
-                                      well-formed service name as
-                                      a replacement for "whois++".
-                                                                                                                                                                                                                                                                                     This entry is an alias to "whoispp". This entry is now
-whois++             63         tcp    whois++                      [Rickard_Schoultz]                                    [Rickard_Schoultz]                                                                                                                                          historic, not usable for use with many common service
-                                                                                                                                                                                                                                                                                     discovery mechanisms.
-                                      whois++
-
-whoispp             63         udp    IANA assigned this           [Rickard_Schoultz]                                    [Rickard_Schoultz]
-                                      well-formed service name as
-                                      a replacement for "whois++".
-                                                                                                                                                                                                                                                                                     This entry is an alias to "whoispp". This entry is now
-whois++             63         udp    whois++                      [Rickard_Schoultz]                                    [Rickard_Schoultz]                                                                                                                                          historic, not usable for use with many common service
-                                                                                                                                                                                                                                                                                     discovery mechanisms.
-covia               64         tcp    Communications Integrator    [Dan_Smith]                                           [Dan_Smith]
-                                      (CI)
-covia               64         udp    Communications Integrator    [Dan_Smith]                                           [Dan_Smith]
-                                      (CI)
-tacacs-ds           65         tcp    TACACS-Database Service      [Kathy_Huber]                                         [Kathy_Huber]
-tacacs-ds           65         udp    TACACS-Database Service      [Kathy_Huber]                                         [Kathy_Huber]
-                                      Oracle SQL*NET
-
-sql-net             66         tcp    IANA assigned this           [Jack_Haverty]                                        [Jack_Haverty]
-                                      well-formed service name as
-                                      a replacement for "sql*net".
-                                                                                                                                                                                                                                                                                     This entry is an alias to "sql-net". This entry is now
-sql*net             66         tcp    Oracle SQL*NET               [Jack_Haverty]                                        [Jack_Haverty]                                                                                                                                              historic, not usable for use with many common service
-                                                                                                                                                                                                                                                                                     discovery mechanisms.
-                                      Oracle SQL*NET
-
-sql-net             66         udp    IANA assigned this           [Jack_Haverty]                                        [Jack_Haverty]
-                                      well-formed service name as
-                                      a replacement for "sql*net".
-                                                                                                                                                                                                                                                                                     This entry is an alias to "sql-net". This entry is now
-sql*net             66         udp    Oracle SQL*NET               [Jack_Haverty]                                        [Jack_Haverty]                                                                                                                                              historic, not usable for use with many common service
-                                                                                                                                                                                                                                                                                     discovery mechanisms.
-bootps              67         tcp    Bootstrap Protocol Server    [Bill_Croft]                                          [Bill_Croft]                                                                        [RFC951]                                                                Defined TXT keys: None
-bootps              67         udp    Bootstrap Protocol Server
-bootpc              68         tcp    Bootstrap Protocol Client    [Bill_Croft]                                          [Bill_Croft]
-bootpc              68         udp    Bootstrap Protocol Client    [Bill_Croft]                                          [Bill_Croft]
-tftp                69         tcp    Trivial File Transfer        [David_Clark]                                         [David_Clark]
-tftp                69         udp    Trivial File Transfer        [David_Clark]                                         [David_Clark]
-gopher              70         tcp    Gopher                       [Mark_McCahill]                                       [Mark_McCahill]
-gopher              70         udp    Gopher                       [Mark_McCahill]                                       [Mark_McCahill]
-netrjs-1            71         tcp    Remote Job Service
-netrjs-1            71         udp    Remote Job Service
-netrjs-2            72         tcp    Remote Job Service
-netrjs-2            72         udp    Remote Job Service
-netrjs-3            73         tcp    Remote Job Service
-netrjs-3            73         udp    Remote Job Service
-netrjs-4            74         tcp    Remote Job Service           [Bob_Braden]                                          [Bob_Braden]
-netrjs-4            74         udp    Remote Job Service           [Bob_Braden]                                          [Bob_Braden]
-                    75         tcp    any private dial out service [Jon_Postel]                                          [Jon_Postel]
-                    75         udp    any private dial out service [Jon_Postel]                                          [Jon_Postel]
-deos                76         tcp    Distributed External Object  [Robert_Ullmann]                                      [Robert_Ullmann]
-                                      Store
-deos                76         udp    Distributed External Object  [Robert_Ullmann]                                      [Robert_Ullmann]
-                                      Store
-                    77         tcp    any private RJE service      [Jon_Postel]                                          [Jon_Postel]
-                    77         udp    any private RJE service      [Jon_Postel]                                          [Jon_Postel]
-vettcp              78         tcp    vettcp                       [Christopher_Leong]                                   [Christopher_Leong]
-vettcp              78         udp    vettcp                       [Christopher_Leong]                                   [Christopher_Leong]
-                                                                                                                                                                                                                                                                        Unauthorized
-                                                                                                                                                                                                                                                                        use by some
-finger              79         tcp    Finger                       [David_Zimmerman]                                     [David_Zimmerman]                                                                                                                              mail users
-                                                                                                                                                                                                                                                                        (see
-                                                                                                                                                                                                                                                                        [RFC4146]
-                                                                                                                                                                                                                                                                        for details)
-                                                                                                                                                                                                                                                                        Unauthorized
-                                                                                                                                                                                                                                                                        use by some
-finger              79         udp    Finger                       [David_Zimmerman]                                     [David_Zimmerman]                                                                                                                              mail users
-                                                                                                                                                                                                                                                                        (see
-                                                                                                                                                                                                                                                                        [RFC4146]
-                                                                                                                                                                                                                                                                        for details)
-http                80         tcp    World Wide Web HTTP                                                                                                                                                                                                                            Defined TXT keys: u=<username> p=<password> path=<path to
-                                                                                                                                                                                                                                                                                     document>
-http                80         udp    World Wide Web HTTP                                                                                                                                                                                                                            Defined TXT keys: u=<username> p=<password> path=<path to
-                                                                                                                                                                                                                                                                                     document>
-www                 80         tcp    World Wide Web HTTP                                                                                                                                                                                                                            This is a duplicate of the "http" service and should not be
-                                                                                                                                                                                                                                                                                     used for discovery purposes.
-www                 80         udp    World Wide Web HTTP                                                                                                                                                                                                                            This is a duplicate of the "http" service and should not be
-                                                                                                                                                                                                                                                                                     used for discovery purposes.
-                                                                                                                                                                                                                                                                                     This is a duplicate of the "http" service and should not be
-                                                                                                                                                                                                                                                                                     used for discovery purposes. u=<username> p=<password>
-                                                                                                                                                                                                                                                                                     path=<path to document> (see txtrecords.html#http) Known
-                                                                                                                                                                                                                                                                                     Subtypes: _printer NOTE: The meaning of this service type,
-                                                                                                                                                                                                                                                                                     though called just "http", actually denotes something more
-                                                                                                                                                                                                                                                                                     precise than just "any data transported using HTTP". The
-                                                                                                                                                                                                                                                                                     DNS-SD service type "http" should only be used to advertise
-                                                                                                                                                                                                                                                                                     content that: * is served over HTTP, * can be displayed by
-                                                                                                                                                                                                                                                                                     "typical" web browser client software, and * is intented
-                                                                                                                                                                                                                                                                                     primarily to be viewed by a human user. Of course, the
-                                                                                                                                                                                                                                                                                     definition of "typical web browser" is subjective, and may
-www-http            80         tcp    World Wide Web HTTP          [Tim_Berners_Lee]                                     [Tim_Berners_Lee]                                                                                                                                           change over time, but for practical purposes the DNS-SD
-                                                                                                                                                                                                                                                                                     service type "http" can be understood as meaning
-                                                                                                                                                                                                                                                                                     "human-readable HTML content served over HTTP". In some cases
-                                                                                                                                                                                                                                                                                     other widely-supported content types may also be appropriate,
-                                                                                                                                                                                                                                                                                     such as plain text over HTTP, or JPEG image over HTTP.
-                                                                                                                                                                                                                                                                                     Content types not intented primarily for viewing by a human
-                                                                                                                                                                                                                                                                                     user, or not widely-supported in web browsing clients, should
-                                                                                                                                                                                                                                                                                     not be advertised as DNS-SD service type "http", even if they
-                                                                                                                                                                                                                                                                                     do happen to be transported over HTTP. Such types should be
-                                                                                                                                                                                                                                                                                     advertised as their own logical service type with their own
-                                                                                                                                                                                                                                                                                     DNS-SD service type, for example, XUL (XML User Interface
-                                                                                                                                                                                                                                                                                     Language) transported over HTTP is advertised explicitly as
-                                                                                                                                                                                                                                                                                     DNS-SD service type "xul-http".
-                                                                                                                                                                                                                                                                                     This is a duplicate of the "http" service and should not be
-                                                                                                                                                                                                                                                                                     used for discovery purposes. u=<username> p=<password>
-                                                                                                                                                                                                                                                                                     path=<path to document> (see txtrecords.html#http) Known
-                                                                                                                                                                                                                                                                                     Subtypes: _printer NOTE: The meaning of this service type,
-                                                                                                                                                                                                                                                                                     though called just "http", actually denotes something more
-                                                                                                                                                                                                                                                                                     precise than just "any data transported using HTTP". The
-                                                                                                                                                                                                                                                                                     DNS-SD service type "http" should only be used to advertise
-                                                                                                                                                                                                                                                                                     content that: * is served over HTTP, * can be displayed by
-                                                                                                                                                                                                                                                                                     "typical" web browser client software, and * is intented
-                                                                                                                                                                                                                                                                                     primarily to be viewed by a human user. Of course, the
-                                                                                                                                                                                                                                                                                     definition of "typical web browser" is subjective, and may
-www-http            80         udp    World Wide Web HTTP          [Tim_Berners_Lee]                                     [Tim_Berners_Lee]                                                                                                                                           change over time, but for practical purposes the DNS-SD
-                                                                                                                                                                                                                                                                                     service type "http" can be understood as meaning
-                                                                                                                                                                                                                                                                                     "human-readable HTML content served over HTTP". In some cases
-                                                                                                                                                                                                                                                                                     other widely-supported content types may also be appropriate,
-                                                                                                                                                                                                                                                                                     such as plain text over HTTP, or JPEG image over HTTP.
-                                                                                                                                                                                                                                                                                     Content types not intented primarily for viewing by a human
-                                                                                                                                                                                                                                                                                     user, or not widely-supported in web browsing clients, should
-                                                                                                                                                                                                                                                                                     not be advertised as DNS-SD service type "http", even if they
-                                                                                                                                                                                                                                                                                     do happen to be transported over HTTP. Such types should be
-                                                                                                                                                                                                                                                                                     advertised as their own logical service type with their own
-                                                                                                                                                                                                                                                                                     DNS-SD service type, for example, XUL (XML User Interface
-                                                                                                                                                                                                                                                                                     Language) transported over HTTP is advertised explicitly as
-                                                                                                                                                                                                                                                                                     DNS-SD service type "xul-http".
-http                80        sctp    HTTP                         [Randall_Stewart]                                     [Randall_Stewart]                                                                   [RFC4960]                                                               Defined TXT keys: u=<username> p=<password> path=<path to
-                                                                                                                                                                                                                                                                                     document>
-                    81                Unassigned                                                                                                                                                2007-09-06
 xfer                82         tcp    XFER Utility                 [Thomas_M_Smith]                                      [Thomas_M_Smith]
 xfer                82         udp    XFER Utility                 [Thomas_M_Smith]                                      [Thomas_M_Smith]
 mit-ml-dev          83         tcp    MIT ML Device                [David_Reed]                                          [David_Reed]

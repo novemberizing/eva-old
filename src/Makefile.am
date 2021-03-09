@@ -1,5 +1,5 @@
 
-SUBDIRS = x example
+SUBDIRS = x example eva
 
 nobase_include_HEADERS = x/std.h                \
                          x/thread.h             \

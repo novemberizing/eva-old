@@ -8,6 +8,9 @@
 #include <x/std.h>
 #include <x/sync.h>
 
+#define xtransmissioncontrolprotocol    1
+#define xuserdatagramprotocol           2
+
 struct xdescriptor;
 
 typedef struct xdescriptor xdescriptor;
