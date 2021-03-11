@@ -5,6 +5,7 @@ lib_LIBRARIES = libnovemberizing.a
 
 # TODO: 디스크립터 이벤트 제네레이터를 OS 에 알맞는 소스를 링크하도록 한다.
 libnovemberizing_a_SOURCES = std.c                                          \
+                             log.c                                          \
                              object.c                                       \
                              exception.c                                    \
                              thread.c                                       \

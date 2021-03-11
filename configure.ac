@@ -15,6 +15,7 @@ AC_CONFIG_FILES([
     src/example/event/Makefile
     src/example/console/Makefile
     src/example/client/Makefile
+    src/example/benchmark/Makefile
     src/eva/Makefile
 ])
 

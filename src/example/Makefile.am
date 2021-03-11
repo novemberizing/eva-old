@@ -1,1 +1,1 @@
-SUBDIRS = event console client
+SUBDIRS = event console client benchmark

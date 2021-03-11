@@ -52,6 +52,7 @@ typedef void *              xhandle;            /**!< 핸들 타입입니다. */
 typedef void *              xobject;            /**!< 객체 타입입니다. */
 typedef unsigned char       xbyte;              /**!< 바이트 타입 */
 
+
 /**
  * @def         xcheck(condition, format, ...)
  * @brief       디버그를 위한 함수로 컨디션에 따라서 특정 포맷 형태로 콘솔에 출력합니다.

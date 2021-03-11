@@ -64,3 +64,4 @@ Makefile
 *.a
 .dirstamp
 .vscode
+benchmark*

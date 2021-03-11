@@ -13,141 +13,109 @@
 #define xlogtype_check          (0x00000200u)
 #define xlogtype_todo           (0x00000400u)
 
-extern int xlogf(unsigned int type);
-extern void xlogterm(void);
+extern void xlogpath_set(const char * path);
 extern unsigned int xlogmask_get(void);
-extern void xlogmask_set(unsigned int v);
+extern void xlogmask_set(unsigned int value);
 
-#define xlogverbose(format, ...) do {                       \
-    if(xlogmask_get() & xlogtype_verbose) {                 \
-        dprintf(xlogf(), "[verbose] %s:%d %s(...) %ld "     \
-                         format "\n",                       \
-                         __FILE__,                          \
-                         __LINE__,                          \
-                         __func__,                          \
-                         xthreadid(),                       \
-                         ##__VA_ARGS__);                    \
-    }                                                       \
+extern void xlogout(unsigned int type, const char * file, int line, const char * func, const char * format, ...);
+
+#define xlogverbose(format, ...) do {       \
+    xlogout(xlogtype_verbose,               \
+            __FILE__,                       \
+            __LINE__,                       \
+            __func__,                       \
+            format,                         \
+            ##__VA_ARGS__);                 \
 } while(0)
 
-#define xlogdebug(format, ...) do {                         \
-    if(xlogmask_get() & xlogtype_debug) {                   \
-        dprintf(xlogf(), "[debug] %s:%d %s(...) %ld "       \
-                         format "\n",                       \
-                         __FILE__,                          \
-                         __LINE__,                          \
-                         __func__,                          \
-                         xthreadid(),                       \
-                         ##__VA_ARGS__);                    \
-    }                                                       \
+#define xlogdebug(format, ...) do {         \
+    xlogout(xlogtype_debug,                 \
+            __FILE__,                       \
+            __LINE__,                       \
+            __func__,                       \
+            format,                         \
+            ##__VA_ARGS__);                 \
 } while(0)
 
-#define xlogtype_information(format, ...) do {              \
-    if(xlogmask_get() & xlogtype_information) {             \
-        dprintf(xlogf(), "[information] %s:%d %s(...) %ld " \
-                         format "\n",                       \
-                         __FILE__,                          \
-                         __LINE__,                          \
-                         __func__,                          \
-                         xthreadid(),                       \
-                         ##__VA_ARGS__);                    \
-    }                                                       \
+#define xloginformation(format, ...) do {   \
+    xlogout(xlogtype_information,           \
+            __FILE__,                       \
+            __LINE__,                       \
+            __func__,                       \
+            format,                         \
+            ##__VA_ARGS__);                 \
 } while(0)
 
-#define xlogtype_notice(format, ...) do {                   \
-    if(xlogmask_get() & xlogtype_notice) {                  \
-        dprintf(xlogf(), "[notice] %s:%d %s(...) %ld "      \
-                         format "\n",                       \
-                         __FILE__,                          \
-                         __LINE__,                          \
-                         __func__,                          \
-                         xthreadid(),                       \
-                         ##__VA_ARGS__);                    \
-    }                                                       \
+#define xlognotice(format, ...) do {        \
+    xlogout(xlogtype_notice,                \
+            __FILE__,                       \
+            __LINE__,                       \
+            __func__,                       \
+            format,                         \
+            ##__VA_ARGS__);                 \
 } while(0)
 
-#define xlogtype_caution(format, ...) do {                  \
-    if(xlogmask_get() & xlogtype_caution) {                 \
-        dprintf(xlogf(), "[caution] %s:%d %s(...) %ld "     \
-                         format "\n",                       \
-                         __FILE__,                          \
-                         __LINE__,                          \
-                         __func__,                          \
-                         xthreadid(),                       \
-                         ##__VA_ARGS__);                    \
-    }                                                       \
+#define xlogcaution(format, ...) do {       \
+    xlogout(xlogtype_caution,               \
+            __FILE__,                       \
+            __LINE__,                       \
+            __func__,                       \
+            format,                         \
+            ##__VA_ARGS__);                 \
 } while(0)
 
-#define xlogtype_warning(format, ...) do {                  \
-    if(xlogmask_get() & xlogtype_warning) {                 \
-        dprintf(xlogf(), "[warning] %s:%d %s(...) %ld "     \
-                         format "\n",                       \
-                         __FILE__,                          \
-                         __LINE__,                          \
-                         __func__,                          \
-                         xthreadid(),                       \
-                         ##__VA_ARGS__);                    \
-    }                                                       \
+#define xlogwarning(format, ...) do {       \
+    xlogout(xlogtype_warning,               \
+            __FILE__,                       \
+            __LINE__,                       \
+            __func__,                       \
+            format,                         \
+            ##__VA_ARGS__);                 \
 } while(0)
 
-#define xlogtype_error(format, ...) do {                    \
-    if(xlogmask_get() & xlogtype_error) {                   \
-        dprintf(xlogf(), "[error] %s:%d %s(...) %ld "       \
-                         format "\n",                       \
-                         __FILE__,                          \
-                         __LINE__,                          \
-                         __func__,                          \
-                         xthreadid(),                       \
-                         ##__VA_ARGS__);                    \
-    }                                                       \
+#define xlogerror(format, ...) do {         \
+    xlogout(xlogtype_error,                 \
+            __FILE__,                       \
+            __LINE__,                       \
+            __func__,                       \
+            format,                         \
+            ##__VA_ARGS__);                 \
 } while(0)
 
-#define xlogtype_critical(format, ...) do {                 \
-    if(xlogmask_get() & xlogtype_critical) {                \
-        dprintf(xlogf(), "[critical] %s:%d %s(...) %ld "    \
-                         format "\n",                       \
-                         __FILE__,                          \
-                         __LINE__,                          \
-                         __func__,                          \
-                         xthreadid(),                       \
-                         ##__VA_ARGS__);                    \
-    }                                                       \
+#define xlogcritical(format, ...) do {      \
+    xlogout(xlogtype_critical,              \
+            __FILE__,                       \
+            __LINE__,                       \
+            __func__,                       \
+            format,                         \
+            ##__VA_ARGS__);                 \
 } while(0)
 
-#define xlogtype_assertion(format, ...) do {                \
-    if(xlogmask_get() & xlogtype_assertion) {               \
-        dprintf(xlogf(), "[assertion] %s:%d %s(...) %ld "   \
-                         format "\n",                       \
-                         __FILE__,                          \
-                         __LINE__,                          \
-                         __func__,                          \
-                         xthreadid(),                       \
-                         ##__VA_ARGS__);                    \
-    }                                                       \
+#define xlogassertion(format, ...) do {     \
+    xlogout(xlogtype_assertion,             \
+            __FILE__,                       \
+            __LINE__,                       \
+            __func__,                       \
+            format,                         \
+            ##__VA_ARGS__);                 \
 } while(0)
 
-#define xlogtype_check(format, ...) do {                    \
-    if(xlogmask_get() & xlogtype_check) {                   \
-        dprintf(xlogf(), "[check] %s:%d %s(...) %ld "       \
-                         format "\n",                       \
-                         __FILE__,                          \
-                         __LINE__,                          \
-                         __func__,                          \
-                         xthreadid(),                       \
-                         ##__VA_ARGS__);                    \
-    }                                                       \
+#define xlogcheck(format, ...) do {         \
+    xlogout(xlogtype_check,                 \
+            __FILE__,                       \
+            __LINE__,                       \
+            __func__,                       \
+            format,                         \
+            ##__VA_ARGS__);                 \
 } while(0)
 
-#define xlogtype_todo(format, ...) do {                     \
-    if(xlogmask_get() & xlogtype_todo) {                    \
-        dprintf(xlogf(), "[todo] %s:%d %s(...) %ld "        \
-                         format "\n",                       \
-                         __FILE__,                          \
-                         __LINE__,                          \
-                         __func__,                          \
-                         xthreadid(),                       \
-                         ##__VA_ARGS__);                    \
-    }                                                       \
+#define xlogtodo(format, ...) do {          \
+    xlogout(xlogtype_todo,                  \
+            __FILE__,                       \
+            __LINE__,                       \
+            __func__,                       \
+            format,                         \
+            ##__VA_ARGS__);                 \
 } while(0)
 
 #endif // __NOVEMBERIZING_X__LOG__H__
