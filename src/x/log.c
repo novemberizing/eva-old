@@ -27,18 +27,20 @@ static inline const char * xlogtypestr(unsigned int type)
 {
     switch(type)
     {
-        case xlogtype_verbose:      return "verbose";
-        case xlogtype_debug:        return "debug";
-        case xlogtype_information:  return "information";
-        case xlogtype_notice:       return "notice";
-        case xlogtype_caution:      return "caution";
-        case xlogtype_warning:      return "warning";
-        case xlogtype_error:        return "error";
-        case xlogtype_critical:     return "critical";
-        case xlogtype_assertion:    return "assertion";
-        case xlogtype_check:        return "check";
-        case xlogtype_todo:         return "todo";
-        default:                    return "custom";
+        case xlogtype_verbose:          return "verbose";
+        case xlogtype_debug:            return "debug";
+        case xlogtype_information:      return "information";
+        case xlogtype_notice:           return "notice";
+        case xlogtype_caution:          return "caution";
+        case xlogtype_warning:          return "warning";
+        case xlogtype_error:            return "error";
+        case xlogtype_critical:         return "critical";
+        case xlogtype_assertion:        return "assertion";
+        case xlogtype_check:            return "check";
+        case xlogtype_todo:             return "todo";
+        case xlogtype_function_start:   return "function/start";
+        case xlogtype_function_end:     return "function/end";
+        default:                        return "custom";
     }
 }
 
@@ -46,18 +48,20 @@ static inline const char * xlogtypeupperstr(unsigned int type)
 {
     switch(type)
     {
-        case xlogtype_verbose:      return "VERBOSE";
-        case xlogtype_debug:        return "DEBUG";
-        case xlogtype_information:  return "INFORMATION";
-        case xlogtype_notice:       return "NOTICE";
-        case xlogtype_caution:      return "CAUTION";
-        case xlogtype_warning:      return "WARNING";
-        case xlogtype_error:        return "ERROR";
-        case xlogtype_critical:     return "CRITICAL";
-        case xlogtype_assertion:    return "ASSERTION";
-        case xlogtype_check:        return "CHECK";
-        case xlogtype_todo:         return "TODO";
-        default:                    return "CUSTOM";
+        case xlogtype_verbose:          return "VERBOSE";
+        case xlogtype_debug:            return "DEBUG";
+        case xlogtype_information:      return "INFORMATION";
+        case xlogtype_notice:           return "NOTICE";
+        case xlogtype_caution:          return "CAUTION";
+        case xlogtype_warning:          return "WARNING";
+        case xlogtype_error:            return "ERROR";
+        case xlogtype_critical:         return "CRITICAL";
+        case xlogtype_assertion:        return "ASSERTION";
+        case xlogtype_check:            return "CHECK";
+        case xlogtype_todo:             return "TODO";
+        case xlogtype_function_start:   return "FUNCTION/START";
+        case xlogtype_function_end:     return "FUNCTION/END";
+        default:                        return "CUSTOM";
     }
 }
 

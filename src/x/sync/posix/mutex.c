@@ -6,6 +6,8 @@
 
 extern xsyncposixmutex * xsyncposixmutex_new(void)
 {
+    xlogfunction_start("%s()", __func__);
+
     xsyncposixmutex * sync = (xsyncposixmutex *) calloc(sizeof(xsyncposixmutex), 1);
 
     xassertion(sync == xnil, "");
@@ -25,11 +27,14 @@ extern xsyncposixmutex * xsyncposixmutex_new(void)
 
     xassertion(ret != xsuccess, "");
 
+    xlogfunction_end("%s(...) => %p", __func__, sync);
     return sync;
 }
 
 extern xsyncposixmutex * xsyncposixmutex_rem(xsyncposixmutex * o)
 {
+    xlogfunction_start("%s(%p)", __func__, o);
+
     xassertion(o == xnil, "");
     xassertion(o->rem != xsyncposixmutex_rem, "");
 
@@ -45,33 +50,41 @@ extern xsyncposixmutex * xsyncposixmutex_rem(xsyncposixmutex * o)
     }
     free(o);
 
+    xlogfunction_end("%s(...) => %p", __func__, xnil);
     return xnil;
 }
 
 extern xint32 xsyncposixmutex_lock(xsyncposixmutex * o)
 {
+    xlogfunction_start("%s(%p)", __func__, o);
     xassertion(o == xnil || o->mutex == xnil, "");
 
     int ret = pthread_mutex_lock(o->mutex);
 
     xassertion(ret != xsuccess, "");
 
+    xlogfunction_end("%s(...) => %d", ret == xsuccess ? xsuccess : xfail);
+
     return ret == xsuccess ? xsuccess : xfail;
 }
 
 extern xint32 xsyncposixmutex_unlock(xsyncposixmutex * o)
 {
+    xlogfunction_start("%s(%p)", __func__, o);
     xassertion(o == xnil || o->mutex == xnil, "");
 
     int ret = pthread_mutex_unlock(o->mutex);
 
     xassertion(ret != xsuccess, "");
 
+    xlogfunction_end("%s(...) => %d", __func__, ret == xsuccess ? xsuccess : xfail);
     return ret == xsuccess ? xsuccess : xfail;
 }
 
 extern xint32 xsyncposixmutex_wait(xsyncposixmutex * o, xint64 second, xint64 nanosecond)
 {
+    xlogfunction_start("%s(%p, %ld, %ld)", __func__, o, second, nanosecond);
+
     xassertion(o == xnil || o->mutex == xnil || o->condition == xnil, "");
     xassertion(second < 0 || nanosecond < 0, "");
 
@@ -98,13 +111,19 @@ extern xint32 xsyncposixmutex_wait(xsyncposixmutex * o, xint64 second, xint64 na
             ret = pthread_cond_wait(o->condition, o->mutex);
             xassertion(ret != xsuccess, "");
         }
+
+        xlogfunction_end("%s(...) => %d", ret == xsuccess ? xsuccess : xfail);
         return ret == xsuccess ? xsuccess : xfail;
     }
+
+    xlogfunction_end("%s(...) => %d", xsuccess);
     return xsuccess;
 }
 
 extern xint32 xsyncposixmutex_wakeup(xsyncposixmutex * o, xint32 all)
 {
+    xlogfunction_start("%s(%p, %d)", __func__, o, all);
+
     xassertion(o == xnil || o->mutex == xnil || o->condition == xnil, "");
 
     if(o->condition)
@@ -121,11 +140,14 @@ extern xint32 xsyncposixmutex_wakeup(xsyncposixmutex * o, xint32 all)
             xassertion(ret != xsuccess, "");
         }
     }
+
+    xlogfunction_end("%s(...) => %d", __func__, xsuccess);
     return xsuccess;
 }
 
 extern xsyncposixmutex * xsyncposixcond_init(xsyncposixmutex * o)
 {
+    xlogfunction_start("%s(%p)", __func__, o);
     xassertion(o == xnil, "");
 
     if(o->condition == xnil)
@@ -137,11 +159,14 @@ extern xsyncposixmutex * xsyncposixcond_init(xsyncposixmutex * o)
 
         xassertion(ret != xsuccess, "");
     }
+
+    xlogfunction_end("%s(...) => %p", __func__, o);
     return o;
 }
 
 extern xsyncposixmutex * xsyncposixcond_term(xsyncposixmutex * o)
 {
+    xlogfunction_start("%s(%p)", __func__, o);
     xassertion(o == xnil, "");
 
     if(o->condition)
@@ -150,5 +175,7 @@ extern xsyncposixmutex * xsyncposixcond_term(xsyncposixmutex * o)
         free(o->condition);
         o->condition = xnil;
     }
+
+    xlogfunction_end("%s(...) => %p", __func__, o);
     return o;
 }

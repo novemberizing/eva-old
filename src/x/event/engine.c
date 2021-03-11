@@ -13,14 +13,15 @@
 #include "../session.h"
 #include "../session/socket.h"
 
-#include "processor/pool.h"
-#include "descriptor/event/subscription.h"
+#include "./processor/pool.h"
+#include "./descriptor/event/subscription.h"
 
 
 static void xeventenginecallback_internal(xeventengine * engine, xuint32 status);
 
 extern xeventengine * xeventengine_new(void)
 {
+    xlogfunction_start("%s()", __func__);
     xeventengine * engine = (xeventengine *) calloc(sizeof(xeventengine), 1);
 
     engine->main  = xeventqueue_new();
@@ -28,11 +29,13 @@ extern xeventengine * xeventengine_new(void)
 
     engine->generators.descriptor = xdescriptoreventgenerator_new(engine);
 
+    xlogfunction_end("%s(...) => %p", __func__, engine);
     return engine;
 }
 
 extern xint32 xeventengine_run(xeventengine * engine)
 {
+    xlogfunction_start("%s(%p)", __func__, engine);
     xassertion(engine == xnil, "");
 
     if(engine->on == xnil)
@@ -70,11 +73,13 @@ extern xint32 xeventengine_run(xeventengine * engine)
         xeventengine_sync(engine, xfalse);
     }
 
+    xlogfunction_end("%s(...) => %d", __func__, xsuccess);
     return xsuccess;
 }
 
 extern void xeventengine_sync(xeventengine * engine, xint32 on)
 {
+    xlogfunction_start("%s(%p, $d)", __func__, engine, on);
     if(on)
     {
         if(engine->sync == xnil)
@@ -114,10 +119,14 @@ extern void xeventengine_sync(xeventengine * engine, xint32 on)
     }
 
     __xsyncunlock(engine->sync);
+
+    xlogfunction_end("%s(...)", __func__);
 }
 
 extern xeventsubscription * xeventengine_session_register(xeventengine * engine, xsession * session)
 {
+    xlogfunction_start("%s(%p, %p)", __func__, engine, session);
+
     xassertion(engine == xnil || session == xnil || session->descriptor == xnil, "");
     xassertion(session->descriptor->subscription, "");   // 이 로직을 어떻게 처리해야할까?
 
@@ -127,16 +136,24 @@ extern xeventsubscription * xeventengine_session_register(xeventengine * engine,
 
     xdescriptoreventgenerator_register(engine->generators.descriptor, (xdescriptoreventsubscription *) subscription);
 
+    xlogfunction_end("%s(...) => %p", (xeventsubscription *) subscription);
     return (xeventsubscription *) subscription;
 }
 
 extern xeventsubscription * xeventengine_session_unregister(xeventengine * engine, xsession * session)
 {
-    return (xeventsubscription *) xeventengine_descriptor_unregister(engine, (xdescriptor *) session->descriptor);
+    xlogfunction_start("%s(%p, %p)", __func__, engine, session);
+
+    xeventsubscription * ret = (xeventsubscription *) xeventengine_descriptor_unregister(engine, (xdescriptor *) session->descriptor);
+
+    xlogfunction_end("%s(...) => %p", __func__, ret);
+    return ret;
 }
 
 extern xeventsubscription * xeventengine_server_register(xeventengine * engine, xserver * server)
 {
+    xlogfunction_start("%s(%p, %p)", __func__, engine, server);
+
     xassertion(engine == xnil || server == xnil || server->descriptor == xnil, "");
     xassertion(server->descriptor->subscription, "");   // 이 로직을 어떻게 처리해야할까?
 
@@ -146,17 +163,23 @@ extern xeventsubscription * xeventengine_server_register(xeventengine * engine, 
 
     xdescriptoreventgenerator_register(engine->generators.descriptor, (xdescriptoreventsubscription *) subscription);
 
+    xlogfunction_end("%s(...) => %p", __func__, subscription);
     return (xeventsubscription *) subscription;
 }
 
 extern xeventsubscription * xeventengine_server_unregister(xeventengine * engine, xserver * server)
 {
-    return (xeventsubscription *) xeventengine_descriptor_unregister(engine, (xdescriptor *) server->descriptor);
+    xlogfunction_start("%s(%p, %p)", __func__, engine, server);
+    xeventsubscription * ret = (xeventsubscription *) xeventengine_descriptor_unregister(engine, (xdescriptor *) server->descriptor);
+
+    xlogfunction_end("%s(...) => %p", __func__, ret);
+    return ret;
 }
 
 
 extern xeventsubscription * xeventengine_descriptor_register(xeventengine * engine, xdescriptor * descriptor)
 {
+    xlogfunction_start("%s(%p, %p)", __func__, engine, descriptor);
     xassertion(engine == xnil || descriptor == xnil, "");
 
     xassertion(descriptor->subscription, "");   // 이 로직은 어떻게 처리해야 할까?
@@ -167,11 +190,13 @@ extern xeventsubscription * xeventengine_descriptor_register(xeventengine * engi
 
     xdescriptoreventgenerator_register(engine->generators.descriptor, subscription);
 
+    xlogfunction_end("%s(...) => %p", __func__, subscription);
     return (xeventsubscription *) subscription;
 }
 
 extern xeventsubscription * xeventengine_descriptor_unregister(xeventengine * engine, xdescriptor * descriptor)
 {
+    xlogfunction_start("%s(%p, %p)", __func__, descriptor);
     xdescriptoreventsubscription * subscription = descriptor->subscription;
 
     if(subscription->enginenode.engine == engine)
@@ -210,20 +235,25 @@ extern xeventsubscription * xeventengine_descriptor_unregister(xeventengine * en
         xassertion(subscription->enginenode.engine != engine ,"");
     }
 
+    xlogfunction_end("%s(...) => %p", __func__, subscription);
     return (xeventsubscription *) subscription;
 }
 
 extern void xeventengine_main_push(xeventengine * engine, xevent * event)
 {
+    xlogfunction_start("%s(%p, %p)", __func__, engine, event);
     xassertion(engine == xnil || engine->main == xnil || event == xnil, "");
 
     __xsynclock(engine->main->sync);
     xeventqueue_push(engine->main, event);
     __xsyncunlock(engine->main->sync);
+
+    xlogfunction_end("%s(...)", __func__);
 }
 
 extern void xeventengine_queue_push(xeventengine * engine, xevent * event)
 {
+    xlogfunction_start("%s(%p, %p)", __func__, engine, event);
     xassertion(engine == xnil || engine->queue == xnil || event == xnil, "");
 
     /**
@@ -235,11 +265,16 @@ extern void xeventengine_queue_push(xeventengine * engine, xevent * event)
     xeventqueue_push(engine->queue, event);
     __xsyncwakeup(engine->queue->sync, xfalse);
     __xsyncunlock(engine->queue->sync);
+
+    xlogfunction_end("%s(...)", __func__);
 }
 
 static void xeventenginecallback_internal(xeventengine * engine, xuint32 status)
 {
+    xlogfunction_start("%s(%p, %u)", __func__, engine, status);
     // TODO: 
+
+    xlogfunction_end("%s(...)", __func__);
 }
 
 /**
@@ -247,6 +282,7 @@ static void xeventenginecallback_internal(xeventengine * engine, xuint32 status)
  */
 extern xint32 xeventengine_descriptor_dispatch(xdescriptor * descriptor)
 {
+    xlogfunction_start("%s(%p)", __func__, descriptor);
     xassertion(descriptor == xnil, "");
 
     xdescriptoreventsubscription * subscription = descriptor->subscription;
@@ -258,9 +294,12 @@ extern xint32 xeventengine_descriptor_dispatch(xdescriptor * descriptor)
         if(xeventprocessorpool_size(engine->processors) > 0)
         {
             xeventengine_queue_push(engine, (xevent *) xaddressof(descriptor->event));
+
+            xlogfunction_end("%s(...) => %d", __func__, xsuccess);
             return xsuccess;
         }
     }
 
+    xlogfunction_end("%s(...) => %d", __func__, xfail);
     return xfail;
 }

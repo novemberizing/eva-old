@@ -37,6 +37,8 @@ static void xeventprocessor_exit(xeventprocessor * processor);
  */
 extern xeventprocessor * xeventprocessor_new(xeventprocessorpool * pool)
 {
+    xlogfunction_start("%s(%p)", __func__, pool);
+
     xassertion(pool == xnil, "");
 
     xeventprocessor * processor = (xeventprocessor *) calloc(sizeof(xeventprocessor), 1);
@@ -57,6 +59,7 @@ extern xeventprocessor * xeventprocessor_new(xeventprocessorpool * pool)
 
     xthreadrun((xthread *) processor);
 
+    xlogfunction_end("%s(...) => %p", __func__, processor);
     return processor;
 }
 
@@ -83,6 +86,7 @@ extern xeventprocessor * xeventprocessor_new(xeventprocessorpool * pool)
  */
 extern xeventprocessor * xeventprocessor_rem(xeventprocessor * processor)
 {
+    xlogfunction_start("%s(%p)", __func__, processor);
     xassertion(processor == xnil, "");
     xassertion(xthreadcheck_rem((xthread *) processor) == xfalse, "");
 
@@ -114,7 +118,10 @@ extern xeventprocessor * xeventprocessor_rem(xeventprocessor * processor)
         pool->size = pool->size - 1;
     }
 
-    return (xeventprocessor *) xthreadrem((xthread *) processor);
+    xeventprocessor * ret = (xeventprocessor *) xthreadrem((xthread *) processor);
+
+    xlogfunction_end("%s(...) => %p", __func__, ret);
+    return ret;
 }
 
 /**
@@ -134,10 +141,13 @@ extern xeventprocessor * xeventprocessor_rem(xeventprocessor * processor)
  */
 extern void xeventprocessor_cancel(xeventprocessor * processor)
 {
+    xlogfunction_start("%s(%p)", __func__, processor);
     if(processor->handle)
     {
         processor->cancel = xeventprocessor_exit;
     }
+
+    xlogfunction_end("%s(...)", __func__);
 }
 
 /**
@@ -161,11 +171,14 @@ extern void xeventprocessor_cancel(xeventprocessor * processor)
  */
 extern void xeventprocessor_wakeup(xeventengine * engine, xint32 all)
 {
+    xlogfunction_start("%s(%p, %d)", __func__, engine, all);
     xassertion(engine == xnil, "");
 
     __xsynclock(engine->queue->sync);
     __xsyncwakeup(engine->queue->sync, all);
     __xsyncunlock(engine->queue->sync);
+
+    xlogfunction_end("%s(...)", __func__);
 }
 
 /**
@@ -194,6 +207,8 @@ extern void xeventprocessor_wakeup(xeventengine * engine, xint32 all)
  */
 static void xeventprocessor_loop(xeventprocessor * processor)
 {
+    xlogfunction_start("%s(%p)", __func__, processor);
+
     xeventprocessorpool * pool = processor->pool;
     xeventengine *      engine = pool->engine;
     xeventqueue *        queue = engine->queue;
@@ -217,6 +232,8 @@ static void xeventprocessor_loop(xeventprocessor * processor)
             event->on(event);
         }
     }
+
+    xlogfunction_end("%s(...)", __func__);
 }
 
 /**
@@ -238,10 +255,14 @@ static void xeventprocessor_loop(xeventprocessor * processor)
  */
 static void xeventprocessor_exit(xeventprocessor * processor)
 {
+    xlogfunction_start("%s(%p)", __func__, processor);
+
     xeventprocessorpool *    pool = processor->pool;
     xeventengine *         engine = pool->engine;
     xeventprocessor_event * event = xeventprocessor_event_new(xeventprocessor_event_handler_rem, processor);
 
 
     xeventengine_main_push(engine, (xevent *) event);
+
+    xlogfunction_end("%s(...)", __func__);
 }

@@ -10,6 +10,8 @@
 
 extern xeventsubscription * xeventsubscription_new(xeventengine * engine, xeventtarget * target, xuint64 size)
 {
+    xlogfunction_start("%s(%p, %p, %lu)", __func__, engine, target, size);
+
     xassertion(target == xnil || engine == xnil || size < sizeof(xeventsubscription), "");
 
     xeventsubscription * subscription = (xeventsubscription *) calloc(size, 1);
@@ -35,11 +37,14 @@ extern xeventsubscription * xeventsubscription_new(xeventengine * engine, xevent
     engine->subscriptions.size = engine->subscriptions.size + 1;
     __xsyncunlock(engine->subscriptions.sync);
 
+    xlogfunction_end("%s(...) => %p", __func__, subscription);
     return subscription;
 }
 
 extern xeventsubscription * xeventsubscription_rem(xeventsubscription * subscription)
 {
+    xlogfunction_start("%s(%p)", __func__, subscription);
+
     xassertion(subscription == xnil, "");
     xassertion(subscription->enginenode.engine || subscription->enginenode.next || subscription->enginenode.prev, "");
 
@@ -49,11 +54,14 @@ extern xeventsubscription * xeventsubscription_rem(xeventsubscription * subscrip
     }
     free(subscription);
 
+    xlogfunction_end("%s(...) => %p", __func__, xnil);
     return xnil;
 }
 
 extern xeventsubscription * xeventsubscription_del(xeventsubscription * subscription)
 {
+    xlogfunction_start("%s(%p)", __func__, subscription);
+
     xassertion(subscription == xnil, "");
     xassertion(subscription->enginenode.engine == xnil, "");
 
@@ -85,5 +93,6 @@ extern xeventsubscription * xeventsubscription_del(xeventsubscription * subscrip
 
     subscription->enginenode.engine = xnil;
 
+    xlogfunction_end("%s(...) => %p", __func__, subscription);
     return subscription;
 }

@@ -12,6 +12,8 @@
 
 static inline xint32 xdescriptoreventgenerator_epoll_register(int epollfd, xdescriptoreventsubscription * subscrption, xint32 force)
 {
+    xlogfunction_start("%s(%d, %p, %d)", __func__, subscrption, force);
+
     xassertion(subscrption == xnil || subscrption->descriptor == xnil, "");
 
     if(epollfd >= 0)
@@ -22,10 +24,12 @@ static inline xint32 xdescriptoreventgenerator_epoll_register(int epollfd, xdesc
         {
             if(descriptor->status & xdescriptorstatus_exception)
             {
+                xlogfunction_end("%s(...) => %d", __func__, xfail);
                 return xfail;
             }
             if(descriptor->status & xdescriptorstatus_close)
             {
+                xlogfunction_end("%s(...) => %d", __func__, xfail);
                 return xfail;
             }
             // 아래의 로직은 고민스럽다.
@@ -54,6 +58,7 @@ static inline xint32 xdescriptoreventgenerator_epoll_register(int epollfd, xdesc
                         if(epoll_ctl(epollfd, EPOLL_CTL_MOD, descriptor->handle.f, &event) == xsuccess)
                         {
                             descriptor->status |= xdescriptorstatus_register;
+                            xlogfunction_end("%s(...) => %d", __func__, xsuccess);
                             return xsuccess;
                         }
                     }
@@ -64,22 +69,31 @@ static inline xint32 xdescriptoreventgenerator_epoll_register(int epollfd, xdesc
 
                     // xdescriptorexception_set(descriptor)
                     xdescriptorevent_dispatch_exception(descriptor);
+
+                    xlogfunction_end("%s(...) => %d", __func__, xfail);
                     return xfail;
                 }
 
                 descriptor->status |= xdescriptorstatus_register;
+
+                xlogfunction_end("%s(...) => %d", __func__, xsuccess);
                 return xsuccess;
             }
         }
         // TODO: 예외를 발생시킬 때 참조할 수 있는 것을 설정하도록 한다.
         descriptor->status |= xdescriptorstatus_exception;
+
+        xlogfunction_end("%s(...) => %d", __func__, xfail);
         return xfail;
     }
+
+    xlogfunction_end("%s(...) => %d", __func__, xsuccess);
     return xsuccess;
 }
 
 static inline xint32 xdescriptoreventgenerator_epoll_unregister(int epollfd, xdescriptoreventsubscription * subscrption, xint32 force)
 {
+    xlogfunction_start("%s(%d, %p, %d)", __func__, subscrption, force);
     if(epollfd >= 0)
     {
         xdescriptor * descriptor = subscrption->descriptor;
@@ -93,15 +107,20 @@ static inline xint32 xdescriptoreventgenerator_epoll_unregister(int epollfd, xde
 
                 xassertion(ret != xsuccess, "");
 
-                return ret == xsuccess ? xsuccess : xexceptionno(errno);
+                ret = (ret == xsuccess ? xsuccess : xexceptionno(errno));
+                xlogfunction_end("%s(...) => %d", __func__, ret);
+                return ret;
             }
         }
     }
+    xlogfunction_end("%s(...) => %d", __func__, xsuccess);
     return xsuccess;
 }
 
 static inline xint32 xdescriptoreventgenerator_epoll_update(int epollfd, xdescriptoreventsubscription * subscrption, xint32 force)
 {
+    xlogfunction_start("%s(%d, %p, %d)", __func__, epollfd, subscrption, force);
+
     if(epollfd >= 0)
     {
         xdescriptor * descriptor = subscrption->descriptor;
@@ -109,10 +128,12 @@ static inline xint32 xdescriptoreventgenerator_epoll_update(int epollfd, xdescri
         {
             if(descriptor->status & xdescriptorstatus_exception)
             {
+                xlogfunction_end("%s(...) => %d", __func__, xfail);
                 return xfail;
             }
             if(descriptor->status & xdescriptorstatus_close)
             {
+                xlogfunction_end("%s(...) => %d", __func__, xfail);
                 return xfail;
             }
             struct epoll_event event;
@@ -139,6 +160,7 @@ static inline xint32 xdescriptoreventgenerator_epoll_update(int epollfd, xdescri
                         {
                             if(epoll_ctl(epollfd, EPOLL_CTL_ADD, descriptor->handle.f, &event) == xsuccess)
                             {
+                                xlogfunction_end("%s(...) => %d", __func__, xsuccess);
                                 return xsuccess;
                             }
                         }
@@ -148,10 +170,13 @@ static inline xint32 xdescriptoreventgenerator_epoll_update(int epollfd, xdescri
                         descriptor->status |= xdescriptorstatus_exception;
                         descriptor->exception.func = epoll_ctl;
                         descriptor->exception.number = errno;
+                        xlogfunction_end("%s(...) => %d", __func__, xfail);
                         return xfail;
                     }
+                    xlogfunction_end("%s(...) => %d", __func__, xsuccess);
                     return xsuccess;
                 }
+                xlogfunction_end("%s(...) => %d", __func__, xsuccess);
                 return xsuccess;
             }
             else
@@ -166,6 +191,7 @@ static inline xint32 xdescriptoreventgenerator_epoll_update(int epollfd, xdescri
                             if(epoll_ctl(epollfd, EPOLL_CTL_MOD, descriptor->handle.f, &event) == xsuccess)
                             {
                                 descriptor->status |= xdescriptorstatus_register;
+                                xlogfunction_end("%s(...) => %d", __func__, xsuccess);
                                 return xsuccess;
                             }
                         }
@@ -175,22 +201,28 @@ static inline xint32 xdescriptoreventgenerator_epoll_update(int epollfd, xdescri
                         descriptor->status |= xdescriptorstatus_exception;
                         descriptor->exception.func = epoll_ctl;
                         descriptor->exception.number = errno;
+                        xlogfunction_end("%s(...) => %d", __func__, xfail);
                         return xfail;
                     }
                     descriptor->status |= xdescriptorstatus_register;
+                    xlogfunction_end("%s(...) => %d", __func__, xsuccess);
                     return xsuccess;
                 }
                 descriptor->status |= xdescriptorstatus_register;
+                xlogfunction_end("%s(...) => %d", __func__, xsuccess);
                 return xsuccess;
             }
         }
+        xlogfunction_end("%s(...) => %d", __func__, xfail);
         return xfail;
     }
+    xlogfunction_end("%s(...) => %d", __func__, xsuccess);
     return xsuccess;
 }
 
 static inline xint32 xdescriptoreventgenerator_epoll_open(xdescriptoreventgenerator_epoll * generator)
 {
+    xlogfunction_start("%s(%p)", __func__, generator);
     if(generator->f < 0)
     {
         generator->f = epoll_create(generator->max);
@@ -217,14 +249,18 @@ static inline xint32 xdescriptoreventgenerator_epoll_open(xdescriptoreventgenera
         else
         {
             xassertion(generator->f < 0, "");
+            xlogfunction_end("%s(...) => %d", __func__, xfail);
             return xfail;
         }
     }
+    xlogfunction_end("%s(...) => %d", __func__, xsuccess);
     return xsuccess;
 }
 
 extern xdescriptoreventgenerator * xdescriptoreventgenerator_new(xeventengine * engine)
 {
+    xlogfunction_start("%s(%p)", __func__, engine);
+
     xdescriptoreventgenerator_epoll * generator = (xdescriptoreventgenerator_epoll *) calloc(sizeof(xdescriptoreventgenerator_epoll), 1);
 
     generator->alive       = xdescriptoreventgeneratorsubscriptionlist_new();
@@ -236,11 +272,13 @@ extern xdescriptoreventgenerator * xdescriptoreventgenerator_new(xeventengine * 
     generator->millisecond = 1;
     generator->events      = (struct epoll_event *) malloc(sizeof(struct epoll_event) * generator->max);
 
+    xlogfunction_end("%s(...) => %p", __func__, generator);
     return (xdescriptoreventgenerator *) generator;
 }
 
 extern xdescriptoreventgenerator * xdescriptoreventgenerator_rem(xdescriptoreventgenerator * o)
 {
+    xlogfunction_start("%s(%p)", __func__, o);
     xdescriptoreventgenerator_epoll * generator = (xdescriptoreventgenerator_epoll *) o;
 
     xassertion(generator == xnil || generator->alive->size > 0 || generator->queue->size > 0, "");
@@ -259,12 +297,13 @@ extern xdescriptoreventgenerator * xdescriptoreventgenerator_rem(xdescriptoreven
     generator->alive  = xdescriptoreventgeneratorsubscriptionlist_rem(generator->alive);
     generator->queue  = xdescriptoreventgeneratorsubscriptionlist_rem(generator->queue);
 
+    xlogfunction_end("%s(...) => %p", __func__, xnil);
     return xnil;
 }
 
 extern void xdescriptoreventgenerator_register(xdescriptoreventgenerator * o, xdescriptoreventsubscription * subscription)
 {
-    xdebugfunctionstart("xdescriptoreventgenerator * o => %p, xdescriptoreventsubscription * subscription => %p", o, subscription);
+    xlogfunction_start("%s(%p, %p)", __func__, o, subscription);
 
     xdescriptoreventgenerator_epoll * generator = (xdescriptoreventgenerator_epoll *) o;
     xdescriptor * descriptor = subscription->descriptor;
@@ -284,6 +323,7 @@ extern void xdescriptoreventgenerator_register(xdescriptoreventgenerator * o, xd
                         descriptor->on(descriptor, xdescriptoreventtype_register, xnil, xtrue);
                         xdescriptoreventgeneratorsubscriptionlist_push(generator->alive, subscription);
                     }
+                    xlogfunction_end("%s(...)", __func__);
                     return;
                 }
             }
@@ -291,10 +331,12 @@ extern void xdescriptoreventgenerator_register(xdescriptoreventgenerator * o, xd
     }
 
     xdescriptoreventgeneratorsubscriptionlist_push(generator->queue, subscription);
+    xlogfunction_end("%s(...)", __func__);
 }
 
 extern void xdescriptoreventgenerator_unregister(xdescriptoreventgenerator * o, xdescriptoreventsubscription * subscription)
 {
+    xlogfunction_start("%s(%p, %p)", __func__, o, subscription);
     xdescriptoreventgenerator_epoll * generator = (xdescriptoreventgenerator_epoll *) o;
 
     xdescriptor * descriptor = subscription->descriptor;
@@ -311,10 +353,13 @@ extern void xdescriptoreventgenerator_unregister(xdescriptoreventgenerator * o, 
     {
         xdescriptoreventgeneratorsubscriptionlist_del(subscription);
     }
+
+    xlogfunction_end("%s(...)", __func__);
 }
 
 extern void xdescriptoreventgenerator_once(xdescriptoreventgenerator * o)
 {
+    xlogfunction_start("%s(%p)", __func__, o);
     xdescriptoreventgenerator_epoll * generator = (xdescriptoreventgenerator_epoll *) o;
 
     if(xdescriptoreventgenerator_epoll_open(generator) == xsuccess)
@@ -355,10 +400,13 @@ extern void xdescriptoreventgenerator_once(xdescriptoreventgenerator * o)
             }
         }
     }
+
+    xlogfunction_end("%s(...)", __func__);
 }
 
 extern void xdescriptoreventgenerator_queue_once(xdescriptoreventgenerator * o)
 {
+    xlogfunction_start("%s(%p)", __func__, o);
     xdescriptoreventgenerator_epoll * generator = (xdescriptoreventgenerator_epoll *) o;
 
     __xsynclock(generator->queue->sync);
@@ -411,10 +459,13 @@ extern void xdescriptoreventgenerator_queue_once(xdescriptoreventgenerator * o)
         break;
     }
     __xsyncunlock(generator->queue->sync);
+
+    xlogfunction_end("%s(...)", __func__);
 }
 
 extern void xdescriptoreventgenerator_sync(xdescriptoreventgenerator * o, xint32 on)
 {
+    xlogfunction_start("%s(%p, %d)", __func__, o, on);
     xdescriptoreventgenerator_epoll * generator = (xdescriptoreventgenerator_epoll *) o;
 
     if(on)
@@ -434,17 +485,23 @@ extern void xdescriptoreventgenerator_sync(xdescriptoreventgenerator * o, xint32
         generator->alive->sync = xsyncrem(generator->alive->sync);
         generator->queue->sync = xsyncrem(generator->queue->sync);
     }
+
+    xlogfunction_end("%s(...)", __func__);
 }
 
 extern void xdescriptoreventgenerator_on(xdescriptoreventgenerator * o)
 {
+    xlogfunction_start("%s(%p)", __func__, o);
     xdescriptoreventgenerator_epoll * generator = (xdescriptoreventgenerator_epoll *) o;
 
     xdescriptoreventgenerator_epoll_open(generator);
+
+    xlogfunction_end("%s(...)", __func__);
 }
 
 extern void xdescriptoreventgenerator_off(xdescriptoreventgenerator * o)
 {
+    xlogfunction_start("%s(%p)", __func__, o);
     xdescriptoreventgenerator_epoll * generator = (xdescriptoreventgenerator_epoll *) o;
 
     if(generator->f)
@@ -459,10 +516,14 @@ extern void xdescriptoreventgenerator_off(xdescriptoreventgenerator * o)
 
     xdescriptoreventgenerator_alive_clear(o);
     xdescriptoreventgenerator_queue_clear(o);
+
+    xlogfunction_end("%s(...)", __func__);
 }
 
 extern void xdescriptoreventgenerator_alive_clear(xdescriptoreventgenerator * generator)
 {
+    xlogfunction_start("%s(%p)", __func__, generator);
+
     xdescriptoreventsubscription * subscription = generator->alive->head;
     while(subscription)
     {
@@ -476,10 +537,13 @@ extern void xdescriptoreventgenerator_alive_clear(xdescriptoreventgenerator * ge
         
         subscription = next;
     }
+
+    xlogfunction_end("%s(...)", __func__);
 }
 
 extern void xdescriptoreventgenerator_queue_clear(xdescriptoreventgenerator * generator)
 {
+    xlogfunction_start("%s(%p)", __func__, generator);
     xdescriptoreventsubscription * subscription = generator->alive->head;
     while(subscription)
     {
@@ -491,10 +555,13 @@ extern void xdescriptoreventgenerator_queue_clear(xdescriptoreventgenerator * ge
         
         subscription = next;
     }
+
+    xlogfunction_end("%s(...)", __func__);
 }
 
 extern xint64 xdescriptoreventgenerator_descriptor_update(xdescriptoreventgenerator * o, xdescriptor * descriptor)
 {
+    xlogfunction_start("%s(%p, %p)", __func__, o, descriptor);
     xdescriptoreventgenerator_epoll * generator = (xdescriptoreventgenerator_epoll *) o;
 
     xdescriptoreventsubscription * subscription = descriptor->subscription;
@@ -503,11 +570,16 @@ extern xint64 xdescriptoreventgenerator_descriptor_update(xdescriptoreventgenera
     xassertion(descriptor->handle.f < 0, "");
     xassertion(generator->alive != subscription->generatornode.list, "");
 
-    return xdescriptoreventgenerator_epoll_update(generator->f, subscription, xtrue);
+    xint64 ret = xdescriptoreventgenerator_epoll_update(generator->f, subscription, xtrue);
+
+    xlogfunction_end("%s(...) => %ld", __func__, ret);
+    return ret;
 }
 
 extern xint64 xdescriptoreventgenerator_descriptor_unregister(xdescriptoreventgenerator * o, xdescriptor * descriptor)
 {
+    xlogfunction_start("%s(%p, %p)", __func__, o, descriptor);
+
     xdescriptoreventgenerator_epoll * generator = (xdescriptoreventgenerator_epoll *) o;
 
     xdescriptoreventsubscription * subscription = descriptor->subscription;
@@ -516,8 +588,12 @@ extern xint64 xdescriptoreventgenerator_descriptor_unregister(xdescriptoreventge
     xassertion(descriptor->handle.f < 0, "");
     xassertion(generator->alive != subscription->generatornode.list, "");
 
-        if(xdescriptoreventgenerator_epoll_unregister(generator->f, subscription, xtrue) == xsuccess)
+    if(xdescriptoreventgenerator_epoll_unregister(generator->f, subscription, xtrue) == xsuccess)
     {
         descriptor->on(descriptor, xdescriptoreventtype_register, xnil, xtrue);
     }
+
+    xlogfunction_end("%s(...) => %d", __func__, xsuccess);
+    // TODO: IMPLEMENT LOGIC
+    return xsuccess;
 }

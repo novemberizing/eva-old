@@ -11,6 +11,8 @@
 #ifndef   __NOVEMBERIZING_X__STD__H__
 #define   __NOVEMBERIZING_X__STD__H__
 
+#include <x/log.h>
+
 #define xinvalid            (-1)                /**!< 유효하지 않은 값을 나타냅니다. 특히 디스크립터가 유요하지 않음을 나타냅니다. */
 #define xsuccess            (0)                 /**!< 어떤 프로세스의 수행이 성공하였음을 나타냅니다. */
 #define xfail               (-1)                /**!< 어떤 프로세서의 수행이 실패하였음을 나타냅니다. */

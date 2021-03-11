@@ -62,6 +62,8 @@ static xconsoledescriptor * consoledescriptorsingleton_out = xnil;
 
 extern void xconsoledescriptor_term(void)
 {
+    xlogfunction_start("%s()", __func__);
+
     if(console.in)
     {
         console.in = xconsoledescriptor_rem(console.in);
@@ -70,10 +72,14 @@ extern void xconsoledescriptor_term(void)
     {
         console.out = xconsoledescriptor_rem(console.out);
     }
+
+    xlogfunction_end("%s()", __func__);
 }
 
 extern void xconsolesubscriber_set(xconsolesubscriber subscriber)
 {
+    xlogfunction_start("%s(%p)", __func__, subscriber);
+
     if(console.in == xnil)
     {
         console.in = (xconsoledescriptor *) xconsoledescriptorin_get();
@@ -83,16 +89,24 @@ extern void xconsolesubscriber_set(xconsolesubscriber subscriber)
         console.out = (xconsoledescriptor *) xconsoledescriptorout_get();
     }
     console.on = (subscriber ? subscriber : xconsolesubscriber_default);
+
+    xlogfunction_end("%s(...)", __func__);
 }
 
 extern xint64 xconsolesubscriber_default(xconsole * console, xuint64 event, void * parameter, xint64 value)
 {
+    xlogfunction_start("%s(%p, %lu, %p, %ld)", __func__, console, event, parameter, value);
+
     xassertion(xtrue, "implement this");
+
+    xlogfunction_end("%s(...) => %ld", __func__, value);
     return value;
 }
 
 extern xdescriptor * xconsoledescriptorin_get(void)
 {
+    xlogfunction_start("%s()", __func__);
+
     if(consoledescriptorsingleton_in == xnil)
     {
         consoledescriptorsingleton_in = xaddressof(consoledescriptor_in);
@@ -105,11 +119,14 @@ extern xdescriptor * xconsoledescriptorin_get(void)
         console.in = consoledescriptorsingleton_in;
     }
     
+    xlogfunction_end("%s(...) => %p", __func__, consoledescriptorsingleton_in);
     return (xdescriptor *) consoledescriptorsingleton_in;
 }
 
 extern xdescriptor * xconsoledescriptorout_get(void)
 {
+    xlogfunction_start("%s()", __func__);
+
     if(consoledescriptorsingleton_out == xnil)
     {
         consoledescriptorsingleton_out = xaddressof(consoledescriptor_out);
@@ -122,12 +139,14 @@ extern xdescriptor * xconsoledescriptorout_get(void)
         console.out = consoledescriptorsingleton_out;
     }
 
+    xlogfunction_end("%s(...) => %p", __func__, consoledescriptorsingleton_out);
     return (xdescriptor *) consoledescriptorsingleton_out;
 }
 
 
 static xconsoledescriptor * xconsoledescriptor_rem(xconsoledescriptor * descriptor)
 {
+    xlogfunction_start("%s(%p)", __func__, descriptor);
     xassertion(descriptor == xnil, "");
     xassertion(descriptor->event.queue || descriptor->event.next || descriptor->event.prev, "");
     xassertion(descriptor->subscription == xnil, "");
@@ -138,11 +157,14 @@ static xconsoledescriptor * xconsoledescriptor_rem(xconsoledescriptor * descript
     descriptor->stream    = xstreamrem(descriptor->stream);
     descriptor->sync      = xsyncrem(descriptor->sync);
 
+    xlogfunction_end("%s(...) => %p", __func__, descriptor);
     return descriptor;
 }
 
 static inline xint64 xconsoledescriptorprocessor_input_open(xconsoledescriptor * descriptor, void * parameter)
 {
+    xlogfunction_start("%s(%p, %p)", __func__, descriptor, parameter);
+
     if(xdescriptorcheck_close((xdescriptor *) descriptor) == xfalse)
     {
         if(descriptor->stream == xnil)
@@ -159,15 +181,19 @@ static inline xint64 xconsoledescriptorprocessor_input_open(xconsoledescriptor *
             descriptor->status = (xdescriptorstatus_open | xdescriptorstatus_out);
         }
 
+        xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
         return xsuccess;
     }
 
+    xlogfunction_end("%s(...) => %ld", __func__, xfail);
     return xfail;
 }
 
 
 static inline xint64 xconsoledescriptorprocessor_output_open(xconsoledescriptor * descriptor, void * parameter)
 {
+    xlogfunction_start("%s(%p, %p)", __func__, descriptor, parameter);
+
     if(xdescriptorcheck_open((xdescriptor *) descriptor))
     {
         if(descriptor->stream == xnil)
@@ -184,14 +210,18 @@ static inline xint64 xconsoledescriptorprocessor_output_open(xconsoledescriptor 
             descriptor->status = (xdescriptorstatus_open | xdescriptorstatus_in | xdescriptorstatus_out);
         }
 
+        xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
         return xsuccess;
     }
 
+    xlogfunction_end("%s(...) => %ld", __func__, xfail);
     return xfail;
 }
 
 static inline xint64 xconsoledescriptorprocessor_out(xconsoledescriptor * descriptor, void * parameter)
 {
+    xlogfunction_start("%s(%p, %p)", __func__, descriptor, parameter);
+
     if(xdescriptorcheck_open((xdescriptor *) descriptor))
     {
         if(xstreamlen(descriptor->stream) > 0)
@@ -202,15 +232,22 @@ static inline xint64 xconsoledescriptorprocessor_out(xconsoledescriptor * descri
                 xstreampos_set(descriptor->stream, xstreampos_get(descriptor->stream) + n);
             }
 
+            xlogfunction_end("%s(...) => %ld", __func__, n);
             return n;
         }
+
+        xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
         return xsuccess;
     }
+
+    xlogfunction_end("%s(...) => %ld", __func__, xfail);
     return xfail;
 }
 
 static inline xint64 xconsoledescriptorprocessor_in(xconsoledescriptor * descriptor, void * parameter)
 {
+    xlogfunction_start("%s(%p, %p)", __func__, descriptor, parameter);
+
     if(xdescriptorcheck_open((xdescriptor *) descriptor))
     {
         xstreamadjust(descriptor->stream, xfalse);
@@ -220,111 +257,161 @@ static inline xint64 xconsoledescriptorprocessor_in(xconsoledescriptor * descrip
         if(n > 0)
         {
             xstreamsize_set(descriptor->stream, n + xstreamsize_get(descriptor->stream));
+
+            xlogfunction_end("%s(...) => %ld", __func__, n);
             return n;
         }
+
+        xlogfunction_end("%s(...) => %ld", __func__, n);
         return n;
     }
+
+    xlogfunction_end("%s(...) => %ld", __func__, xfail);
     return xfail;
 }
 
 static inline xint64 xconsoledescriptorprocessor_close(xconsoledescriptor * descriptor, void * parameter)
 {
+    xlogfunction_start("%s(%p, %p)", __func__, descriptor, parameter);
+
     if((descriptor->status & xdescriptorstatus_close) == xdescriptorstatus_void)
     {
         descriptor->status |= xdescriptorstatus_close;
     }
+
+    xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
     return xsuccess;
 }
 
 static inline xint64 xconsoledescriptorprocessor_exception(xconsoledescriptor * descriptor, void * parameter)
 {
+    xlogfunction_start("%s(%p, %p)", __func__, descriptor, parameter);
+
     if((descriptor->status & xdescriptorstatus_exception) == xdescriptorstatus_void)
     {
         descriptor->status |= xdescriptorstatus_exception;
     }
 
+    xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
     return xsuccess;
 }
 
 static xint64 xconsoledescriptorprocessor_input(xconsoledescriptor * descriptor, xuint32 event, void * parameter)
 {
+    xlogfunction_start("%s(%p, %u, %p)", __func__, descriptor, event, parameter);
+
+    xint64 ret = xsuccess;
     switch(event)
     {
-        case xdescriptoreventtype_open:         return xconsoledescriptorprocessor_input_open(descriptor, parameter);
-        case xdescriptoreventtype_in:           return xconsoledescriptorprocessor_in(descriptor, parameter);
-        case xdescriptoreventtype_close:        return xconsoledescriptorprocessor_close(descriptor, parameter);
-        case xdescriptoreventtype_exception:    return xconsoledescriptorprocessor_exception(descriptor, parameter);
+        case xdescriptoreventtype_open:      ret = xconsoledescriptorprocessor_input_open(descriptor, parameter);   break;
+        case xdescriptoreventtype_in:        ret = xconsoledescriptorprocessor_in(descriptor, parameter);           break;
+        case xdescriptoreventtype_close:     ret = xconsoledescriptorprocessor_close(descriptor, parameter);        break;
+        case xdescriptoreventtype_exception: ret = xconsoledescriptorprocessor_exception(descriptor, parameter);    break;
+        default:                             xassertion(xtrue, "");                                                 break;
     }
-    xassertion(xtrue, "");
-
-    return xsuccess;
+    
+    xlogfunction_end("%s(...) => %ld", __func__, ret);
+    return ret;
 }
 
 
 static xint64 xconsoledescriptorsubscriber_input(xconsoledescriptor * descriptor, xuint32 event, void * parameter, xint64 val)
 {
+    xlogfunction_start("%s(%p, %u, %p, %ld)", __func__, descriptor, event, parameter, val);
+
     xassertion(descriptor == xnil, "");
     xassertion(descriptor->console == xnil, "");
     xassertion(descriptor->console->on == xnil, "");
 
-    return descriptor->console->on(descriptor->console, event, parameter, val);
+    xint64 ret = descriptor->console->on(descriptor->console, event, parameter, val);
+
+    xlogfunction_end("%s(...) => %ld", __func__, ret);
+    return ret;
 }
 
 static xint64 xconsoledescriptorsubscriber_on(xconsoledescriptor * descriptor, xuint32 event, void * parameter, xint64 val)
 {
+    xlogfunction_start("%s(%p, %u, %p, %ld)", __func__, descriptor, event, parameter, val);
     xassertion(descriptor == xnil, "");
     xassertion(descriptor->console == xnil, "");
     xassertion(descriptor->console->on == xnil, "");
 
-    return descriptor->console->on(descriptor->console, event, parameter, val);
+    xint64 ret = descriptor->console->on(descriptor->console, event, parameter, val);
+
+    xlogfunction_end("%s(...) => %ld", __func__, ret);
+    return ret;
 }
 
 static xint32 xconsoledescriptorcheck_input(xconsoledescriptor * descriptor, xuint32 event)
 {
+    xlogfunction_start("%s(%p, %u)", __func__, descriptor, event);
+
     if(event == xdescriptoreventtype_out)
     {
+        xlogfunction_end("%s(...) => %d", __func__, xfalse);
         return xfalse;
     }
 
     xassertion(xtrue, "");
+
+    xlogfunction_end("%s(...) => %d", __func__, xtrue);
+    return xtrue;
 }
 
 static xint64 xconsoledescriptorprocessor_output(xconsoledescriptor * descriptor, xuint32 event, void * parameter)
 {
+    xlogfunction_start("%s(%p, %u, %p)", __func__, descriptor, event, parameter);
+
+    xint64 ret = xsuccess;
     switch(event)
     {
-        case xdescriptoreventtype_open:         return xconsoledescriptorprocessor_output_open(descriptor, parameter);
-        case xdescriptoreventtype_out:          return xconsoledescriptorprocessor_out(descriptor, parameter);
-        case xdescriptoreventtype_close:        return xconsoledescriptorprocessor_close(descriptor, parameter);
-        case xdescriptoreventtype_exception:    return xconsoledescriptorprocessor_exception(descriptor, parameter);
+        case xdescriptoreventtype_open:         ret = xconsoledescriptorprocessor_output_open(descriptor, parameter);   break;
+        case xdescriptoreventtype_out:          ret = xconsoledescriptorprocessor_out(descriptor, parameter);           break;
+        case xdescriptoreventtype_close:        ret = xconsoledescriptorprocessor_close(descriptor, parameter);         break;
+        case xdescriptoreventtype_exception:    ret = xconsoledescriptorprocessor_exception(descriptor, parameter);     break;
+        default:                                xassertion(xtrue, "");                                                  break;
     }
-    xassertion(xtrue, "");
 
-    return xsuccess;
+    xlogfunction_end("%s(...) => %ld", __func__, ret);
+    return ret;
 }
 
 static xint64 xconsoledescriptorsubscriber_output(xconsoledescriptor * descriptor, xuint32 event, void * parameter, xint64 val)
 {
-    
+    xlogfunction_start("%s(%p, %u, %p, %ld)", __func__, descriptor, event, parameter, val);
+
     xassertion(descriptor == xnil, "");
     xassertion(descriptor->console == xnil, "");
     xassertion(descriptor->console->on == xnil, "");
 
-    return descriptor->console->on(descriptor->console, event, parameter, val);
+    xint64 ret = descriptor->console->on(descriptor->console, event, parameter, val);
+
+    xlogfunction_end("%s(...) => %ld", __func__, ret);
+    return ret;
 }
 
 static xint32 xconsoledescriptorcheck_output(xconsoledescriptor * descriptor, xuint32 event)
 {
+    xlogfunction_start("%s(%p, %u)", __func__, descriptor, event);
     if(event == xdescriptoreventtype_out)
     {
-        return xstreamlen(descriptor->stream) > 0;
+        xint32 ret = (xstreamlen(descriptor->stream) > 0);
+
+        xlogfunction_end("%s(...) => %d", __func__, ret);
+        return ret;
     }
 
     xassertion(xtrue, "");
+
+    xlogfunction_end("%s(...) => %ld", __func__, xtrue);
+    return xtrue;
+    
 }
 
 extern xint64 xconsoleout_string(const char * s)
 {
+    xlogfunction_start("%s(%s)", __func__, s);
+
     xconsoledescriptor * descriptor = (xconsoledescriptor *) xconsoledescriptorout_get();
 
     xint64 len = strlen(s);
@@ -346,6 +433,7 @@ extern xint64 xconsoleout_string(const char * s)
         xassertion(n < 0, "");
     }
 
+    xlogfunction_end("%s(...) => %ld", __func__, n);
     return n;
     
 }
@@ -356,6 +444,8 @@ extern xint64 xconsoleout_string(const char * s)
  */
 extern xint64 xconsolein_string(char * buffer, xuint64 size)
 {
+    xlogfunction_start("%s(%p, %lu)", __func__, buffer, size);
+
     xassertion(buffer == xnil || size == 0, "");
 
     xint64 n = 0;
@@ -367,6 +457,8 @@ extern xint64 xconsolein_string(char * buffer, xuint64 size)
         memcpy(buffer, xstreamfront(descriptor->stream), size);
         xstreampos_set(descriptor->stream, xstreampos_get(descriptor->stream) + size);
         xstreamadjust(descriptor->stream, xfalse);
+
+        xlogfunction_end("%s(...) => %lu", __func__, size);
         return size;
     }
     else if(xstreamlen(descriptor->stream) > 0)
@@ -386,29 +478,36 @@ extern xint64 xconsolein_string(char * buffer, xuint64 size)
         xstreampos_set(descriptor->stream, xstreampos_get(descriptor->stream) + size);
         xstreamadjust(descriptor->stream, xfalse);
 
+        xlogfunction_end("%s(...) => %lu", __func__, size);
         return size;
     }
     else
     {
         xint64 n = xdescriptorread((xdescriptor *) descriptor, buffer, size);
-
+        // TODO: CHECK THIS LOGIC
         if(n > 0)
         {
+            xlogfunction_end("%s(...) => %lu", __func__, n);
             return n;
         }
         else if(n == 0)
         {
             xassertion(n < 0, "");
+
+            xlogfunction_end("%s(...) => %lu", __func__, n);
             return n;
         }
         else
         {
             xassertion(n < 0, "");
+            xlogfunction_end("%s(...) => %lu", __func__, xfail);
             return xfail;
         }
 
+        xlogfunction_end("%s(...) => %lu", __func__, n);
         return n;
     }
 
+    xlogfunction_end("%s(...) => %lu", __func__, xfail);
     return xfail;
 }

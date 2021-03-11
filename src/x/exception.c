@@ -7,6 +7,8 @@
 
 extern void xexceptionset(xexception * exception, void * func, xint32 number, xuint32 type, const char * message)
 {
+    xlogfunction_start("%s(%p, %p, %d, %u, %s)", __func__, exception, func, number, type, message);
+
     xassertion(exception == xnil, "");
 
     if(exception->type == xexceptiontype_void)
@@ -16,6 +18,8 @@ extern void xexceptionset(xexception * exception, void * func, xint32 number, xu
         exception->type = type;
         exception->message = message;
     }
+
+    xlogfunction_end("%s(...)", __func__);
 }
 
 

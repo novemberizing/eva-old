@@ -13,17 +13,22 @@
 
 extern xclient * xclientnew(xint32 domain, xint32 type, xint32 protocol, const void * addr, xuint32 addrlen, xclientsubscriber on, xuint64 size)
 {
+    xlogfunction_start("%s(%d, %d, %d, %p, %u, %p, %lu)", __func__, domain, type, protocol, addr, addrlen, on, size);
+
     xassertion(size < sizeof(xclient), "");
     xclient * client = (xclient *) calloc(size, 1);
 
     client->descriptor = xclientsocket_new(client, domain, type, protocol, addr, addrlen);
     client->on         = on;
 
+    xlogfunction_end("%s(...) => %p", __func__, client);
     return client;
 }
 
 extern xclient * xclientrem(xclient * client)
 {
+    xlogfunction_start("%s(%p)", __func__, client);
+
     if(client)
     {
         if(client->descriptor)
@@ -32,6 +37,8 @@ extern xclient * xclientrem(xclient * client)
         }
         free(client);
     }
+
+    xlogfunction_end("%s(...) => %p", __func__, client);
     return xnil;
 }
 
@@ -59,6 +66,8 @@ extern xclient * xclientrem(xclient * client)
  */
 extern xint64 xclientconnect(xclient * client)
 {
+    xlogfunction_start("%s(%p)", __func__, client);
+
     xassertion(client == xnil || client->descriptor == xnil, "");
     
     xclientsocket * descriptor = client->descriptor;
@@ -69,6 +78,7 @@ extern xint64 xclientconnect(xclient * client)
     {
         if(xsocketcreate((xsocket *) descriptor) != xsuccess)
         {
+            xlogfunction_end("%s(...) => %ld", __func__, xfail);
             return xfail;
         }
     }
@@ -82,6 +92,7 @@ extern xint64 xclientconnect(xclient * client)
 
         if((descriptor->status & xsocketstatus_connecting) == xsocketstatus_void)
         {
+            xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
             return xsuccess;
         }
 
@@ -92,19 +103,25 @@ extern xint64 xclientconnect(xclient * client)
             if(errno == EINPROGRESS || errno == EAGAIN)
             {
                 descriptor->status |= xsocketstatus_connecting;
+
+                xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
                 return xsuccess;
             }
             descriptor->status |= xsocketstatus_exception;
             xexceptionset(xaddressof(descriptor->exception), connect, errno, xexceptiontype_system, "");
+
+            xlogfunction_end("%s(...) => %ld", __func__, xfail);
             return xfail;
         }
     }
     
+    xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
     return xsuccess;
 }
 
 extern xint64 xclientsend(xclient * client, const void * data, xuint64 len)
 {
+    xlogfunction_start("%s(%p, %p, %lu)", __func__, client, data, len);
     if(xclientsocketcheck_open(client->descriptor))
     {
         if(data && len)
@@ -136,19 +153,28 @@ extern xint64 xclientsend(xclient * client, const void * data, xuint64 len)
                 }
             }
 
+            xlogfunction_end("%s(...) => %ld", __func__, n);
             return n;
         }
+
+        xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
         return xsuccess;
     }
     else if(xclientsocketcheck_connecting(client->descriptor))
     {
+
+        xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
         return xsuccess;
     }
+
+    xlogfunction_end("%s(...) => %ld", __func__, xfail);
     return xfail;
 }
 
 extern xint64 xclientrecv(xclient * client, void * buffer, xuint64 len)
 {
+    xlogfunction_start("%s(%p, %p, %lu)", __func__, client, buffer, len);
+
     if(xclientsocketcheck_open(client->descriptor))
     {
         if(buffer && len)
@@ -161,6 +187,8 @@ extern xint64 xclientrecv(xclient * client, void * buffer, xuint64 len)
                     memcpy(buffer, xstreamfront(client->descriptor->stream.in), len);
                     xstreampos_set(client->descriptor->stream.in, xstreampos_get(client->descriptor->stream.in) + len);
                     xstreamadjust(client->descriptor->stream.in, xfalse);
+
+                    xlogfunction_end("%s(...) => %ld", __func__, len);
                     return len;
                 }
                 else
@@ -173,10 +201,14 @@ extern xint64 xclientrecv(xclient * client, void * buffer, xuint64 len)
                         memcpy(buffer, xstreamfront(client->descriptor->stream.in), n);
                         xstreampos_set(client->descriptor->stream.in, xstreampos_get(client->descriptor->stream.in) + n);
                         xstreamadjust(client->descriptor->stream.in, xfalse);
+
+                        xlogfunction_end("%s(...) => %ld", __func__, n);
                         return n;
                     }
                     else if(n == 0)
                     {
+
+                        xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
                         return xsuccess;
                     }
                     else
@@ -187,6 +219,8 @@ extern xint64 xclientrecv(xclient * client, void * buffer, xuint64 len)
                         {
                             client->descriptor->on(client->descriptor, xsocketeventtype_exception, xnil, 0);
                         }
+
+                        xlogfunction_end("%s(...) => %ld", __func__, xfail);
                         return xfail;
                     }
                 }
@@ -196,6 +230,7 @@ extern xint64 xclientrecv(xclient * client, void * buffer, xuint64 len)
                 n = xsocketread((xsocket *) client->descriptor, buffer, len);
                 if(n >= 0)
                 {
+                    xlogfunction_end("%s(...) => %ld", __func__, n);
                     return n;
                 }
                 else
@@ -206,25 +241,35 @@ extern xint64 xclientrecv(xclient * client, void * buffer, xuint64 len)
                     {
                         client->descriptor->on(client->descriptor, xsocketeventtype_exception, xnil, 0);
                     }
+                    xlogfunction_end("%s(...) => %ld", __func__, xfail);
                     return xfail;
                 }
             }
         }
+        xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
         return xsuccess;
     }
     else if(xclientsocketcheck_connecting(client->descriptor))
     {
+        xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
         return xsuccess;
     }
+    xlogfunction_end("%s(...) => %ld", __func__, xfail);
     return xfail;
 }
 
 extern xint64 xclientclose(xclient * client)
 {
-    return xsocketclose((xsocket *) client->descriptor);
+    xlogfunction_start("%s(%p)", __func__, client);
+    xint64 ret = xsocketclose((xsocket *) client->descriptor);
+    xlogfunction_end("%s(...) => %ld", __func__, ret);
+    return ret;
 }
 
 extern xint64 xclientshutdown(xclient * client, xuint64 how)
 {
-    return xsocketshutdown((xsocket *) client->descriptor, how);
+    xlogfunction_start("%s(%p)", __func__, client);
+    xint64 ret = xsocketshutdown((xsocket *) client->descriptor, how);
+    xlogfunction_end("%s(...) => %ld", __func__, ret);
+    return ret;
 }

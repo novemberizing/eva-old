@@ -26,6 +26,7 @@
  */
 extern xeventprocessorpool_event * xeventprocessorpool_event_new(xeventprocessorpool_event_handler handler, xeventprocessorpool * pool, xuint64 n)
 {
+    xlogfunction_start("%s(%p, %p, %lu)", __func__, handler, pool, n);
     xeventprocessorpool_event * o = (xeventprocessorpool_event *) calloc(sizeof(xeventprocessorpool_event), 1);
 
     o->on   = handler;
@@ -33,6 +34,7 @@ extern xeventprocessorpool_event * xeventprocessorpool_event_new(xeventprocessor
     o->pool = pool;
     o->n    = n;
 
+    xlogfunction_end("%s(...) => %p", __func__, o);
     return o;
 }
 
@@ -55,9 +57,12 @@ extern xeventprocessorpool_event * xeventprocessorpool_event_new(xeventprocessor
  */
 extern void xeventprocessorpool_event_handler_add(xeventprocessorpool_event * event)
 {
+    xlogfunction_start("%s(%p)", __func__, event);
     xeventprocessorpool_add(event->pool, event->n);
 
     free(event);
+
+    xlogfunction_end("%s(...)", __func__);
 }
 
 /**
@@ -79,7 +84,10 @@ extern void xeventprocessorpool_event_handler_add(xeventprocessorpool_event * ev
  */
 extern void xeventprocessorpool_event_handler_del(xeventprocessorpool_event * event)
 {
+    xlogfunction_start("%s(%p)", __func__, event);
     xeventprocessorpool_del(event->pool, event->n);
 
     free(event);
+
+    xlogfunction_end("%s(...)", __func__);
 }

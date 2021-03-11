@@ -30,11 +30,18 @@
  */
 extern xstream * xstreamnew(xuint32 type)
 {
+    xlogfunction_start("%s(%u)", __func__, type);
+
+    xstream * ret = xnil;
     switch(type)
     {
-        case xstreamtype_buffer: return (xstream *) xstreambuffer_new();
+        case xstreamtype_buffer:    ret = (xstream *) xstreambuffer_new();  break;
+        default:                    xassertion(xtrue, "");                  break;
     }
-    xassertion(xtrue, "");
+
+    xlogfunction_end("%s(...) => %p", __func__, ret);
+
+    return ret;
 }
 
 /**
@@ -53,7 +60,12 @@ extern xstream * xstreamnew(xuint32 type)
  */
 extern xstream * xstreamrem(xstream * o)
 {
-    return o ? o->rem(o) : xnil;
+    xlogfunction_start("%s(%p)", __func__, o);
+
+    xstream * ret = (o ? o->rem(o) : xnil);
+
+    xlogfunction_end("%s(...) => %p", __func__, ret);
+    return ret;
 }
 
 /**
@@ -72,11 +84,17 @@ extern xstream * xstreamrem(xstream * o)
  */
 extern xbyte * xstreamback(xstream * o)
 {
+    xlogfunction_start("%s(%p)", __func__, o);
+
+    xbyte * ret = xnil;
     switch(o->type)
     {
-        case xstreamtype_buffer: return xstreambuffer_back((xstreambuffer *) o);
+        case xstreamtype_buffer: ret = xstreambuffer_back((xstreambuffer *) o); break;
+        default:                 xassertion(xtrue, "");                         break;
     }
-    xassertion(xtrue, "");
+
+    xlogfunction_end("%s(...) => %p", __func__, ret);
+    return ret;
 }
 
 /**
@@ -97,11 +115,17 @@ extern xbyte * xstreamback(xstream * o)
  */
 extern xbyte * xstreamfront(xstream * o)
 {
+    xlogfunction_start("%s(%p)", __func__, o);
+
+    xbyte * ret = xnil;
     switch(o->type)
     {
-        case xstreamtype_buffer: return xstreambuffer_front((xstreambuffer *) o);
+        case xstreamtype_buffer: ret = xstreambuffer_front((xstreambuffer *) o);    break;
+        default:                 xassertion(xtrue, "");                             break;
     }
-    xassertion(xtrue, "");
+
+    xlogfunction_end("%s(...) => %p", ret);
+    return ret;
 }
 
 /**
@@ -122,11 +146,17 @@ extern xbyte * xstreamfront(xstream * o)
  */
 extern xuint64 xstreamremain(xstream * o)
 {
+    xlogfunction_start("%s(%p)", __func__, o);
+
+    xuint64 ret = 0;
     switch(o->type)
     {
-        case xstreamtype_buffer: return xstreambuffer_remain((xstreambuffer *) o);
+        case xstreamtype_buffer: ret = xstreambuffer_remain((xstreambuffer *) o);   break;
+        default:                 xassertion(xtrue, "");                             break;
     }
-    xassertion(xtrue, "");
+
+    xlogfunction_end("%s(...) => %lu", __func__, ret);
+    return ret;
 }
 
 /**
@@ -147,11 +177,18 @@ extern xuint64 xstreamremain(xstream * o)
  */
 extern xuint64 xstreamlen(xstream * o)
 {
+    xlogfunction_start("%s(%p)", __func__, o);
+
+    xuint64 ret = 0;
     switch(o->type)
     {
-        case xstreamtype_buffer: return xstreambuffer_len((xstreambuffer *) o);
+        case xstreamtype_buffer: ret = xstreambuffer_len((xstreambuffer *) o);  break;
+        default:                 xassertion(xtrue, "");                         break;
     }
-    xassertion(xtrue, "");
+
+    xlogfunction_end("%s(...) => %lu", __func__, ret);
+
+    return ret;
 }
 
 /**
@@ -172,11 +209,18 @@ extern xuint64 xstreamlen(xstream * o)
  */
 extern xuint64 xstreamcapacity_set(xstream * o, xuint64 v)
 {
+    xlogfunction_start("%s(%p, %lu)", __func__, o, v);
+
+    xuint64 ret = 0;
     switch(o->type)
     {
-        case xstreamtype_buffer: return xstreambuffercapacity_set((xstreambuffer *) o, v);
+        case xstreamtype_buffer: ret = xstreambuffercapacity_set((xstreambuffer *) o, v);   break;
+        default:                 xassertion(xtrue, "");                                     break;
     }
-    xassertion(xtrue, "");
+
+    xlogfunction_end("%s(...) => %lu", __func__, ret);
+
+    return ret;
 }
 
 /**
@@ -189,11 +233,17 @@ extern xuint64 xstreamcapacity_set(xstream * o, xuint64 v)
  */
 extern xuint64 xstreamcapacity_get(xstream * o)
 {
+    xlogfunction_start("%s(%p)", __func__, o);
+
+    xuint64 ret = 0;
     switch(o->type)
     {
-        case xstreamtype_buffer: return xstreambuffercapacity_get((xstreambuffer *) o);
+        case xstreamtype_buffer: ret = xstreambuffercapacity_get((xstreambuffer *) o);  break;
+        default:                 xassertion(xtrue, "");                                 break;
     }
-    xassertion(xtrue, "");
+
+    xlogfunction_end("%s(...) => %lu", __func__, ret);
+    return ret;
 }
 
 /**
@@ -211,11 +261,17 @@ extern xuint64 xstreamcapacity_get(xstream * o)
  */
 extern xuint64 xstreamsize_set(xstream * o, xuint64 n)
 {
+    xlogfunction_start("%s(%p, %lu)", __func__, o, n);
+
+    xuint64 ret = 0;
     switch(o->type)
     {
-        case xstreamtype_buffer: return xstreambuffersize_set((xstreambuffer *) o, n);
+        case xstreamtype_buffer: ret = xstreambuffersize_set((xstreambuffer *) o, n);   break;
+        default:                 xassertion(xtrue, "");                                 break;
     }
-    xassertion(xtrue, "");
+
+    xlogfunction_end("%s(...) => %lu", ret);
+    return ret;
 }
 
 /**
@@ -231,11 +287,17 @@ extern xuint64 xstreamsize_set(xstream * o, xuint64 n)
  */
 extern xuint64 xstreamsize_get(xstream * o)
 {
+    xlogfunction_start("%s(%p)", __func__, o);
+
+    xuint64 ret = 0;
     switch(o->type)
     {
-        case xstreamtype_buffer: return xstreambuffersize_get((xstreambuffer *) o);
+        case xstreamtype_buffer: ret = xstreambuffersize_get((xstreambuffer *) o);  break;
+        default:                 xassertion(xtrue, "");                             break;
     }
-    xassertion(xtrue, "");
+    
+    xlogfunction_end("%s(...) => %lu", __func__, ret);
+    return ret;
 }
 
 /**
@@ -258,11 +320,17 @@ extern xuint64 xstreamsize_get(xstream * o)
  */
 extern xuint64 xstreampos_set(xstream * o, xuint64 n)
 {
+    xlogfunction_start("%s(%p, %lu)", __func__, o, n);
+
+    xuint64 ret = 0;
     switch(o->type)
     {
-        case xstreamtype_buffer: return xstreambufferpos_set((xstreambuffer *) o, n);
+        case xstreamtype_buffer: ret = xstreambufferpos_set((xstreambuffer *) o, n);    break;
+        default:                 xassertion(xtrue, "");                                 break;
     }
-    xassertion(xtrue, "");
+
+    xlogfunction_end("%s(...) => %lu", __func__, ret);
+    return ret;
 }
 
 /**
@@ -283,11 +351,17 @@ extern xuint64 xstreampos_set(xstream * o, xuint64 n)
  */
 extern xuint64 xstreampos_get(xstream * o)
 {
+    xlogfunction_start("%s(%p)", __func__, o);
+    xuint64 ret = 0;
+
     switch(o->type)
     {
-        case xstreamtype_buffer: return xstreambufferpos_get((xstreambuffer *) o);
+        case xstreamtype_buffer: ret = xstreambufferpos_get((xstreambuffer *) o);   break;
+        default:                 xassertion(xtrue, "");                             break;
     }
-    xassertion(xtrue, "");
+
+    xlogfunction_end("%s(...) => %lu", __func__, ret);
+    return ret;
 }
 
 /**
@@ -310,18 +384,30 @@ extern xuint64 xstreampos_get(xstream * o)
  */
 extern xuint64 xstreamadjust(xstream * o, xint32 force)
 {
+    xlogfunction_start("%s(%p, %d)", __func__, o, force);
+    
+    xuint64 ret = 0;
     switch(o->type)
     {
-        case xstreamtype_buffer: return xstreambuffer_adjust((xstreambuffer *) o, force);
+        case xstreamtype_buffer: ret = xstreambuffer_adjust((xstreambuffer *) o, force);    break;
+        default:                 xassertion(xtrue, "");                                     break;
     }
-    xassertion(xtrue, "");
+
+    xlogfunction_end("%s(...) => %lu", __func__, ret);
+    return ret;
 }
 
 extern xuint64 xstreampush(xstream * o, const xbyte * data, xuint64 len)
 {
+    xlogfunction_start("%s(%p, $p, %lu)", __func__, o, data, len);
+
+    xuint64 ret = 0;
     switch(o->type)
     {
-        case xstreamtype_buffer: return xstreambuffer_push((xstreambuffer *) o, data, len);
+        case xstreamtype_buffer: ret = xstreambuffer_push((xstreambuffer *) o, data, len);  break;
+        default:                 xassertion(xtrue, "");                                     break;
     }
-    xassertion(xtrue, "");
+
+    xlogfunction_end("%s(...) => %lu", __func__, ret);
+    return ret;
 }

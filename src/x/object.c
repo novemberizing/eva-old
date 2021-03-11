@@ -39,11 +39,14 @@
  */
 extern xobject xobjectnew(xuint64 size)
 {
+    xlogfunction_start("%s(%lu)", __func__, size);
     xassertion(size == 0, "");
 
     xobject o = calloc(size, 1);
 
     xassertion(o == xnil, "");
+
+    xlogfunction_end("%s(...) => %p", __func__, o);
 
     return o;
 }
@@ -72,13 +75,17 @@ extern xobject xobjectnew(xuint64 size)
  */
 extern xobject xobjectdup(const void * data, xuint64 size)
 {
+    xlogfunction_start("%s(%p, %lu)", __func__, data, size);
     xassertion(data == xnil || size == 0, "");
 
     void * o = malloc(size);
 
     xassertion(o == xnil, "");
 
-    return memcpy(o, data, size);
+    void * ret = memcpy(o, data, size);
+
+    xlogfunction_end("%s(...) => %p", __func__, ret);
+    return ret;
 }
 
 /**
@@ -101,10 +108,13 @@ extern xobject xobjectdup(const void * data, xuint64 size)
  */
 extern xobject xobjectrem(xobject o)
 {
+    xlogfunction_start("%s(%p)", __func__, o);
+
     if(o)
     {
         free(o);
     }
     
+    xlogfunction_end("%s(...) => %p", __func__, xnil);
     return xnil;
 }

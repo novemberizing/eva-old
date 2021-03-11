@@ -40,12 +40,15 @@
  */
 extern xthread * xthreadnew(xthreadfunc func, xuint64 size)
 {
+    xlogfunction_start("%s(%p, %lu)", __func__, func, size);
+
     xassertion(func == xnil || size < sizeof(xthread), "");
 
     xthread * o = (xthread *) calloc(size, 1);
 
     o->func     = func;
 
+    xlogfunction_end("%s(...) => %p", __func__, o);
     return o;
 }
 
@@ -67,7 +70,12 @@ extern xthread * xthreadnew(xthreadfunc func, xuint64 size)
  */
 extern xthread * xthreadrem(xthread * o)
 {
-    return (xthread *) xthreadposix_rem((xthreadposix *) o);
+    xlogfunction_start("%s(%p)", __func__, o);
+
+    xthread * ret = (xthread *) xthreadposix_rem((xthreadposix *) o);
+
+    xlogfunction_end("%s(...) => %p", __func__, ret);
+    return ret;
 }
 
 /**
@@ -91,7 +99,12 @@ extern xthread * xthreadrem(xthread * o)
  */
 extern xint32 xthreadcheck_rem(xthread * o)
 {
-    return (o->status & xthreadstatus_on) == xthreadstatus_void;
+    xlogfunction_start("%s(%p)", __func__, o);
+
+    xint32 ret = (o->status & xthreadstatus_on) == xthreadstatus_void;
+
+    xlogfunction_end("%s(...) => %d", __func__, ret);
+    return ret;
 }
 
 /**
@@ -128,7 +141,11 @@ extern xint32 xthreadcheck_rem(xthread * o)
  */
 extern void xthreadcancel(xthread * o, xthreadfunc callback)
 {
+    xlogfunction_start("%s(%p, %p)", __func__, o, callback);
+
     xthreadposix_cancel((xthreadposix *) o, (xthreadposixfunc) callback);
+
+    xlogfunction_end("%s(...)", __func__);
 }
 
 /**
@@ -147,7 +164,11 @@ extern void xthreadcancel(xthread * o, xthreadfunc callback)
  */
 extern void xthreadrun(xthread * o)
 {
+    xlogfunction_start("%s(%p)", __func__, o);
+
     xthreadposix_run((xthreadposix *) o);
+
+    xlogfunction_end("%s(...)", __func__);
 }
 
 /**
@@ -166,25 +187,40 @@ extern void xthreadrun(xthread * o)
  */
 extern xuint64 xthreadid(void)
 {
-    return xthreadposix_id();
+    xlogfunction_start("%s()", __func__);
+    xint64 ret = xthreadposix_id();
+    xlogfunction_end("%s() => %ld", __func__, ret);
+    return ret;
 }
 
 extern xint32 xsynclock(xsync * o)
 {
-    return __xsynclock(o);
+    xlogfunction_start("%s(%p)", __func__, o);
+    xint32 ret = __xsynclock(o);
+    xlogfunction_end("%s(...) => %d", __func__, ret);
+    return ret;
 }
 
 extern xint32 xsyncunlock(xsync * o)
 {
-    return __xsyncunlock(o);
+    xlogfunction_start("%s(%p)", __func__, o);
+    xint32 ret = __xsyncunlock(o);
+    xlogfunction_end("%s(...) => %d", __func__, ret);
+    return ret;
 }
 
 extern xint32 xsyncwait(xsync * o, xint64 second, xint64 nanosecond)
 {
-    return __xsyncwait(o, second, nanosecond);
+    xlogfunction_start("%s(%p, %ld, %ld)", __func__, o, second, nanosecond);
+    xint32 ret = __xsyncwait(o, second, nanosecond);
+    xlogfunction_end("%s(...) => %d", __func__, ret);
+    return ret;
 }
 
 extern xint32 xsyncwakeup(xsync * o, xint32 all)
 {
-    return __xsyncwakeup(o, all);
+    xlogfunction_start("%s(%p, %d)", __func__, o, all);
+    xint32 ret = __xsyncwakeup(o, all);
+    xlogfunction_end("%s(...) => %d", __func__, ret);
+    return ret;
 }

@@ -11,27 +11,46 @@
 
 extern xint32 xdescriptorcheck_rem(xdescriptor * descriptor)
 {
-    return (descriptor->status & xdescriptorstatus_rem) && descriptor->handle.f < 0 && descriptor->event.queue == xnil;
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
+    xint32 ret = (descriptor->status & xdescriptorstatus_rem) && descriptor->handle.f < 0 && descriptor->event.queue == xnil;
+
+    xlogfunction_end("%s(...) => %d", __func__, ret);
+    return ret;
 }
 
 extern xint32 xdescriptorcheck_close(xdescriptor * descriptor)
 {
-    return descriptor->status & (xdescriptorstatus_close | xdescriptorstatus_exception | xdescriptorstatus_rem);
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+    xint32 ret = descriptor->status & (xdescriptorstatus_close | xdescriptorstatus_exception | xdescriptorstatus_rem);
+
+    xlogfunction_end("%s(...) => %d", __func__, ret);
+    return ret;
 }
 
 extern xint32 xdescriptorcheck_open(xdescriptor * descriptor)
 {
-    return xdescriptorcheck_close(descriptor) == xfalse && (descriptor->status & xdescriptorstatus_open);
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
+    xint32 ret = xdescriptorcheck_close(descriptor) == xfalse && (descriptor->status & xdescriptorstatus_open);
+
+    xlogfunction_end("%s(...) => %d", __func__, ret);
+    return ret;
 }
 
 extern xint64 xdescriptorevent_processor_on(xdescriptor * descriptor)
 {
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
     xassertion(descriptor == xnil, "");
 
     if(xdescriptorcheck_close(descriptor))
     {
         xdescriptorevent_processor_unregister(descriptor);
-        return xdescriptorevent_processor_close(descriptor);
+        xint64 ret = xdescriptorevent_processor_close(descriptor);
+
+        xlogfunction_end("%s(...) => %d", __func__, ret);
+        return ret;
     }
     else if((descriptor->status & xdescriptorstatus_open) == xdescriptorstatus_void)
     {
@@ -51,9 +70,12 @@ extern xint64 xdescriptorevent_processor_on(xdescriptor * descriptor)
     {
         xdescriptorevent_processor_unregister(descriptor);
         xdescriptorevent_processor_close(descriptor);
+
+        xlogfunction_end("%s(...) => %d", __func__, xfail);
         return xfail;
     }
 
+    xlogfunction_end("%s(...) => %d", __func__, xsuccess);
     return xsuccess;
 }
 
@@ -62,36 +84,56 @@ extern xint64 xdescriptorevent_processor_on(xdescriptor * descriptor)
  */
 extern xint64 xdescriptorevent_processor_open(xdescriptor * descriptor)
 {
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
     xassertion(xdescriptorcheck_open(descriptor), "");
     xassertion(descriptor->process == xnil, "");
 
     xint64 n = descriptor->process(descriptor, xdescriptoreventtype_open, xnil);
-    return descriptor->on(descriptor, xdescriptoreventtype_open, xnil, n);
+    n = descriptor->on(descriptor, xdescriptoreventtype_open, xnil, n);
+
+    xlogfunction_end("%s(...) => %ld", __func__, n);
+    return n;
 }
 
 extern xint64 xdescriptorevent_processor_out(xdescriptor * descriptor)
 {
+    xlogfunction_start("%s(%p)", descriptor);
+
     if(xdescriptorcheck_open(descriptor))
     {
         xint64 n = descriptor->process(descriptor, xdescriptoreventtype_out, xnil);
-        return descriptor->on(descriptor, xdescriptoreventtype_out, xnil, n);
+        n = descriptor->on(descriptor, xdescriptoreventtype_out, xnil, n);
+
+        xlogfunction_end("%s(...) => %ld", __func__, n);
+        return n;
     }
+
+    xlogfunction_end("%s(...) => %ld", __func__, xfail);
     return xfail;
 }
 
 extern xint64 xdescriptorevent_processor_in(xdescriptor * descriptor)
 {
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
     if(xdescriptorcheck_open(descriptor))
     {
         xint64 n = descriptor->process(descriptor, xdescriptoreventtype_in, xnil);
+        n = descriptor->on(descriptor, xdescriptoreventtype_in, xnil, n);
 
-        return descriptor->on(descriptor, xdescriptoreventtype_in, xnil, n);
+        xlogfunction_end("%s(...) => %ld", __func__, n);
+        return n;
     }
+
+    xlogfunction_end("%s(...) => %ld", __func__, xfail);
     return xfail;
 }
 
 extern xint64 xdescriptorevent_processor_close(xdescriptor * descriptor)
 {
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
     xassertion(descriptor->event.queue, "");
     xassertion(descriptor->status & xdescriptorstatus_register, "");
 
@@ -119,33 +161,46 @@ extern xint64 xdescriptorevent_processor_close(xdescriptor * descriptor)
         xdescriptoreventgeneratorsubscriptionlist_push(generator->queue, subscription);
     }
 
+    xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
     return xsuccess;
 }
 
 extern xint64 xdescriptorevent_processor_register(xdescriptor * descriptor)
 {
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
     if(xdescriptorcheck_open(descriptor))
     {
         xdescriptoreventsubscription * subscription = descriptor->subscription;
         xdescriptoreventgenerator * generator = subscription->generatornode.generator;
         xint64 n = xdescriptoreventgenerator_descriptor_update(generator, descriptor);
-        return descriptor->on(descriptor, xdescriptoreventtype_register, xnil, n == xsuccess);
+        n = descriptor->on(descriptor, xdescriptoreventtype_register, xnil, n == xsuccess);
+
+        xlogfunction_end("%s(...) => %ld", __func__, n);
+        return n;
     }
 
+    xlogfunction_end("%s(...) => %ld", __func__, xfail);
     return xfail;
 }
 
 extern xint64 xdescriptorevent_processor_unregister(xdescriptor * descriptor)
 {
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
     xdescriptoreventsubscription * subscription = descriptor->subscription;
     xdescriptoreventgenerator * generator = subscription->generatornode.generator;
     xdescriptoreventgenerator_descriptor_unregister(generator, descriptor);
     descriptor->on(descriptor, xdescriptoreventtype_register, xnil, xfalse);
+
+    xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
     return xsuccess;
 }
 
 extern xint64 xdescriptorevent_processor_rem(xdescriptor * descriptor)
 {
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
     if(xdescriptorcheck_rem(descriptor))
     {
         xdescriptoreventsubscription * subscription = descriptor->subscription;
@@ -173,11 +228,15 @@ extern xint64 xdescriptorevent_processor_rem(xdescriptor * descriptor)
         xdescriptoreventgenerator * generator = subscription->generatornode.generator;
         xdescriptoreventgeneratorsubscriptionlist_push(generator->queue, subscription);
     }
+
+    xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
     return xsuccess;
 }
 
 extern xint64 xdescriptorevent_processor_exception(xdescriptor * descriptor)
 {
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
     xdescriptoreventsubscription * subscription = descriptor->subscription;
     xdescriptoreventgenerator *       generator = subscription->generatornode.generator;
     xint64                                    n = xsuccess;
@@ -198,29 +257,42 @@ extern xint64 xdescriptorevent_processor_exception(xdescriptor * descriptor)
         xdescriptoreventgeneratorsubscriptionlist_push(generator->queue, subscription);
     }
 
+    xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
     return xsuccess;
 }
 
 extern xint64 xdescriptorevent_dispatch_on(xdescriptor * descriptor)
 {
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
     xdescriptoreventsubscription * subscription = descriptor->subscription;
 
     if(subscription)
     {
         if(xeventengine_descriptor_dispatch(descriptor) != xsuccess)
         {
-            return xdescriptorevent_processor_on(descriptor);
+            xint64 ret = xdescriptorevent_processor_on(descriptor);
+
+            xlogfunction_end("%s(...) => %ld", __func__, ret);
+            return ret;
         }
+
+        xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
         return xsuccess;
     }
     else
     {
-        return xdescriptorevent_processor_on(descriptor);
+        xint64 ret = xdescriptorevent_processor_on(descriptor);
+
+        xlogfunction_end("%s(...) => %ld", __func__, ret);
+        return ret;
     }
 }
 
 extern xint64 xdescriptorevent_dispatch_open(xdescriptor * descriptor)
 {
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
     xdescriptoreventsubscription * subscription = descriptor->subscription;
 
     if(xdescriptorcheck_close(descriptor) == xfalse)
@@ -231,23 +303,36 @@ extern xint64 xdescriptorevent_dispatch_open(xdescriptor * descriptor)
             {
                 if(xeventengine_descriptor_dispatch(descriptor) != xsuccess)
                 {
-                    return xdescriptorevent_processor_open(descriptor);
+                    xint64 ret = xdescriptorevent_processor_open(descriptor);
+
+                    xlogfunction_end("%s(...) => %ld", __func__, ret);
+                    return ret;
                 }
+
+                xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
                 return xsuccess;
             }
             else
             {
-                return xdescriptorevent_processor_open(descriptor);
+                xint64 ret = xdescriptorevent_processor_open(descriptor);
+
+                xlogfunction_end("%s(...) => %ld", __func__, ret);
+                return ret;
             }
         }
         // 두번 오픈이 호출된 것이다. 큰 문제는 없지만, 체크는 할 필요가 있다.
         // 이것을 호출한 것은 불필요한 로직이 호출된 것이다.
+        xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
         return xsuccess;
     }
+
+    xlogfunction_end("%s(...) => %ld", __func__, xfail);
     return xfail;
 }
 extern xint64 xdescriptorevent_dispatch_in(xdescriptor * descriptor)
 {
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
     xdescriptoreventsubscription * subscription = descriptor->subscription;
 
     if(xdescriptorcheck_open(descriptor))
@@ -268,19 +353,30 @@ extern xint64 xdescriptorevent_dispatch_in(xdescriptor * descriptor)
                         xassertion(xtrue, "implement this");
                     }
                 }
+
+                xlogfunction_end("%s(...) => %ld", __func__, n);
                 return n;
             }
+
+            xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
             return xsuccess;
         }
         else
         {
-            return xdescriptorevent_processor_in(descriptor);
+            xint64 ret = xdescriptorevent_processor_in(descriptor);
+
+            xlogfunction_end("%s(...) => %ld", __func__, ret);
+            return ret;
         }
     }
+
+    xlogfunction_end("%s(...) => %ld", __func__, xfail);
     return xfail;
 }
 extern xint64 xdescriptorevent_dispatch_out(xdescriptor * descriptor)
 {
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
     xdescriptoreventsubscription * subscription = descriptor->subscription;
 
     if(xdescriptorcheck_open(descriptor))
@@ -301,20 +397,31 @@ extern xint64 xdescriptorevent_dispatch_out(xdescriptor * descriptor)
                         xassertion(xtrue, "implement this");
                     }
                 }
+
+                xlogfunction_end("%s(...) => %ld", __func__, n);
                 return n;
             }
+
+            xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
             return xsuccess;
         }
         else
         {
-            return xdescriptorevent_processor_out(descriptor);
+            xint64 ret = xdescriptorevent_processor_out(descriptor);
+
+            xlogfunction_end("%s(...) => %ld", __func__, ret);
+            return ret;
         }
     }
+
+    xlogfunction_end("%s(...) => %ld", __func__, xfail);
     return xfail;
 }
 
 extern xint64 xdescriptorevent_dispatch_close(xdescriptor * descriptor)
 {
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
     xdescriptoreventsubscription * subscription = descriptor->subscription;
 
     if((descriptor->status & xdescriptorstatus_close) == xdescriptorstatus_void)
@@ -325,16 +432,23 @@ extern xint64 xdescriptorevent_dispatch_close(xdescriptor * descriptor)
             if(xeventengine_descriptor_dispatch(descriptor) != xsuccess)
             {
                 xdescriptorevent_processor_unregister(descriptor);
-                return xdescriptorevent_processor_close(descriptor);
+                xint64 ret = xdescriptorevent_processor_close(descriptor);
+                xlogfunction_end("%s(...) => %ld", __func__, ret);
+                return ret;
             }
+
+            xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
             return xsuccess;
         }
         else
         {
-            return xdescriptorevent_processor_close(descriptor);
+            xint64 ret = xdescriptorevent_processor_close(descriptor);
+            xlogfunction_end("%s(...) => %ld", __func__, ret);
+            return ret;
         }    
     }
     
+    xlogfunction_end("%s(...) => %ld", __func__, xfail);
     return xfail;
 }
 
@@ -344,6 +458,8 @@ extern xint64 xdescriptorevent_dispatch_close(xdescriptor * descriptor)
  */
 extern xint64 xdescriptorevent_dispatch_rem(xdescriptor * descriptor)
 {
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
     xdescriptoreventsubscription * subscription = descriptor->subscription;
 
     if((descriptor->status & xdescriptorstatus_rem) == xdescriptorstatus_void)
@@ -355,23 +471,34 @@ extern xint64 xdescriptorevent_dispatch_rem(xdescriptor * descriptor)
             {
                 xdescriptorevent_processor_unregister(descriptor);
                 xdescriptorevent_processor_close(descriptor);
-                return xdescriptorevent_processor_rem(descriptor);
+                xint64 ret = xdescriptorevent_processor_rem(descriptor);
+
+                xlogfunction_end("%s(...) => %ld", __func__, ret);
+                return ret;
             }
+
+            xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
             return xsuccess;
         }
         else
         {
             xdescriptorevent_processor_unregister(descriptor);
             xdescriptorevent_processor_close(descriptor);
-            return xdescriptorevent_processor_rem(descriptor);
+            xint64 ret = xdescriptorevent_processor_rem(descriptor);
+
+            xlogfunction_end("%s(...) => %ld", __func__, ret);
+            return ret;
         }    
     }
     
+    xlogfunction_end("%s(...) => %ld", __func__, xfail);
     return xfail;
 }
 
 extern xint64 xdescriptorevent_dispatch_exception(xdescriptor * descriptor)
 {
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
     xdescriptoreventsubscription * subscription = descriptor->subscription;
 
     if((descriptor->status & xdescriptorstatus_exception) == xdescriptorstatus_void)
@@ -382,21 +509,32 @@ extern xint64 xdescriptorevent_dispatch_exception(xdescriptor * descriptor)
             if(xeventengine_descriptor_dispatch(descriptor) != xsuccess)
             {
                 xdescriptorevent_processor_unregister(descriptor);
-                return xdescriptorevent_processor_exception(descriptor);
+                xint64 ret = xdescriptorevent_processor_exception(descriptor);
+
+                xlogfunction_end("%s(...) => %ld", __func__, ret);
+                return ret;
             }
+
+            xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
             return xsuccess;
         }
         else
         {
-            return xdescriptorevent_processor_exception(descriptor);
+            xint64 ret = xdescriptorevent_processor_exception(descriptor);
+
+            xlogfunction_end("%s(...) => %ld", __func__, ret);
+            return ret;
         }    
     }
     
+    xlogfunction_end("%s(...) => %ld", __func__, xfail);
     return xfail;
 }
 
 extern xint64 xdescriptorclose(xdescriptor * descriptor)
 {
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
     if(descriptor->handle.f >= 0)
     {
         int ret = close(descriptor->handle.f);
@@ -404,11 +542,15 @@ extern xint64 xdescriptorclose(xdescriptor * descriptor)
         descriptor->handle.f = xinvalid;
         descriptor->status |= xdescriptorstatus_close;
     }
+
+    xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
     return xsuccess;
 }
 
 extern xint64 xdescriptorread(xdescriptor * descriptor, void * buffer, xuint64 size)
 {
+    xlogfunction_start("%s(%p, %p, %lu)", __func__, descriptor, buffer, size);
+
     if(xdescriptorcheck_open(descriptor))
     {
         if(buffer && size)
@@ -417,6 +559,8 @@ extern xint64 xdescriptorread(xdescriptor * descriptor, void * buffer, xuint64 s
             if(n > 0)
             {
                 descriptor->status |= xdescriptorstatus_in;
+
+                xlogfunction_end("%s(...) => %ld", __func__, n);
                 return n;
             }
             else if(n == 0)
@@ -424,6 +568,8 @@ extern xint64 xdescriptorread(xdescriptor * descriptor, void * buffer, xuint64 s
                 descriptor->status |= xdescriptorstatus_exception;
                 descriptor->exception.func = read;
                 descriptor->exception.number = 0;
+
+                xlogfunction_end("%s(...) => %ld", __func__, xfail);
                 return xfail;
             }
             else
@@ -433,22 +579,31 @@ extern xint64 xdescriptorread(xdescriptor * descriptor, void * buffer, xuint64 s
                     descriptor->status |= xdescriptorstatus_exception;
                     descriptor->exception.func = read;
                     descriptor->exception.number = errno;
+
+                    xlogfunction_end("%s(...) => %ld", __func__, xfail);
                     return xfail;
                 }
                 descriptor->status &= (~xdescriptorstatus_in);
+
+                xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
                 return xsuccess;
             }
         }
         else
         {
+            xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
             return xsuccess;
         }
     }
+
+    xlogfunction_end("%s(...) => %ld", __func__, xfail);
     return xfail;
 }
 
 extern xint64 xdescriptorwrite(xdescriptor * descriptor, const void * data, xuint64 len)
 {
+    xlogfunction_start("%s(%p, %p, %lu)", __func__, descriptor, data, len);
+
     if(xdescriptorcheck_open(descriptor))
     {
         if(data && len)
@@ -458,11 +613,15 @@ extern xint64 xdescriptorwrite(xdescriptor * descriptor, const void * data, xuin
             if(n > 0)
             {
                 descriptor->status |= xdescriptorstatus_out;
+
+                xlogfunction_end("%s(...) => %ld", __func__, n);
                 return n;
             }
             else if(n == 0)
             {
                 xassertion(n == 0, "check this");
+
+                xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
                 return xsuccess;
             }
             else
@@ -472,22 +631,31 @@ extern xint64 xdescriptorwrite(xdescriptor * descriptor, const void * data, xuin
                     descriptor->status |= xdescriptorstatus_exception;
                     descriptor->exception.func = write;
                     descriptor->exception.number = errno;
+
+                    xlogfunction_end("%s(...) => %ld", __func__, xfail);
                     return xfail;
                 }
                 descriptor->status &= (~xdescriptorstatus_out);
+
+                xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
                 return xsuccess;
             }
         }
         else
         {
+            xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
             return xsuccess;
         }
     }
+
+    xlogfunction_end("%s(...) => %ld", __func__, xfail);
     return xfail;
 }
 
 extern xint32 xdescriptornonblock_set(xdescriptor * descriptor, xint32 on)
 {
+    xlogfunction_start("%s(%p, %d)", __func__, descriptor, on);
+
     xassertion(descriptor == xnil || descriptor->handle.f < 0, "");
 
     int mask = fcntl(descriptor->handle.f, F_GETFL, 0);
@@ -496,6 +664,8 @@ extern xint32 xdescriptornonblock_set(xdescriptor * descriptor, xint32 on)
         descriptor->exception.func   = fcntl;
         descriptor->exception.number = errno;
         descriptor->status          |= xdescriptorstatus_exception;
+
+        xlogfunction_end("%s(...) => %d", __func__, xfail);
         return xfail;
     }
     if(on)
@@ -512,7 +682,10 @@ extern xint32 xdescriptornonblock_set(xdescriptor * descriptor, xint32 on)
         descriptor->exception.number = errno;
         descriptor->status          |= xdescriptorstatus_exception;
 
+        xlogfunction_end("%s(...) => %d", __func__, xfail);
         return xfail;
     }
+
+    xlogfunction_end("%s(...) => %d", __func__, xsuccess);
     return xsuccess;
 }

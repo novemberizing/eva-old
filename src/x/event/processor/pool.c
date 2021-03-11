@@ -30,6 +30,7 @@
  */
 extern xeventprocessorpool * xeventprocessorpool_new(xeventengine * engine, xuint64 n)
 {
+    xlogfunction_start("%s(%p, %lu)", __func__, engine, n);
     xassertion(engine == xnil, "");
 
     xeventprocessorpool * o = (xeventprocessorpool *) calloc(sizeof(xeventprocessorpool), 1);
@@ -38,6 +39,7 @@ extern xeventprocessorpool * xeventprocessorpool_new(xeventengine * engine, xuin
 
     xeventprocessorpool_add(o, n);
 
+    xlogfunction_end("%s(...) => %p", __func__, o);
     return o;
 }
 
@@ -59,12 +61,14 @@ extern xeventprocessorpool * xeventprocessorpool_new(xeventengine * engine, xuin
  */
 extern xeventprocessorpool * xeventprocessorpool_rem(xeventprocessorpool * pool)
 {
+    xlogfunction_start("%s(%p)", __func__, pool);
     if(pool)
     {
         xassertion(!xeventprocessorpool_removable(pool), "");
 
         free(pool);
     }
+    xlogfunction_end("%s() => %p", __func__, xnil);
     return xnil;
 }
 
@@ -88,10 +92,12 @@ extern xeventprocessorpool * xeventprocessorpool_rem(xeventprocessorpool * pool)
  */
 extern void xeventprocessorpool_add(xeventprocessorpool * pool, xuint64 n)
 {
+    xlogfunction_start("%s(%p, %lu)", __func__, pool, n);
     for(xuint64 i = 0; i < n; i++)
     {
         xeventprocessor_new(pool);
     }
+    xlogfunction_end("%s(...)", __func__);
 }
 
 /**
@@ -114,6 +120,7 @@ extern void xeventprocessorpool_add(xeventprocessorpool * pool, xuint64 n)
  */
 extern void xeventprocessorpool_del(xeventprocessorpool * pool, xuint64 n)
 {
+    xlogfunction_start("%s(%p, %lu)", __func__, pool, n);
     xeventprocessor * processor = pool->head;
     for(xuint64 i = 0; i < n && processor; i++)
     {
@@ -126,6 +133,8 @@ extern void xeventprocessorpool_del(xeventprocessorpool * pool, xuint64 n)
     }
 
     xeventprocessor_wakeup(pool->engine, xtrue);
+
+    xlogfunction_end("%s(...)", __func__);
 }
 
 /**
@@ -144,17 +153,26 @@ extern void xeventprocessorpool_del(xeventprocessorpool * pool, xuint64 n)
  */
 extern xint32 xeventprocessorpool_removable(xeventprocessorpool * pool)
 {
-    return pool == xnil || (pool->size == 0);
+    xlogfunction_start("%s(%p)", __func__, pool);
+    xint32 ret = (pool == xnil || (pool->size == 0));
+
+    xlogfunction_end("%s(...) => %d", __func__, ret);
+    return ret;
 }
 
 extern xuint64 xeventprocessorpool_size(xeventprocessorpool * pool)
 {
-    return pool ? pool->size : 0;
+    xlogfunction_start("%s(%p)", __func__, pool);
+    xuint64 ret = (pool ? pool->size : 0);
+    xlogfunction_end("%s(...) => %lu", ret);
 }
 
 extern void xeventprocessorpool_on(xeventprocessorpool * pool)
 {
+    xlogfunction_start("%s(%p)", __func__, pool);
     // 프로세서는 생성과 동시에 실행이 된다.
+
+    xlogfunction_end("%s(...)", __func__);
 }
 
 /**
@@ -164,6 +182,7 @@ extern void xeventprocessorpool_on(xeventprocessorpool * pool)
  */
 extern void xeventprocessorpool_sync(xeventprocessorpool * pool, xint32 on)
 {
+    xlogfunction_start("%s(%p, %d)", __func__, pool, on);
     if(on)
     {
         xassertion(pool == xnil, "");
@@ -171,4 +190,5 @@ extern void xeventprocessorpool_sync(xeventprocessorpool * pool, xint32 on)
     else
     {
     }
+    xlogfunction_end("%s(...)", __func__);
 }

@@ -26,12 +26,15 @@ const static xuint64 xstreambuffer_capacity_page = 4096;    /**!< 메모리 공�
  */
 extern xstreambuffer * xstreambuffer_new(void)
 {
+    xlogfunction_start("%s()", __func__);
     xstreambuffer * o = (xstreambuffer *) calloc(sizeof(xstreambuffer), 1);
 
     o->type     = xstreamtype_buffer;
     o->rem      = xstreambuffer_rem;
     o->capacity = xstreambuffer_capacity_page;
     o->buffer   = malloc(o->capacity);
+
+    xlogfunction_end("%s(...) => %p", __func__, o);
     return o;
 }
 
@@ -51,6 +54,7 @@ extern xstreambuffer * xstreambuffer_new(void)
  */
 extern xstreambuffer * xstreambuffer_rem(xstreambuffer * o)
 {
+    xlogfunction_start("%s(%p)", __func__, o);
     xassertion(o->rem != xstreambuffer_rem, "");
 
     if(o->buffer)
@@ -59,6 +63,7 @@ extern xstreambuffer * xstreambuffer_rem(xstreambuffer * o)
     }
     free(o);
 
+    xlogfunction_end("%s(...) => %p", __func__, xnil);
     return xnil;
 }
 
@@ -76,7 +81,11 @@ extern xstreambuffer * xstreambuffer_rem(xstreambuffer * o)
  */
 extern xbyte * xstreambuffer_back(xstreambuffer * o)
 {
-    return o->size == o->capacity ? xnil : xaddressof(o->buffer[o->size]);
+    xlogfunction_start("%s(%p)", __func__, o);
+    xbyte * ret = (o->size == o->capacity ? xnil : xaddressof(o->buffer[o->size]));
+
+    xlogfunction_end("%s(...) => %p", __func__, ret);
+    return ret;
 }
 
 /**
@@ -92,7 +101,11 @@ extern xbyte * xstreambuffer_back(xstreambuffer * o)
  */
 extern xbyte * xstreambuffer_front(xstreambuffer * o)
 {
-    return xaddressof(o->buffer[o->position]);
+    xlogfunction_start("%s(%p)", __func__, o);
+    xbyte * ret = xaddressof(o->buffer[o->position]);
+
+    xlogfunction_end("%s(...) => %p", __func__, ret);
+    return ret;
 }
 
 /**
@@ -111,7 +124,11 @@ extern xbyte * xstreambuffer_front(xstreambuffer * o)
  */
 extern xuint64 xstreambuffer_remain(xstreambuffer * o)
 {
-    return o->capacity - o->size;
+    xlogfunction_start("%s(%p)", __func__, o);
+    xuint64 ret = (o->capacity - o->size);
+
+    xlogfunction_end("%s(...) => %lu", __func__, ret);
+    return ret;
 }
 
 /**
@@ -127,7 +144,11 @@ extern xuint64 xstreambuffer_remain(xstreambuffer * o)
  */
 extern xuint64 xstreambuffer_len(xstreambuffer * o)
 {
-    return o->size - o->position;
+    xlogfunction_start("%s(%p)", __func__, o);
+    xuint64 ret = (o->size - o->position);
+
+    xlogfunction_end("%s(...) => %lu", __func__, ret);
+    return ret;
 }
 
 /**
@@ -151,6 +172,7 @@ extern xuint64 xstreambuffer_len(xstreambuffer * o)
  */
 extern xuint64 xstreambuffercapacity_set(xstreambuffer * o, xuint64 v)
 {
+    xlogfunction_start("%s(%p, %lu)", __func__, o, v);
     xassertion(v < o->size, "");
 
     xuint64 capacity = (v / xstreambuffer_capacity_page + 1) * xstreambuffer_capacity_page;
@@ -169,6 +191,7 @@ extern xuint64 xstreambuffercapacity_set(xstreambuffer * o, xuint64 v)
 
     o->capacity = capacity;
 
+    xlogfunction_end("%s(...) => %lu", __func__, capacity);
     return capacity;
 }
 
@@ -206,9 +229,13 @@ extern xuint64 xstreambuffercapacity_get(xstreambuffer * o)
  */
 extern xuint64 xstreambuffersize_set(xstreambuffer * o, xuint64 n)
 {
-    xassertion(o->capacity < n, "");
+    xlogfunction_start("%s(%p, %lu)", __func__, o, n);
 
-    return o->size = n;
+    xassertion(o->capacity < n, "");
+    xuint64 ret = (o->size = n);
+
+    xlogfunction_end("%s(...) => %lu", __func__, ret);
+    return ret;
 }
 
 /**
@@ -239,9 +266,13 @@ extern xuint64 xstreambuffersize_get(xstreambuffer * o)
  */
 extern xuint64 xstreambufferpos_set(xstreambuffer * o, xuint64 n)
 {
-    xassertion(o->size < n, "");
+    xlogfunction_start("%s(%p, %lu)", __func__, o, n);
 
-    return o->position = n;
+    xassertion(o->size < n, "");
+    xuint64 ret = (o->position = n);
+
+    xlogfunction_end("%s(...) => %lu", __func__, ret);
+    return ret;
 }
 
 /**
@@ -277,6 +308,8 @@ extern xuint64 xstreambufferpos_get(xstreambuffer * o)
  */
 extern xuint64 xstreambuffer_adjust(xstreambuffer * o, xint32 force)
 {
+    xlogfunction_start("%s(%p, %d)", __func__, o, force);
+
     xuint64 len = o->size - o->position;
     if(o->position > 0)
     {
@@ -301,11 +334,16 @@ extern xuint64 xstreambuffer_adjust(xstreambuffer * o, xint32 force)
             o->size = 0;
         }
     }
-    return o->capacity - o->size;
+
+    xuint64 ret = o->capacity - o->size;
+
+    xlogfunction_end("%s(...) => %lu", __func__, ret);
+    return ret;
 }
 
 extern xuint64 xstreambuffer_push(xstreambuffer * o, const xbyte * data, xuint64 len)
 {
+    xlogfunction_start("%s(%p, %p, %lu)", __func__, o, data, len);
     // TODO: 최적화를 수행하가면서 데이터를 삽입하도록 한다.
     if(len < o->position + (o->capacity - o->size))
     {
@@ -318,5 +356,8 @@ extern xuint64 xstreambuffer_push(xstreambuffer * o, const xbyte * data, xuint64
     memcpy(xaddressof(o->buffer[o->size]), data, len);
     o->size = o->size + len;
 
-    return (o->size - o->position);
+    xuint64 ret = (o->size - o->position);
+
+    xlogfunction_end("%s(...) => %lu", __func__, ret);
+    return ret;
 }

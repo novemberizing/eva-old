@@ -29,11 +29,13 @@
  */
 extern xeventprocessor_event * xeventprocessor_event_new(xeventprocessor_event_handler handler, xeventprocessor * processor)
 {
+    xlogfunction_start("%s(%p, %p)", __func__, handler, processor);
     xeventprocessor_event * o = (xeventprocessor_event *) calloc(sizeof(xeventprocessor_event), 1);
 
     o->on        = handler;
     o->processor = processor;
 
+    xlogfunction_end("%s(...) => %p", __func__, o);
     return o;
 }
 
@@ -49,6 +51,7 @@ extern xeventprocessor_event * xeventprocessor_event_new(xeventprocessor_event_h
  */
 extern void xeventprocessor_event_handler_rem(xeventprocessor_event * event)
 {
+    xlogfunction_start("%s(%p)", __func__, event);
     xeventprocessor * processor = event->processor;
     
     if(xthreadcheck_rem((xthread *) processor))
@@ -63,4 +66,5 @@ extern void xeventprocessor_event_handler_rem(xeventprocessor_event * event)
         xeventengine * engine = pool->engine;
         xeventengine_main_push(engine, (xevent *) event);
     }
+    xlogfunction_end("%s(...)", __func__);
 }

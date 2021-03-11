@@ -10,6 +10,8 @@
 
 extern xint64 xsocketcreate(xsocket * o)
 {
+    xlogfunction_start("%s(%p)", __func__, o);
+
     xassertion(o == xnil, "");
     if(o->handle.f < 0)
     {
@@ -17,12 +19,16 @@ extern xint64 xsocketcreate(xsocket * o)
         if(o->handle.f >= 0)
         {
             o->status |= xsocketstatus_create;
+
+            xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
             return xsuccess;
         }
         else
         {
             o->status |= xsocketstatus_exception;
             xexceptionset(xaddressof(o->exception), socket, errno, 0, "");
+
+            xlogfunction_end("%s(...) => %ld", __func__, xfail);
             return xfail;
         }
     }
@@ -32,11 +38,14 @@ extern xint64 xsocketcreate(xsocket * o)
         o->status |= xsocketstatus_create;
     }
 
+    xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
     return xsuccess;
 }
 
 extern xint64 xsocketbind(xsocket * o, void * addr, xuint32 addrlen)
 {
+    xlogfunction_start("%s(%p, %p, %u)", __func__, o, addr, addrlen);
+
     xassertion(o == xnil, "");
     xassertion(o->handle.f < 0 || (o->status & xsocketstatus_create) == xsocketstatus_void, "");
 
@@ -49,23 +58,32 @@ extern xint64 xsocketbind(xsocket * o, void * addr, xuint32 addrlen)
             if(ret == xsuccess)
             {
                 o->status |= xsocketstatus_bind;
+
+                xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
                 return xsuccess;
             }
             else
             {
                 o->status |= xsocketstatus_exception;
                 xexceptionset(xaddressof(o->exception), bind, errno, 0, "");
+
+                xlogfunction_end("%s(...) => %ld", __func__, xfail);
                 return xfail;
             }
         }
 
+        xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
         return xsuccess;
     }
+
+    xlogfunction_end("%s(...) => %ld", __func__, xfail);
     return xfail;
 }
 
 extern xint64 xsocketlisten(xsocket * o, xint32 backlog)
 {
+    xlogfunction_start("%s(%p, %d)", __func__, o, backlog);
+
     xassertion(o == xnil, "");
     xassertion(o->handle.f < 0 || (o->status & xsocketstatus_create) == xsocketstatus_void, "");
     xassertion((o->status & xsocketstatus_bind) == xsocketstatus_void, "");
@@ -82,37 +100,62 @@ extern xint64 xsocketlisten(xsocket * o, xint32 backlog)
             if(ret == xsuccess)
             {
                 o->status |= xsocketstatus_listen;
+
+                xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
                 return xsuccess;
             }
             else
             {
                 o->status |= xsocketstatus_exception;
                 xexceptionset(xaddressof(o->exception), listen, errno, 0, "");
+
+                xlogfunction_end("%s(...) => %ld", __func__, xfail);
                 return xfail;
             }
         }
+
+        xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
         return xsuccess;
     }
+
+    xlogfunction_end("%s(...) => %ld", __func__, xfail);
     return xfail;
 }
 
 extern xint64 xsocketread(xsocket * o, void * buffer, xuint64 size)
 {
-    return xdescriptorread((xdescriptor *) o, buffer, size);
+    xlogfunction_start("%s(%p, %p, %lu)", __func__, o, buffer, size);
+
+    xint64 ret = xdescriptorread((xdescriptor *) o, buffer, size);
+
+    xlogfunction_end("%s(...) => %ld", __func__, ret);
+    return ret;
 }
 
 extern xint64 xsocketwrite(xsocket * o, const void * data, xuint64 len)
 {
-    return xdescriptorwrite((xdescriptor *) o, data, len);
+    xlogfunction_start("%s(%p, %p, %lu)", __func__, o, data, len);
+
+    xint64 ret = xdescriptorwrite((xdescriptor *) o, data, len);
+
+    xlogfunction_end("%s(...) => %ld", __func__, ret);
+    return ret;
 }
 
 extern xint64 xsocketclose(xsocket * o)
 {
-    return xdescriptorclose((xdescriptor *) o);
+    xlogfunction_start("%s(%p)", __func__, o);
+
+    xint64 ret = xdescriptorclose((xdescriptor *) o);
+
+    xlogfunction_end("%s(...) => %ld", __func__, ret);
+    return ret;
 }
 
 extern xint64 xsocketshutdown(xsocket * o, xuint32 how)
 {
+    xlogfunction_start("%s(%p, %u)", __func__, o, how);
+
     if(how == xsocketeventtype_offin)
     {
         if((o->status & xsocketstatus_offin) == xsocketstatus_void)
@@ -121,15 +164,21 @@ extern xint64 xsocketshutdown(xsocket * o, xuint32 how)
             if(ret == xsuccess)
             {
                 o->status |= xsocketstatus_offin;
+
+                xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
                 return xsuccess;
             }
             else
             {
                 o->status |= xsocketstatus_exception;
                 xexceptionset(xaddressof(o->exception), shutdown, errno, 0, "");
+
+                xlogfunction_end("%s(...) => %ld", __func__, xfail);
                 return xfail;
             }
         }
+
+        xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
         return xsuccess;
     }
     else if(how == xsocketeventtype_offout)
@@ -140,15 +189,21 @@ extern xint64 xsocketshutdown(xsocket * o, xuint32 how)
             if(ret == xsuccess)
             {
                 o->status |= xsocketstatus_offin;
+
+                xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
                 return xsuccess;
             }
             else
             {
                 o->status |= xsocketstatus_exception;
                 xexceptionset(xaddressof(o->exception), shutdown, errno, 0, "");
+
+                xlogfunction_end("%s(...) => %ld", __func__, xfail);
                 return xfail;
             }
         }
+
+        xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
         return xsuccess;
     }
     else if(how == xsocketeventtype_offall)
@@ -159,26 +214,36 @@ extern xint64 xsocketshutdown(xsocket * o, xuint32 how)
             if(ret == xsuccess)
             {
                 o->status |= xsocketstatus_offin;
+
+                xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
                 return xsuccess;
             }
             else
             {
                 o->status |= xsocketstatus_exception;
                 xexceptionset(xaddressof(o->exception), shutdown, errno, 0, "");
+
+                xlogfunction_end("%s(...) => %ld", __func__, xfail);
                 return xfail;
             }
         }
+
+        xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
         return xsuccess;
     }
     else
     {
         xassertion(xtrue, "");
     }
+
+    xlogfunction_end("%s(...) => %ld", __func__, xfail);
     return xfail;
 }
 
 extern xint64 xsocketconnect(xsocket * o, void * addr, xuint32 addrlen)
 {
+    xlogfunction_start("%s(%p, %p, %u)", __func__, o, addr, addrlen);
+
     xassertion(o == xnil, "");
     xassertion(o->handle.f < 0, "");
     xassertion((o->status & xsocketstatus_create) == xsocketstatus_void, "");
@@ -191,6 +256,8 @@ extern xint64 xsocketconnect(xsocket * o, void * addr, xuint32 addrlen)
             if(ret == xsuccess)
             {
                 o->status |= xsocketstatus_connect;
+
+                xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
                 return xsuccess;
             }
             else
@@ -199,19 +266,29 @@ extern xint64 xsocketconnect(xsocket * o, void * addr, xuint32 addrlen)
                 {
                     o->status |= xsocketstatus_exception;
                     xexceptionset(xaddressof(o->exception), connect, errno, 0, "");
+
+                    xlogfunction_end("%s(...) => %ld", __func__, xfail);
                     return xfail;
                 }
                 o->status |= xsocketstatus_connecting;
+
+                xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
                 return xsuccess;
             }
         }
+
+        xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
         return xsuccess;
     }
+
+    xlogfunction_end("%s(...) => %ld", __func__, xfail);
     return xfail;
 }
 
 extern xint32 xsocketresuseaddr_set(xsocket * o, xint32 on)
 {
+    xlogfunction_start("%s(%p, %d)", __func__, o, on);
+
     xassertion(o == xnil, "");
     xassertion(o->handle.f < 0 || (o->status & xsocketstatus_create) == xsocketstatus_void, "");
 
@@ -223,12 +300,17 @@ extern xint32 xsocketresuseaddr_set(xsocket * o, xint32 on)
         o->exception.number = errno;
         o->status |= xsocketstatus_exception;
 
+        xlogfunction_end("%s(...) => %d", __func__, xfail);
         return xfail;
     }
 
+    xlogfunction_end("%s(...) => %d", __func__, xsuccess);
     return xsuccess;
 }
 
+/**
+ * DO NOT LOGGING
+ */
 extern const char * xsocketeventtype_str(xuint32 event)
 {
     switch(event)

@@ -40,12 +40,18 @@
  */
 extern xsync * xsyncnew(xuint32 type)
 {
+    xlogfunction_start("%s(%u)", __func__, type);
+
+    xsync * ret = xnil;
     switch(type)
     {
-        case xsynctype_mutex:   return (xsync *) xsyncposixmutex_new();
+        case xsynctype_mutex:   ret = (xsync *) xsyncposixmutex_new();  break;
+        default:                xassertion(xtrue, "");                  break;
     }
 
-    xassertion(xtrue, "");
+    xlogfunction_end("%s(...) => %p", __func__, ret);
+
+    return ret;
 }
 
 /**
@@ -65,7 +71,12 @@ extern xsync * xsyncnew(xuint32 type)
  */
 extern xsync * xsyncrem(xsync * o)
 {
-    return o ? o->rem(o) : xnil;
+    xlogfunction_start("%s(%p)", __func__, o);
+
+    xsync * ret = (o ? o->rem(o) : xnil);
+
+    xlogfunction_end("%s(...) => %p", __func__, ret);
+    return ret;
 }
 
 /**
@@ -87,11 +98,19 @@ extern xsync * xsyncrem(xsync * o)
  */
 extern xsync * xsynccondinit(xsync * o)
 {
+    xlogfunction_start("%s(%p)", __func__, o);
+    xsync * ret = xnil;
     if(o->rem == (xsyncdestructor) xsyncposixmutex_rem)
     {
-        return (xsync *) xsyncposixcond_init((xsyncposixmutex *) o);
+        ret = (xsync *) xsyncposixcond_init((xsyncposixmutex *) o);
     }
-    xassertion(xtrue, "");
+    else
+    {
+        xassertion(xtrue, "");
+    }
+    xlogfunction_end("%s(...) => %p", ret);
+
+    return ret;
 }
 
 /**
@@ -115,9 +134,18 @@ extern xsync * xsynccondinit(xsync * o)
  */
 extern xsync * xsynccondterm(xsync * o)
 {
+    xlogfunction_start("%s(%p)", __func__, o);
+
+    xsync * ret = xnil;
     if(o->rem == (xsyncdestructor) xsyncposixmutex_rem)
     {
-        return (xsync *) xsyncposixcond_term((xsyncposixmutex *) o);
+        ret = (xsync *) xsyncposixcond_term((xsyncposixmutex *) o);
     }
-    xassertion(xtrue, "");
+    else
+    {
+        xassertion(xtrue, "");
+    }
+
+    xlogfunction_end("%s(...) => %p", __func__, ret);
+    return ret;
 }

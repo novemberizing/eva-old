@@ -22,10 +22,12 @@
  */
 extern xeventqueue * xeventqueue_new(void)
 {
+    xlogfunction_start("%s()", __func__);
     xeventqueue * queue = (xeventqueue *) calloc(sizeof(xeventqueue), 1);
 
     xassertion(queue == xnil, "");
 
+    xlogfunction_end("%s(...) => %p", __func__, queue);
     return queue;
 }
 
@@ -47,12 +49,15 @@ extern xeventqueue * xeventqueue_new(void)
  */
 extern xeventqueue * xeventqueue_rem(xeventqueue * queue)
 {
+    xlogfunction_start("%s(%p)", __func__, queue);
     if(queue)
     {
         xassertion(queue->size > 0, "");
 
         queue->sync = xsyncrem(queue->sync);
     }
+
+    xlogfunction_end("%s(...) => %p", __func__, queue);
     return xnil;
 }
 

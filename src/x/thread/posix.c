@@ -35,6 +35,8 @@ static void * xthreadposix_routine(void * o);
  */
 extern xthreadposix * xthreadposix_rem(xthreadposix * o)
 {
+    xlogfunction_start("%s(%p)", __func__, o);
+
     xassertion(o == xnil, "");
     xassertion(xthreadcheck_rem((xthread *) o) == xfalse, "");
 
@@ -53,6 +55,8 @@ extern xthreadposix * xthreadposix_rem(xthreadposix * o)
         }
     }
     free(o);
+
+    xlogfunction_end("%s(...) => %p", __func__, xnil);
     return xnil;
 }
 
@@ -82,10 +86,14 @@ extern xthreadposix * xthreadposix_rem(xthreadposix * o)
  */
 extern void xthreadposix_cancel(xthreadposix * o, xthreadposixfunc callback)
 {
+    xlogfunction_start("%s(%p, %p)", __func__, o, callback);
+
     if(o->handle)
     {
         o->cancel = callback;
     }
+
+    xlogfunction_end("%s(...)");
 }
 
 /**
@@ -108,6 +116,8 @@ extern void xthreadposix_cancel(xthreadposix * o, xthreadposixfunc callback)
  */
 extern void xthreadposix_run(xthreadposix * o)
 {
+    xlogfunction_start("%s(%p)", __func__, o);
+
     xassertion(o->handle, "");
 
     o->handle = calloc(sizeof(pthread_t), 1);
@@ -122,6 +132,8 @@ extern void xthreadposix_run(xthreadposix * o)
         o->status &= (~xthreadstatus_on);
         o->handle = xobjectrem(o->handle);
     }
+
+    xlogfunction_end("%s(...)", __func__);
 }
 
 /**
@@ -139,6 +151,7 @@ extern void xthreadposix_run(xthreadposix * o)
  */
 static void * xthreadposix_routine(void * o)
 {
+    xlogfunction_start("%s(%p)", __func__, o);
     xthreadposix * thread = (xthreadposix *) o;
 
     thread->func(thread);
@@ -151,6 +164,7 @@ static void * xthreadposix_routine(void * o)
         thread->cancel = xnil;
     }
 
+    xlogfunction_end("%s(...) => %p", __func__, xnil);
     return xnil;
 }
 
@@ -169,5 +183,9 @@ static void * xthreadposix_routine(void * o)
  */
 extern xuint64 xthreadposix_id(void)
 {
-    return pthread_self();
+    xlogfunction_start("%s()", __func__);
+    xuint64 ret = pthread_self();
+    xlogfunction_end("%s(...) => %lu", __func__, ret);
+
+    return ret;
 }
