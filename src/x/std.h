@@ -54,6 +54,17 @@ typedef void *              xhandle;            /**!< 핸들 타입입니다. */
 typedef void *              xobject;            /**!< 객체 타입입니다. */
 typedef unsigned char       xbyte;              /**!< 바이트 타입 */
 
+union xval;
+
+typedef union xval xval;
+
+union xval
+{
+    void *  p;
+    xint64  i64;
+    xuint64 u64;
+};
+
 
 /**
  * @def         xcheck(condition, format, ...)

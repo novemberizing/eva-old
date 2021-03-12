@@ -68,6 +68,7 @@ extern xint64 xdescriptorevent_processor_on(xdescriptor * descriptor)
 
     xdescriptorevent_processor_out(descriptor);
     xdescriptorevent_processor_in(descriptor);
+    xdescriptorevent_processor_out(descriptor);
 
     if((descriptor->status & (xdescriptorstatus_in | xdescriptorstatus_out)) != (xdescriptorstatus_in | xdescriptorstatus_out))
     {

@@ -8,10 +8,14 @@
 #include "console/descriptor.h"
 
 static xconsoledescriptor * xconsoledescriptor_rem(xconsoledescriptor * descriptor);
+static void xconsoledescriptoreventhandler_all(xconsoledescriptorevent * event);
 
 static xint64 xconsoledescriptorprocessor_input(xconsoledescriptor * descriptor, xuint32 event, void * parameter);
 static xint64 xconsoledescriptorsubscriber_input(xconsoledescriptor * descriptor, xuint32 event, void * parameter, xint64 val);
 static xint32 xconsoledescriptorcheck_input(xconsoledescriptor * descriptor, xuint32 event);
+
+static void xconsoledescriptoreventhandler_input(xconsoledescriptorevent * event);
+
 
 static xconsoledescriptor consoledescriptor_in = {
     /** INHERITED EVENT TARGET */
@@ -35,6 +39,8 @@ static xconsoledescriptor consoledescriptor_in = {
 static xint64 xconsoledescriptorprocessor_output(xconsoledescriptor * descriptor, xuint32 event, void * parameter);
 static xint64 xconsoledescriptorsubscriber_output(xconsoledescriptor * descriptor, xuint32 event, void * parameter, xint64 val);
 static xint32 xconsoledescriptorcheck_output(xconsoledescriptor * descriptor, xuint32 event);
+
+static void xconsoledescriptoreventhandler_output(xconsoledescriptorevent * event);
 
 static xconsoledescriptor consoledescriptor_out = {
     /** INHERITED EVENT TARGET */
@@ -112,6 +118,9 @@ extern xdescriptor * xconsoledescriptorin_get(void)
         consoledescriptorsingleton_in = xaddressof(consoledescriptor_in);
         consoledescriptorsingleton_in->handle.f = STDIN_FILENO;
         consoledescriptorsingleton_in->event.descriptor = xaddressof(consoledescriptor_in);
+
+        consoledescriptorsingleton_in->event.on = xconsoledescriptoreventhandler_input;
+
         consoledescriptorsingleton_in->status = (xdescriptorstatus_open | xdescriptorstatus_out);
         consoledescriptorsingleton_in->console = xaddressof(console);
         // TODO: 사용자가 버퍼를 생성할 수 있도록 하자.
@@ -132,6 +141,9 @@ extern xdescriptor * xconsoledescriptorout_get(void)
         consoledescriptorsingleton_out = xaddressof(consoledescriptor_out);
         consoledescriptorsingleton_out->handle.f = STDOUT_FILENO;
         consoledescriptorsingleton_out->event.descriptor = xaddressof(consoledescriptor_out);
+
+        consoledescriptorsingleton_out->event.on = xconsoledescriptoreventhandler_output;
+
         consoledescriptorsingleton_out->status = (xdescriptorstatus_open | xdescriptorstatus_out | xdescriptorstatus_in);
         consoledescriptorsingleton_out->console = xaddressof(console);
         // TODO: 사용자가 버퍼를 생성할 수 있도록 하자.
@@ -556,8 +568,81 @@ extern void xconsoleout_flush(void)
 extern void xconsolein_flush(void)
 {
     xlogfunction_start("%s()", __func__);
+
     xconsoledescriptor * descriptor = (xconsoledescriptor *) xconsoledescriptorin_get();
     xstreamclear(descriptor->stream);
 
     xlogfunction_end("%s(...)", __func__);
+}
+
+static void xconsoledescriptoreventhandler_all(xconsoledescriptorevent * event)
+{
+    xlogfunction_start("%s(%p)", __func__, event);
+    
+    xdescriptor * descriptor = (xdescriptor *) event->descriptor;
+
+    xassertion(descriptor == xnil, "");
+
+    if(xdescriptorcheck_close(descriptor))
+    {
+        xdescriptorevent_processor_unregister(descriptor);
+        xdescriptorevent_processor_close(descriptor);
+        xlogfunction_end("%s(...)", __func__);
+        return;
+    }
+    else if((descriptor->status & xdescriptorstatus_open) == xdescriptorstatus_void)
+    {
+        xassertion(xtrue, "not support open");
+        // xdescriptorevent_processor_open(descriptor);
+    }
+
+    xdescriptor * out = xconsoledescriptorout_get();
+
+    if(out->status & xdescriptorstatus_flush)
+    {
+        xdescriptorevent_processor_out(descriptor);
+    }
+    else
+    {
+        xdescriptorevent_processor_in(descriptor);
+    }
+
+    if((descriptor->status & (xdescriptorstatus_in | xdescriptorstatus_out)) != (xdescriptorstatus_in | xdescriptorstatus_out))
+    {
+        xdescriptorevent_processor_register(descriptor);
+    }
+
+    if(xdescriptorcheck_close(descriptor))
+    {
+        xdescriptorevent_processor_unregister(descriptor);
+        xdescriptorevent_processor_close(descriptor);
+
+        xlogfunction_end("%s(...) => %d", __func__);
+        return;
+    }
+
+    xlogfunction_end("%s(...)", __func__);
+}
+
+static void xconsoledescriptoreventhandler_input(xconsoledescriptorevent * event)
+{
+    xlogfunction_start("%s(%p)", __func__, event);
+
+    xconsoledescriptoreventhandler_all(event);
+
+    xlogfunction_end("%s(...)", __func__);
+}
+
+static void xconsoledescriptoreventhandler_output(xconsoledescriptorevent * event)
+{
+    xlogfunction_start("%s(%p)", __func__, event);
+
+    xconsoledescriptoreventhandler_all(event);
+
+    xlogfunction_end("%s(...)", __func__);
+}
+
+extern xstream * xconsoledescriptorstream_get(xconsoledescriptor * descriptor)
+{
+    return descriptor->stream;
 }
