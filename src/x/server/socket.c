@@ -198,6 +198,7 @@ static xint64 xserversocketprocessor_tcp_open(xserversocket * descriptor, void *
 static xint64 xserversocketprocessor_tcp_in(xserversocket * descriptor, void * data)
 {
     xlogfunction_start("%s(%p, %p)", __func__, descriptor, data);
+    
     xassertion(descriptor == xnil, "");
     xassertion(descriptor->subscription == xnil, "");
     xassertion(descriptor->server == xnil, "");
@@ -238,7 +239,7 @@ static xint64 xserversocketprocessor_tcp_in(xserversocket * descriptor, void * d
             {
                 xassertion(xtrue, "");
             }
-            xassertion(session == xnil, "");
+            // xassertion(session == xnil, "");
         }
         xlogfunction_end("%s(...) => %ld", __func__, 1);
         // 1 is or not 1 check this

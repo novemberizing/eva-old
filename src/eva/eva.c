@@ -19,6 +19,9 @@ static xint64 xsessionsubscriber_echo(xsession * session, xuint64 event, void * 
 
 int main(int argc, char ** argv)
 {
+    xlogpath_set("/novemberizing/");
+    xlogmask_set(xlogtype_all);
+
     xconsolesubscriber_set(evacli);
     xeventengine * engine = xeventengine_new();
 

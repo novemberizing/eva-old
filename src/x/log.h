@@ -15,6 +15,8 @@
 #define xlogtype_function_start (0x00000800u)
 #define xlogtype_function_end   (0x00001000u)
 
+#define xlogtype_all            (0xFFFFFFFFu)
+
 extern void xlogpath_set(const char * path);
 extern unsigned int xlogmask_get(void);
 extern void xlogmask_set(unsigned int value);

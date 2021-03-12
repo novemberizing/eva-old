@@ -78,17 +78,13 @@ typedef unsigned char       xbyte;              /**!< 바이트 타입 */
  *                  1. 파일 디스크립터 함수를 통하여 현재 로그 파일을 남기기 위한 파일 혹은 콘솔의 디스크립터를 입력 또는 선택할 수 있도록 해야 합니다.
  * 
  */
-#define xcheck(condition, format, ...) do {     \
-    if(condition) {                             \
-        printf("[check:%s:%d] %s:%lu => "       \
-               format "\n",                     \
-               __FILE__,                        \
-               __LINE__,                        \
-               __func__,                        \
-               xthreadid(),                     \
-               ##__VA_ARGS__);                  \
-    }                                           \
+#define xcheck(condition, format, ...) do {                 \
+    if(condition) {                                         \
+        xlogcheck(#condition " " format, ##__VA_ARGS__);    \
+    }                                                       \
 } while(0)
+
+#define xdebugonly(code) do { } while(0)
 
 /**
  * @def         xassertion(condition, format, ...)
@@ -109,42 +105,11 @@ typedef unsigned char       xbyte;              /**!< 바이트 타입 */
  * @version     0.0.1
  * @date        2021. 02. 22.
  */
-#define xassertion(condition, format, ...) do {     \
-    if(condition) {                                 \
-        printf("[assertion:%s:%d] %s:%lu => "       \
-               format "\n",                         \
-               __FILE__,                            \
-               __LINE__,                            \
-               __func__,                            \
-               xthreadid(),                         \
-               ##__VA_ARGS__);                      \
-        exit(xinvalid);                             \
-    }                                               \
-} while(0)
-
-/**
- * 로그 서브 시스템을 만들자.
- */
-#define xdebugfunctionstart(format, ...) do {       \
-    if(xfalse) {                                    \
-        printf("[function:start:%s:%d] %s:%lu => "  \
-               format "\n",                         \
-               __FILE__,                            \
-               __LINE__,                            \
-               __func__,                            \
-               xthreadid(),                         \
-               ##__VA_ARGS__);                      \
-    }                                               \
-} while(0)
-
-#define xdebugverbose(format, ...) do {             \
-    printf("[verbose:%s:%d] %s:%lu => "             \
-           format "\n",                             \
-           __FILE__,                                \
-           __LINE__,                                \
-           __func__,                                \
-           xthreadid(),                             \
-           ##__VA_ARGS__);                          \
+#define xassertion(condition, format, ...) do {                 \
+    if(condition) {                                             \
+        xlogassertion(#condition " " format, ##__VA_ARGS__);    \
+        exit(xinvalid);                                         \
+    }                                                           \
 } while(0)
 
 /**

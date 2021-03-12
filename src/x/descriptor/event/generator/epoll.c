@@ -222,7 +222,7 @@ static inline xint32 xdescriptoreventgenerator_epoll_update(int epollfd, xdescri
 
 static inline xint32 xdescriptoreventgenerator_epoll_open(xdescriptoreventgenerator_epoll * generator)
 {
-    xlogfunction_start("%s(%p)", __func__, generator);
+    xdebugonly(xlogfunction_start("%s(%p)", __func__, generator));
     if(generator->f < 0)
     {
         generator->f = epoll_create(generator->max);
@@ -253,7 +253,7 @@ static inline xint32 xdescriptoreventgenerator_epoll_open(xdescriptoreventgenera
             return xfail;
         }
     }
-    xlogfunction_end("%s(...) => %d", __func__, xsuccess);
+    xdebugonly(xlogfunction_end("%s(...) => %d", __func__, xsuccess));
     return xsuccess;
 }
 
@@ -359,7 +359,7 @@ extern void xdescriptoreventgenerator_unregister(xdescriptoreventgenerator * o, 
 
 extern void xdescriptoreventgenerator_once(xdescriptoreventgenerator * o)
 {
-    xlogfunction_start("%s(%p)", __func__, o);
+    xdebugonly(xlogfunction_start("%s(%p)", __func__, o));  // repeat infinte
     xdescriptoreventgenerator_epoll * generator = (xdescriptoreventgenerator_epoll *) o;
 
     if(xdescriptoreventgenerator_epoll_open(generator) == xsuccess)
@@ -401,12 +401,12 @@ extern void xdescriptoreventgenerator_once(xdescriptoreventgenerator * o)
         }
     }
 
-    xlogfunction_end("%s(...)", __func__);
+    xdebugonly(xlogfunction_end("%s(...)", __func__));  // repeat infinite
 }
 
 extern void xdescriptoreventgenerator_queue_once(xdescriptoreventgenerator * o)
 {
-    xlogfunction_start("%s(%p)", __func__, o);
+    xdebugonly(xlogfunction_start("%s(%p)", __func__, o));
     xdescriptoreventgenerator_epoll * generator = (xdescriptoreventgenerator_epoll *) o;
 
     __xsynclock(generator->queue->sync);
@@ -460,7 +460,7 @@ extern void xdescriptoreventgenerator_queue_once(xdescriptoreventgenerator * o)
     }
     __xsyncunlock(generator->queue->sync);
 
-    xlogfunction_end("%s(...)", __func__);
+    xdebugonly(xlogfunction_end("%s(...)", __func__));
 }
 
 extern void xdescriptoreventgenerator_sync(xdescriptoreventgenerator * o, xint32 on)

@@ -162,9 +162,9 @@ extern xint32 xeventprocessorpool_removable(xeventprocessorpool * pool)
 
 extern xuint64 xeventprocessorpool_size(xeventprocessorpool * pool)
 {
-    xlogfunction_start("%s(%p)", __func__, pool);
+    xdebugonly(xlogfunction_start("%s(%p)", __func__, pool));
     xuint64 ret = (pool ? pool->size : 0);
-    xlogfunction_end("%s(...) => %lu", ret);
+    xdebugonly(xlogfunction_end("%s(...) => %lu", ret));
 }
 
 extern void xeventprocessorpool_on(xeventprocessorpool * pool)

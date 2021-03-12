@@ -19,6 +19,7 @@ struct xthreadlog
 {
     FILE * fp;
     int    date;
+    int    depth;
 };
 
 typedef struct xthreadlog xthreadlog;
@@ -172,9 +173,12 @@ extern void xlogout(unsigned int type, const char * file, int line, const char *
 
                 if(threadlog->fp)
                 {
-                    va_list ap;
-                    va_start(ap, format);
-                    fprintf(threadlog->fp, "%04d-%02d-%02d %02d:%02d:%02d.%09ld [%s] %s:%d %s %lu ",
+                    if(type == xlogtype_function_start)
+                    {
+                        threadlog->depth = threadlog->depth + 1;
+                    }
+                    int depth = (type == xlogtype_function_end || type == xlogtype_function_start) ? threadlog->depth : 0;
+                    fprintf(threadlog->fp, "%04d-%02d-%02d %02d:%02d:%02d.%09ld [%s] %s%*s %s:%d %s %lu ",
                                            m.tm_year + 1900,
                                            m.tm_mon + 1,
                                            m.tm_mday,
@@ -183,13 +187,21 @@ extern void xlogout(unsigned int type, const char * file, int line, const char *
                                            m.tm_sec,
                                            spec.tv_nsec,
                                            xlogtypeupperstr(type),
+                                           type == xlogtype_function_end ? "  " : "",
+                                           depth, "",
                                            file,
                                            line,
                                            func,
                                            threadid);
-
-                    fprintf(threadlog->fp, format, ap);
+                    if(type == xlogtype_function_end)
+                    {
+                        threadlog->depth = threadlog->depth - 1;
+                    }
+                    va_list ap;
+                    va_start(ap, format);
+                    vfprintf(threadlog->fp, format, ap);
                     fprintf(threadlog->fp, "\n");
+                    fflush(threadlog->fp);
                     va_end(ap);
                 }
             }

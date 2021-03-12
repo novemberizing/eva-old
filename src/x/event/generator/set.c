@@ -29,10 +29,10 @@ extern void xeventgeneratorset_off(xeventgeneratorset * generators)
 
 extern void xeventgeneratorset_once(xeventgeneratorset * generators)
 {
-    xlogfunction_start("%s(%p)", __func__, generators);
+    xdebugonly(xlogfunction_start("%s(%p)", __func__, generators)); // repeat infinite
     // TODO: UPGRADE THIS
 
     xdescriptoreventgenerator_once(generators->descriptor);
 
-    xlogfunction_end("%s(..)", __func__);
+    xdebugonly(xlogfunction_end("%s(..)", __func__));               // repeat infinite
 }
