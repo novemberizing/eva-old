@@ -45,24 +45,24 @@ static inline const char * xlogtypestr(unsigned int type)
     }
 }
 
-static inline const char * xlogtypeupperstr(unsigned int type)
+static inline const char * xlogtypeprintstr(unsigned int type)
 {
     switch(type)
     {
-        case xlogtype_verbose:          return "VERBOSE";
-        case xlogtype_debug:            return "DEBUG";
-        case xlogtype_information:      return "INFORMATION";
-        case xlogtype_notice:           return "NOTICE";
-        case xlogtype_caution:          return "CAUTION";
-        case xlogtype_warning:          return "WARNING";
-        case xlogtype_error:            return "ERROR";
-        case xlogtype_critical:         return "CRITICAL";
-        case xlogtype_assertion:        return "ASSERTION";
-        case xlogtype_check:            return "CHECK";
-        case xlogtype_todo:             return "TODO";
-        case xlogtype_function_start:   return "FUNCTION/START";
-        case xlogtype_function_end:     return "FUNCTION/END";
-        default:                        return "CUSTOM";
+        case xlogtype_verbose:          return "[VERBOSE]       ";
+        case xlogtype_debug:            return "[DEBUG]         ";
+        case xlogtype_information:      return "[INFORMATION]   ";
+        case xlogtype_notice:           return "[NOTICE]        ";
+        case xlogtype_caution:          return "[CAUTION]       ";
+        case xlogtype_warning:          return "[WARNING]       ";
+        case xlogtype_error:            return "[ERROR]         ";
+        case xlogtype_critical:         return "[CRITICAL]      ";
+        case xlogtype_assertion:        return "[ASSERTION]     ";
+        case xlogtype_check:            return "[CHECK]         ";
+        case xlogtype_todo:             return "[TODO]          ";
+        case xlogtype_function_start:   return "[FUNCTION/START]";
+        case xlogtype_function_end:     return "[FUNCTION/END]  ";
+        default:                        return "[CUSTOM]        ";
     }
 }
 
@@ -173,12 +173,15 @@ extern void xlogout(unsigned int type, const char * file, int line, const char *
 
                 if(threadlog->fp)
                 {
-                    if(type == xlogtype_function_start)
+                    if(type == xlogtype_function_end)
                     {
-                        threadlog->depth = threadlog->depth + 1;
+                        threadlog->depth = threadlog->depth - 1;
                     }
-                    int depth = (type == xlogtype_function_end || type == xlogtype_function_start) ? threadlog->depth : 0;
-                    fprintf(threadlog->fp, "%04d-%02d-%02d %02d:%02d:%02d.%09ld [%s] %s%*s %s:%d %s %lu ",
+                    if(threadlog->depth < 0)
+                    {
+                        threadlog->depth = 0;
+                    }
+                    fprintf(threadlog->fp, "%04d-%02d-%02d %02d:%02d:%02d.%09ld %s %*s %s:%d %s %lu ",
                                            m.tm_year + 1900,
                                            m.tm_mon + 1,
                                            m.tm_mday,
@@ -186,16 +189,15 @@ extern void xlogout(unsigned int type, const char * file, int line, const char *
                                            m.tm_min,
                                            m.tm_sec,
                                            spec.tv_nsec,
-                                           xlogtypeupperstr(type),
-                                           type == xlogtype_function_end ? "  " : "",
-                                           depth, "",
+                                           xlogtypeprintstr(type),
+                                           threadlog->depth, "",
                                            file,
                                            line,
                                            func,
                                            threadid);
-                    if(type == xlogtype_function_end)
+                    if(type == xlogtype_function_start)
                     {
-                        threadlog->depth = threadlog->depth - 1;
+                        threadlog->depth = threadlog->depth + 1;
                     }
                     va_list ap;
                     va_start(ap, format);
