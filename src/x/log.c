@@ -115,6 +115,26 @@ extern void xlogmask_set(unsigned int value)
     __mask = value;
 }
 
+extern void xlogterm(void)
+{
+    if(key)
+    {
+        void * data = pthread_getspecific(*key);
+        if(data)
+        {
+            free(data);
+        }
+        pthread_key_delete(*key);
+        free(key);
+        key = (pthread_key_t *)(0);
+    }
+    if(__path)
+    {
+        free(__path);
+        __path = (char *)(0);
+    }
+}
+
 extern void xlogout(unsigned int type, const char * file, int line, const char * func, const char * format, ...)
 {
     if(__mask & type)

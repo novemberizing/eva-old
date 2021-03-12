@@ -3,12 +3,27 @@
 
 #include <x/thread.h>
 #include <x/stream.h>
+#include <x/string.h>
+#include <x/socket.h>
+#include <x/command/string.h>
 
 #include "console.h"
-
-#include <x/socket.h>
+#include "eva.h"
 
 static xint32 __ready = xfalse;
+
+#define xconsolecommandtype_quit        (0x74697571u)            // "quit"
+
+static void xconsolecommandfunc(xcommandstring * command)
+{
+    if(command && command->strings.size > 0)
+    {
+        switch(xinteger32from_str(xstringto_lower(xnil, command->strings.cntr[0])))
+        {
+        case xconsolecommandtype_quit: xevaquit();  break;
+        }
+    }
+}
 
 extern xint64 evacli(xconsole * console, xconsoledescriptor * descriptor, xuint64 event, void * parameter, xint64 value)
 {
@@ -33,16 +48,29 @@ extern xint64 evacli(xconsole * console, xconsoledescriptor * descriptor, xuint6
         if(value > 0)
         {
             xstream * stream = xconsoledescriptorstream_get(descriptor);
+            // 아래의 로직은 수행하지 않을 수 있는 방법을 찾아야 한다.
+            if(xstreamremain(stream) == 0)
+            {
+                xstreamcapacity_set(stream, xstreamcapacity_get(stream) + 1);
+            }
 
-            
+            char * s = xstreamfront(stream);
+            s[xstreamlen(stream)] = 0;
 
-            // byte stream to command
+            char * line = xnil;
 
-            // stream parse
-            // if(xstreamlne(stream) > 0)
+            const char * start = s;
+            const char * end = xnil;
 
-            
-            printf("event in => %s(%p, %p, %lu, %p, %ld)\n", __func__, console, descriptor, event, parameter, value);
+            while((end = xstringline_get(start, xnil)), start != xnil)
+            {
+                char * line = xstringline_dup(xnil, start, end);
+                xcommandstring * command = xcommandstringfrom_line(line, xconsolecommandfunc);
+                xcommandexec(command);
+                xcommandstring_rem(command);
+                free(line);
+                start = end;
+            }
         }
     }
 

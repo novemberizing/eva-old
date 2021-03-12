@@ -17,6 +17,8 @@ libnovemberizing_a_SOURCES = x/std.c                                          \
                              x/sync/posix/mutex.c                             \
                              x/stream.c                                       \
                              x/stream/buffer.c                                \
+                             x/command.c                                      \
+                             x/command/string.c                               \
                              x/event/queue.c                                  \
                              x/event/processor.c                              \
                              x/event/subscription.c                           \

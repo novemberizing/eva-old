@@ -4,6 +4,8 @@
 
 #include "string.h"
 
+static xuint64 page = 16;
+
 extern char * xstringline_dup(char * output, const char * s, const char * next)
 {
     xuint64 len = (next ? next - s : strlen(s));
@@ -24,9 +26,12 @@ extern char * xstringdup(char * output, const char * s, xuint64 n)
     {
         if(output == xnil)
         {
+            // output = (char *) calloc(sizeof(char), n + 1);
             output = (char *) malloc(n + 1);
         }
-        return strncpy(output, s, n);
+        strncpy(output, s, n);
+        output[n] = 0;
+        return output;
     }
     if(s == xnil)
     {
@@ -163,11 +168,85 @@ extern const char * xstringword_get(const char * s, xstringfunc callback)
 extern char * xstringword_dup(char * output, const char * s, const char * next)
 {
     xuint64 len = (next ? next - s : strlen(s));
-    if(len > 0)
-    {
-        len = len - 1;
-        while(len > 0 && xchrchr_str(s[len - 1], "\r\n \t\v")){ len = len - 1; }
-    }
+
+    while(len > 0 && xchrchr_str(s[len - 1], "\r\n \t\v")){ len = len - 1; }
 
     return xstringdup(output, s, len);
+}
+
+extern char ** xstringword_split(char ** output, xuint64 * n, const char * line)
+{
+    xuint64 count = 0;
+    xuint64 size = n ? *n : 0;
+
+    const char * start = line;
+    const char * end = xnil;
+
+    while(end = xstringword_get(start, xnil), start != xnil)
+    {
+        if(size <= count)
+        {
+            size = (size / page + 1) * page;
+            if(output == xnil)
+            {
+                output = (char **) calloc(sizeof(char *), size);
+            }
+            else
+            {
+                output = (char **) realloc(output, sizeof(char *) * size);
+            }
+        }
+        output[count] = xstringword_dup(xnil, start, end);
+        if(output[count])
+        {
+            count = count + 1;
+        }
+        start = end;
+    }
+
+    if(n)
+    {
+        *n = count;
+    }
+
+    return output;
+}
+
+extern xint64 xinteger64from_str(const char * s)
+{
+    xint64 ret = 0;
+    if(s)
+    {
+        memcpy(&ret, s, strnlen(s, sizeof(xint64)));
+    }
+    return ret;
+}
+
+extern xint32 xinteger32from_str(const char * s)
+{
+    xint32 ret = 0;
+    if(s)
+    {
+        memcpy(&ret, s, strnlen(s, sizeof(xint32)));
+    }
+    return ret;
+}
+
+extern char * xstringto_lower(char * output, char * source)
+{
+    if(source)
+    {
+        xuint64 len = strlen(source);
+        char * destination = output ? output : source;
+        for(xuint64 i = 0; i < len; i++)
+        {
+            if('A' <= source[i] && source[i] <= 'Z')
+            {
+                destination[i] = source[i] + ('a' - 'A');
+            }
+        }
+        return destination;
+    }
+    
+    return xnil;
 }

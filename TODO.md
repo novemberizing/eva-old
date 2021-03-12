@@ -20,5 +20,139 @@
 
 - [ ] 문서를 정리할 때이다.
 - [ ] STRING 관련 함수를 만들자.
+- [ ] 정규 표현식 관련하여 POSIX 를 대체할만한 무엇인가를 만들자.
 
+- [ ] 메모리 릭 체크
+
+```
+novemberizing@novemberizing-switch:~/Workspace/novemberizing/eva$ sudo valgrind --leak-check=full --show-leak-kinds=all ./src/evad 
+==31330== Memcheck, a memory error detector
+==31330== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==31330== Using Valgrind-3.15.0 and LibVEX; rerun with -h for copyright info
+==31330== Command: ./src/evad
+==31330== 
+greeting
+eva> Quit
+==31330== 
+==31330== HEAP SUMMARY:
+==31330==     in use at exit: 492 bytes in 12 blocks
+==31330==   total heap usage: 475 allocs, 463 frees, 277,962 bytes allocated
+==31330== 
+==31330== 4 bytes in 1 blocks are still reachable in loss record 1 of 12
+==31330==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==31330==    by 0x10B198: xlogout (log.c:132)
+==31330==    by 0x113CE0: xconsolesubscriber_set (console.c:87)
+==31330==    by 0x10A7CF: main (eva.c:33)
+==31330== 
+==31330== 16 bytes in 1 blocks are still reachable in loss record 2 of 12
+==31330==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==31330==    by 0x10AFE7: xlogpath_set (log.c:90)
+==31330==    by 0x10A7B6: main (eva.c:30)
+==31330== 
+==31330== 16 bytes in 1 blocks are still reachable in loss record 3 of 12
+==31330==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==31330==    by 0x10B1C8: xlogout (log.c:135)
+==31330==    by 0x113CE0: xconsolesubscriber_set (console.c:87)
+==31330==    by 0x10A7CF: main (eva.c:33)
+==31330== 
+==31330== 32 bytes in 1 blocks are still reachable in loss record 4 of 12
+==31330==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==31330==    by 0x119C82: xeventqueue_new (queue.c:26)
+==31330==    by 0x10D712: xeventengine_new (engine.c:27)
+==31330==    by 0x10A7D4: main (eva.c:34)
+==31330== 
+==31330== 32 bytes in 1 blocks are still reachable in loss record 5 of 12
+==31330==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==31330==    by 0x119C82: xeventqueue_new (queue.c:26)
+==31330==    by 0x10D71F: xeventengine_new (engine.c:28)
+==31330==    by 0x10A7D4: main (eva.c:34)
+==31330== 
+==31330== 32 bytes in 1 blocks are still reachable in loss record 6 of 12
+==31330==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==31330==    by 0x11359B: xdescriptoreventgeneratorsubscriptionlist_new (list.c:23)
+==31330==    by 0x11237A: xdescriptoreventgenerator_new (epoll.c:266)
+==31330==    by 0x10D733: xeventengine_new (engine.c:30)
+==31330==    by 0x10A7D4: main (eva.c:34)
+==31330== 
+==31330== 32 bytes in 1 blocks are still reachable in loss record 7 of 12
+==31330==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==31330==    by 0x11359B: xdescriptoreventgeneratorsubscriptionlist_new (list.c:23)
+==31330==    by 0x112386: xdescriptoreventgenerator_new (epoll.c:267)
+==31330==    by 0x10D733: xeventengine_new (engine.c:30)
+==31330==    by 0x10A7D4: main (eva.c:34)
+==31330== 
+==31330== 48 bytes in 1 blocks are still reachable in loss record 8 of 12
+==31330==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==31330==    by 0x112371: xdescriptoreventgenerator_new (epoll.c:264)
+==31330==    by 0x10D733: xeventengine_new (engine.c:30)
+==31330==    by 0x10A7D4: main (eva.c:34)
+==31330== 
+==31330== 64 bytes in 1 blocks are still reachable in loss record 9 of 12
+==31330==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==31330==    by 0x11A9D2: xeventsubscription_new (subscription.c:17)
+==31330==    by 0x10DF71: xeventengine_server_register (engine.c:168)
+==31330==    by 0x10A7FA: main (eva.c:36)
+==31330== 
+==31330== 64 bytes in 1 blocks are still reachable in loss record 10 of 12
+==31330==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==31330==    by 0x11A9D2: xeventsubscription_new (subscription.c:17)
+==31330==    by 0x10E16D: xeventengine_descriptor_register (engine.c:195)
+==31330==    by 0x10A814: main (eva.c:37)
+==31330== 
+==31330== 64 bytes in 1 blocks are still reachable in loss record 11 of 12
+==31330==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==31330==    by 0x11A9D2: xeventsubscription_new (subscription.c:17)
+==31330==    by 0x10E16D: xeventengine_descriptor_register (engine.c:195)
+==31330==    by 0x10A82E: main (eva.c:38)
+==31330== 
+==31330== 88 bytes in 1 blocks are still reachable in loss record 12 of 12
+==31330==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==31330==    by 0x10D709: xeventengine_new (engine.c:25)
+==31330==    by 0x10A7D4: main (eva.c:34)
+==31330== 
+==31330== LEAK SUMMARY:
+==31330==    definitely lost: 0 bytes in 0 blocks
+==31330==    indirectly lost: 0 bytes in 0 blocks
+==31330==      possibly lost: 0 bytes in 0 blocks
+==31330==    still reachable: 492 bytes in 12 blocks
+==31330==         suppressed: 0 bytes in 0 blocks
+==31330== 
+==31330== For lists of detected and suppressed errors, rerun with: -s
+==31330== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+```
+
+
+
+
+----
+
+1. LEAK = 
+
+```
+==31330== 4 bytes in 1 blocks are still reachable in loss record 1 of 12
+==31330==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==31330==    by 0x10B198: xlogout (log.c:132)
+==31330==    by 0x113CE0: xconsolesubscriber_set (console.c:87)
+==31330==    by 0x10A7CF: main (eva.c:33)
+```
+
+
+2. LEAK
+
+```
+==32468== 16 bytes in 1 blocks are still reachable in loss record 1 of 11
+==32468==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==32468==    by 0x10AFEC: xlogpath_set (log.c:90)
+==32468==    by 0x10A7B6: main (eva.c:30)
+```
+
+3. LEAK
+
+```
+==37270== 32 bytes in 1 blocks are still reachable in loss record 1 of 9
+==37270==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==37270==    by 0x119D19: xeventqueue_new (queue.c:26)
+==37270==    by 0x10D7A9: xeventengine_new (engine.c:27)
+==37270==    by 0x10A7D4: main (eva.c:34)
+```
 

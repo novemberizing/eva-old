@@ -33,6 +33,14 @@ extern xeventengine * xeventengine_new(void)
     return engine;
 }
 
+extern void xeventengine_cancel(xeventengine * engine, xeventenginefunc callback)
+{
+    if(engine)
+    {
+        engine->cancel = callback;
+    }
+}
+
 extern xint32 xeventengine_run(xeventengine * engine)
 {
     xlogfunction_start("%s(%p)", __func__, engine);

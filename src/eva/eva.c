@@ -15,6 +15,14 @@
 #include "echo.h"
 #include "console.h"
 
+static xeventengine * engine = xnil;
+
+static void xevaeventengine_cancel(xeventengine * engine)
+{
+    printf("engine cancel\n");
+}
+// typedef void (*xeventenginefunc)(xeventengine *); 
+
 static xint64 xsessionsubscriber_echo(xsession * session, xuint64 event, void * data, xint64 result);
 
 int main(int argc, char ** argv)
@@ -23,7 +31,7 @@ int main(int argc, char ** argv)
     xlogmask_set(xlogtype_all);
 
     xconsolesubscriber_set(evacli);
-    xeventengine * engine = xeventengine_new();
+    engine = xeventengine_new();
 
     xeventengine_server_register(engine, evaechoserver_get(xtransmissioncontrolprotocol));
     xeventengine_descriptor_register(engine, xconsoledescriptorout_get());
@@ -33,8 +41,14 @@ int main(int argc, char ** argv)
 
     xconsoledescriptor_term();
     evaechoserver_term();
+    xlogterm();
     
     return ret;
+}
+
+extern void xevaquit(void)
+{
+    xeventengine_cancel(engine, xevaeventengine_cancel);
 }
 
 static xint64 xsessionsubscriber_echo(xsession * session, xuint64 event, void * data, xint64 result)
