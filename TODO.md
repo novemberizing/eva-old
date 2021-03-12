@@ -22,7 +22,7 @@
 - [ ] STRING 관련 함수를 만들자.
 - [ ] 정규 표현식 관련하여 POSIX 를 대체할만한 무엇인가를 만들자.
 
-- [ ] 메모리 릭 체크
+- [x] 메모리 릭 체크
 
 ```
 novemberizing@novemberizing-switch:~/Workspace/novemberizing/eva$ sudo valgrind --leak-check=full --show-leak-kinds=all ./src/evad 
