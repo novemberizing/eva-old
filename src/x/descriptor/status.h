@@ -12,4 +12,6 @@
 #define xdescriptorstatus_rem           xdescriptoreventtype_rem
 #define xdescriptorstatus_register      xdescriptoreventtype_register
 
+#define xdescriptorstatus_flush         xdescriptoreventtype_flush
+
 #endif // __NOVEMBERIZING_X__DESCRIPTOR__STATUS__H__

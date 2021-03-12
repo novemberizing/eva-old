@@ -361,3 +361,15 @@ extern xuint64 xstreambuffer_push(xstreambuffer * o, const xbyte * data, xuint64
     xlogfunction_end("%s(...) => %lu", __func__, ret);
     return ret;
 }
+
+extern void xstreambuffer_clear(xstreambuffer * o)
+{
+    xlogfunction_start("%s(%p)", __func__, o);
+
+    o->capacity = xstreambuffer_capacity_page;
+    o->position = 0;
+    o->size = 0;
+    o->buffer = realloc(o->buffer, o->capacity);
+
+    xlogfunction_end("%s(%p)", __func__);
+}

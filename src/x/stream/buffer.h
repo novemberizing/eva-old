@@ -43,5 +43,6 @@ extern xuint64 xstreambufferpos_get(xstreambuffer * o);
 extern xuint64 xstreambuffer_adjust(xstreambuffer * o, xint32 force);
 
 extern xuint64 xstreambuffer_push(xstreambuffer * o, const xbyte * data, xuint64 len);
+extern void xstreambuffer_clear(xstreambuffer * o);
 
 #endif // __NOVEMBERIZING_X__STREAM__BUFFER__H__

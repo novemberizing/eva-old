@@ -38,6 +38,14 @@ extern xint32 xdescriptorcheck_open(xdescriptor * descriptor)
     return ret;
 }
 
+extern xint32 xdescriptorcheck_register(xdescriptor * descriptor)
+{
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+    xint32 ret = (descriptor->status & xdescriptorstatus_register);
+    xlogfunction_end("%s(...) => %d", __func__, ret);
+    return ret;
+}
+
 extern xint64 xdescriptorevent_processor_on(xdescriptor * descriptor)
 {
     xlogfunction_start("%s(%p)", __func__, descriptor);
@@ -688,4 +696,14 @@ extern xint32 xdescriptornonblock_set(xdescriptor * descriptor, xint32 on)
 
     xlogfunction_end("%s(...) => %d", __func__, xsuccess);
     return xsuccess;
+}
+
+extern xuint32 xdescriptorstatus_get(xdescriptor * descriptor)
+{
+    return descriptor->status;
+}
+
+extern xdescriptoreventsubscription * xdescriptoreventsubscription_get(xdescriptor * descriptor)
+{
+    return descriptor->subscription;
 }

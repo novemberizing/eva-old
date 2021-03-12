@@ -57,6 +57,7 @@ extern xint64 xdescriptorwrite(xdescriptor * descriptor, const void * data, xuin
 extern xint32 xdescriptorcheck_rem(xdescriptor * descriptor);
 extern xint32 xdescriptorcheck_close(xdescriptor * descriptor);
 extern xint32 xdescriptorcheck_open(xdescriptor * descriptor);
+extern xint32 xdescriptorcheck_register(xdescriptor * descriptor);
 
 extern xint32 xdescriptornonblock_set(xdescriptor * descriptor, xint32 on);
 
@@ -77,5 +78,10 @@ extern xint64 xdescriptorevent_processor_register(xdescriptor * descriptor);
 extern xint64 xdescriptorevent_processor_unregister(xdescriptor * descriptor);
 extern xint64 xdescriptorevent_processor_rem(xdescriptor * descriptor);
 extern xint64 xdescriptorevent_processor_exception(xdescriptor * descriptor);
+
+
+extern xuint32 xdescriptorstatus_get(xdescriptor * descriptor);
+
+extern xdescriptoreventsubscription * xdescriptoreventsubscription_get(xdescriptor * descriptor);
 
 #endif // __NOVEMBERIZING_X__DESCRIPTOR__H__

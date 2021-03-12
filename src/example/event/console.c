@@ -4,7 +4,7 @@
 #include <x/console.h>
 #include <x/event/engine.h>
 
-static xint64 xconsolesubscriber_example(xconsole * console, xuint64 event, void * parameter, xint64 value);
+static xint64 xconsolesubscriber_example(xconsole * console, xconsoledescriptor * descriptor, xuint64 event, void * parameter, xint64 value);
 
 int main(int argc, char ** argv)
 {
@@ -18,7 +18,7 @@ int main(int argc, char ** argv)
     return xeventengine_run(engine);
 }
 
-static xint64 xconsolesubscriber_example(xconsole * console, xuint64 event, void * parameter, xint64 value)
+static xint64 xconsolesubscriber_example(xconsole * console, xconsoledescriptor * descriptor, xuint64 event, void * parameter, xint64 value)
 {
     return value;
 }

@@ -153,6 +153,7 @@ extern void xeventqueue_once(xeventqueue * queue)
         if(event)
         {
             __xsyncunlock(queue->sync);
+            xassertion(event->on == xnil, "");
             event->on(event);
             __xsynclock(queue->sync);
             continue;

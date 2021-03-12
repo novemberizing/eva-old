@@ -10,4 +10,6 @@
 #define xdescriptoreventtype_rem        (0x00000020u)   /** 디스크립터 이벤트 타입: 객체 해제 */
 #define xdescriptoreventtype_register   (0x00000040u)   /** 디스크립터 이벤트 타입: 등록 */
 
+#define xdescriptoreventtype_flush      (0x00008000u)   /***/
+
 #endif // __NOVEMBERIZING_X__DESCRIPTOR__EVENT_TYPE__H__
