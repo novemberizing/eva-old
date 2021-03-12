@@ -124,7 +124,7 @@ extern xbyte * xstreamfront(xstream * o)
         default:                 xassertion(xtrue, "");                             break;
     }
 
-    xlogfunction_end("%s(...) => %p", ret);
+    xlogfunction_end("%s(...) => %p", __func__, ret);
     return ret;
 }
 

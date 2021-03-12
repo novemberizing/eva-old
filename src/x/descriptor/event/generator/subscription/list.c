@@ -24,7 +24,7 @@ extern xdescriptoreventgeneratorsubscriptionlist * xdescriptoreventgeneratorsubs
 
     xassertion(list == xnil, "");
 
-    xlogfunction_end("%s(...) => %p", list);
+    xlogfunction_end("%s(...) => %p", __func__, list);
     return list;
 }
 

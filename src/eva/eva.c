@@ -17,6 +17,8 @@
 
 static xeventengine * engine = xnil;
 
+static xeventsubscription * subscriptions[1024] = { 0, };
+
 static void xevaeventengine_cancel(xeventengine * engine)
 {
     printf("engine cancel\n");
@@ -33,15 +35,27 @@ int main(int argc, char ** argv)
     xconsolesubscriber_set(evacli);
     engine = xeventengine_new();
 
-    xeventengine_server_register(engine, evaechoserver_get(xtransmissioncontrolprotocol));
-    xeventengine_descriptor_register(engine, xconsoledescriptorout_get());
-    xeventengine_descriptor_register(engine, xconsoledescriptorin_get());
+    subscriptions[7] = xeventengine_server_register(engine, evaechoserver_get(xtransmissioncontrolprotocol));
+    subscriptions[2] = xeventengine_descriptor_register(engine, xconsoledescriptorout_get());
+    subscriptions[1] = xeventengine_descriptor_register(engine, xconsoledescriptorin_get());
 
     int ret = xeventengine_run(engine);
 
+    for(xint64 i = 0; i < 1024; i++)
+    {
+        if(subscriptions[i])
+        {
+            xeventsubscription_rem(subscriptions[i]);
+        }
+    }
+
     xconsoledescriptor_term();
     evaechoserver_term();
+
     xlogterm();
+
+    printf("quit\n");
+
     
     return ret;
 }

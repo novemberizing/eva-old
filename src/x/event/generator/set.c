@@ -16,6 +16,17 @@ extern void xeventgeneratorset_on(xeventgeneratorset * generators)
     xlogfunction_end("%s(...)", __func__);
 }
 
+extern void xeventgeneratorset_rem(xeventgeneratorset * generators)
+{
+    xlogfunction_start("%s(%p)", __func__, generators);
+    xassertion(generators == xnil, "");
+    xassertion(generators->descriptor == xnil, "");
+
+    generators->descriptor = xdescriptoreventgenerator_rem(generators->descriptor);
+
+    xlogfunction_end("%s(...)", __func__);
+}
+
 extern void xeventgeneratorset_off(xeventgeneratorset * generators)
 {
     xlogfunction_start("%s(%p)", __func__, generators);

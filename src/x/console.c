@@ -6,6 +6,7 @@
 #include "thread.h"
 #include "console.h"
 #include "console/descriptor.h"
+#include "event/engine.h"
 
 static xconsoledescriptor * xconsoledescriptor_rem(xconsoledescriptor * descriptor);
 static void xconsoledescriptoreventhandler_all(xconsoledescriptorevent * event);
@@ -72,10 +73,31 @@ extern void xconsoledescriptor_term(void)
 
     if(console.in)
     {
+        if(console.in->subscription)
+        {
+            if(console.in->subscription->enginenode.engine)
+            {
+                xeventengine_descriptor_unregister(console.in->subscription->enginenode.engine, (xdescriptor *) console.in);
+            }
+            xeventsubscription * subscription = (xeventsubscription *) console.in->subscription;
+            console.in->subscription = xnil;
+            xeventsubscription_rem(subscription);
+        }
         console.in = xconsoledescriptor_rem(console.in);
     }
     if(console.out)
     {
+        if(console.out->subscription)
+        {
+            if(console.out->subscription->enginenode.engine)
+            {
+                xeventengine_descriptor_unregister(console.out->subscription->enginenode.engine, (xdescriptor *) console.out);
+            }
+            xeventsubscription * subscription = (xeventsubscription *) console.out->subscription;
+            console.out->subscription = xnil;
+            xeventsubscription_rem(subscription);
+            
+        }
         console.out = xconsoledescriptor_rem(console.out);
     }
 
@@ -161,7 +183,7 @@ static xconsoledescriptor * xconsoledescriptor_rem(xconsoledescriptor * descript
     xlogfunction_start("%s(%p)", __func__, descriptor);
     xassertion(descriptor == xnil, "");
     xassertion(descriptor->event.queue || descriptor->event.next || descriptor->event.prev, "");
-    xassertion(descriptor->subscription == xnil, "");
+    xassertion(descriptor->subscription != xnil, "");
 
     descriptor->console   = xnil;
     descriptor->exception = xexception_void;

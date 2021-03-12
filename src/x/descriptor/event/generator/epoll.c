@@ -297,6 +297,8 @@ extern xdescriptoreventgenerator * xdescriptoreventgenerator_rem(xdescriptoreven
     generator->alive  = xdescriptoreventgeneratorsubscriptionlist_rem(generator->alive);
     generator->queue  = xdescriptoreventgeneratorsubscriptionlist_rem(generator->queue);
 
+    free(generator);
+
     xlogfunction_end("%s(...) => %p", __func__, xnil);
     return xnil;
 }

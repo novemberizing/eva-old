@@ -122,7 +122,8 @@ extern void xlogterm(void)
         void * data = pthread_getspecific(*key);
         if(data)
         {
-            free(data);
+            pthread_setspecific(*key, (void *)(0));
+            xlogthreaddatarem(data);
         }
         pthread_key_delete(*key);
         free(key);

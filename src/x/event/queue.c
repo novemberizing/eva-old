@@ -55,6 +55,8 @@ extern xeventqueue * xeventqueue_rem(xeventqueue * queue)
         xassertion(queue->size > 0, "");
 
         queue->sync = xsyncrem(queue->sync);
+
+        free(queue);
     }
 
     xlogfunction_end("%s(...) => %p", __func__, queue);

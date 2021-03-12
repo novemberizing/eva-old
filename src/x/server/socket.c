@@ -22,7 +22,7 @@ static xint64 xserversocketprocessor_tcp_close(xserversocket * descriptor, void 
 
 extern xserversocket * xserversocket_new(xserver * server, xint32 domain, xint32 type, xint32 protocol, const void * addr, xuint32 addrlen)
 {
-    xlogfunction_start("%s(%p, %d, %d, %d, %p, %u)", __func__, domain, type, protocol, addr, addrlen);
+    xlogfunction_start("%s(%p, %d, %d, %d, %p, %u)", __func__, server, domain, type, protocol, addr, addrlen);
     xserversocket * descriptor = calloc(sizeof(xserversocket), 1);
 
     descriptor->rem              = xserversocket_rem;

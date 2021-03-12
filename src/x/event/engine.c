@@ -75,10 +75,27 @@ extern xint32 xeventengine_run(xeventengine * engine)
         xeventgeneratorset_off(xaddressof(engine->generators));
         xeventqueue_clear(engine->queue);
         xeventqueue_clear(engine->main);
+
         engine->on(engine, xeventenginestatus_off);
         engine->on = xnil;
         __xsyncunlock(engine->sync);
         xeventengine_sync(engine, xfalse);
+        engine->queue = xeventqueue_rem(engine->queue);
+        engine->main = xeventqueue_rem(engine->main);
+        xeventgeneratorset_rem(xaddressof(engine->generators));
+        
+        // 아래의 로직은 ENEING SUBSCRIPTIONS 리스트를 클리어 하는 것이다.
+        // 함수화 시켜 놓을 필요가 있다.
+        while(engine->subscriptions.head)
+        {
+            xeventsubscription * next = engine->subscriptions.head->enginenode.next;
+            // TODO: 아래의 로직은 복잡하다. 그렇기 때문에, 작은 DEL 을 구현해야 한다.
+            // POP 같은 메서드
+            xeventsubscription_del(engine->subscriptions.head);
+            engine->subscriptions.head = next;
+        }
+
+        free(engine);
     }
 
     xlogfunction_end("%s(...) => %d", __func__, xsuccess);

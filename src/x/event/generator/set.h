@@ -15,6 +15,8 @@ struct xeventgeneratorset
 extern void xeventgeneratorset_on(xeventgeneratorset * generators);
 extern void xeventgeneratorset_off(xeventgeneratorset * generators);
 
+extern void xeventgeneratorset_rem(xeventgeneratorset * generators);
+
 extern void xeventgeneratorset_once(xeventgeneratorset * generators);
 
 #endif // __NOVEMBERIZING_X__EVENT__GENERATOR_SET__H__
