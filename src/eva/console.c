@@ -34,6 +34,8 @@ extern xint64 evacli(xconsole * console, xconsoledescriptor * descriptor, xuint6
         {
             xstream * stream = xconsoledescriptorstream_get(descriptor);
 
+            
+
             // byte stream to command
 
             // stream parse

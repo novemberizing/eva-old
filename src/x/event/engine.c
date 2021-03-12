@@ -14,7 +14,7 @@
 #include "../session/socket.h"
 
 #include "./processor/pool.h"
-#include "./descriptor/event/subscription.h"
+#include "../descriptor/event/subscription.h"
 
 
 static void xeventenginecallback_internal(xeventengine * engine, xuint32 status);

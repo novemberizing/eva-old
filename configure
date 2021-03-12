@@ -11140,7 +11140,7 @@ CC=$lt_save_CC
 
 
 
-ac_config_files="$ac_config_files Makefile src/Makefile src/x/Makefile src/example/Makefile src/example/event/Makefile src/example/console/Makefile src/example/client/Makefile src/example/benchmark/Makefile src/eva/Makefile"
+ac_config_files="$ac_config_files Makefile src/Makefile"
 
 
 ac_config_headers="$ac_config_headers config.h"
@@ -13488,13 +13488,6 @@ do
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
-    "src/x/Makefile") CONFIG_FILES="$CONFIG_FILES src/x/Makefile" ;;
-    "src/example/Makefile") CONFIG_FILES="$CONFIG_FILES src/example/Makefile" ;;
-    "src/example/event/Makefile") CONFIG_FILES="$CONFIG_FILES src/example/event/Makefile" ;;
-    "src/example/console/Makefile") CONFIG_FILES="$CONFIG_FILES src/example/console/Makefile" ;;
-    "src/example/client/Makefile") CONFIG_FILES="$CONFIG_FILES src/example/client/Makefile" ;;
-    "src/example/benchmark/Makefile") CONFIG_FILES="$CONFIG_FILES src/example/benchmark/Makefile" ;;
-    "src/eva/Makefile") CONFIG_FILES="$CONFIG_FILES src/eva/Makefile" ;;
     "config.h") CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
 

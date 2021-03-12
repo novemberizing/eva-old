@@ -27,7 +27,6 @@ extern xdescriptor * xconsoledescriptorin_get(void);
 extern xdescriptor * xconsoledescriptorout_get(void);
 extern void xconsolesubscriber_set(xconsolesubscriber subscriber);
 
-
 extern xint64 xconsolesubscriber_default(xconsole * console, xconsoledescriptor * descriptor, xuint64 event, void * parameter, xint64 value);
 
 extern xint64 xconsoleout_string(const char * s);

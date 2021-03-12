@@ -65,3 +65,5 @@ Makefile
 .dirstamp
 .vscode
 benchmark*
+example-*
+evad

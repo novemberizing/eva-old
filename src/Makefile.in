@@ -14,6 +14,10 @@
 
 @SET_MAKE@
 
+# SUBDIRS = example eva
+
+
+
 VPATH = @srcdir@
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -88,6 +92,11 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+noinst_PROGRAMS = benchmark-log$(EXEEXT) \
+	example-client-simple$(EXEEXT) example-console-io$(EXEEXT) \
+	example-event-engine$(EXEEXT) example-event-console$(EXEEXT) \
+	example-event-server$(EXEEXT) example-string-api$(EXEEXT) \
+	example-command-string$(EXEEXT) evad$(EXEEXT)
 subdir = src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -102,33 +111,7 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-AM_V_P = $(am__v_P_@AM_V@)
-am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
-am__v_P_0 = false
-am__v_P_1 = :
-AM_V_GEN = $(am__v_GEN_@AM_V@)
-am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
-am__v_GEN_0 = @echo "  GEN     " $@;
-am__v_GEN_1 = 
-AM_V_at = $(am__v_at_@AM_V@)
-am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
-am__v_at_0 = @
-am__v_at_1 = 
-SOURCES =
-DIST_SOURCES =
-RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
-	ctags-recursive dvi-recursive html-recursive info-recursive \
-	install-data-recursive install-dvi-recursive \
-	install-exec-recursive install-html-recursive \
-	install-info-recursive install-pdf-recursive \
-	install-ps-recursive install-recursive installcheck-recursive \
-	installdirs-recursive pdf-recursive ps-recursive \
-	tags-recursive uninstall-recursive
-am__can_run_installinfo = \
-  case $$AM_UPDATE_INFO_DIR in \
-    n|no|NO) false;; \
-    *) (install-info --version) >/dev/null 2>&1;; \
-  esac
+PROGRAMS = $(noinst_PROGRAMS)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -156,16 +139,145 @@ am__uninstall_files_from_dir = { \
     || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
          $(am__cd) "$$dir" && rm -f $$files; }; \
   }
-am__installdirs = "$(DESTDIR)$(includedir)"
+am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includedir)"
+LIBRARIES = $(lib_LIBRARIES)
+ARFLAGS = cru
+AM_V_AR = $(am__v_AR_@AM_V@)
+am__v_AR_ = $(am__v_AR_@AM_DEFAULT_V@)
+am__v_AR_0 = @echo "  AR      " $@;
+am__v_AR_1 = 
+libnovemberizing_a_AR = $(AR) $(ARFLAGS)
+libnovemberizing_a_LIBADD =
+am__dirstamp = $(am__leading_dot)dirstamp
+am_libnovemberizing_a_OBJECTS = x/std.$(OBJEXT) x/log.$(OBJEXT) \
+	x/string.$(OBJEXT) x/object.$(OBJEXT) x/exception.$(OBJEXT) \
+	x/thread.$(OBJEXT) x/thread/posix.$(OBJEXT) x/sync.$(OBJEXT) \
+	x/sync/posix/mutex.$(OBJEXT) x/stream.$(OBJEXT) \
+	x/stream/buffer.$(OBJEXT) x/event/queue.$(OBJEXT) \
+	x/event/processor.$(OBJEXT) x/event/subscription.$(OBJEXT) \
+	x/event/engine.$(OBJEXT) x/event/processor/pool.$(OBJEXT) \
+	x/event/processor/event.$(OBJEXT) \
+	x/event/generator/set.$(OBJEXT) x/descriptor.$(OBJEXT) \
+	x/descriptor/event/generator.$(OBJEXT) \
+	x/descriptor/event/generator/epoll.$(OBJEXT) \
+	x/descriptor/event/generator/subscription/list.$(OBJEXT) \
+	x/console.$(OBJEXT) x/socket.$(OBJEXT) x/server.$(OBJEXT) \
+	x/server/socket.$(OBJEXT) x/session.$(OBJEXT) \
+	x/session/socket.$(OBJEXT) x/client.$(OBJEXT) \
+	x/client/socket.$(OBJEXT)
+libnovemberizing_a_OBJECTS = $(am_libnovemberizing_a_OBJECTS)
+am_benchmark_log_OBJECTS = example/benchmark/log.$(OBJEXT)
+benchmark_log_OBJECTS = $(am_benchmark_log_OBJECTS)
+am__DEPENDENCIES_1 = libnovemberizing.a
+benchmark_log_DEPENDENCIES = $(am__DEPENDENCIES_1)
+AM_V_lt = $(am__v_lt_@AM_V@)
+am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
+am__v_lt_0 = --silent
+am__v_lt_1 = 
+am_evad_OBJECTS = eva/eva.$(OBJEXT) eva/console.$(OBJEXT) \
+	eva/echo.$(OBJEXT)
+evad_OBJECTS = $(am_evad_OBJECTS)
+evad_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_example_client_simple_OBJECTS = example/client/simple.$(OBJEXT)
+example_client_simple_OBJECTS = $(am_example_client_simple_OBJECTS)
+example_client_simple_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_example_command_string_OBJECTS = example/command/string.$(OBJEXT)
+example_command_string_OBJECTS = $(am_example_command_string_OBJECTS)
+example_command_string_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_example_console_io_OBJECTS = example/console/io.$(OBJEXT)
+example_console_io_OBJECTS = $(am_example_console_io_OBJECTS)
+example_console_io_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_example_event_console_OBJECTS = example/event/console.$(OBJEXT)
+example_event_console_OBJECTS = $(am_example_event_console_OBJECTS)
+example_event_console_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_example_event_engine_OBJECTS = example/event/engine.$(OBJEXT)
+example_event_engine_OBJECTS = $(am_example_event_engine_OBJECTS)
+example_event_engine_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_example_event_server_OBJECTS = example/event/server.$(OBJEXT)
+example_event_server_OBJECTS = $(am_example_event_server_OBJECTS)
+example_event_server_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_example_string_api_OBJECTS = example/string/api.$(OBJEXT)
+example_string_api_OBJECTS = $(am_example_string_api_OBJECTS)
+example_string_api_DEPENDENCIES = $(am__DEPENDENCIES_1)
+AM_V_P = $(am__v_P_@AM_V@)
+am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
+am__v_P_0 = false
+am__v_P_1 = :
+AM_V_GEN = $(am__v_GEN_@AM_V@)
+am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
+am__v_GEN_0 = @echo "  GEN     " $@;
+am__v_GEN_1 = 
+AM_V_at = $(am__v_at_@AM_V@)
+am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
+am__v_at_0 = @
+am__v_at_1 = 
+DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
+depcomp = $(SHELL) $(top_srcdir)/depcomp
+am__maybe_remake_depfiles = depfiles
+am__depfiles_remade = eva/$(DEPDIR)/console.Po eva/$(DEPDIR)/echo.Po \
+	eva/$(DEPDIR)/eva.Po example/benchmark/$(DEPDIR)/log.Po \
+	example/client/$(DEPDIR)/simple.Po \
+	example/command/$(DEPDIR)/string.Po \
+	example/console/$(DEPDIR)/io.Po \
+	example/event/$(DEPDIR)/console.Po \
+	example/event/$(DEPDIR)/engine.Po \
+	example/event/$(DEPDIR)/server.Po \
+	example/string/$(DEPDIR)/api.Po x/$(DEPDIR)/client.Po \
+	x/$(DEPDIR)/console.Po x/$(DEPDIR)/descriptor.Po \
+	x/$(DEPDIR)/exception.Po x/$(DEPDIR)/log.Po \
+	x/$(DEPDIR)/object.Po x/$(DEPDIR)/server.Po \
+	x/$(DEPDIR)/session.Po x/$(DEPDIR)/socket.Po \
+	x/$(DEPDIR)/std.Po x/$(DEPDIR)/stream.Po x/$(DEPDIR)/string.Po \
+	x/$(DEPDIR)/sync.Po x/$(DEPDIR)/thread.Po \
+	x/client/$(DEPDIR)/socket.Po \
+	x/descriptor/event/$(DEPDIR)/generator.Po \
+	x/descriptor/event/generator/$(DEPDIR)/epoll.Po \
+	x/descriptor/event/generator/subscription/$(DEPDIR)/list.Po \
+	x/event/$(DEPDIR)/engine.Po x/event/$(DEPDIR)/processor.Po \
+	x/event/$(DEPDIR)/queue.Po x/event/$(DEPDIR)/subscription.Po \
+	x/event/generator/$(DEPDIR)/set.Po \
+	x/event/processor/$(DEPDIR)/event.Po \
+	x/event/processor/$(DEPDIR)/pool.Po \
+	x/server/$(DEPDIR)/socket.Po x/session/$(DEPDIR)/socket.Po \
+	x/stream/$(DEPDIR)/buffer.Po x/sync/posix/$(DEPDIR)/mutex.Po \
+	x/thread/$(DEPDIR)/posix.Po
+am__mv = mv -f
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_@AM_V@)
+am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
+am__v_CC_0 = @echo "  CC      " $@;
+am__v_CC_1 = 
+CCLD = $(CC)
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_@AM_V@)
+am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
+am__v_CCLD_0 = @echo "  CCLD    " $@;
+am__v_CCLD_1 = 
+SOURCES = $(libnovemberizing_a_SOURCES) $(benchmark_log_SOURCES) \
+	$(evad_SOURCES) $(example_client_simple_SOURCES) \
+	$(example_command_string_SOURCES) \
+	$(example_console_io_SOURCES) $(example_event_console_SOURCES) \
+	$(example_event_engine_SOURCES) \
+	$(example_event_server_SOURCES) $(example_string_api_SOURCES)
+DIST_SOURCES = $(libnovemberizing_a_SOURCES) $(benchmark_log_SOURCES) \
+	$(evad_SOURCES) $(example_client_simple_SOURCES) \
+	$(example_command_string_SOURCES) \
+	$(example_console_io_SOURCES) $(example_event_console_SOURCES) \
+	$(example_event_engine_SOURCES) \
+	$(example_event_server_SOURCES) $(example_string_api_SOURCES)
+am__can_run_installinfo = \
+  case $$AM_UPDATE_INFO_DIR in \
+    n|no|NO) false;; \
+    *) (install-info --version) >/dev/null 2>&1;; \
+  esac
 HEADERS = $(nobase_include_HEADERS)
-RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
-  distclean-recursive maintainer-clean-recursive
-am__recursive_targets = \
-  $(RECURSIVE_TARGETS) \
-  $(RECURSIVE_CLEAN_TARGETS) \
-  $(am__extra_recursive_targets)
-AM_RECURSIVE_TARGETS = $(am__recursive_targets:-recursive=) TAGS CTAGS \
-	distdir distdir-am
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 # Read a list of newline-separated strings from the standard input,
 # and print each of them once, without duplicates.  Input order is
@@ -185,34 +297,8 @@ am__define_uniq_tagged_files = \
   done | $(am__uniquify_input)`
 ETAGS = etags
 CTAGS = ctags
-DIST_SUBDIRS = $(SUBDIRS)
-am__DIST_COMMON = $(srcdir)/Makefile.in
+am__DIST_COMMON = $(srcdir)/Makefile.in $(top_srcdir)/depcomp
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-am__relativize = \
-  dir0=`pwd`; \
-  sed_first='s,^\([^/]*\)/.*$$,\1,'; \
-  sed_rest='s,^[^/]*/*,,'; \
-  sed_last='s,^.*/\([^/]*\)$$,\1,'; \
-  sed_butlast='s,/*[^/]*$$,,'; \
-  while test -n "$$dir1"; do \
-    first=`echo "$$dir1" | sed -e "$$sed_first"`; \
-    if test "$$first" != "."; then \
-      if test "$$first" = ".."; then \
-        dir2=`echo "$$dir0" | sed -e "$$sed_last"`/"$$dir2"; \
-        dir0=`echo "$$dir0" | sed -e "$$sed_butlast"`; \
-      else \
-        first2=`echo "$$dir2" | sed -e "$$sed_first"`; \
-        if test "$$first2" = "$$first"; then \
-          dir2=`echo "$$dir2" | sed -e "$$sed_rest"`; \
-        else \
-          dir2="../$$dir2"; \
-        fi; \
-        dir0="$$dir0"/"$$first"; \
-      fi; \
-    fi; \
-    dir1=`echo "$$dir1" | sed -e "$$sed_rest"`; \
-  done; \
-  reldir="$$dir2"
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
@@ -247,7 +333,9 @@ INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
-LIBS = @LIBS@
+LIBS = libnovemberizing.a             \
+       -lpthread
+
 LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
 LN_S = @LN_S@
@@ -329,15 +417,72 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-SUBDIRS = x example eva
+AM_CFLAGS = -I$(top_srcdir)/src
+ACLOCAL_AMFLAGS = -I m4
+lib_LIBRARIES = libnovemberizing.a
+
+# TODO: 디스크립터 이벤트 제네레이터를 OS 에 알맞는 소스를 링크하도록 한다.
+libnovemberizing_a_SOURCES = x/std.c                                          \
+                             x/log.c                                          \
+                             x/string.c                                       \
+                             x/object.c                                       \
+                             x/exception.c                                    \
+                             x/thread.c                                       \
+                             x/thread/posix.c                                 \
+                             x/sync.c                                         \
+                             x/sync/posix/mutex.c                             \
+                             x/stream.c                                       \
+                             x/stream/buffer.c                                \
+                             x/event/queue.c                                  \
+                             x/event/processor.c                              \
+                             x/event/subscription.c                           \
+                             x/event/engine.c                                 \
+                             x/event/processor/pool.c                         \
+                             x/event/processor/event.c                        \
+                             x/event/generator/set.c                          \
+                             x/descriptor.c                                   \
+                             x/descriptor/event/generator.c                   \
+                             x/descriptor/event/generator/epoll.c             \
+                             x/descriptor/event/generator/subscription/list.c \
+                             x/console.c                                      \
+                             x/socket.c                                       \
+                             x/server.c                                       \
+                             x/server/socket.c                                \
+                             x/session.c                                      \
+                             x/session/socket.c                               \
+                             x/client.c                                       \
+                             x/client/socket.c
+
+benchmark_log_SOURCES = example/benchmark/log.c
+benchmark_log_LDADD = $(LIBS)
+example_client_simple_SOURCES = example/client/simple.c
+example_client_simple_LDADD = $(LIBS)
+example_console_io_SOURCES = example/console/io.c
+example_console_io_LDADD = $(LIBS)
+example_event_engine_SOURCES = example/event/engine.c
+example_event_engine_LDADD = $(LIBS)
+example_event_console_SOURCES = example/event/console.c
+example_event_console_LDADD = $(LIBS)
+example_event_server_SOURCES = example/event/server.c
+example_event_server_LDADD = $(LIBS)
+example_string_api_SOURCES = example/string/api.c
+example_string_api_LDADD = $(LIBS)
+example_command_string_SOURCES = example/command/string.c
+example_command_string_LDADD = $(LIBS)
+evad_SOURCES = eva/eva.c        \
+                                  eva/console.c    \
+                                  eva/echo.c
+
+evad_LDADD = $(LIBS)
 nobase_include_HEADERS = x/std.h                \
                          x/thread.h             \
                          x/sync.h               \
                          x/stream.h
 
-all: all-recursive
+all: all-am
 
 .SUFFIXES:
+.SUFFIXES: .c .lo .o .obj
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -367,6 +512,374 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
+
+clean-noinstPROGRAMS:
+	@list='$(noinst_PROGRAMS)'; test -n "$$list" || exit 0; \
+	echo " rm -f" $$list; \
+	rm -f $$list || exit $$?; \
+	test -n "$(EXEEXT)" || exit 0; \
+	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
+	echo " rm -f" $$list; \
+	rm -f $$list
+install-libLIBRARIES: $(lib_LIBRARIES)
+	@$(NORMAL_INSTALL)
+	@list='$(lib_LIBRARIES)'; test -n "$(libdir)" || list=; \
+	list2=; for p in $$list; do \
+	  if test -f $$p; then \
+	    list2="$$list2 $$p"; \
+	  else :; fi; \
+	done; \
+	test -z "$$list2" || { \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(libdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(libdir)" || exit 1; \
+	  echo " $(INSTALL_DATA) $$list2 '$(DESTDIR)$(libdir)'"; \
+	  $(INSTALL_DATA) $$list2 "$(DESTDIR)$(libdir)" || exit $$?; }
+	@$(POST_INSTALL)
+	@list='$(lib_LIBRARIES)'; test -n "$(libdir)" || list=; \
+	for p in $$list; do \
+	  if test -f $$p; then \
+	    $(am__strip_dir) \
+	    echo " ( cd '$(DESTDIR)$(libdir)' && $(RANLIB) $$f )"; \
+	    ( cd "$(DESTDIR)$(libdir)" && $(RANLIB) $$f ) || exit $$?; \
+	  else :; fi; \
+	done
+
+uninstall-libLIBRARIES:
+	@$(NORMAL_UNINSTALL)
+	@list='$(lib_LIBRARIES)'; test -n "$(libdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(libdir)'; $(am__uninstall_files_from_dir)
+
+clean-libLIBRARIES:
+	-test -z "$(lib_LIBRARIES)" || rm -f $(lib_LIBRARIES)
+x/$(am__dirstamp):
+	@$(MKDIR_P) x
+	@: > x/$(am__dirstamp)
+x/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) x/$(DEPDIR)
+	@: > x/$(DEPDIR)/$(am__dirstamp)
+x/std.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
+x/log.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
+x/string.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
+x/object.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
+x/exception.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
+x/thread.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
+x/thread/$(am__dirstamp):
+	@$(MKDIR_P) x/thread
+	@: > x/thread/$(am__dirstamp)
+x/thread/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) x/thread/$(DEPDIR)
+	@: > x/thread/$(DEPDIR)/$(am__dirstamp)
+x/thread/posix.$(OBJEXT): x/thread/$(am__dirstamp) \
+	x/thread/$(DEPDIR)/$(am__dirstamp)
+x/sync.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
+x/sync/posix/$(am__dirstamp):
+	@$(MKDIR_P) x/sync/posix
+	@: > x/sync/posix/$(am__dirstamp)
+x/sync/posix/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) x/sync/posix/$(DEPDIR)
+	@: > x/sync/posix/$(DEPDIR)/$(am__dirstamp)
+x/sync/posix/mutex.$(OBJEXT): x/sync/posix/$(am__dirstamp) \
+	x/sync/posix/$(DEPDIR)/$(am__dirstamp)
+x/stream.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
+x/stream/$(am__dirstamp):
+	@$(MKDIR_P) x/stream
+	@: > x/stream/$(am__dirstamp)
+x/stream/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) x/stream/$(DEPDIR)
+	@: > x/stream/$(DEPDIR)/$(am__dirstamp)
+x/stream/buffer.$(OBJEXT): x/stream/$(am__dirstamp) \
+	x/stream/$(DEPDIR)/$(am__dirstamp)
+x/event/$(am__dirstamp):
+	@$(MKDIR_P) x/event
+	@: > x/event/$(am__dirstamp)
+x/event/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) x/event/$(DEPDIR)
+	@: > x/event/$(DEPDIR)/$(am__dirstamp)
+x/event/queue.$(OBJEXT): x/event/$(am__dirstamp) \
+	x/event/$(DEPDIR)/$(am__dirstamp)
+x/event/processor.$(OBJEXT): x/event/$(am__dirstamp) \
+	x/event/$(DEPDIR)/$(am__dirstamp)
+x/event/subscription.$(OBJEXT): x/event/$(am__dirstamp) \
+	x/event/$(DEPDIR)/$(am__dirstamp)
+x/event/engine.$(OBJEXT): x/event/$(am__dirstamp) \
+	x/event/$(DEPDIR)/$(am__dirstamp)
+x/event/processor/$(am__dirstamp):
+	@$(MKDIR_P) x/event/processor
+	@: > x/event/processor/$(am__dirstamp)
+x/event/processor/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) x/event/processor/$(DEPDIR)
+	@: > x/event/processor/$(DEPDIR)/$(am__dirstamp)
+x/event/processor/pool.$(OBJEXT): x/event/processor/$(am__dirstamp) \
+	x/event/processor/$(DEPDIR)/$(am__dirstamp)
+x/event/processor/event.$(OBJEXT): x/event/processor/$(am__dirstamp) \
+	x/event/processor/$(DEPDIR)/$(am__dirstamp)
+x/event/generator/$(am__dirstamp):
+	@$(MKDIR_P) x/event/generator
+	@: > x/event/generator/$(am__dirstamp)
+x/event/generator/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) x/event/generator/$(DEPDIR)
+	@: > x/event/generator/$(DEPDIR)/$(am__dirstamp)
+x/event/generator/set.$(OBJEXT): x/event/generator/$(am__dirstamp) \
+	x/event/generator/$(DEPDIR)/$(am__dirstamp)
+x/descriptor.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
+x/descriptor/event/$(am__dirstamp):
+	@$(MKDIR_P) x/descriptor/event
+	@: > x/descriptor/event/$(am__dirstamp)
+x/descriptor/event/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) x/descriptor/event/$(DEPDIR)
+	@: > x/descriptor/event/$(DEPDIR)/$(am__dirstamp)
+x/descriptor/event/generator.$(OBJEXT):  \
+	x/descriptor/event/$(am__dirstamp) \
+	x/descriptor/event/$(DEPDIR)/$(am__dirstamp)
+x/descriptor/event/generator/$(am__dirstamp):
+	@$(MKDIR_P) x/descriptor/event/generator
+	@: > x/descriptor/event/generator/$(am__dirstamp)
+x/descriptor/event/generator/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) x/descriptor/event/generator/$(DEPDIR)
+	@: > x/descriptor/event/generator/$(DEPDIR)/$(am__dirstamp)
+x/descriptor/event/generator/epoll.$(OBJEXT):  \
+	x/descriptor/event/generator/$(am__dirstamp) \
+	x/descriptor/event/generator/$(DEPDIR)/$(am__dirstamp)
+x/descriptor/event/generator/subscription/$(am__dirstamp):
+	@$(MKDIR_P) x/descriptor/event/generator/subscription
+	@: > x/descriptor/event/generator/subscription/$(am__dirstamp)
+x/descriptor/event/generator/subscription/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) x/descriptor/event/generator/subscription/$(DEPDIR)
+	@: > x/descriptor/event/generator/subscription/$(DEPDIR)/$(am__dirstamp)
+x/descriptor/event/generator/subscription/list.$(OBJEXT):  \
+	x/descriptor/event/generator/subscription/$(am__dirstamp) \
+	x/descriptor/event/generator/subscription/$(DEPDIR)/$(am__dirstamp)
+x/console.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
+x/socket.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
+x/server.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
+x/server/$(am__dirstamp):
+	@$(MKDIR_P) x/server
+	@: > x/server/$(am__dirstamp)
+x/server/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) x/server/$(DEPDIR)
+	@: > x/server/$(DEPDIR)/$(am__dirstamp)
+x/server/socket.$(OBJEXT): x/server/$(am__dirstamp) \
+	x/server/$(DEPDIR)/$(am__dirstamp)
+x/session.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
+x/session/$(am__dirstamp):
+	@$(MKDIR_P) x/session
+	@: > x/session/$(am__dirstamp)
+x/session/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) x/session/$(DEPDIR)
+	@: > x/session/$(DEPDIR)/$(am__dirstamp)
+x/session/socket.$(OBJEXT): x/session/$(am__dirstamp) \
+	x/session/$(DEPDIR)/$(am__dirstamp)
+x/client.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
+x/client/$(am__dirstamp):
+	@$(MKDIR_P) x/client
+	@: > x/client/$(am__dirstamp)
+x/client/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) x/client/$(DEPDIR)
+	@: > x/client/$(DEPDIR)/$(am__dirstamp)
+x/client/socket.$(OBJEXT): x/client/$(am__dirstamp) \
+	x/client/$(DEPDIR)/$(am__dirstamp)
+
+libnovemberizing.a: $(libnovemberizing_a_OBJECTS) $(libnovemberizing_a_DEPENDENCIES) $(EXTRA_libnovemberizing_a_DEPENDENCIES) 
+	$(AM_V_at)-rm -f libnovemberizing.a
+	$(AM_V_AR)$(libnovemberizing_a_AR) libnovemberizing.a $(libnovemberizing_a_OBJECTS) $(libnovemberizing_a_LIBADD)
+	$(AM_V_at)$(RANLIB) libnovemberizing.a
+example/benchmark/$(am__dirstamp):
+	@$(MKDIR_P) example/benchmark
+	@: > example/benchmark/$(am__dirstamp)
+example/benchmark/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) example/benchmark/$(DEPDIR)
+	@: > example/benchmark/$(DEPDIR)/$(am__dirstamp)
+example/benchmark/log.$(OBJEXT): example/benchmark/$(am__dirstamp) \
+	example/benchmark/$(DEPDIR)/$(am__dirstamp)
+
+benchmark-log$(EXEEXT): $(benchmark_log_OBJECTS) $(benchmark_log_DEPENDENCIES) $(EXTRA_benchmark_log_DEPENDENCIES) 
+	@rm -f benchmark-log$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(benchmark_log_OBJECTS) $(benchmark_log_LDADD) $(LIBS)
+eva/$(am__dirstamp):
+	@$(MKDIR_P) eva
+	@: > eva/$(am__dirstamp)
+eva/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) eva/$(DEPDIR)
+	@: > eva/$(DEPDIR)/$(am__dirstamp)
+eva/eva.$(OBJEXT): eva/$(am__dirstamp) eva/$(DEPDIR)/$(am__dirstamp)
+eva/console.$(OBJEXT): eva/$(am__dirstamp) \
+	eva/$(DEPDIR)/$(am__dirstamp)
+eva/echo.$(OBJEXT): eva/$(am__dirstamp) eva/$(DEPDIR)/$(am__dirstamp)
+
+evad$(EXEEXT): $(evad_OBJECTS) $(evad_DEPENDENCIES) $(EXTRA_evad_DEPENDENCIES) 
+	@rm -f evad$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(evad_OBJECTS) $(evad_LDADD) $(LIBS)
+example/client/$(am__dirstamp):
+	@$(MKDIR_P) example/client
+	@: > example/client/$(am__dirstamp)
+example/client/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) example/client/$(DEPDIR)
+	@: > example/client/$(DEPDIR)/$(am__dirstamp)
+example/client/simple.$(OBJEXT): example/client/$(am__dirstamp) \
+	example/client/$(DEPDIR)/$(am__dirstamp)
+
+example-client-simple$(EXEEXT): $(example_client_simple_OBJECTS) $(example_client_simple_DEPENDENCIES) $(EXTRA_example_client_simple_DEPENDENCIES) 
+	@rm -f example-client-simple$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_client_simple_OBJECTS) $(example_client_simple_LDADD) $(LIBS)
+example/command/$(am__dirstamp):
+	@$(MKDIR_P) example/command
+	@: > example/command/$(am__dirstamp)
+example/command/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) example/command/$(DEPDIR)
+	@: > example/command/$(DEPDIR)/$(am__dirstamp)
+example/command/string.$(OBJEXT): example/command/$(am__dirstamp) \
+	example/command/$(DEPDIR)/$(am__dirstamp)
+
+example-command-string$(EXEEXT): $(example_command_string_OBJECTS) $(example_command_string_DEPENDENCIES) $(EXTRA_example_command_string_DEPENDENCIES) 
+	@rm -f example-command-string$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_command_string_OBJECTS) $(example_command_string_LDADD) $(LIBS)
+example/console/$(am__dirstamp):
+	@$(MKDIR_P) example/console
+	@: > example/console/$(am__dirstamp)
+example/console/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) example/console/$(DEPDIR)
+	@: > example/console/$(DEPDIR)/$(am__dirstamp)
+example/console/io.$(OBJEXT): example/console/$(am__dirstamp) \
+	example/console/$(DEPDIR)/$(am__dirstamp)
+
+example-console-io$(EXEEXT): $(example_console_io_OBJECTS) $(example_console_io_DEPENDENCIES) $(EXTRA_example_console_io_DEPENDENCIES) 
+	@rm -f example-console-io$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_console_io_OBJECTS) $(example_console_io_LDADD) $(LIBS)
+example/event/$(am__dirstamp):
+	@$(MKDIR_P) example/event
+	@: > example/event/$(am__dirstamp)
+example/event/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) example/event/$(DEPDIR)
+	@: > example/event/$(DEPDIR)/$(am__dirstamp)
+example/event/console.$(OBJEXT): example/event/$(am__dirstamp) \
+	example/event/$(DEPDIR)/$(am__dirstamp)
+
+example-event-console$(EXEEXT): $(example_event_console_OBJECTS) $(example_event_console_DEPENDENCIES) $(EXTRA_example_event_console_DEPENDENCIES) 
+	@rm -f example-event-console$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_event_console_OBJECTS) $(example_event_console_LDADD) $(LIBS)
+example/event/engine.$(OBJEXT): example/event/$(am__dirstamp) \
+	example/event/$(DEPDIR)/$(am__dirstamp)
+
+example-event-engine$(EXEEXT): $(example_event_engine_OBJECTS) $(example_event_engine_DEPENDENCIES) $(EXTRA_example_event_engine_DEPENDENCIES) 
+	@rm -f example-event-engine$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_event_engine_OBJECTS) $(example_event_engine_LDADD) $(LIBS)
+example/event/server.$(OBJEXT): example/event/$(am__dirstamp) \
+	example/event/$(DEPDIR)/$(am__dirstamp)
+
+example-event-server$(EXEEXT): $(example_event_server_OBJECTS) $(example_event_server_DEPENDENCIES) $(EXTRA_example_event_server_DEPENDENCIES) 
+	@rm -f example-event-server$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_event_server_OBJECTS) $(example_event_server_LDADD) $(LIBS)
+example/string/$(am__dirstamp):
+	@$(MKDIR_P) example/string
+	@: > example/string/$(am__dirstamp)
+example/string/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) example/string/$(DEPDIR)
+	@: > example/string/$(DEPDIR)/$(am__dirstamp)
+example/string/api.$(OBJEXT): example/string/$(am__dirstamp) \
+	example/string/$(DEPDIR)/$(am__dirstamp)
+
+example-string-api$(EXEEXT): $(example_string_api_OBJECTS) $(example_string_api_DEPENDENCIES) $(EXTRA_example_string_api_DEPENDENCIES) 
+	@rm -f example-string-api$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_string_api_OBJECTS) $(example_string_api_LDADD) $(LIBS)
+
+mostlyclean-compile:
+	-rm -f *.$(OBJEXT)
+	-rm -f eva/*.$(OBJEXT)
+	-rm -f example/benchmark/*.$(OBJEXT)
+	-rm -f example/client/*.$(OBJEXT)
+	-rm -f example/command/*.$(OBJEXT)
+	-rm -f example/console/*.$(OBJEXT)
+	-rm -f example/event/*.$(OBJEXT)
+	-rm -f example/string/*.$(OBJEXT)
+	-rm -f x/*.$(OBJEXT)
+	-rm -f x/client/*.$(OBJEXT)
+	-rm -f x/descriptor/event/*.$(OBJEXT)
+	-rm -f x/descriptor/event/generator/*.$(OBJEXT)
+	-rm -f x/descriptor/event/generator/subscription/*.$(OBJEXT)
+	-rm -f x/event/*.$(OBJEXT)
+	-rm -f x/event/generator/*.$(OBJEXT)
+	-rm -f x/event/processor/*.$(OBJEXT)
+	-rm -f x/server/*.$(OBJEXT)
+	-rm -f x/session/*.$(OBJEXT)
+	-rm -f x/stream/*.$(OBJEXT)
+	-rm -f x/sync/posix/*.$(OBJEXT)
+	-rm -f x/thread/*.$(OBJEXT)
+
+distclean-compile:
+	-rm -f *.tab.c
+
+@AMDEP_TRUE@@am__include@ @am__quote@eva/$(DEPDIR)/console.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@eva/$(DEPDIR)/echo.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@eva/$(DEPDIR)/eva.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@example/benchmark/$(DEPDIR)/log.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@example/client/$(DEPDIR)/simple.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@example/command/$(DEPDIR)/string.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@example/console/$(DEPDIR)/io.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@example/event/$(DEPDIR)/console.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@example/event/$(DEPDIR)/engine.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@example/event/$(DEPDIR)/server.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@example/string/$(DEPDIR)/api.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/client.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/console.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/descriptor.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/exception.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/log.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/object.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/server.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/session.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/socket.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/std.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/stream.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/string.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/sync.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/thread.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/client/$(DEPDIR)/socket.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/descriptor/event/$(DEPDIR)/generator.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/descriptor/event/generator/$(DEPDIR)/epoll.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/descriptor/event/generator/subscription/$(DEPDIR)/list.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/event/$(DEPDIR)/engine.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/event/$(DEPDIR)/processor.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/event/$(DEPDIR)/queue.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/event/$(DEPDIR)/subscription.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/event/generator/$(DEPDIR)/set.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/event/processor/$(DEPDIR)/event.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/event/processor/$(DEPDIR)/pool.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/server/$(DEPDIR)/socket.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/session/$(DEPDIR)/socket.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/stream/$(DEPDIR)/buffer.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/sync/posix/$(DEPDIR)/mutex.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/thread/$(DEPDIR)/posix.Po@am__quote@ # am--include-marker
+
+$(am__depfiles_remade):
+	@$(MKDIR_P) $(@D)
+	@echo '# dummy' >$@-t && $(am__mv) $@-t $@
+
+am--depfiles: $(am__depfiles_remade)
+
+.c.o:
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ $<
+
+.c.obj:
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+.c.lo:
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
+@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -398,61 +911,14 @@ uninstall-nobase_includeHEADERS:
 	$(am__nobase_strip_setup); files=`$(am__nobase_strip)`; \
 	dir='$(DESTDIR)$(includedir)'; $(am__uninstall_files_from_dir)
 
-# This directory's subdirectories are mostly independent; you can cd
-# into them and run 'make' without going through this Makefile.
-# To change the values of 'make' variables: instead of editing Makefiles,
-# (1) if the variable is set in 'config.status', edit 'config.status'
-#     (which will cause the Makefiles to be regenerated when you run 'make');
-# (2) otherwise, pass the desired values on the 'make' command line.
-$(am__recursive_targets):
-	@fail=; \
-	if $(am__make_keepgoing); then \
-	  failcom='fail=yes'; \
-	else \
-	  failcom='exit 1'; \
-	fi; \
-	dot_seen=no; \
-	target=`echo $@ | sed s/-recursive//`; \
-	case "$@" in \
-	  distclean-* | maintainer-clean-*) list='$(DIST_SUBDIRS)' ;; \
-	  *) list='$(SUBDIRS)' ;; \
-	esac; \
-	for subdir in $$list; do \
-	  echo "Making $$target in $$subdir"; \
-	  if test "$$subdir" = "."; then \
-	    dot_seen=yes; \
-	    local_target="$$target-am"; \
-	  else \
-	    local_target="$$target"; \
-	  fi; \
-	  ($(am__cd) $$subdir && $(MAKE) $(AM_MAKEFLAGS) $$local_target) \
-	  || eval $$failcom; \
-	done; \
-	if test "$$dot_seen" = "no"; then \
-	  $(MAKE) $(AM_MAKEFLAGS) "$$target-am" || exit 1; \
-	fi; test -z "$$fail"
-
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
-tags: tags-recursive
+tags: tags-am
 TAGS: tags
 
 tags-am: $(TAGS_DEPENDENCIES) $(am__tagged_files)
 	set x; \
 	here=`pwd`; \
-	if ($(ETAGS) --etags-include --version) >/dev/null 2>&1; then \
-	  include_option=--etags-include; \
-	  empty_fix=.; \
-	else \
-	  include_option=--include; \
-	  empty_fix=; \
-	fi; \
-	list='$(SUBDIRS)'; for subdir in $$list; do \
-	  if test "$$subdir" = .; then :; else \
-	    test ! -f $$subdir/TAGS || \
-	      set "$$@" "$$include_option=$$here/$$subdir/TAGS"; \
-	  fi; \
-	done; \
 	$(am__define_uniq_tagged_files); \
 	shift; \
 	if test -z "$(ETAGS_ARGS)$$*$$unique"; then :; else \
@@ -465,7 +931,7 @@ tags-am: $(TAGS_DEPENDENCIES) $(am__tagged_files)
 	      $$unique; \
 	  fi; \
 	fi
-ctags: ctags-recursive
+ctags: ctags-am
 
 CTAGS: ctags
 ctags-am: $(TAGS_DEPENDENCIES) $(am__tagged_files)
@@ -478,7 +944,7 @@ GTAGS:
 	here=`$(am__cd) $(top_builddir) && pwd` \
 	  && $(am__cd) $(top_srcdir) \
 	  && gtags -i $(GTAGS_ARGS) "$$here"
-cscopelist: cscopelist-recursive
+cscopelist: cscopelist-am
 
 cscopelist-am: $(am__tagged_files)
 	list='$(am__tagged_files)'; \
@@ -530,48 +996,22 @@ distdir-am: $(DISTFILES)
 	    || exit 1; \
 	  fi; \
 	done
-	@list='$(DIST_SUBDIRS)'; for subdir in $$list; do \
-	  if test "$$subdir" = .; then :; else \
-	    $(am__make_dryrun) \
-	      || test -d "$(distdir)/$$subdir" \
-	      || $(MKDIR_P) "$(distdir)/$$subdir" \
-	      || exit 1; \
-	    dir1=$$subdir; dir2="$(distdir)/$$subdir"; \
-	    $(am__relativize); \
-	    new_distdir=$$reldir; \
-	    dir1=$$subdir; dir2="$(top_distdir)"; \
-	    $(am__relativize); \
-	    new_top_distdir=$$reldir; \
-	    echo " (cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) top_distdir="$$new_top_distdir" distdir="$$new_distdir" \\"; \
-	    echo "     am__remove_distdir=: am__skip_length_check=: am__skip_mode_fix=: distdir)"; \
-	    ($(am__cd) $$subdir && \
-	      $(MAKE) $(AM_MAKEFLAGS) \
-	        top_distdir="$$new_top_distdir" \
-	        distdir="$$new_distdir" \
-		am__remove_distdir=: \
-		am__skip_length_check=: \
-		am__skip_mode_fix=: \
-	        distdir) \
-	      || exit 1; \
-	  fi; \
-	done
 check-am: all-am
-check: check-recursive
-all-am: Makefile $(HEADERS)
-installdirs: installdirs-recursive
-installdirs-am:
-	for dir in "$(DESTDIR)$(includedir)"; do \
+check: check-am
+all-am: Makefile $(PROGRAMS) $(LIBRARIES) $(HEADERS)
+installdirs:
+	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includedir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
-install: install-recursive
-install-exec: install-exec-recursive
-install-data: install-data-recursive
-uninstall: uninstall-recursive
+install: install-am
+install-exec: install-exec-am
+install-data: install-data-am
+uninstall: uninstall-am
 
 install-am: all-am
 	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
 
-installcheck: installcheck-recursive
+installcheck: installcheck-am
 install-strip:
 	if test -z '$(STRIP)'; then \
 	  $(MAKE) $(AM_MAKEFLAGS) INSTALL_PROGRAM="$(INSTALL_STRIP_PROGRAM)" \
@@ -589,91 +1029,218 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f eva/$(DEPDIR)/$(am__dirstamp)
+	-rm -f eva/$(am__dirstamp)
+	-rm -f example/benchmark/$(DEPDIR)/$(am__dirstamp)
+	-rm -f example/benchmark/$(am__dirstamp)
+	-rm -f example/client/$(DEPDIR)/$(am__dirstamp)
+	-rm -f example/client/$(am__dirstamp)
+	-rm -f example/command/$(DEPDIR)/$(am__dirstamp)
+	-rm -f example/command/$(am__dirstamp)
+	-rm -f example/console/$(DEPDIR)/$(am__dirstamp)
+	-rm -f example/console/$(am__dirstamp)
+	-rm -f example/event/$(DEPDIR)/$(am__dirstamp)
+	-rm -f example/event/$(am__dirstamp)
+	-rm -f example/string/$(DEPDIR)/$(am__dirstamp)
+	-rm -f example/string/$(am__dirstamp)
+	-rm -f x/$(DEPDIR)/$(am__dirstamp)
+	-rm -f x/$(am__dirstamp)
+	-rm -f x/client/$(DEPDIR)/$(am__dirstamp)
+	-rm -f x/client/$(am__dirstamp)
+	-rm -f x/descriptor/event/$(DEPDIR)/$(am__dirstamp)
+	-rm -f x/descriptor/event/$(am__dirstamp)
+	-rm -f x/descriptor/event/generator/$(DEPDIR)/$(am__dirstamp)
+	-rm -f x/descriptor/event/generator/$(am__dirstamp)
+	-rm -f x/descriptor/event/generator/subscription/$(DEPDIR)/$(am__dirstamp)
+	-rm -f x/descriptor/event/generator/subscription/$(am__dirstamp)
+	-rm -f x/event/$(DEPDIR)/$(am__dirstamp)
+	-rm -f x/event/$(am__dirstamp)
+	-rm -f x/event/generator/$(DEPDIR)/$(am__dirstamp)
+	-rm -f x/event/generator/$(am__dirstamp)
+	-rm -f x/event/processor/$(DEPDIR)/$(am__dirstamp)
+	-rm -f x/event/processor/$(am__dirstamp)
+	-rm -f x/server/$(DEPDIR)/$(am__dirstamp)
+	-rm -f x/server/$(am__dirstamp)
+	-rm -f x/session/$(DEPDIR)/$(am__dirstamp)
+	-rm -f x/session/$(am__dirstamp)
+	-rm -f x/stream/$(DEPDIR)/$(am__dirstamp)
+	-rm -f x/stream/$(am__dirstamp)
+	-rm -f x/sync/posix/$(DEPDIR)/$(am__dirstamp)
+	-rm -f x/sync/posix/$(am__dirstamp)
+	-rm -f x/thread/$(DEPDIR)/$(am__dirstamp)
+	-rm -f x/thread/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-clean: clean-recursive
+clean: clean-am
 
-clean-am: clean-generic clean-libtool mostlyclean-am
+clean-am: clean-generic clean-libLIBRARIES clean-libtool \
+	clean-noinstPROGRAMS mostlyclean-am
 
-distclean: distclean-recursive
+distclean: distclean-am
+		-rm -f eva/$(DEPDIR)/console.Po
+	-rm -f eva/$(DEPDIR)/echo.Po
+	-rm -f eva/$(DEPDIR)/eva.Po
+	-rm -f example/benchmark/$(DEPDIR)/log.Po
+	-rm -f example/client/$(DEPDIR)/simple.Po
+	-rm -f example/command/$(DEPDIR)/string.Po
+	-rm -f example/console/$(DEPDIR)/io.Po
+	-rm -f example/event/$(DEPDIR)/console.Po
+	-rm -f example/event/$(DEPDIR)/engine.Po
+	-rm -f example/event/$(DEPDIR)/server.Po
+	-rm -f example/string/$(DEPDIR)/api.Po
+	-rm -f x/$(DEPDIR)/client.Po
+	-rm -f x/$(DEPDIR)/console.Po
+	-rm -f x/$(DEPDIR)/descriptor.Po
+	-rm -f x/$(DEPDIR)/exception.Po
+	-rm -f x/$(DEPDIR)/log.Po
+	-rm -f x/$(DEPDIR)/object.Po
+	-rm -f x/$(DEPDIR)/server.Po
+	-rm -f x/$(DEPDIR)/session.Po
+	-rm -f x/$(DEPDIR)/socket.Po
+	-rm -f x/$(DEPDIR)/std.Po
+	-rm -f x/$(DEPDIR)/stream.Po
+	-rm -f x/$(DEPDIR)/string.Po
+	-rm -f x/$(DEPDIR)/sync.Po
+	-rm -f x/$(DEPDIR)/thread.Po
+	-rm -f x/client/$(DEPDIR)/socket.Po
+	-rm -f x/descriptor/event/$(DEPDIR)/generator.Po
+	-rm -f x/descriptor/event/generator/$(DEPDIR)/epoll.Po
+	-rm -f x/descriptor/event/generator/subscription/$(DEPDIR)/list.Po
+	-rm -f x/event/$(DEPDIR)/engine.Po
+	-rm -f x/event/$(DEPDIR)/processor.Po
+	-rm -f x/event/$(DEPDIR)/queue.Po
+	-rm -f x/event/$(DEPDIR)/subscription.Po
+	-rm -f x/event/generator/$(DEPDIR)/set.Po
+	-rm -f x/event/processor/$(DEPDIR)/event.Po
+	-rm -f x/event/processor/$(DEPDIR)/pool.Po
+	-rm -f x/server/$(DEPDIR)/socket.Po
+	-rm -f x/session/$(DEPDIR)/socket.Po
+	-rm -f x/stream/$(DEPDIR)/buffer.Po
+	-rm -f x/sync/posix/$(DEPDIR)/mutex.Po
+	-rm -f x/thread/$(DEPDIR)/posix.Po
 	-rm -f Makefile
-distclean-am: clean-am distclean-generic distclean-tags
+distclean-am: clean-am distclean-compile distclean-generic \
+	distclean-tags
 
-dvi: dvi-recursive
+dvi: dvi-am
 
 dvi-am:
 
-html: html-recursive
+html: html-am
 
 html-am:
 
-info: info-recursive
+info: info-am
 
 info-am:
 
 install-data-am: install-nobase_includeHEADERS
 
-install-dvi: install-dvi-recursive
+install-dvi: install-dvi-am
 
 install-dvi-am:
 
-install-exec-am:
+install-exec-am: install-libLIBRARIES
 
-install-html: install-html-recursive
+install-html: install-html-am
 
 install-html-am:
 
-install-info: install-info-recursive
+install-info: install-info-am
 
 install-info-am:
 
 install-man:
 
-install-pdf: install-pdf-recursive
+install-pdf: install-pdf-am
 
 install-pdf-am:
 
-install-ps: install-ps-recursive
+install-ps: install-ps-am
 
 install-ps-am:
 
 installcheck-am:
 
-maintainer-clean: maintainer-clean-recursive
+maintainer-clean: maintainer-clean-am
+		-rm -f eva/$(DEPDIR)/console.Po
+	-rm -f eva/$(DEPDIR)/echo.Po
+	-rm -f eva/$(DEPDIR)/eva.Po
+	-rm -f example/benchmark/$(DEPDIR)/log.Po
+	-rm -f example/client/$(DEPDIR)/simple.Po
+	-rm -f example/command/$(DEPDIR)/string.Po
+	-rm -f example/console/$(DEPDIR)/io.Po
+	-rm -f example/event/$(DEPDIR)/console.Po
+	-rm -f example/event/$(DEPDIR)/engine.Po
+	-rm -f example/event/$(DEPDIR)/server.Po
+	-rm -f example/string/$(DEPDIR)/api.Po
+	-rm -f x/$(DEPDIR)/client.Po
+	-rm -f x/$(DEPDIR)/console.Po
+	-rm -f x/$(DEPDIR)/descriptor.Po
+	-rm -f x/$(DEPDIR)/exception.Po
+	-rm -f x/$(DEPDIR)/log.Po
+	-rm -f x/$(DEPDIR)/object.Po
+	-rm -f x/$(DEPDIR)/server.Po
+	-rm -f x/$(DEPDIR)/session.Po
+	-rm -f x/$(DEPDIR)/socket.Po
+	-rm -f x/$(DEPDIR)/std.Po
+	-rm -f x/$(DEPDIR)/stream.Po
+	-rm -f x/$(DEPDIR)/string.Po
+	-rm -f x/$(DEPDIR)/sync.Po
+	-rm -f x/$(DEPDIR)/thread.Po
+	-rm -f x/client/$(DEPDIR)/socket.Po
+	-rm -f x/descriptor/event/$(DEPDIR)/generator.Po
+	-rm -f x/descriptor/event/generator/$(DEPDIR)/epoll.Po
+	-rm -f x/descriptor/event/generator/subscription/$(DEPDIR)/list.Po
+	-rm -f x/event/$(DEPDIR)/engine.Po
+	-rm -f x/event/$(DEPDIR)/processor.Po
+	-rm -f x/event/$(DEPDIR)/queue.Po
+	-rm -f x/event/$(DEPDIR)/subscription.Po
+	-rm -f x/event/generator/$(DEPDIR)/set.Po
+	-rm -f x/event/processor/$(DEPDIR)/event.Po
+	-rm -f x/event/processor/$(DEPDIR)/pool.Po
+	-rm -f x/server/$(DEPDIR)/socket.Po
+	-rm -f x/session/$(DEPDIR)/socket.Po
+	-rm -f x/stream/$(DEPDIR)/buffer.Po
+	-rm -f x/sync/posix/$(DEPDIR)/mutex.Po
+	-rm -f x/thread/$(DEPDIR)/posix.Po
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
-mostlyclean: mostlyclean-recursive
+mostlyclean: mostlyclean-am
 
-mostlyclean-am: mostlyclean-generic mostlyclean-libtool
+mostlyclean-am: mostlyclean-compile mostlyclean-generic \
+	mostlyclean-libtool
 
-pdf: pdf-recursive
+pdf: pdf-am
 
 pdf-am:
 
-ps: ps-recursive
+ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-nobase_includeHEADERS
+uninstall-am: uninstall-libLIBRARIES uninstall-nobase_includeHEADERS
 
-.MAKE: $(am__recursive_targets) install-am install-strip
+.MAKE: install-am install-strip
 
-.PHONY: $(am__recursive_targets) CTAGS GTAGS TAGS all all-am check \
-	check-am clean clean-generic clean-libtool cscopelist-am ctags \
-	ctags-am distclean distclean-generic distclean-libtool \
+.PHONY: CTAGS GTAGS TAGS all all-am am--depfiles check check-am clean \
+	clean-generic clean-libLIBRARIES clean-libtool \
+	clean-noinstPROGRAMS cscopelist-am ctags ctags-am distclean \
+	distclean-compile distclean-generic distclean-libtool \
 	distclean-tags distdir dvi dvi-am html html-am info info-am \
 	install install-am install-data install-data-am install-dvi \
 	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am install-man \
-	install-nobase_includeHEADERS install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs installdirs-am maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-generic \
-	mostlyclean-libtool pdf pdf-am ps ps-am tags tags-am uninstall \
-	uninstall-am uninstall-nobase_includeHEADERS
+	install-html-am install-info install-info-am \
+	install-libLIBRARIES install-man install-nobase_includeHEADERS \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
+	pdf pdf-am ps ps-am tags tags-am uninstall uninstall-am \
+	uninstall-libLIBRARIES uninstall-nobase_includeHEADERS
 
 .PRECIOUS: Makefile
 
