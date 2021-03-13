@@ -49,22 +49,10 @@ typedef __UINT8_TYPE__      xuint8;             /**!< 8 비트 양의 정수형�
 typedef __UINT16_TYPE__     xuint16;            /**!< 16 비트 양의 정수형입니다. */
 typedef __UINT32_TYPE__     xuint32;            /**!< 32 비트 양의 정수형입니다. */
 typedef __UINT64_TYPE__     xuint64;            /**!< 64 비트 양의 정수형입니다. */
+typedef unsigned char       xbyte;              /**!< 바이트 타입 */
 
 typedef void *              xhandle;            /**!< 핸들 타입입니다. */
 typedef void *              xobject;            /**!< 객체 타입입니다. */
-typedef unsigned char       xbyte;              /**!< 바이트 타입 */
-
-union xval;
-
-typedef union xval xval;
-
-union xval
-{
-    void *  p;
-    xint64  i64;
-    xuint64 u64;
-};
-
 
 /**
  * @def         xcheck(condition, format, ...)

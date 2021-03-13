@@ -129,7 +129,7 @@ extern void xeventengine_sync(xeventengine * engine, xint32 on)
         }
         if(engine->queue->sync == xnil)
         {
-            engine->queue->sync = xsynccondinit(xsyncnew(xsynctype_default));
+            engine->queue->sync = xsyncconditioninit(xsyncnew(xsynctype_default));
         }
         if(engine->main->sync == xnil)
         {

@@ -96,7 +96,7 @@ extern xsync * xsyncrem(xsync * o)
  * @version     0.0.1
  * @date        2021. 02. 24.
  */
-extern xsync * xsynccondinit(xsync * o)
+extern xsync * xsyncconditioninit(xsync * o)
 {
     xlogfunction_start("%s(%p)", __func__, o);
     xsync * ret = xnil;
@@ -132,7 +132,7 @@ extern xsync * xsynccondinit(xsync * o)
  * @version     0.0.1
  * @date        2021. 02. 24.
  */
-extern xsync * xsynccondterm(xsync * o)
+extern xsync * xsyncconditionterm(xsync * o)
 {
     xlogfunction_start("%s(%p)", __func__, o);
 

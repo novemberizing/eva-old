@@ -39,8 +39,8 @@ extern xint32 xthreadcheck_rem(xthread * o);
 
 extern xsync * xsyncnew(xuint32 type);
 extern xsync * xsyncrem(xsync * o);
-extern xsync * xsynccondinit(xsync * o);
-extern xsync * xsynccondterm(xsync * o);
+extern xsync * xsyncconditioninit(xsync * o);
+extern xsync * xsyncconditionterm(xsync * o);
 
 extern xint32 xsynclock(xsync * o);
 extern xint32 xsyncunlock(xsync * o);
