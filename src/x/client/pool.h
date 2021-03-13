@@ -30,9 +30,18 @@ struct xclientpool
 
     xclientfactory create;
     xclientreleaser release;
+
+    xeventengine * engine;
 };
 
-extern xclientpool * xclientpool_new(xclientfactory factory, xclientreleaser * releaser, xclientpoolsubscriber on, xuint32 total);
+extern xclientpool * xclientpool_new(xclientfactory factory, xclientreleaser * releaser, int domain, int type, int protocol, void * addr, xuint32 addrlen, xclientpoolsubscriber on, xuint32 total);
 extern xclientpool * xclientpool_rem(xclientpool * pool);
+
+extern void xclientpool_client_bulk_create(xclientpool * pool, xuint64 total);
+extern xclient * xclientpool_client_create(xclientpool * pool);
+extern void xclientpool_client_release(xclientpool * pool, xclient * client);
+
+extern xclient * xclientpool_pop(xclientpool * pool);
+extern xclient * xclientpool_del(xclientpool * pool, xclient * client);
 
 #endif // __NOVEMBERIZING_X__CLIENT_POOL__H__

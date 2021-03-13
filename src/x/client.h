@@ -10,13 +10,13 @@ typedef struct xclient xclient;
 
 typedef xint64 (*xclientsubscriber)(xclient *, xuint64, void *, xint64);
 
-typedef xclient * (*xclientfactory)(void);
+typedef xclient * (*xclientfactory)(xclientpool *);
 typedef void (*xclientreleaser)(xclient *);
 
 struct xclient
 {
     xclientsocket * descriptor;
-    xclientsubscriber on;
+    xclientsubscriber on;           // 사용자에게 오픈되지만, 
 
     xclient * prev;
     xclient * next;
