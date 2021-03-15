@@ -46,6 +46,7 @@ LIBS = libnovemberizing.a             \
 
 noinst_PROGRAMS = benchmark-log                 \
                   example-client-simple         \
+                  example-client-pool           \
                   example-console-io            \
                   example-event-engine          \
                   example-event-console         \
@@ -59,6 +60,9 @@ benchmark_log_LDADD             = $(LIBS)
 
 example_client_simple_SOURCES   = example/client/simple.c
 example_client_simple_LDADD     = $(LIBS)
+
+example_client_pool_SOURCES     = example/client/pool.c
+example_client_pool_LDADD       = $(LIBS)
 
 example_console_io_SOURCES      = example/console/io.c
 example_console_io_LDADD        = $(LIBS)

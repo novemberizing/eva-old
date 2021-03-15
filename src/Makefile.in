@@ -93,10 +93,11 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 noinst_PROGRAMS = benchmark-log$(EXEEXT) \
-	example-client-simple$(EXEEXT) example-console-io$(EXEEXT) \
-	example-event-engine$(EXEEXT) example-event-console$(EXEEXT) \
-	example-event-server$(EXEEXT) example-string-api$(EXEEXT) \
-	example-command-string$(EXEEXT) evad$(EXEEXT)
+	example-client-simple$(EXEEXT) example-client-pool$(EXEEXT) \
+	example-console-io$(EXEEXT) example-event-engine$(EXEEXT) \
+	example-event-console$(EXEEXT) example-event-server$(EXEEXT) \
+	example-string-api$(EXEEXT) example-command-string$(EXEEXT) \
+	evad$(EXEEXT)
 subdir = src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -179,6 +180,9 @@ am_evad_OBJECTS = eva/eva.$(OBJEXT) eva/console.$(OBJEXT) \
 	eva/echo.$(OBJEXT)
 evad_OBJECTS = $(am_evad_OBJECTS)
 evad_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_example_client_pool_OBJECTS = example/client/pool.$(OBJEXT)
+example_client_pool_OBJECTS = $(am_example_client_pool_OBJECTS)
+example_client_pool_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_example_client_simple_OBJECTS = example/client/simple.$(OBJEXT)
 example_client_simple_OBJECTS = $(am_example_client_simple_OBJECTS)
 example_client_simple_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -217,6 +221,7 @@ depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = eva/$(DEPDIR)/console.Po eva/$(DEPDIR)/echo.Po \
 	eva/$(DEPDIR)/eva.Po example/benchmark/$(DEPDIR)/log.Po \
+	example/client/$(DEPDIR)/pool.Po \
 	example/client/$(DEPDIR)/simple.Po \
 	example/command/$(DEPDIR)/string.Po \
 	example/console/$(DEPDIR)/io.Po \
@@ -262,13 +267,15 @@ am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
 SOURCES = $(libnovemberizing_a_SOURCES) $(benchmark_log_SOURCES) \
-	$(evad_SOURCES) $(example_client_simple_SOURCES) \
+	$(evad_SOURCES) $(example_client_pool_SOURCES) \
+	$(example_client_simple_SOURCES) \
 	$(example_command_string_SOURCES) \
 	$(example_console_io_SOURCES) $(example_event_console_SOURCES) \
 	$(example_event_engine_SOURCES) \
 	$(example_event_server_SOURCES) $(example_string_api_SOURCES)
 DIST_SOURCES = $(libnovemberizing_a_SOURCES) $(benchmark_log_SOURCES) \
-	$(evad_SOURCES) $(example_client_simple_SOURCES) \
+	$(evad_SOURCES) $(example_client_pool_SOURCES) \
+	$(example_client_simple_SOURCES) \
 	$(example_command_string_SOURCES) \
 	$(example_console_io_SOURCES) $(example_event_console_SOURCES) \
 	$(example_event_engine_SOURCES) \
@@ -460,6 +467,8 @@ benchmark_log_SOURCES = example/benchmark/log.c
 benchmark_log_LDADD = $(LIBS)
 example_client_simple_SOURCES = example/client/simple.c
 example_client_simple_LDADD = $(LIBS)
+example_client_pool_SOURCES = example/client/pool.c
+example_client_pool_LDADD = $(LIBS)
 example_console_io_SOURCES = example/console/io.c
 example_console_io_LDADD = $(LIBS)
 example_event_engine_SOURCES = example/event/engine.c
@@ -728,6 +737,12 @@ example/client/$(am__dirstamp):
 example/client/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) example/client/$(DEPDIR)
 	@: > example/client/$(DEPDIR)/$(am__dirstamp)
+example/client/pool.$(OBJEXT): example/client/$(am__dirstamp) \
+	example/client/$(DEPDIR)/$(am__dirstamp)
+
+example-client-pool$(EXEEXT): $(example_client_pool_OBJECTS) $(example_client_pool_DEPENDENCIES) $(EXTRA_example_client_pool_DEPENDENCIES) 
+	@rm -f example-client-pool$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_client_pool_OBJECTS) $(example_client_pool_LDADD) $(LIBS)
 example/client/simple.$(OBJEXT): example/client/$(am__dirstamp) \
 	example/client/$(DEPDIR)/$(am__dirstamp)
 
@@ -826,6 +841,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@eva/$(DEPDIR)/echo.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@eva/$(DEPDIR)/eva.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/benchmark/$(DEPDIR)/log.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@example/client/$(DEPDIR)/pool.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/client/$(DEPDIR)/simple.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/command/$(DEPDIR)/string.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/console/$(DEPDIR)/io.Po@am__quote@ # am--include-marker
@@ -1100,6 +1116,7 @@ distclean: distclean-am
 	-rm -f eva/$(DEPDIR)/echo.Po
 	-rm -f eva/$(DEPDIR)/eva.Po
 	-rm -f example/benchmark/$(DEPDIR)/log.Po
+	-rm -f example/client/$(DEPDIR)/pool.Po
 	-rm -f example/client/$(DEPDIR)/simple.Po
 	-rm -f example/command/$(DEPDIR)/string.Po
 	-rm -f example/console/$(DEPDIR)/io.Po
@@ -1188,6 +1205,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f eva/$(DEPDIR)/echo.Po
 	-rm -f eva/$(DEPDIR)/eva.Po
 	-rm -f example/benchmark/$(DEPDIR)/log.Po
+	-rm -f example/client/$(DEPDIR)/pool.Po
 	-rm -f example/client/$(DEPDIR)/simple.Po
 	-rm -f example/command/$(DEPDIR)/string.Po
 	-rm -f example/console/$(DEPDIR)/io.Po
