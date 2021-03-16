@@ -24,7 +24,13 @@ static void xevaeventengine_cancel(xeventengine * engine)
 
 static struct xeva __singleton = {
     xnil,
+    { 0, }
 };
+
+static void xevaconfigterm(void)
+{
+    __singleton.config.log.path = xobjectrem(__singleton.config.log.path);
+}
 
 extern xint32 xevarun(int argc, char ** argv)
 {
@@ -54,6 +60,7 @@ extern xint32 xevarun(int argc, char ** argv)
         // Z. TERMINAITION
         xconsoleterm();
         xlogterm();
+        xevaconfigterm();
 
         return ret;
     }

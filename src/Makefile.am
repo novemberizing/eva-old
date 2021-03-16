@@ -9,6 +9,8 @@ lib_LIBRARIES = libnovemberizing.a
 libnovemberizing_a_SOURCES = x/std.c                                          \
                              x/log.c                                          \
                              x/string.c                                       \
+                             x/dictionary.c                                   \
+                             x/set.c                                          \
                              x/object.c                                       \
                              x/exception.c                                    \
                              x/thread.c                                       \
