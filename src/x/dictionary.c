@@ -5,6 +5,18 @@
 #include "thread.h"
 #include "dictionary.h"
 
+
+static xdictionary * xdictionarydestruct(xdictionary * dictionary)
+{
+    if(dictionary)
+    {
+        xassertion(dictionary->size > 0 || dictionary->root, "");
+        dictionary->sync = xsyncrem(dictionary->sync);
+        free(dictionary);
+    }
+    return xnil;
+}
+
 static xint32 xdictionarynodecolor_get(xdictionarynode * node)
 {
     return node ? node->color : xdictionarynodecolor_black;
@@ -248,11 +260,24 @@ static xdictionarynode * xdictionarynode_min(xdictionarynode * node)
     return node;
 }
 
+static xdictionarynode * xdictionarynodenew(xval key)
+{
+    xdictionarynode * node = (xdictionarynode *) calloc(sizeof(xdictionarynode), 1);
+
+    node->key = key;
+    node->color = xdictionarynodecolor_black;
+    node->size = sizeof(xdictionarynode);
+
+    return node;
+}
+
 extern xdictionary * xdictionarynew(xdictionarycmp comparator)
 {
     xdictionary * dictionary = (xdictionary *) calloc(sizeof(xdictionary), 1);
 
+    dictionary->rem = xdictionarydestruct;
     dictionary->compare = comparator;
+    dictionary->create = xdictionarynodenew;
 
     return dictionary;
 }
@@ -473,4 +498,13 @@ extern xdictionarynode * xdictionarydel(xdictionary * dictionary, xval key)
         }
     }
     return node;
+}
+
+extern xdictionary * xdictionaryrem(xdictionary * dictionary)
+{
+    if(dictionary)
+    {
+        dictionary->rem(dictionary);
+    }
+    return xnil;
 }

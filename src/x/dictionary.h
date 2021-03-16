@@ -14,13 +14,16 @@ typedef struct xdictionary xdictionary;
 typedef struct xdictionarynode xdictionarynode;
 typedef xint32 (*xdictionarycmp)(xval, xval);
 typedef xdictionarynode * (*xdictionarynodefactory)(xval);
+typedef xdictionary * (*xdictionarydestructor)(xdictionary *);
 
 struct xdictionary
 {
+    xdictionarydestructor  rem;
     xdictionarynode *      root;
     xuint64                size;
     xdictionarynodefactory create;
     xdictionarycmp         compare;
+    xsync *                sync;
 };
 
 struct xdictionarynode
@@ -34,6 +37,7 @@ struct xdictionarynode
 };
 
 extern xdictionary * xdictionarynew(xdictionarycmp comparator);
+extern xdictionary * xdictionaryrem(xdictionary * dictionary);
 
 extern xdictionarynode * xdictionaryget(xdictionary * dictionary, xval key);
 extern xdictionarynode * xdictionaryadd(xdictionary * dictionary, xval key, xdictionarynode ** prev);

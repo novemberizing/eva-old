@@ -19,6 +19,11 @@ extern xset * xsetnew(xdictionarycmp comparator)
     return (xset *) xdictionarynew(comparator);
 }
 
+extern xset * xsetrem(xset * set)
+{
+    return xdictionaryrem(set);
+}
+
 extern void xsetadd(xset * set, xval key)
 {
     xdictionaryadd(set, key, xnil);

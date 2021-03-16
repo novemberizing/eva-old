@@ -151,9 +151,10 @@ libnovemberizing_a_AR = $(AR) $(ARFLAGS)
 libnovemberizing_a_LIBADD =
 am__dirstamp = $(am__leading_dot)dirstamp
 am_libnovemberizing_a_OBJECTS = x/std.$(OBJEXT) x/log.$(OBJEXT) \
-	x/string.$(OBJEXT) x/dictionary.$(OBJEXT) x/set.$(OBJEXT) \
-	x/map.$(OBJEXT) x/object.$(OBJEXT) x/exception.$(OBJEXT) \
-	x/thread.$(OBJEXT) x/thread/posix.$(OBJEXT) x/sync.$(OBJEXT) \
+	x/string.$(OBJEXT) x/dictionary.$(OBJEXT) x/array.$(OBJEXT) \
+	x/list.$(OBJEXT) x/set.$(OBJEXT) x/map.$(OBJEXT) \
+	x/object.$(OBJEXT) x/exception.$(OBJEXT) x/thread.$(OBJEXT) \
+	x/thread/posix.$(OBJEXT) x/sync.$(OBJEXT) \
 	x/sync/posix/mutex.$(OBJEXT) x/stream.$(OBJEXT) \
 	x/stream/buffer.$(OBJEXT) x/command.$(OBJEXT) \
 	x/command/string.$(OBJEXT) x/event/queue.$(OBJEXT) \
@@ -229,16 +230,17 @@ am__depfiles_remade = eva/$(DEPDIR)/console.Po eva/$(DEPDIR)/echo.Po \
 	example/event/$(DEPDIR)/console.Po \
 	example/event/$(DEPDIR)/engine.Po \
 	example/event/$(DEPDIR)/server.Po \
-	example/string/$(DEPDIR)/api.Po x/$(DEPDIR)/client.Po \
-	x/$(DEPDIR)/command.Po x/$(DEPDIR)/console.Po \
-	x/$(DEPDIR)/descriptor.Po x/$(DEPDIR)/dictionary.Po \
-	x/$(DEPDIR)/eva.Po x/$(DEPDIR)/exception.Po x/$(DEPDIR)/log.Po \
-	x/$(DEPDIR)/map.Po x/$(DEPDIR)/object.Po x/$(DEPDIR)/server.Po \
-	x/$(DEPDIR)/session.Po x/$(DEPDIR)/set.Po \
-	x/$(DEPDIR)/socket.Po x/$(DEPDIR)/std.Po x/$(DEPDIR)/stream.Po \
-	x/$(DEPDIR)/string.Po x/$(DEPDIR)/sync.Po \
-	x/$(DEPDIR)/thread.Po x/client/$(DEPDIR)/socket.Po \
-	x/command/$(DEPDIR)/string.Po \
+	example/string/$(DEPDIR)/api.Po x/$(DEPDIR)/array.Po \
+	x/$(DEPDIR)/client.Po x/$(DEPDIR)/command.Po \
+	x/$(DEPDIR)/console.Po x/$(DEPDIR)/descriptor.Po \
+	x/$(DEPDIR)/dictionary.Po x/$(DEPDIR)/eva.Po \
+	x/$(DEPDIR)/exception.Po x/$(DEPDIR)/list.Po \
+	x/$(DEPDIR)/log.Po x/$(DEPDIR)/map.Po x/$(DEPDIR)/object.Po \
+	x/$(DEPDIR)/server.Po x/$(DEPDIR)/session.Po \
+	x/$(DEPDIR)/set.Po x/$(DEPDIR)/socket.Po x/$(DEPDIR)/std.Po \
+	x/$(DEPDIR)/stream.Po x/$(DEPDIR)/string.Po \
+	x/$(DEPDIR)/sync.Po x/$(DEPDIR)/thread.Po \
+	x/client/$(DEPDIR)/socket.Po x/command/$(DEPDIR)/string.Po \
 	x/descriptor/event/$(DEPDIR)/generator.Po \
 	x/descriptor/event/generator/$(DEPDIR)/epoll.Po \
 	x/descriptor/event/generator/subscription/$(DEPDIR)/list.Po \
@@ -438,6 +440,8 @@ libnovemberizing_a_SOURCES = x/std.c                                          \
                              x/log.c                                          \
                              x/string.c                                       \
                              x/dictionary.c                                   \
+                             x/array.c                                        \
+                             x/list.c                                         \
                              x/set.c                                          \
                              x/map.c                                          \
                              x/object.c                                       \
@@ -583,6 +587,8 @@ x/std.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
 x/log.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
 x/string.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
 x/dictionary.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
+x/array.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
+x/list.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
 x/set.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
 x/map.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
 x/object.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
@@ -871,6 +877,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@example/event/$(DEPDIR)/engine.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/event/$(DEPDIR)/server.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/string/$(DEPDIR)/api.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/array.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/client.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/command.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/console.Po@am__quote@ # am--include-marker
@@ -878,6 +885,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/dictionary.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/eva.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/exception.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/list.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/log.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/map.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/object.Po@am__quote@ # am--include-marker
@@ -1153,6 +1161,7 @@ distclean: distclean-am
 	-rm -f example/event/$(DEPDIR)/engine.Po
 	-rm -f example/event/$(DEPDIR)/server.Po
 	-rm -f example/string/$(DEPDIR)/api.Po
+	-rm -f x/$(DEPDIR)/array.Po
 	-rm -f x/$(DEPDIR)/client.Po
 	-rm -f x/$(DEPDIR)/command.Po
 	-rm -f x/$(DEPDIR)/console.Po
@@ -1160,6 +1169,7 @@ distclean: distclean-am
 	-rm -f x/$(DEPDIR)/dictionary.Po
 	-rm -f x/$(DEPDIR)/eva.Po
 	-rm -f x/$(DEPDIR)/exception.Po
+	-rm -f x/$(DEPDIR)/list.Po
 	-rm -f x/$(DEPDIR)/log.Po
 	-rm -f x/$(DEPDIR)/map.Po
 	-rm -f x/$(DEPDIR)/object.Po
@@ -1247,6 +1257,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f example/event/$(DEPDIR)/engine.Po
 	-rm -f example/event/$(DEPDIR)/server.Po
 	-rm -f example/string/$(DEPDIR)/api.Po
+	-rm -f x/$(DEPDIR)/array.Po
 	-rm -f x/$(DEPDIR)/client.Po
 	-rm -f x/$(DEPDIR)/command.Po
 	-rm -f x/$(DEPDIR)/console.Po
@@ -1254,6 +1265,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f x/$(DEPDIR)/dictionary.Po
 	-rm -f x/$(DEPDIR)/eva.Po
 	-rm -f x/$(DEPDIR)/exception.Po
+	-rm -f x/$(DEPDIR)/list.Po
 	-rm -f x/$(DEPDIR)/log.Po
 	-rm -f x/$(DEPDIR)/map.Po
 	-rm -f x/$(DEPDIR)/object.Po

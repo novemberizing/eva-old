@@ -8,6 +8,7 @@ struct xset;
 typedef struct xdictionary xset;
 
 extern xset * xsetnew(xdictionarycmp comparator);
+extern xset * xsetrem(xset * set);
 
 extern void xsetadd(xset * set, xval key);
 extern xint32 xsetdel(xset * set, xval key);

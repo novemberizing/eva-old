@@ -2,6 +2,16 @@
 
 콜백을 이용한 자료 구조
 
+- [x] LIST
+- [x] MAP
+- [x] SET
+- [x] ARRAY
+- [ ] STACK
+- [ ] QUEUE
+- [ ] HASH
+
+원격 자료구조
+
 
 ----
 

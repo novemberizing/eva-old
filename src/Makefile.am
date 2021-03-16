@@ -10,6 +10,8 @@ libnovemberizing_a_SOURCES = x/std.c                                          \
                              x/log.c                                          \
                              x/string.c                                       \
                              x/dictionary.c                                   \
+                             x/array.c                                        \
+                             x/list.c                                         \
                              x/set.c                                          \
                              x/map.c                                          \
                              x/object.c                                       \

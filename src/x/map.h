@@ -12,6 +12,7 @@ typedef void (*xmapdeletioncallback)(xmap *, xval, xint32, xval *);
 typedef void (*xmapcheckcallback)(xmap *, xval, xint32);
 
 extern xmap * xmapnew(xdictionarycmp comparator);
+extern xmap * xmaprem(xmap * map);
 
 extern void xmapadd(xmap * map, xval key, xval value, xmapinsertioncallback callback);
 extern xint32 xmapdel(xmap * map, xval key, xmapdeletioncallback callback);

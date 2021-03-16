@@ -19,9 +19,29 @@ struct xmapnode
     xval              value;
 };
 
+static xdictionarynode * xmapnodenew(xval key)
+{
+    xmapnode * node = (xmapnode *) calloc(sizeof(xmapnode), 1);
+
+    node->key = key;
+    node->color = xdictionarynodecolor_black;
+    node->size = sizeof(xmapnode);
+
+    return (xdictionarynode *) node;
+}
+
+extern xmap * xmaprem(xmap * map)
+{
+    return xdictionaryrem(map);
+}
+
 extern xmap * xmapnew(xdictionarycmp comparator)
 {
-    return (xmap *) xdictionarynew(comparator);
+    xmap * map = (xmap *) xdictionarynew(comparator);
+
+    map->create = xmapnodenew;
+
+    return map;
 }
 
 extern void xmapadd(xmap * map, xval key, xval value, xmapinsertioncallback callback)
