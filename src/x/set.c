@@ -21,19 +21,23 @@ extern xset * xsetnew(xdictionarycmp comparator)
 
 extern void xsetadd(xset * set, xval key)
 {
-    xdictionarynode * node = xdictionarynodeadd(set, key, xsetnodefactory);
-    xassertion(node == xnil, "");
+    xdictionaryadd(set, key, xnil);
 }
 
-extern void xsetdel(xset * set, xval key)
+extern xint32 xsetdel(xset * set, xval key)
 {
-    xdictionarynode * node = xdictionarynodedel(set, key);
-    free(node);
+    xdictionarynode * node = xdictionarydel(set, key);
+    if(node)
+    {
+        free(node);
+        return xtrue;
+    }
+    return xfalse;
 }
 
 extern xint32 xsethas(xset * set, xval key)
 {
-    xdictionarynode * node = xdictionarynodeget(set, key);
+    xdictionarynode * node = xdictionaryget(set, key);
 
     return node != xnil;
 }

@@ -257,7 +257,7 @@ extern xdictionary * xdictionarynew(xdictionarycmp comparator)
     return dictionary;
 }
 
-extern xdictionarynode * xdictionarynodeget(xdictionary * dictionary, xval key)
+extern xdictionarynode * xdictionaryget(xdictionary * dictionary, xval key)
 {
     xdictionarynode * node = dictionary->root;
 
@@ -281,7 +281,7 @@ extern xdictionarynode * xdictionarynodeget(xdictionary * dictionary, xval key)
     return node;
 }
 
-extern xdictionarynode * xdictionarynodeadd(xdictionary * dictionary, xval key, xdictionarynodefactory gen)
+extern xdictionarynode * xdictionaryadd(xdictionary * dictionary, xval key, xdictionarynode ** prev)
 {
     xdictionarynode * node = dictionary->root;
     while(node)
@@ -293,12 +293,16 @@ extern xdictionarynode * xdictionarynodeadd(xdictionary * dictionary, xval key, 
             {
                 node = node->right;
             }
-            xdictionarynode * o = gen(key);
+            xdictionarynode * o = dictionary->create(key);
             o->color = xdictionarynodecolor_red;
             o->parent = node;
             node->right = o;
             xdictionarynodeadjust_insertion(dictionary, o);
             dictionary->size = dictionary->size + 1;
+            if(prev)
+            {
+                *prev = xnil;
+            }
             return o;
         }
         else if(diff > 0)
@@ -307,25 +311,33 @@ extern xdictionarynode * xdictionarynodeadd(xdictionary * dictionary, xval key, 
             {
                 node = node->left; 
             }
-            xdictionarynode * o = gen(key);
+            xdictionarynode * o = dictionary->create(key);
             o->color = xdictionarynodecolor_red;
             o->parent = node;
             node->left = o;
             xdictionarynodeadjust_insertion(dictionary, o);
             dictionary->size = dictionary->size + 1;
+            if(prev)
+            {
+                *prev = xnil;
+            }
             return o;
         }
         else
         {
+            if(prev)
+            {
+                *prev = node;
+            }
             return node;
         }
     }
     return node;
 }
 
-extern xdictionarynode * xdictionarynodedel(xdictionary * dictionary, xval key)
+extern xdictionarynode * xdictionarydel(xdictionary * dictionary, xval key)
 {
-    xdictionarynode * node = xdictionarynodeget(dictionary, key);
+    xdictionarynode * node = xdictionaryget(dictionary, key);
     if(node)
     {
         if(node->left && node->right)

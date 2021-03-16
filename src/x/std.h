@@ -58,6 +58,8 @@ union xval;
 
 typedef union xval          xval;
 
+typedef void (*xvalfunc)(xval *);
+
 union xval
 {
     xint32 i32;
