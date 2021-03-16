@@ -8,6 +8,10 @@
 #include "console/descriptor.h"
 #include "event/engine.h"
 
+/**
+ * 로직을 합번 정리할 필요가 있다.
+ */
+
 static xconsoledescriptor * xconsoledescriptor_rem(xconsoledescriptor * descriptor);
 static void xconsoledescriptoreventhandler_all(xconsoledescriptorevent * event);
 
@@ -64,10 +68,17 @@ static xconsoledescriptor consoledescriptor_out = {
 
 static xconsole console = { xnil, xnil, xnil };
 
-static xconsoledescriptor * consoledescriptorsingleton_in = xnil;
-static xconsoledescriptor * consoledescriptorsingleton_out = xnil;
+extern xconsole * xconsoleinit(xconsolesubscriber on)
+{
+    xconsolesubscriber_set(on);
+}
 
-extern void xconsoledescriptor_term(void)
+extern xconsole * xconsoleget(void)
+{
+    return xaddressof(console);
+}
+
+extern void xconsoleterm(void)
 {
     xlogfunction_start("%s()", __func__);
 
@@ -135,46 +146,40 @@ extern xdescriptor * xconsoledescriptorin_get(void)
 {
     xlogfunction_start("%s()", __func__);
 
-    if(consoledescriptorsingleton_in == xnil)
+    if(console.in == xnil)
     {
-        consoledescriptorsingleton_in = xaddressof(consoledescriptor_in);
-        consoledescriptorsingleton_in->handle.f = STDIN_FILENO;
-        consoledescriptorsingleton_in->event.descriptor = xaddressof(consoledescriptor_in);
-
-        consoledescriptorsingleton_in->event.on = xconsoledescriptoreventhandler_input;
-
-        consoledescriptorsingleton_in->status = (xdescriptorstatus_open | xdescriptorstatus_out);
-        consoledescriptorsingleton_in->console = xaddressof(console);
+        console.in = xaddressof(consoledescriptor_in);
+        console.in->handle.f = STDIN_FILENO;
+        console.in->event.descriptor = xaddressof(consoledescriptor_in);
+        console.in->event.on = xconsoledescriptoreventhandler_input;
+        console.in->status = (xdescriptorstatus_open | xdescriptorstatus_out);
+        console.in->console = xaddressof(console);
         // TODO: 사용자가 버퍼를 생성할 수 있도록 하자.
-        consoledescriptorsingleton_in->stream = xstreamnew(xstreamtype_default);
-        console.in = consoledescriptorsingleton_in;
+        console.in->stream = xstreamnew(xstreamtype_default);
     }
     
-    xlogfunction_end("%s(...) => %p", __func__, consoledescriptorsingleton_in);
-    return (xdescriptor *) consoledescriptorsingleton_in;
+    xlogfunction_end("%s(...) => %p", __func__, console.in);
+    return (xdescriptor *) console.in;
 }
 
 extern xdescriptor * xconsoledescriptorout_get(void)
 {
     xlogfunction_start("%s()", __func__);
 
-    if(consoledescriptorsingleton_out == xnil)
+    if(console.out == xnil)
     {
-        consoledescriptorsingleton_out = xaddressof(consoledescriptor_out);
-        consoledescriptorsingleton_out->handle.f = STDOUT_FILENO;
-        consoledescriptorsingleton_out->event.descriptor = xaddressof(consoledescriptor_out);
-
-        consoledescriptorsingleton_out->event.on = xconsoledescriptoreventhandler_output;
-
-        consoledescriptorsingleton_out->status = (xdescriptorstatus_open | xdescriptorstatus_out | xdescriptorstatus_in);
-        consoledescriptorsingleton_out->console = xaddressof(console);
+        console.out = xaddressof(consoledescriptor_out);
+        console.out->handle.f = STDOUT_FILENO;
+        console.out->event.descriptor = xaddressof(consoledescriptor_out);
+        console.out->event.on = xconsoledescriptoreventhandler_output;
+        console.out->status = (xdescriptorstatus_open | xdescriptorstatus_out | xdescriptorstatus_in);
+        console.out->console = xaddressof(console);
         // TODO: 사용자가 버퍼를 생성할 수 있도록 하자.
-        consoledescriptorsingleton_out->stream = xstreamnew(xstreamtype_default);
-        console.out = consoledescriptorsingleton_out;
+        console.out->stream = xstreamnew(xstreamtype_default);
     }
 
-    xlogfunction_end("%s(...) => %p", __func__, consoledescriptorsingleton_out);
-    return (xdescriptor *) consoledescriptorsingleton_out;
+    xlogfunction_end("%s(...) => %p", __func__, console.out);
+    return (xdescriptor *) console.out;
 }
 
 

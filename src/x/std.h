@@ -54,6 +54,19 @@ typedef unsigned char       xbyte;              /**!< 바이트 타입 */
 typedef void *              xhandle;            /**!< 핸들 타입입니다. */
 typedef void *              xobject;            /**!< 객체 타입입니다. */
 
+union xval;
+
+typedef union xval          xval;
+
+union xval
+{
+    xint32 i32;
+    xuint32 u32;
+    xint64 i64;
+    xuint64 u64;
+    void * p;
+};
+
 /**
  * @def         xcheck(condition, format, ...)
  * @brief       디버그를 위한 함수로 컨디션에 따라서 특정 포맷 형태로 콘솔에 출력합니다.

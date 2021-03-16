@@ -22,7 +22,10 @@ struct xconsole
     xconsolesubscriber   on;
 };
 
-extern void xconsoledescriptor_term(void);
+extern void xconsoleterm(void);
+extern xconsole * xconsoleget(void);
+extern xconsole * xconsoleinit(xconsolesubscriber on);
+
 extern xdescriptor * xconsoledescriptorin_get(void);
 extern xdescriptor * xconsoledescriptorout_get(void);
 extern void xconsolesubscriber_set(xconsolesubscriber subscriber);
