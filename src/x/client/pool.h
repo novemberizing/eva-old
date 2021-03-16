@@ -31,6 +31,7 @@ struct xclientpool
     xclientfactory create;
     xclientreleaser release;
 
+    // TODO: ENGINE NODE OR GENERATOR NODE ... 
     xeventengine * engine;
 };
 

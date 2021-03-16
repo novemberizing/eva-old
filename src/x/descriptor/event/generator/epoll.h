@@ -17,6 +17,7 @@ struct xdescriptoreventgenerator_epoll
     xdescriptoreventgeneratorsubscriptionlist * alive;
     xdescriptoreventgeneratorsubscriptionlist * queue;
     xeventengine *                              engine;
+    xsync *                                     sync;
     /** MEMBER */
     xint32                                      f;
     xint32                                      max;

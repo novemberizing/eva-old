@@ -121,9 +121,9 @@ extern void xconsolesubscriber_set(xconsolesubscriber subscriber)
     xlogfunction_end("%s(...)", __func__);
 }
 
-extern xint64 xconsolesubscriber_default(xconsole * console, xconsoledescriptor * descriptor, xuint64 event, void * parameter, xint64 value)
+extern xint64 xconsolesubscriber_default(xconsole * console, xconsoledescriptor * descriptor, xuint32 event, void * parameter, xint64 value)
 {
-    xlogfunction_start("%s(%p, %p, %lu, %p, %ld)", __func__, console, descriptor, event, parameter, value);
+    xlogfunction_start("%s(%p, %p, %d, %p, %ld)", __func__, console, descriptor, event, parameter, value);
 
     xassertion(xtrue, "implement this");
 

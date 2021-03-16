@@ -127,6 +127,7 @@ extern void xeventprocessorpool_del(xeventprocessorpool * pool, xuint64 n)
         if(processor->cancel == xnil)
         {
             xeventprocessor_cancel(processor);
+            // 궁극적으로는 CANCEL 함수에서 엔진의 메인 큐에 REM 을 호출하도록 되어 있다.
             i = i + 1;
         }
         processor = processor->next;

@@ -8,10 +8,12 @@ typedef void (*xdescriptoreventhandler)(xdescriptorevent *);
 
 struct xdescriptorevent
 {
+    /** INHERITED EVENT */
     xevent *                prev;
     xevent *                next;
     xeventqueue *           queue;
     xdescriptoreventhandler on;
+    /** DESCRIPTOR EVENT MEMBER */
     xdescriptor *           descriptor;
 };
 

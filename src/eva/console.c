@@ -25,7 +25,7 @@ static void xconsolecommandfunc(xcommandstring * command)
     }
 }
 
-extern xint64 evacli(xconsole * console, xconsoledescriptor * descriptor, xuint64 event, void * parameter, xint64 value)
+extern xint64 evacli(xconsole * console, xconsoledescriptor * descriptor, xuint32 event, void * parameter, xint64 value)
 {
     xlogfunction_start("%s(%p, %p, %lu, %p, %ld)", __func__, console, descriptor, event, parameter, value);
 

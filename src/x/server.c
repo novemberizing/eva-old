@@ -44,7 +44,7 @@ extern xserver * xserverrem(xserver * server)
     return xnil;
 }
 
-extern xint64 xserversubscriber_default(xserver * server, xuint64 event, void * data, xint64 result)
+extern xint64 xserversubscriber_default(xserver * server, xuint32 event, void * data, xint64 result)
 {
     xlogfunction_start("%s(%p, %lu, %p, %lu)", __func__, server, event, data, result);
     xlogfunction_end("%s(...) => %ld", __func__, result);

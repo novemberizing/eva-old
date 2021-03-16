@@ -261,7 +261,6 @@ static void xeventprocessor_exit(xeventprocessor * processor)
     xeventengine *         engine = pool->engine;
     xeventprocessor_event * event = xeventprocessor_event_new(xeventprocessor_event_handler_rem, processor);
 
-
     xeventengine_main_push(engine, (xevent *) event);
 
     xlogfunction_end("%s(...)", __func__);
