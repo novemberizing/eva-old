@@ -20,7 +20,7 @@ extern xmap * xmapnew(xdictionarycmp comparator);
 extern xmap * xmaprem(xmap * map, xmapkeyvaluefunc func);
 extern xmap * xmapclear(xmap * map, xmapkeyvaluefunc func);
 
-extern void xmapadd(xmap * map, xval key, xval value, xmapinsertioncallback callback);
+extern xmapnode * xmapadd(xmap * map, xval key, xval value, xmapinsertioncallback callback);
 extern xint32 xmapdel(xmap * map, xval key, xmapdeletioncallback callback);
 extern xint32 xmaphas(xmap * map, xval key);
 extern xmapnode * xmapget(xmap * map, xval key);

@@ -37,3 +37,15 @@ extern xint64 xrandominteger64(xuint64 max)
     xuint64 n = (xuint64) random();
     return (xint64)(max == 0 ? n : (n % max)) * (random() % 2 ? -1 : 1);
 }
+
+extern xuint64 xunsigned64from_integer32(xint32 first, xint32 second)
+{
+    xuint64 ret = 0;
+
+    xuint32 * n = (xuint32 *) xaddressof(ret);
+
+    n[0] = first;
+    n[1] = second;
+
+    return ret;
+}

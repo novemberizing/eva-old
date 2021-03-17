@@ -171,7 +171,8 @@ am_libnovemberizing_a_OBJECTS = x/std.$(OBJEXT) x/log.$(OBJEXT) \
 	x/console.$(OBJEXT) x/socket.$(OBJEXT) x/server.$(OBJEXT) \
 	x/server/socket.$(OBJEXT) x/session.$(OBJEXT) \
 	x/session/socket.$(OBJEXT) x/client.$(OBJEXT) \
-	x/client/socket.$(OBJEXT) x/eva.$(OBJEXT) x/eva/cli.$(OBJEXT)
+	x/client/socket.$(OBJEXT) x/eva.$(OBJEXT) x/eva/cli.$(OBJEXT) \
+	x/eva/server/echo.$(OBJEXT)
 libnovemberizing_a_OBJECTS = $(am_libnovemberizing_a_OBJECTS)
 am_benchmark_log_OBJECTS = example/benchmark/log.$(OBJEXT)
 benchmark_log_OBJECTS = $(am_benchmark_log_OBJECTS)
@@ -266,9 +267,9 @@ am__depfiles_remade = eva/$(DEPDIR)/console.Po eva/$(DEPDIR)/echo.Po \
 	x/descriptor/event/$(DEPDIR)/generator.Po \
 	x/descriptor/event/generator/$(DEPDIR)/epoll.Po \
 	x/descriptor/event/generator/subscription/$(DEPDIR)/list.Po \
-	x/eva/$(DEPDIR)/cli.Po x/event/$(DEPDIR)/engine.Po \
-	x/event/$(DEPDIR)/processor.Po x/event/$(DEPDIR)/queue.Po \
-	x/event/$(DEPDIR)/subscription.Po \
+	x/eva/$(DEPDIR)/cli.Po x/eva/server/$(DEPDIR)/echo.Po \
+	x/event/$(DEPDIR)/engine.Po x/event/$(DEPDIR)/processor.Po \
+	x/event/$(DEPDIR)/queue.Po x/event/$(DEPDIR)/subscription.Po \
 	x/event/generator/$(DEPDIR)/set.Po \
 	x/event/processor/$(DEPDIR)/event.Po \
 	x/event/processor/$(DEPDIR)/pool.Po \
@@ -504,7 +505,8 @@ libnovemberizing_a_SOURCES = x/std.c                                          \
                              x/client.c                                       \
                              x/client/socket.c                                \
                              x/eva.c                                          \
-                             x/eva/cli.c
+                             x/eva/cli.c                                      \
+                             x/eva/server/echo.c
 
 benchmark_log_SOURCES = example/benchmark/log.c
 benchmark_log_LDADD = $(LIBS)
@@ -769,6 +771,14 @@ x/eva/$(DEPDIR)/$(am__dirstamp):
 	@: > x/eva/$(DEPDIR)/$(am__dirstamp)
 x/eva/cli.$(OBJEXT): x/eva/$(am__dirstamp) \
 	x/eva/$(DEPDIR)/$(am__dirstamp)
+x/eva/server/$(am__dirstamp):
+	@$(MKDIR_P) x/eva/server
+	@: > x/eva/server/$(am__dirstamp)
+x/eva/server/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) x/eva/server/$(DEPDIR)
+	@: > x/eva/server/$(DEPDIR)/$(am__dirstamp)
+x/eva/server/echo.$(OBJEXT): x/eva/server/$(am__dirstamp) \
+	x/eva/server/$(DEPDIR)/$(am__dirstamp)
 
 libnovemberizing.a: $(libnovemberizing_a_OBJECTS) $(libnovemberizing_a_DEPENDENCIES) $(EXTRA_libnovemberizing_a_DEPENDENCIES) 
 	$(AM_V_at)-rm -f libnovemberizing.a
@@ -932,6 +942,7 @@ mostlyclean-compile:
 	-rm -f x/descriptor/event/generator/*.$(OBJEXT)
 	-rm -f x/descriptor/event/generator/subscription/*.$(OBJEXT)
 	-rm -f x/eva/*.$(OBJEXT)
+	-rm -f x/eva/server/*.$(OBJEXT)
 	-rm -f x/event/*.$(OBJEXT)
 	-rm -f x/event/generator/*.$(OBJEXT)
 	-rm -f x/event/processor/*.$(OBJEXT)
@@ -990,6 +1001,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@x/descriptor/event/generator/$(DEPDIR)/epoll.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/descriptor/event/generator/subscription/$(DEPDIR)/list.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/eva/$(DEPDIR)/cli.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/eva/server/$(DEPDIR)/echo.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/event/$(DEPDIR)/engine.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/event/$(DEPDIR)/processor.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/event/$(DEPDIR)/queue.Po@am__quote@ # am--include-marker
@@ -1211,6 +1223,8 @@ distclean-generic:
 	-rm -f x/descriptor/event/generator/subscription/$(am__dirstamp)
 	-rm -f x/eva/$(DEPDIR)/$(am__dirstamp)
 	-rm -f x/eva/$(am__dirstamp)
+	-rm -f x/eva/server/$(DEPDIR)/$(am__dirstamp)
+	-rm -f x/eva/server/$(am__dirstamp)
 	-rm -f x/event/$(DEPDIR)/$(am__dirstamp)
 	-rm -f x/event/$(am__dirstamp)
 	-rm -f x/event/generator/$(DEPDIR)/$(am__dirstamp)
@@ -1283,6 +1297,7 @@ distclean: distclean-am
 	-rm -f x/descriptor/event/generator/$(DEPDIR)/epoll.Po
 	-rm -f x/descriptor/event/generator/subscription/$(DEPDIR)/list.Po
 	-rm -f x/eva/$(DEPDIR)/cli.Po
+	-rm -f x/eva/server/$(DEPDIR)/echo.Po
 	-rm -f x/event/$(DEPDIR)/engine.Po
 	-rm -f x/event/$(DEPDIR)/processor.Po
 	-rm -f x/event/$(DEPDIR)/queue.Po
@@ -1386,6 +1401,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f x/descriptor/event/generator/$(DEPDIR)/epoll.Po
 	-rm -f x/descriptor/event/generator/subscription/$(DEPDIR)/list.Po
 	-rm -f x/eva/$(DEPDIR)/cli.Po
+	-rm -f x/eva/server/$(DEPDIR)/echo.Po
 	-rm -f x/event/$(DEPDIR)/engine.Po
 	-rm -f x/event/$(DEPDIR)/processor.Po
 	-rm -f x/event/$(DEPDIR)/queue.Po

@@ -66,6 +66,8 @@ typedef void (*xvalfunc)(xval *);
 #define xvalunsigned64(v)       (xval) { .u64 = v }
 #define xvalobject(v)           (xval) { .p = v }
 
+#define xvalobjectget(o)        (o.p)
+
 union xval
 {
     xint32 i32;
@@ -166,5 +168,7 @@ extern void xrandominit(void);
 extern xint64 xrandomget(void);
 extern xuint64 xrandomunsigned64(xuint64 max);
 extern xint64 xrandominteger64(xuint64 max);
+
+extern xuint64 xunsigned64from_integer32(xint32 first, xint32 second);
 
 #endif // __NOVEMBERIZING_X__STD__H__

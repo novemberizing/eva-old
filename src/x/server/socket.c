@@ -103,7 +103,7 @@ extern xserversocket * xserversocket_rem(xserversocket * descriptor)
 {
     xlogfunction_start("%s(%p)", __func__, descriptor);
 
-    xassertion(xserversocketcheck_rem(descriptor), "");
+    xassertion(xserversocketcheck_rem(descriptor) == xfalse, "");
 
     descriptor->sync = xsyncrem(descriptor->sync);
     descriptor->addr = xobjectrem(descriptor->addr);

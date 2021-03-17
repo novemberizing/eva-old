@@ -142,7 +142,7 @@ extern xmap * xmapnew(xdictionarycmp comparator)
     return map;
 }
 
-extern void xmapadd(xmap * map, xval key, xval value, xmapinsertioncallback callback)
+extern xmapnode * xmapadd(xmap * map, xval key, xval value, xmapinsertioncallback callback)
 {
     xmapnode * prev = xnil;
     xmapnode * node = (xmapnode *) xdictionaryadd((xdictionary *) map, key, (xdictionarynode **) xaddressof(prev));
@@ -161,6 +161,8 @@ extern void xmapadd(xmap * map, xval key, xval value, xmapinsertioncallback call
         }
     }
     node->value = value;
+
+    return prev;
 }
 
 extern xint32 xmapdel(xmap * map, xval key, xmapdeletioncallback callback)

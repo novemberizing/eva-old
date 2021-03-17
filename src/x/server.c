@@ -33,7 +33,8 @@ extern xserver * xserverrem(xserver * server)
     if(server)
     {
         xassertion(server->session.alive.size > 0, "");
-        xassertion(xserversocketcheck_rem(server->descriptor), "");
+        // printf("%d\n", xserversocketcheck_rem(server->descriptor));
+        xassertion(xserversocketcheck_rem(server->descriptor) == xfalse, "");
 
         server->descriptor = xserversocket_rem(server->descriptor);
 

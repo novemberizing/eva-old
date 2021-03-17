@@ -207,6 +207,10 @@ extern void xlogout(unsigned int type, const char * file, int line, const char *
                         threadlog->fp = stdout;
                     }
                 }
+                else
+                {
+
+                }
 
                 if(threadlog->fp)
                 {
