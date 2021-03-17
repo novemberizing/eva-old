@@ -525,8 +525,6 @@ extern xdictionarynode * xdictionarydel(xdictionary * dictionary, xval key)
                 }
                 if(successor->color == xdictionarynodecolor_black)
                 {
-                    // PROBLEM
-                    printf("= A =\n");
                     xdictionarynodeadjust_deletion(dictionary, successor->parent);
                 }
                 successor->parent = xnil;
@@ -609,7 +607,6 @@ extern xdictionarynode * xdictionarydel(xdictionary * dictionary, xval key)
                 }
                 if(node->color == xdictionarynodecolor_black)
                 {
-                    printf("= B =\n");
                     xdictionarynodeadjust_deletion(dictionary, node->parent);
                 }
                 node->parent = xnil;

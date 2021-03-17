@@ -67,3 +67,5 @@ Makefile
 benchmark*
 example-*
 evad
+*.csv
+*.csv#

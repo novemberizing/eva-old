@@ -132,6 +132,23 @@ union xval
     }                                                           \
 } while(0)
 
+#define xperformancecheck(code) do {                            \
+    struct timespec start;                                      \
+    struct timespec end;                                        \
+    struct timespec diff;                                       \
+    clock_gettime(CLOCK_REALTIME, &start);                      \
+    code;                                                       \
+    clock_gettime(CLOCK_REALTIME, &end);                        \
+    diff.tv_sec = end.tv_sec - start.tv_sec;                    \
+    diff.tv_nsec = end.tv_nsec - start.tv_nsec;                 \
+    if(diff.tv_nsec < 0)                                        \
+    {                                                           \
+        diff.tv_sec = diff.tv_sec - 1;                          \
+        diff.tv_nsec = 1000000000 + diff.tv_nsec;               \
+    }                                                           \
+    printf("%ld.%09ld\n", diff.tv_sec, diff.tv_nsec);           \
+} while(0)
+
 /**
  * @def         xobjectof(o)
  * @brief       강제적으로 객체형으로 변환합니다.
