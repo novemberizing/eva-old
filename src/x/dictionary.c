@@ -6,11 +6,11 @@
 #include "dictionary.h"
 
 
-static xdictionary * xdictionarydestruct(xdictionary * dictionary)
+static xdictionary * xdictionarydestruct(xdictionary * dictionary, xdictionarynodefunc func)
 {
     if(dictionary)
     {
-        xassertion(dictionary->size > 0 || dictionary->root, "");
+        xdictionaryclear(dictionary, func);
         dictionary->sync = xsyncrem(dictionary->sync);
         free(dictionary);
     }
@@ -251,7 +251,7 @@ static void xdictionarynodeadjust_deletion(xdictionary * dictionary, xdictionary
     }
 }
 
-static xdictionarynode * xdictionarynode_min(xdictionarynode * node)
+extern xdictionarynode * xdictionarynodemin_get(xdictionarynode * node)
 {
     while(node && node->left)
     {
@@ -367,7 +367,7 @@ extern xdictionarynode * xdictionarydel(xdictionary * dictionary, xval key)
     {
         if(node->left && node->right)
         {
-            xdictionarynode * successor = xdictionarynode_min(node->right);
+            xdictionarynode * successor = xdictionarynodemin_get(node->right);
 
             xdictionarynode * parent = successor->parent;
             xdictionarynode * left = successor->left;
@@ -500,11 +500,84 @@ extern xdictionarynode * xdictionarydel(xdictionary * dictionary, xval key)
     return node;
 }
 
-extern xdictionary * xdictionaryrem(xdictionary * dictionary)
+extern xdictionary * xdictionaryrem(xdictionary * dictionary, xdictionarynodefunc func)
 {
     if(dictionary)
     {
-        dictionary->rem(dictionary);
+        dictionary->rem(dictionary, func);
     }
     return xnil;
+}
+
+static void __xdictionaryclear(xdictionary * dictionary, xdictionarynodefunc func)
+{
+    xdictionarynode * node = xdictionarynodemin_get(dictionary->root);
+    if(func)
+    {
+        while(node)
+        {
+            if(node->right)
+            {
+                node = xdictionarynodemin_get(node->right);
+            }
+            else
+            {
+                xdictionarynode * parent = node->parent;
+                if(parent)
+                {
+                    if(parent->left == node)
+                    {
+                        parent->left = xnil;
+                    }
+                    else
+                    {
+                        parent->right = xnil;
+                    }
+                }
+                node->parent = xnil;
+                func(node);
+                free(node);
+                node = parent;
+            }
+        }
+    }
+    else
+    {
+        while(node)
+        {
+            if(node->right)
+            {
+                node = xdictionarynodemin_get(node->right);
+            }
+            else
+            {
+                xdictionarynode * parent = node->parent;
+                if(parent)
+                {
+                    if(parent->left == node)
+                    {
+                        parent->left = xnil;
+                    }
+                    else
+                    {
+                        parent->right = xnil;
+                    }
+                }
+                free(node);
+                node = parent;
+            }
+        }
+    }
+}
+
+extern void xdictionaryclear(xdictionary * dictionary, xdictionarynodefunc func)
+{
+    if(dictionary->clear)
+    {
+        dictionary->clear(dictionary, func);
+    }
+    else
+    {
+        __xdictionaryclear(dictionary, func);
+    }
 }
