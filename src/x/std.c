@@ -29,11 +29,11 @@ extern xint64 xrandomget(void)
 extern xuint64 xrandomunsigned64(xuint64 max)
 {
     xuint64 n = (xuint64) random();
-    return n % (max == 0 ? 1 : max);
+    return max == 0 ? n : (n % max);
 }
 
 extern xint64 xrandominteger64(xuint64 max)
 {
     xuint64 n = (xuint64) random();
-    return (xint64)(n % (max == 0 ? 1 : max)) * (random() % 2 ? -1 : 1);
+    return (xint64)(max == 0 ? n : (n % max)) * (random() % 2 ? -1 : 1);
 }

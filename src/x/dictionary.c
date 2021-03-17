@@ -5,6 +5,110 @@
 #include "thread.h"
 #include "dictionary.h"
 
+#include "list.h"
+
+static void xdictionarynode_swap(xdictionarynode * x, xdictionarynode * y)
+{
+    xval key = x->key;
+    x->key = y->key;
+    y->key = key;
+}
+
+extern xdictionarynode * xdictionarybegin(xdictionary * dictionary)
+{
+    return xdictionarynodemin_get(dictionary->root);
+}
+
+extern xdictionarynode * xdictionarynode_next(xdictionarynode * node)
+{
+    if(node->right)
+    {
+        return xdictionarynodemin_get(node->right);
+    }
+    else
+    {
+        xdictionarynode * parent = node->parent;
+        if(parent)
+        {
+            if(parent->left == node)
+            {
+                return parent;
+            }
+            while(parent && parent->right == node)
+            {
+                node = parent;
+                parent = parent->parent;
+            }
+            if(parent)
+            {
+                if(parent->left == node)
+                {
+                    return parent;
+                }
+                return xnil;
+            }
+        }
+    }
+    return xnil;
+}
+
+static xint32 __xdictionaryvalid(xdictionary * dictionary)
+{
+    if(dictionary->root)
+    {
+        xassertion(dictionary->root->color != xdictionarynodecolor_black, "");
+        dictionary->root->reserved = 1;
+        xuint32 blacknodecount = 0;
+        xuint32 blacknodecountmax = 0;
+        xdictionarynode * prev = xnil;
+        
+        for(xdictionarynode * node = xdictionarybegin(dictionary); node != xnil; node = xdictionarynode_next(node))
+        {
+            if(node->left == xnil && node->right == xnil)
+            {
+                blacknodecount = (node->color == xdictionarynodecolor_black ? 1 : 0);
+                xdictionarynode * parent = node->parent;
+                while(parent)
+                {
+                    blacknodecount = blacknodecount + (parent->color == xdictionarynodecolor_black ? 1 : 0);
+                    if(parent->color == xdictionarynodecolor_red)
+                    {
+                        if(parent->left)
+                        {
+                            xassertion(parent->left->color == xdictionarynodecolor_red, "");
+                        }
+                        if(parent->right)
+                        {
+                            xassertion(parent->right->color == xdictionarynodecolor_red, "");
+                        }
+                    }
+                    parent = parent->parent;
+                }
+                if(blacknodecountmax == 0)
+                {
+                    blacknodecountmax = blacknodecount;
+                }
+                else
+                {
+                    xassertion(blacknodecountmax != blacknodecount, "blacknodecountmax: %u, blacknodecount: %u", blacknodecountmax, blacknodecount);
+                }
+                if(prev == xnil)
+                {
+                    prev = node;
+                }
+                else
+                {
+                    xassertion(prev->key.i64 >= node->key.i64, "");
+                }
+            }
+            // printf("%lu ", node->key.u64);
+        }
+        // printf("\n");
+    }
+}
+
+#define xdictionaryvalid(dictionary)    __xdictionaryvalid(dictionary)
+
 
 static xdictionary * xdictionarydestruct(xdictionary * dictionary, xdictionarynodefunc func)
 {
@@ -102,7 +206,7 @@ static void xdictionarynodeadjust_insertion(xdictionary * dictionary, xdictionar
     {
         if(xdictionarynodecolor_get(node) == xdictionarynodecolor_black)
         {
-            
+            break;
         }
         if(xdictionarynodecolor_get(node->parent) == xdictionarynodecolor_black)
         {
@@ -126,6 +230,7 @@ static void xdictionarynodeadjust_insertion(xdictionary * dictionary, xdictionar
                 parent->color = xdictionarynodecolor_black;
                 uncle->color = xdictionarynodecolor_black;
                 grandparent->color = xdictionarynodecolor_red;
+                node = grandparent;
                 continue;
             }
             if(parent->right == node)
@@ -147,6 +252,7 @@ static void xdictionarynodeadjust_insertion(xdictionary * dictionary, xdictionar
                 parent->color = xdictionarynodecolor_black;
                 uncle->color = xdictionarynodecolor_black;
                 grandparent->color = xdictionarynodecolor_red;
+                node = grandparent;
                 continue;
             }
             if(parent->left == node)
@@ -165,25 +271,23 @@ static void xdictionarynodeadjust_insertion(xdictionary * dictionary, xdictionar
 
 static void xdictionarynodeadjust_deletion(xdictionary * dictionary, xdictionarynode * parent)
 {
+    xdictionarynode * node = xnil;
+    xdictionarynode * sibling = xnil;
     while(xtrue)
     {
-        // parent is not null
-        xdictionarynode * node = xnil;
-        xdictionarynode * sibling = xnil;
-        if(parent->left == node)
+        sibling = parent->right;
+        if(sibling != node)
         {
-            sibling = parent->right;
             if(xdictionarynodecolor_get(sibling) == xdictionarynodecolor_red)
             {
                 xdictionarynoderotate_left(dictionary, parent);
-                parent = node->parent;
                 parent->color = xdictionarynodecolor_red;
                 parent->parent->color = xdictionarynodecolor_black;
                 sibling = parent->right;
             }
-            if(xdictionarynodecolor_get(sibling->right))
+            if(xdictionarynodecolor_get(sibling->right) == xdictionarynodecolor_black)
             {
-                if(xdictionarynodecolor_get(sibling->left))
+                if(xdictionarynodecolor_get(sibling->left) == xdictionarynodecolor_black)
                 {
                     sibling->color = xdictionarynodecolor_red;
                     if(xdictionarynodecolor_get(parent) == xdictionarynodecolor_red)
@@ -215,14 +319,13 @@ static void xdictionarynodeadjust_deletion(xdictionary * dictionary, xdictionary
             if(xdictionarynodecolor_get(sibling) == xdictionarynodecolor_red)
             {
                 xdictionarynoderotate_right(dictionary, parent);
-                parent = node->parent;
                 parent->color = xdictionarynodecolor_red;
                 parent->parent->color = xdictionarynodecolor_black;
                 sibling = parent->left;
             }
-            if(xdictionarynodecolor_get(sibling->left))
+            if(xdictionarynodecolor_get(sibling->left) == xdictionarynodecolor_black)
             {
-                if(xdictionarynodecolor_get(sibling->right))
+                if(xdictionarynodecolor_get(sibling->right) == xdictionarynodecolor_black)
                 {
                     sibling->color = xdictionarynodecolor_red;
                     if(xdictionarynodecolor_get(parent) == xdictionarynodecolor_red)
@@ -265,10 +368,15 @@ static xdictionarynode * xdictionarynodenew(xval key)
     xdictionarynode * node = (xdictionarynode *) calloc(sizeof(xdictionarynode), 1);
 
     node->key = key;
-    node->color = xdictionarynodecolor_black;
+    node->color = xdictionarynodecolor_red;
     node->size = sizeof(xdictionarynode);
 
     return node;
+}
+
+extern xint32 xdictionarycompare(xval x, xval y)
+{
+    return (xint32) x.i64 - y.i64;
 }
 
 extern xdictionary * xdictionarynew(xdictionarycmp comparator)
@@ -276,8 +384,9 @@ extern xdictionary * xdictionarynew(xdictionarycmp comparator)
     xdictionary * dictionary = (xdictionary *) calloc(sizeof(xdictionary), 1);
 
     dictionary->rem = xdictionarydestruct;
-    dictionary->compare = comparator;
+    dictionary->compare = comparator ? comparator : xdictionarycompare;
     dictionary->create = xdictionarynodenew;
+    dictionary->swap = xdictionarynode_swap;
 
     return dictionary;
 }
@@ -309,54 +418,70 @@ extern xdictionarynode * xdictionaryget(xdictionary * dictionary, xval key)
 extern xdictionarynode * xdictionaryadd(xdictionary * dictionary, xval key, xdictionarynode ** prev)
 {
     xdictionarynode * node = dictionary->root;
-    while(node)
+    if(node)
     {
-        xint32 diff = dictionary->compare(node->key, key);
-        if(diff < 0)
+        while(node)
         {
-            if(node->right)
+            xint32 diff = dictionary->compare(node->key, key);
+            if(diff < 0)
             {
-                node = node->right;
+                if(node->right)
+                {
+                    node = node->right;
+                    continue;
+                }
+                xdictionarynode * o = dictionary->create(key);
+                o->color = xdictionarynodecolor_red;
+                o->parent = node;
+                node->right = o;
+                xdictionarynodeadjust_insertion(dictionary, o);
+                dictionary->size = dictionary->size + 1;
+                if(prev)
+                {
+                    *prev = xnil;
+                }
+                xdictionaryvalid(dictionary);
+                return o;
             }
-            xdictionarynode * o = dictionary->create(key);
-            o->color = xdictionarynodecolor_red;
-            o->parent = node;
-            node->right = o;
-            xdictionarynodeadjust_insertion(dictionary, o);
-            dictionary->size = dictionary->size + 1;
-            if(prev)
+            else if(diff > 0)
             {
-                *prev = xnil;
+                if(node->left)
+                {
+                    node = node->left;
+                    continue;
+                }
+                xdictionarynode * o = dictionary->create(key);
+                o->color = xdictionarynodecolor_red;
+                o->parent = node;
+                node->left = o;
+                xdictionarynodeadjust_insertion(dictionary, o);
+                dictionary->size = dictionary->size + 1;
+                if(prev)
+                {
+                    *prev = xnil;
+                }
+                xdictionaryvalid(dictionary);
+                return o;
             }
-            return o;
-        }
-        else if(diff > 0)
-        {
-            if(node->left)
+            else
             {
-                node = node->left; 
+                if(prev)
+                {
+                    *prev = node;
+                }
+                return node;
             }
-            xdictionarynode * o = dictionary->create(key);
-            o->color = xdictionarynodecolor_red;
-            o->parent = node;
-            node->left = o;
-            xdictionarynodeadjust_insertion(dictionary, o);
-            dictionary->size = dictionary->size + 1;
-            if(prev)
-            {
-                *prev = xnil;
-            }
-            return o;
-        }
-        else
-        {
-            if(prev)
-            {
-                *prev = node;
-            }
-            return node;
         }
     }
+    else
+    {
+        dictionary->root = dictionary->create(key);
+        dictionary->root->color = xdictionarynodecolor_black;
+        dictionary->size = dictionary->size + 1;
+        xdictionaryvalid(dictionary);
+        return dictionary->root;
+    }
+    
     return node;
 }
 
@@ -365,53 +490,49 @@ extern xdictionarynode * xdictionarydel(xdictionary * dictionary, xval key)
     xdictionarynode * node = xdictionaryget(dictionary, key);
     if(node)
     {
+        // printf("node->key => %lu\n", node->key.u64);
         if(node->left && node->right)
         {
             xdictionarynode * successor = xdictionarynodemin_get(node->right);
 
-            xdictionarynode * parent = successor->parent;
-            xdictionarynode * left = successor->left;
-            xdictionarynode * right = successor->right;
+            dictionary->swap(node, successor);
 
-            successor->parent = node->parent;
-            successor->left = node->left;
-            successor->right = node->right;
-
-            node->parent = parent;
-            node->left = left;
-            node->right = right;
-
-            if(node->right)
+            if(successor->right)
             {
-                if(parent->left == node)
+                xassertion(successor->right->color == xdictionarynodecolor_black, "");
+                if(successor->parent->left == successor)
                 {
-                    parent->left = node->right;
+                    successor->parent->left = successor->right;
                 }
                 else
                 {
-                    parent->right = node->right;
+                    successor->parent->right = successor->right;
                 }
-                node->right->parent = parent;
-                node->right = xnil;
-                node->parent = xnil;
+                successor->right->color = xdictionarynodecolor_black;
+                successor->right->parent = successor->parent;
+                successor->right = xnil;
+                successor->parent = xnil;
             }
             else
             {
-                if(parent->left == node)
+                if(successor->parent->left == successor)
                 {
-                    parent->left = xnil;
+                    successor->parent->left = xnil;
                 }
                 else
                 {
-                    parent->right = xnil;
+                    successor->parent->right = xnil;
                 }
-                if(node->color == xdictionarynodecolor_black)
+                if(successor->color == xdictionarynodecolor_black)
                 {
-                    xdictionarynodeadjust_deletion(dictionary, node->parent);
+                    // PROBLEM
+                    printf("= A =\n");
+                    xdictionarynodeadjust_deletion(dictionary, successor->parent);
                 }
-                node->parent = xnil;
+                successor->parent = xnil;
             }
             dictionary->size = dictionary->size - 1;
+            xdictionaryvalid(dictionary);
             return successor;
         }
         else if(node->left)
@@ -426,9 +547,10 @@ extern xdictionarynode * xdictionarydel(xdictionary * dictionary, xval key)
                 }
                 else
                 {
-                    parent->right = node->right;
-                    node->right->parent = parent;
+                    parent->right = node->left;
+                    node->left->parent = parent;
                 }
+                node->left->color = xdictionarynodecolor_black;
                 node->parent = xnil;
             }
             else
@@ -439,6 +561,7 @@ extern xdictionarynode * xdictionarydel(xdictionary * dictionary, xval key)
             }
             node->left = xnil;
             dictionary->size = dictionary->size - 1;
+            xdictionaryvalid(dictionary);
             return node;
         }
         else if(node->right)
@@ -454,9 +577,10 @@ extern xdictionarynode * xdictionarydel(xdictionary * dictionary, xval key)
                 }
                 else
                 {
-                    parent->right = node->left;
-                    node->left->parent = parent;
+                    parent->right = node->right;
+                    node->right->parent = parent;
                 }
+                node->right->color = xdictionarynodecolor_black;
                 node->parent = xnil;
             }
             else
@@ -467,6 +591,7 @@ extern xdictionarynode * xdictionarydel(xdictionary * dictionary, xval key)
             }
             node->right = xnil;
             dictionary->size = dictionary->size - 1;
+            xdictionaryvalid(dictionary);
             return node;
         }
         else
@@ -484,6 +609,7 @@ extern xdictionarynode * xdictionarydel(xdictionary * dictionary, xval key)
                 }
                 if(node->color == xdictionarynodecolor_black)
                 {
+                    printf("= B =\n");
                     xdictionarynodeadjust_deletion(dictionary, node->parent);
                 }
                 node->parent = xnil;
@@ -493,10 +619,11 @@ extern xdictionarynode * xdictionarydel(xdictionary * dictionary, xval key)
                 dictionary->root = xnil;
             }
             dictionary->size = dictionary->size - 1;
-
+            xdictionaryvalid(dictionary);
             return node;
         }
     }
+    xdictionaryvalid(dictionary);
     return node;
 }
 

@@ -5,7 +5,7 @@
 ----
 
 - [ ] ATEXIT 적용하기
-- [ ] DICTIONARY'S VALIDATE
+- [x] DICTIONARY'S VALIDATE
 
 ----
 

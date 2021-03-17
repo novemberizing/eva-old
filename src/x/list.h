@@ -49,4 +49,10 @@ extern xuint64 xlistsize(xlist * list);
 
 extern xlistnode * xlistget(xlist * list, xuint64 index);
 
+extern xlistnode * xlistbegin(xlist * list);
+extern xlistnode * xlistend(xlist * list);
+
+extern xlistnode * xlistnext(xlistnode * node);
+extern xlistnode * xlistprev(xlistnode * node);
+
 #endif // __NOVEMBERIZING_X__LIST__H__

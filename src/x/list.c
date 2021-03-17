@@ -239,3 +239,23 @@ extern xlistnode * xlistget(xlist * list, xuint64 index)
     }
     return xnil;
 }
+
+extern xlistnode * xlistbegin(xlist * list)
+{
+    return list->head;
+}
+
+extern xlistnode * xlistend(xlist * list)
+{
+    return list->tail;
+}
+
+extern xlistnode * xlistnext(xlistnode * node)
+{
+    return node->next;
+}
+
+extern xlistnode * xlistprev(xlistnode * node)
+{
+    return node->prev;
+}

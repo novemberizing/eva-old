@@ -4,7 +4,15 @@
 #include "thread.h"
 #include "map.h"
 
+struct xmapnode;
+
+typedef struct xmapnode xmapnode;
+
 typedef xmap * (*xmapdestructor)(xmap *, xmapkeyvaluefunc);
+
+typedef void (*xmapnodeswap)(xmapnode *, xmapnode *);
+
+
 
 struct xmap
 {
@@ -13,13 +21,12 @@ struct xmap
     xuint64                size;
     xdictionarynodefactory create;
     xdictionarycmp         compare;
+    xmapnodeswap           swap;
     xmapclearfunc          clear;
     xsync *                sync;
 };
 
-struct xmapnode;
 
-typedef struct xmapnode xmapnode;
 
 struct xmapnode
 {
@@ -31,6 +38,18 @@ struct xmapnode
     xval       key;
     xval       value;
 };
+
+static void xmapnode_swap(xmapnode * x, xmapnode * y)
+{
+    xval key = x->key;
+    xval value = x->value;
+
+    x->key = y->key;
+    x->value = y->value;
+
+    y->key = key;
+    y->value = value;
+}
 
 static xdictionarynode * xmapnodenew(xval key)
 {
@@ -117,6 +136,7 @@ extern xmap * xmapnew(xdictionarycmp comparator)
 
     map->create = xmapnodenew;
     map->clear  = __xmapclear;
+    map->swap   = xmapnode_swap;
 
     return map;
 }

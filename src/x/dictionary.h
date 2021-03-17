@@ -17,6 +17,7 @@ typedef xint32 (*xdictionarycmp)(xval, xval);
 typedef xdictionarynode * (*xdictionarynodefactory)(xval);
 typedef void (*xdictionarynodefunc)(xdictionarynode *);
 typedef void (*xdictionaryclearfunc)(xdictionary *, xdictionarynodefunc);
+typedef void (*xdictionarynodeswap)(xdictionarynode *, xdictionarynode *);
 
 typedef xdictionary * (*xdictionarydestructor)(xdictionary *, xdictionarynodefunc);
 
@@ -27,6 +28,7 @@ struct xdictionary
     xuint64                size;
     xdictionarynodefactory create;
     xdictionarycmp         compare;
+    xdictionarynodeswap    swap;
     xdictionaryclearfunc   clear;
     xsync *                sync;
 };
@@ -34,7 +36,8 @@ struct xdictionary
 struct xdictionarynode
 {
     xuint32           color:1;
-    xuint32           size:31;
+    xuint32           reserved:15;
+    xuint32           size:16;
     xdictionarynode * parent;
     xdictionarynode * left;
     xdictionarynode * right;
@@ -50,5 +53,8 @@ extern xdictionarynode * xdictionaryadd(xdictionary * dictionary, xval key, xdic
 extern xdictionarynode * xdictionarydel(xdictionary * dictionary, xval key);
 
 extern xdictionarynode * xdictionarynodemin_get(xdictionarynode * node);
+
+extern xdictionarynode * xdictionarybegin(xdictionary * dictionary);
+extern xdictionarynode * xdictionarynode_next(xdictionarynode * node);
 
 #endif // __NOVEMBERIZING_X__DICTIONARY__H__

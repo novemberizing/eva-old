@@ -13,6 +13,7 @@ struct xset
     xuint64                size;
     xdictionarynodefactory create;
     xdictionarycmp         compare;
+    xdictionarynodeswap    swap;
     xsetclearfunc          clear;
     xsync *                sync;
 };
