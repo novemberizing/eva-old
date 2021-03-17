@@ -568,6 +568,8 @@ static void __xdictionaryclear(xdictionary * dictionary, xdictionarynodefunc fun
             }
         }
     }
+    dictionary->size = 0;
+    dictionary->root = xnil;
 }
 
 extern void xdictionaryclear(xdictionary * dictionary, xdictionarynodefunc func)

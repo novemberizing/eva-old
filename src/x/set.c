@@ -86,6 +86,8 @@ static void __xsetclear(xset * set, xvalfunc func)
             }
         }
     }
+    set->size = 0;
+    set->root = xnil;
 }
 
 extern xset * xsetnew(xdictionarycmp comparator)

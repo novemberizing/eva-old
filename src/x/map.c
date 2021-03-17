@@ -107,6 +107,8 @@ static void __xmapclear(xmap * map, xmapkeyvaluefunc func)
             }
         }
     }
+    map->size = 0;
+    map->root = xnil;
 }
 
 extern xmap * xmapnew(xdictionarycmp comparator)
