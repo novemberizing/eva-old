@@ -4,10 +4,6 @@
 #include "thread.h"
 #include "map.h"
 
-struct xmapnode;
-
-typedef struct xmapnode xmapnode;
-
 typedef xmap * (*xmapdestructor)(xmap *, xmapkeyvaluefunc);
 
 typedef void (*xmapnodeswap)(xmapnode *, xmapnode *);
@@ -60,6 +56,11 @@ static xdictionarynode * xmapnodenew(xval key)
     node->size = sizeof(xmapnode);
 
     return (xdictionarynode *) node;
+}
+
+extern xmapnode * xmapget(xmap * map, xval key)
+{
+    return (xmapnode *) xdictionaryget((xdictionary *) map, key);
 }
 
 extern xmap * xmaprem(xmap * map, xmapkeyvaluefunc func)
@@ -188,4 +189,39 @@ extern xint32 xmaphas(xmap * map, xval key)
 extern xmap * xmapclear(xmap * map, xmapkeyvaluefunc func)
 {
     map->clear(map, func);
+}
+
+extern xval xmapnodekey(xmapnode * node)
+{
+    return node->key;
+}
+
+extern xval xmapnodevalue(xmapnode * node)
+{
+    return node->value;
+}
+
+extern xmapnode * xmapbegin(xmap * map)
+{
+    return (xmapnode *) xdictionarybegin((xdictionary *) map);
+}
+
+extern xmapnode * xmapnode_next(xmapnode * node)
+{
+    return (xmapnode *) xdictionarynode_next((xdictionarynode *) node);
+}
+
+extern xuint64 xmapsize(xmap * map)
+{
+    return map->size;
+}
+
+extern xmapnode * xmapnode_left(xmapnode * node)
+{
+    return node->left;
+}
+
+extern xmapnode * xmapnode_right(xmapnode * node)
+{
+    return node->right;
 }
