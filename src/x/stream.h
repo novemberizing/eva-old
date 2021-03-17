@@ -51,4 +51,7 @@ extern xuint64 xstreampos_get(xstream * o);
 extern xuint64 xstreampush(xstream * o, const xbyte * data, xuint64 len);
 extern void xstreamclear(xstream * o);
 
+
+extern xstream * xstreamgen_str(const char * s);
+
 #endif // __NOVEMBERIZING_X__STREAM__H__

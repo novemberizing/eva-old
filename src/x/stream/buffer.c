@@ -6,7 +6,7 @@
 
 #include "../thread.h"
 
-const static xuint64 xstreambuffer_capacity_page = 4096;    /**!< 메모리 공간 기본 페이지 크기 */
+const static xuint64 xstreambuffer_capacity_page = 16;    /**!< 메모리 공간 기본 페이지 크기 */
 
 /**
  * @fn          extern xstreambuffer * xstreambuffer_new(void)

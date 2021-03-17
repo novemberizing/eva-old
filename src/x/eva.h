@@ -20,6 +20,7 @@ extern xint32 xevarun(int argc, char ** argv);
 extern void xevaquit(void);
 
 extern void xevaserveradd(xint32 protocol, xint32 port, xserver * server);
+extern void xevaclientadd(xclient * client);
 
 // 아래의 함수는 설정하지 말자. (노출 시키지 말자.)
 extern xint64 xevacli(xconsole * console, xconsoledescriptor * descriptor, xuint32 event, void * parameter, xint64 value);

@@ -175,6 +175,33 @@ extern xeventsubscription * xeventengine_session_unregister(xeventengine * engin
     return ret;
 }
 
+extern xeventsubscription * xeventengine_client_register(xeventengine * engine, xclient * client)
+{
+    xlogfunction_start("%s(%p, %p)", __func__, engine, client);
+
+    xassertion(engine == xnil || client == xnil || client->descriptor == xnil, "");
+    xassertion(client->descriptor->subscription, "");   // 이 로직을 어떻게 처리해야할까?
+
+    xsessionsocketeventsubscription * subscription = (xsessionsocketeventsubscription *) xeventsubscription_new(engine, (xeventtarget *) client->descriptor, sizeof(xsessionsocketeventsubscription));
+
+    subscription->generatornode.generator = engine->generators.descriptor;
+
+    xdescriptoreventgenerator_register(engine->generators.descriptor, (xdescriptoreventsubscription *) subscription);
+
+    xlogfunction_end("%s(...) => %p", (xeventsubscription *) subscription);
+    return (xeventsubscription *) subscription;
+}
+
+extern xeventsubscription * xeventengine_client_unregister(xeventengine * engine, xclient * client)
+{
+    xlogfunction_start("%s(%p, %p)", __func__, engine, client);
+
+    xeventsubscription * ret = (xeventsubscription *) xeventengine_descriptor_unregister(engine, (xdescriptor *) client->descriptor);
+
+    xlogfunction_end("%s(...) => %p", __func__, ret);
+    return ret;
+}
+
 extern xeventsubscription * xeventengine_server_register(xeventengine * engine, xserver * server)
 {
     xlogfunction_start("%s(%p, %p)", __func__, engine, server);

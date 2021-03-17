@@ -421,3 +421,9 @@ extern void xstreamclear(xstream * o)
     }
     xlogfunction_end("%s(...)", __func__);
 }
+
+extern xstream * xstreamgen_str(const char * s)
+{
+    xstreambuffer * stream = xstreambuffer_new();
+    xstreambuffer_push(stream, s, strlen(s));
+}

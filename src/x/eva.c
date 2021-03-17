@@ -8,6 +8,7 @@
 #include "eva.h"
 
 #include <x/map.h>
+#include <x/list.h>
 #include <x/server.h>
 #include <x/server/socket.h>
 #include <x/console.h>
@@ -19,11 +20,33 @@ struct xeva
     xeventengine * engine;
     xevaconfig config;
     xmap * servers;
+    xlist * clients;
 };
 
 static void xevaeventengine_cancel(xeventengine * engine)
 {
     printf("engine cancel\n");
+}
+
+static void xevaclientrem(xval * value)
+{
+    xclient * client = (xclient *) value->p;
+
+    if(client->descriptor->subscription)
+    {
+        xassertion(client->descriptor->subscription->enginenode.engine, "");
+        free(client->descriptor->subscription);
+        client->descriptor->subscription = xnil;
+    }
+    if(client->descriptor->handle.f >= 0)
+    {
+        shutdown(client->descriptor->handle.f, SHUT_RDWR);
+        close(client->descriptor->handle.f);
+        client->descriptor->handle.f = xinvalid;
+    }
+    client->descriptor->status = xdescriptorstatus_void;
+    
+    xclientrem(client);
 }
 
 static void xevaserverrem(xval * key, xval * value)
@@ -50,6 +73,7 @@ static void xevaserverrem(xval * key, xval * value)
 static struct xeva __singleton = {
     xnil,
     { 0, },
+    xnil,
     xnil
 };
 
@@ -65,6 +89,10 @@ extern void xevaserveradd(xint32 protocol, xint32 port, xserver * server)
     if(__singleton.servers == xnil)
     {
         __singleton.servers = xmapnew(xnil);
+    }
+    if(__singleton.clients == xnil)
+    {
+        __singleton.clients = xlistnew();
     }
     xmapnode * prev = xmapadd(__singleton.servers, xvalunsigned64(key), xvalobject(server), xnil);
     if(prev)
@@ -103,19 +131,23 @@ extern xint32 xevarun(int argc, char ** argv)
         xeventengine_descriptor_register(__singleton.engine, xconsoledescriptorin_get());
         xeventengine_descriptor_register(__singleton.engine, xconsoledescriptorout_get());
 
+        // 2. REGISTER SERVERS
         for(xmapnode * node = xmapbegin(__singleton.servers); node != xnil; node = xmapnode_next(node))
         {
             xeventengine_server_register(__singleton.engine, (xserver *) xvalobjectget(xmapnodevalue(node)));
-            // printf("node => \n", node)
+        }
+        // 3. REGISTER CLIENTS
+        // TODO: xlistnext 를 통일성을 위해서 xlistnode_next 로 변경하자.
+        for(xlistnode * node = xlistbegin(__singleton.clients); node != xnil; node = xlistnext(node))
+        {
+            xeventengine_client_register(__singleton.engine, (xclient *) xvalobjectget(node->value));
         }
 
         // 2. EVENT ENGINE RUN
         xint32 ret = xeventengine_run(__singleton.engine);
         __singleton.engine = xnil;
-        if(__singleton.servers)
-        {
-            __singleton.servers = xmaprem(__singleton.servers, xevaserverrem);
-        }
+        __singleton.servers = xmaprem(__singleton.servers, xevaserverrem);
+        __singleton.clients = xlistrem(__singleton.clients, xevaclientrem);
 
         xlogfunction_end("%s()", __func__, ret);
 
@@ -170,4 +202,10 @@ extern void xevaconfigloginit(char * path, xuint32 types)
 extern void xevaquit(void)
 {
     xeventengine_cancel(__singleton.engine, xevaeventengine_cancel);
+}
+
+extern void xevaclientadd(xclient * client)
+{
+    xassertion(xtrue, "implement this");
+    xlistpushback(__singleton.clients, xvalobject(client));
 }

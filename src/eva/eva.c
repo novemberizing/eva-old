@@ -8,5 +8,7 @@ int main(int argc, char ** argv)
 
     xevaserveradd(xtransmissioncontrolprotocol, 7, xevaechoserver_get(xtransmissioncontrolprotocol));
 
+    xevaclientadd(xevaechoclient_gen(xtransmissioncontrolprotocol, "127.0.0.1", xstreamgen_str("hello world")));
+
     return xevarun(argc, argv);
 }

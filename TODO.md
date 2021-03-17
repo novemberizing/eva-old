@@ -1,11 +1,16 @@
 ----
 
+- [ ] XCLIENT SUBSCRIBER
+
+----
+
 1 - 1024 까지 데이터를 삽입하고, ...
 
 LEAF NODE'S 의 수행 시간을 체크해보자.
 
 ----
 
+- [ ] IPv6 지원 ...
 - [ ] 로고 - EVA
 - [ ] FUNCTION TRACE 를 구현하자. (로그 모듈에 넣고,)
 

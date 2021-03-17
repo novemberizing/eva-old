@@ -10,8 +10,10 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 
 #include "echo.h"
+#include "../../client/socket.h"
 
 struct service
 {
@@ -99,4 +101,20 @@ static xint64 subscriber(xsession * session, xuint64 event, void * data, xint64 
         xstreamrem(stream);
     }
     return result;
+}
+
+extern xclient * xevaechoclient_gen(xuint32 protocol, const char * ip, xstream * stream)
+{
+    if(protocol == xtransmissioncontrolprotocol)
+    {
+        struct sockaddr_in addr;
+        addr.sin_family = PF_INET;
+        addr.sin_addr.s_addr = inet_addr(ip);
+        addr.sin_port = htons(7);
+
+        xclient * client = xclientnew(AF_INET, SOCK_STREAM, IPPROTO_TCP, xaddressof(addr), sizeof(struct sockaddr_in), subscriber, sizeof(xclient));
+        client->descriptor->stream.out = stream;
+    }
+    xassertion(xtrue, "implement this");
+    return xnil;
 }
