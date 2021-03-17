@@ -12,6 +12,8 @@ libnovemberizing_a_SOURCES = x/std.c                                          \
                              x/dictionary.c                                   \
                              x/array.c                                        \
                              x/list.c                                         \
+                             x/stack.c                                        \
+                             x/queue.c                                        \
                              x/set.c                                          \
                              x/map.c                                          \
                              x/object.c                                       \
@@ -60,6 +62,9 @@ noinst_PROGRAMS = benchmark-log                 \
                   example-event-server          \
                   example-string-api            \
                   example-command-string        \
+                  example-ds-list               \
+                  example-ds-queue              \
+                  example-ds-stack              \
                   evad
 
 benchmark_log_SOURCES           = example/benchmark/log.c
@@ -88,6 +93,15 @@ example_string_api_LDADD        = $(LIBS)
 
 example_command_string_SOURCES  = example/command/string.c
 example_command_string_LDADD    = $(LIBS)
+
+example_ds_list_SOURCES         = example/ds/list.c
+example_ds_list_LDADD           = $(LIBS)
+
+example_ds_queue_SOURCES        = example/ds/queue.c
+example_ds_queue_LDADD          = $(LIBS)
+
+example_ds_stack_SOURCES        = example/ds/stack.c
+example_ds_stack_LDADD          = $(LIBS)
 
 evad_SOURCES                    = eva/eva.c        \
                                   eva/console.c    \

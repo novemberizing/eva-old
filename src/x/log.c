@@ -72,10 +72,16 @@ static inline const char * xlogtypeprintstr(unsigned int type)
  * log path /path/[date:YYYY-MM-DD-[LOGTYPE:16]-[THREADID:32].log
  */
 
+static int __console = 0;
 static char * __path = (char *) 0;
 static unsigned int __mask = 0;
 static pthread_key_t * key = (pthread_key_t *)(0);
 static void xlogthreaddatarem(void * o);
+
+extern void xlogconsole_set(int enable)
+{
+    __console = enable;
+}
 
 extern void xlogpath_set(const char * path)
 {
@@ -176,20 +182,30 @@ extern void xlogout(unsigned int type, const char * file, int line, const char *
                 int date = (m.tm_year + 1900) * 10000 + (m.tm_mon +1) * 100 + m.tm_mday;
                 if(threadlog->fp == (FILE *)(0) || threadlog->date != date)
                 {
-                    if(threadlog->fp)
+                    if(!__console)
                     {
-                        fclose(threadlog->fp);
-                    }
+                        if(threadlog->fp)
+                        {
+                            if(threadlog->fp != stdout)
+                            {
+                                fclose(threadlog->fp);
+                            }
+                        }
 
-                    char path[1024 + 64];
-                    snprintf(path, 1024 + 64, "%s/%04d-%02d-%02d-%lu.log",
-                                              __path ? __path : "",
-                                              m.tm_year + 1900,
-                                              m.tm_mon + 1,
-                                              m.tm_mday,
-                                              threadid);
-                    threadlog->fp = fopen(path, "a+");
-                    threadlog->date = date;
+                        char path[1024 + 64];
+                        snprintf(path, 1024 + 64, "%s/%04d-%02d-%02d-%lu.log",
+                                                __path ? __path : "",
+                                                m.tm_year + 1900,
+                                                m.tm_mon + 1,
+                                                m.tm_mday,
+                                                threadid);
+                        threadlog->fp = fopen(path, "a+");
+                        threadlog->date = date;
+                    }
+                    else
+                    {
+                        threadlog->fp = stdout;
+                    }
                 }
 
                 if(threadlog->fp)

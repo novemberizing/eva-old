@@ -60,6 +60,12 @@ typedef union xval          xval;
 
 typedef void (*xvalfunc)(xval *);
 
+#define xvalinteger32(v)        (xval) { .i32 = v }
+#define xvalinteger64(v)        (xval) { .i64 = v }
+#define xvalunsigned32(v)       (xval) { .u32 = v }
+#define xvalunsigned64(v)       (xval) { .u64 = v }
+#define xvalobject(v)           (xval) { .p = v }
+
 union xval
 {
     xint32 i32;
@@ -138,5 +144,10 @@ union xval
 extern xobject xobjectdup(const void * data, xuint64 size);
 extern xobject xobjectnew(xuint64 size);
 extern xobject xobjectrem(xobject o);
+
+extern void xrandominit(void);
+extern xint64 xrandomget(void);
+extern xuint64 xrandomunsigned64(xuint64 max);
+extern xint64 xrandominteger64(xuint64 max);
 
 #endif // __NOVEMBERIZING_X__STD__H__

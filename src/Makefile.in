@@ -97,7 +97,8 @@ noinst_PROGRAMS = benchmark-log$(EXEEXT) \
 	example-console-io$(EXEEXT) example-event-engine$(EXEEXT) \
 	example-event-console$(EXEEXT) example-event-server$(EXEEXT) \
 	example-string-api$(EXEEXT) example-command-string$(EXEEXT) \
-	evad$(EXEEXT)
+	example-ds-list$(EXEEXT) example-ds-queue$(EXEEXT) \
+	example-ds-stack$(EXEEXT) evad$(EXEEXT)
 subdir = src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -152,8 +153,9 @@ libnovemberizing_a_LIBADD =
 am__dirstamp = $(am__leading_dot)dirstamp
 am_libnovemberizing_a_OBJECTS = x/std.$(OBJEXT) x/log.$(OBJEXT) \
 	x/string.$(OBJEXT) x/dictionary.$(OBJEXT) x/array.$(OBJEXT) \
-	x/list.$(OBJEXT) x/set.$(OBJEXT) x/map.$(OBJEXT) \
-	x/object.$(OBJEXT) x/exception.$(OBJEXT) x/thread.$(OBJEXT) \
+	x/list.$(OBJEXT) x/stack.$(OBJEXT) x/queue.$(OBJEXT) \
+	x/set.$(OBJEXT) x/map.$(OBJEXT) x/object.$(OBJEXT) \
+	x/exception.$(OBJEXT) x/thread.$(OBJEXT) \
 	x/thread/posix.$(OBJEXT) x/sync.$(OBJEXT) \
 	x/sync/posix/mutex.$(OBJEXT) x/stream.$(OBJEXT) \
 	x/stream/buffer.$(OBJEXT) x/command.$(OBJEXT) \
@@ -194,6 +196,15 @@ example_command_string_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_example_console_io_OBJECTS = example/console/io.$(OBJEXT)
 example_console_io_OBJECTS = $(am_example_console_io_OBJECTS)
 example_console_io_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_example_ds_list_OBJECTS = example/ds/list.$(OBJEXT)
+example_ds_list_OBJECTS = $(am_example_ds_list_OBJECTS)
+example_ds_list_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_example_ds_queue_OBJECTS = example/ds/queue.$(OBJEXT)
+example_ds_queue_OBJECTS = $(am_example_ds_queue_OBJECTS)
+example_ds_queue_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_example_ds_stack_OBJECTS = example/ds/stack.$(OBJEXT)
+example_ds_stack_OBJECTS = $(am_example_ds_stack_OBJECTS)
+example_ds_stack_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_example_event_console_OBJECTS = example/event/console.$(OBJEXT)
 example_event_console_OBJECTS = $(am_example_event_console_OBJECTS)
 example_event_console_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -226,7 +237,8 @@ am__depfiles_remade = eva/$(DEPDIR)/console.Po eva/$(DEPDIR)/echo.Po \
 	example/client/$(DEPDIR)/pool.Po \
 	example/client/$(DEPDIR)/simple.Po \
 	example/command/$(DEPDIR)/string.Po \
-	example/console/$(DEPDIR)/io.Po \
+	example/console/$(DEPDIR)/io.Po example/ds/$(DEPDIR)/list.Po \
+	example/ds/$(DEPDIR)/queue.Po example/ds/$(DEPDIR)/stack.Po \
 	example/event/$(DEPDIR)/console.Po \
 	example/event/$(DEPDIR)/engine.Po \
 	example/event/$(DEPDIR)/server.Po \
@@ -236,8 +248,9 @@ am__depfiles_remade = eva/$(DEPDIR)/console.Po eva/$(DEPDIR)/echo.Po \
 	x/$(DEPDIR)/dictionary.Po x/$(DEPDIR)/eva.Po \
 	x/$(DEPDIR)/exception.Po x/$(DEPDIR)/list.Po \
 	x/$(DEPDIR)/log.Po x/$(DEPDIR)/map.Po x/$(DEPDIR)/object.Po \
-	x/$(DEPDIR)/server.Po x/$(DEPDIR)/session.Po \
-	x/$(DEPDIR)/set.Po x/$(DEPDIR)/socket.Po x/$(DEPDIR)/std.Po \
+	x/$(DEPDIR)/queue.Po x/$(DEPDIR)/server.Po \
+	x/$(DEPDIR)/session.Po x/$(DEPDIR)/set.Po \
+	x/$(DEPDIR)/socket.Po x/$(DEPDIR)/stack.Po x/$(DEPDIR)/std.Po \
 	x/$(DEPDIR)/stream.Po x/$(DEPDIR)/string.Po \
 	x/$(DEPDIR)/sync.Po x/$(DEPDIR)/thread.Po \
 	x/client/$(DEPDIR)/socket.Po x/command/$(DEPDIR)/string.Po \
@@ -276,14 +289,18 @@ SOURCES = $(libnovemberizing_a_SOURCES) $(benchmark_log_SOURCES) \
 	$(evad_SOURCES) $(example_client_pool_SOURCES) \
 	$(example_client_simple_SOURCES) \
 	$(example_command_string_SOURCES) \
-	$(example_console_io_SOURCES) $(example_event_console_SOURCES) \
+	$(example_console_io_SOURCES) $(example_ds_list_SOURCES) \
+	$(example_ds_queue_SOURCES) $(example_ds_stack_SOURCES) \
+	$(example_event_console_SOURCES) \
 	$(example_event_engine_SOURCES) \
 	$(example_event_server_SOURCES) $(example_string_api_SOURCES)
 DIST_SOURCES = $(libnovemberizing_a_SOURCES) $(benchmark_log_SOURCES) \
 	$(evad_SOURCES) $(example_client_pool_SOURCES) \
 	$(example_client_simple_SOURCES) \
 	$(example_command_string_SOURCES) \
-	$(example_console_io_SOURCES) $(example_event_console_SOURCES) \
+	$(example_console_io_SOURCES) $(example_ds_list_SOURCES) \
+	$(example_ds_queue_SOURCES) $(example_ds_stack_SOURCES) \
+	$(example_event_console_SOURCES) \
 	$(example_event_engine_SOURCES) \
 	$(example_event_server_SOURCES) $(example_string_api_SOURCES)
 am__can_run_installinfo = \
@@ -442,6 +459,8 @@ libnovemberizing_a_SOURCES = x/std.c                                          \
                              x/dictionary.c                                   \
                              x/array.c                                        \
                              x/list.c                                         \
+                             x/stack.c                                        \
+                             x/queue.c                                        \
                              x/set.c                                          \
                              x/map.c                                          \
                              x/object.c                                       \
@@ -494,6 +513,12 @@ example_string_api_SOURCES = example/string/api.c
 example_string_api_LDADD = $(LIBS)
 example_command_string_SOURCES = example/command/string.c
 example_command_string_LDADD = $(LIBS)
+example_ds_list_SOURCES = example/ds/list.c
+example_ds_list_LDADD = $(LIBS)
+example_ds_queue_SOURCES = example/ds/queue.c
+example_ds_queue_LDADD = $(LIBS)
+example_ds_stack_SOURCES = example/ds/stack.c
+example_ds_stack_LDADD = $(LIBS)
 evad_SOURCES = eva/eva.c        \
                                   eva/console.c    \
                                   eva/echo.c
@@ -589,6 +614,8 @@ x/string.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
 x/dictionary.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
 x/array.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
 x/list.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
+x/stack.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
+x/queue.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
 x/set.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
 x/map.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
 x/object.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
@@ -800,6 +827,30 @@ example/console/io.$(OBJEXT): example/console/$(am__dirstamp) \
 example-console-io$(EXEEXT): $(example_console_io_OBJECTS) $(example_console_io_DEPENDENCIES) $(EXTRA_example_console_io_DEPENDENCIES) 
 	@rm -f example-console-io$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(example_console_io_OBJECTS) $(example_console_io_LDADD) $(LIBS)
+example/ds/$(am__dirstamp):
+	@$(MKDIR_P) example/ds
+	@: > example/ds/$(am__dirstamp)
+example/ds/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) example/ds/$(DEPDIR)
+	@: > example/ds/$(DEPDIR)/$(am__dirstamp)
+example/ds/list.$(OBJEXT): example/ds/$(am__dirstamp) \
+	example/ds/$(DEPDIR)/$(am__dirstamp)
+
+example-ds-list$(EXEEXT): $(example_ds_list_OBJECTS) $(example_ds_list_DEPENDENCIES) $(EXTRA_example_ds_list_DEPENDENCIES) 
+	@rm -f example-ds-list$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_ds_list_OBJECTS) $(example_ds_list_LDADD) $(LIBS)
+example/ds/queue.$(OBJEXT): example/ds/$(am__dirstamp) \
+	example/ds/$(DEPDIR)/$(am__dirstamp)
+
+example-ds-queue$(EXEEXT): $(example_ds_queue_OBJECTS) $(example_ds_queue_DEPENDENCIES) $(EXTRA_example_ds_queue_DEPENDENCIES) 
+	@rm -f example-ds-queue$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_ds_queue_OBJECTS) $(example_ds_queue_LDADD) $(LIBS)
+example/ds/stack.$(OBJEXT): example/ds/$(am__dirstamp) \
+	example/ds/$(DEPDIR)/$(am__dirstamp)
+
+example-ds-stack$(EXEEXT): $(example_ds_stack_OBJECTS) $(example_ds_stack_DEPENDENCIES) $(EXTRA_example_ds_stack_DEPENDENCIES) 
+	@rm -f example-ds-stack$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_ds_stack_OBJECTS) $(example_ds_stack_LDADD) $(LIBS)
 example/event/$(am__dirstamp):
 	@$(MKDIR_P) example/event
 	@: > example/event/$(am__dirstamp)
@@ -844,6 +895,7 @@ mostlyclean-compile:
 	-rm -f example/client/*.$(OBJEXT)
 	-rm -f example/command/*.$(OBJEXT)
 	-rm -f example/console/*.$(OBJEXT)
+	-rm -f example/ds/*.$(OBJEXT)
 	-rm -f example/event/*.$(OBJEXT)
 	-rm -f example/string/*.$(OBJEXT)
 	-rm -f x/*.$(OBJEXT)
@@ -873,6 +925,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@example/client/$(DEPDIR)/simple.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/command/$(DEPDIR)/string.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/console/$(DEPDIR)/io.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@example/ds/$(DEPDIR)/list.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@example/ds/$(DEPDIR)/queue.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@example/ds/$(DEPDIR)/stack.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/event/$(DEPDIR)/console.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/event/$(DEPDIR)/engine.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/event/$(DEPDIR)/server.Po@am__quote@ # am--include-marker
@@ -889,10 +944,12 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/log.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/map.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/object.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/queue.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/server.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/session.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/set.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/socket.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/stack.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/std.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/stream.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/string.Po@am__quote@ # am--include-marker
@@ -1105,6 +1162,8 @@ distclean-generic:
 	-rm -f example/command/$(am__dirstamp)
 	-rm -f example/console/$(DEPDIR)/$(am__dirstamp)
 	-rm -f example/console/$(am__dirstamp)
+	-rm -f example/ds/$(DEPDIR)/$(am__dirstamp)
+	-rm -f example/ds/$(am__dirstamp)
 	-rm -f example/event/$(DEPDIR)/$(am__dirstamp)
 	-rm -f example/event/$(am__dirstamp)
 	-rm -f example/string/$(DEPDIR)/$(am__dirstamp)
@@ -1157,6 +1216,9 @@ distclean: distclean-am
 	-rm -f example/client/$(DEPDIR)/simple.Po
 	-rm -f example/command/$(DEPDIR)/string.Po
 	-rm -f example/console/$(DEPDIR)/io.Po
+	-rm -f example/ds/$(DEPDIR)/list.Po
+	-rm -f example/ds/$(DEPDIR)/queue.Po
+	-rm -f example/ds/$(DEPDIR)/stack.Po
 	-rm -f example/event/$(DEPDIR)/console.Po
 	-rm -f example/event/$(DEPDIR)/engine.Po
 	-rm -f example/event/$(DEPDIR)/server.Po
@@ -1173,10 +1235,12 @@ distclean: distclean-am
 	-rm -f x/$(DEPDIR)/log.Po
 	-rm -f x/$(DEPDIR)/map.Po
 	-rm -f x/$(DEPDIR)/object.Po
+	-rm -f x/$(DEPDIR)/queue.Po
 	-rm -f x/$(DEPDIR)/server.Po
 	-rm -f x/$(DEPDIR)/session.Po
 	-rm -f x/$(DEPDIR)/set.Po
 	-rm -f x/$(DEPDIR)/socket.Po
+	-rm -f x/$(DEPDIR)/stack.Po
 	-rm -f x/$(DEPDIR)/std.Po
 	-rm -f x/$(DEPDIR)/stream.Po
 	-rm -f x/$(DEPDIR)/string.Po
@@ -1253,6 +1317,9 @@ maintainer-clean: maintainer-clean-am
 	-rm -f example/client/$(DEPDIR)/simple.Po
 	-rm -f example/command/$(DEPDIR)/string.Po
 	-rm -f example/console/$(DEPDIR)/io.Po
+	-rm -f example/ds/$(DEPDIR)/list.Po
+	-rm -f example/ds/$(DEPDIR)/queue.Po
+	-rm -f example/ds/$(DEPDIR)/stack.Po
 	-rm -f example/event/$(DEPDIR)/console.Po
 	-rm -f example/event/$(DEPDIR)/engine.Po
 	-rm -f example/event/$(DEPDIR)/server.Po
@@ -1269,10 +1336,12 @@ maintainer-clean: maintainer-clean-am
 	-rm -f x/$(DEPDIR)/log.Po
 	-rm -f x/$(DEPDIR)/map.Po
 	-rm -f x/$(DEPDIR)/object.Po
+	-rm -f x/$(DEPDIR)/queue.Po
 	-rm -f x/$(DEPDIR)/server.Po
 	-rm -f x/$(DEPDIR)/session.Po
 	-rm -f x/$(DEPDIR)/set.Po
 	-rm -f x/$(DEPDIR)/socket.Po
+	-rm -f x/$(DEPDIR)/stack.Po
 	-rm -f x/$(DEPDIR)/std.Po
 	-rm -f x/$(DEPDIR)/stream.Po
 	-rm -f x/$(DEPDIR)/string.Po

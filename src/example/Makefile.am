@@ -1,1 +1,0 @@
-SUBDIRS = event console client benchmark string

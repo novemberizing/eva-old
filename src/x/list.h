@@ -10,7 +10,7 @@ struct xlistnode;
 typedef struct xlist xlist;
 typedef struct xlistnode xlistnode;
 
-typedef xlist * (*xlistdestructor)(xlist *);
+typedef xlist * (*xlistdestructor)(xlist *, xvalfunc);
 
 struct xlist
 {
@@ -31,7 +31,7 @@ struct xlistnode
 };
 
 extern xlist * xlistnew(void);
-extern xlist * xlistrem(xlist * list);
+extern xlist * xlistrem(xlist * list, xvalfunc func);
 
 extern void xlistdel(xlist * list, xlistnode * node);
 
@@ -43,5 +43,10 @@ extern xlistnode * xlistpopback(xlist * list);
 
 extern void xlistinsertfront(xlist * list, xlistnode * node, xval value);
 extern void xlistinsertback(xlist * list, xlistnode * node, xval value);
+
+extern void xlistclear(xlist * list, xvalfunc func);
+extern xuint64 xlistsize(xlist * list);
+
+extern xlistnode * xlistget(xlist * list, xuint64 index);
 
 #endif // __NOVEMBERIZING_X__LIST__H__

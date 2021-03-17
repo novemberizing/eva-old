@@ -15,11 +15,11 @@ static xlistnode * xlistnodenew(xlist * list, xval value)
     return node;
 }
 
-static xlist * xlistdesctruct(xlist * list)
+static xlist * xlistdesctruct(xlist * list, xvalfunc func)
 {
     if(list)
     {
-        xassertion(list->size > 0 || list->head || list->tail, "");
+        xlistclear(list, func);
         list->sync = xsyncrem(list->sync);
         free(list);
     }
@@ -33,9 +33,9 @@ extern xlist * xlistnew(void)
     return list;
 }
 
-extern xlist * xlistrem(xlist * list)
+extern xlist * xlistrem(xlist * list, xvalfunc func)
 {
-    return list->rem(list);
+    return list->rem(list, func);
 }
 
 extern void xlistdel(xlist * list, xlistnode * node)
@@ -188,4 +188,54 @@ extern void xlistinsertback(xlist * list, xlistnode * node, xval value)
         list->tail = o;
     }
     list->size = list->size + 1;
+}
+
+extern void xlistclear(xlist * list, xvalfunc func)
+{
+    xlistnode * node = list->head;
+    if(func)
+    {
+        while(node)
+        {
+            xlistnode * next = node->next;
+
+            func(xaddressof(node->value));
+
+            free(node);
+            node = next;
+        }
+    }
+    else
+    {
+        while(node)
+        {
+            xlistnode * next = node->next;
+
+            free(node);
+            node = next;
+        }
+    }
+    list->head = xnil;
+    list->tail = xnil;
+    list->size = 0;
+    
+}
+
+extern xuint64 xlistsize(xlist * list)
+{
+    return list->size;
+}
+
+extern xlistnode * xlistget(xlist * list, xuint64 index)
+{
+    if(index < list->size)
+    {
+        xlistnode * node = list->head;
+        for(xuint64 i = 1; i < index; i++)
+        {
+            node = node->next;
+        }
+        return node;
+    }
+    return xnil;
 }
