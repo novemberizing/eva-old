@@ -61,6 +61,7 @@ static void xevaconfigterm(void)
 extern void xevaserveradd(xint32 protocol, xint32 port, xserver * server)
 {
     xuint64 key = xunsigned64from_integer32(protocol, port);
+    printf("%lu\n", key);
     if(__singleton.servers == xnil)
     {
         __singleton.servers = xmapnew(xnil);
@@ -158,7 +159,7 @@ extern void xevaconfigloginit(char * path, xuint32 types)
 {
     if(__singleton.config.log.path == xnil)
     {
-        __singleton.config.log.path  = xobjectdup(path, strlen(path));   // check strnlen
+        __singleton.config.log.path  = xobjectdup(path, strlen(path) + 1);   // check strnlen
         __singleton.config.log.types = types;
 
         xlogpath_set(__singleton.config.log.path);
