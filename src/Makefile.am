@@ -65,6 +65,7 @@ noinst_PROGRAMS = benchmark-log                 \
                   example-ds-list               \
                   example-ds-queue              \
                   example-ds-stack              \
+                  example-ds-dictionary         \
                   evad
 
 benchmark_log_SOURCES           = example/benchmark/log.c
@@ -102,6 +103,9 @@ example_ds_queue_LDADD          = $(LIBS)
 
 example_ds_stack_SOURCES        = example/ds/stack.c
 example_ds_stack_LDADD          = $(LIBS)
+
+example_ds_dictionary_SOURCES   = example/ds/dictionary.c
+example_ds_dictionary_LDADD     = $(LIBS)
 
 evad_SOURCES                    = eva/eva.c        \
                                   eva/console.c    \

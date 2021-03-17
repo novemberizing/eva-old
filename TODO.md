@@ -1,6 +1,11 @@
 ----
 
+- [ ] 로고 - EVA
+
+----
+
 - [ ] ATEXIT 적용하기
+- [ ] DICTIONARY'S VALIDATE
 
 ----
 
@@ -10,9 +15,10 @@
 - [x] MAP
 - [x] SET
 - [x] ARRAY
-- [ ] STACK
-- [ ] QUEUE
+- [x] STACK
+- [x] QUEUE
 - [ ] HASH
+- [ ] B+ TREE
 
 원격 자료구조
 

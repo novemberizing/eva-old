@@ -98,7 +98,8 @@ noinst_PROGRAMS = benchmark-log$(EXEEXT) \
 	example-event-console$(EXEEXT) example-event-server$(EXEEXT) \
 	example-string-api$(EXEEXT) example-command-string$(EXEEXT) \
 	example-ds-list$(EXEEXT) example-ds-queue$(EXEEXT) \
-	example-ds-stack$(EXEEXT) evad$(EXEEXT)
+	example-ds-stack$(EXEEXT) example-ds-dictionary$(EXEEXT) \
+	evad$(EXEEXT)
 subdir = src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -196,6 +197,9 @@ example_command_string_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_example_console_io_OBJECTS = example/console/io.$(OBJEXT)
 example_console_io_OBJECTS = $(am_example_console_io_OBJECTS)
 example_console_io_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_example_ds_dictionary_OBJECTS = example/ds/dictionary.$(OBJEXT)
+example_ds_dictionary_OBJECTS = $(am_example_ds_dictionary_OBJECTS)
+example_ds_dictionary_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_example_ds_list_OBJECTS = example/ds/list.$(OBJEXT)
 example_ds_list_OBJECTS = $(am_example_ds_list_OBJECTS)
 example_ds_list_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -237,8 +241,10 @@ am__depfiles_remade = eva/$(DEPDIR)/console.Po eva/$(DEPDIR)/echo.Po \
 	example/client/$(DEPDIR)/pool.Po \
 	example/client/$(DEPDIR)/simple.Po \
 	example/command/$(DEPDIR)/string.Po \
-	example/console/$(DEPDIR)/io.Po example/ds/$(DEPDIR)/list.Po \
-	example/ds/$(DEPDIR)/queue.Po example/ds/$(DEPDIR)/stack.Po \
+	example/console/$(DEPDIR)/io.Po \
+	example/ds/$(DEPDIR)/dictionary.Po \
+	example/ds/$(DEPDIR)/list.Po example/ds/$(DEPDIR)/queue.Po \
+	example/ds/$(DEPDIR)/stack.Po \
 	example/event/$(DEPDIR)/console.Po \
 	example/event/$(DEPDIR)/engine.Po \
 	example/event/$(DEPDIR)/server.Po \
@@ -289,18 +295,18 @@ SOURCES = $(libnovemberizing_a_SOURCES) $(benchmark_log_SOURCES) \
 	$(evad_SOURCES) $(example_client_pool_SOURCES) \
 	$(example_client_simple_SOURCES) \
 	$(example_command_string_SOURCES) \
-	$(example_console_io_SOURCES) $(example_ds_list_SOURCES) \
-	$(example_ds_queue_SOURCES) $(example_ds_stack_SOURCES) \
-	$(example_event_console_SOURCES) \
+	$(example_console_io_SOURCES) $(example_ds_dictionary_SOURCES) \
+	$(example_ds_list_SOURCES) $(example_ds_queue_SOURCES) \
+	$(example_ds_stack_SOURCES) $(example_event_console_SOURCES) \
 	$(example_event_engine_SOURCES) \
 	$(example_event_server_SOURCES) $(example_string_api_SOURCES)
 DIST_SOURCES = $(libnovemberizing_a_SOURCES) $(benchmark_log_SOURCES) \
 	$(evad_SOURCES) $(example_client_pool_SOURCES) \
 	$(example_client_simple_SOURCES) \
 	$(example_command_string_SOURCES) \
-	$(example_console_io_SOURCES) $(example_ds_list_SOURCES) \
-	$(example_ds_queue_SOURCES) $(example_ds_stack_SOURCES) \
-	$(example_event_console_SOURCES) \
+	$(example_console_io_SOURCES) $(example_ds_dictionary_SOURCES) \
+	$(example_ds_list_SOURCES) $(example_ds_queue_SOURCES) \
+	$(example_ds_stack_SOURCES) $(example_event_console_SOURCES) \
 	$(example_event_engine_SOURCES) \
 	$(example_event_server_SOURCES) $(example_string_api_SOURCES)
 am__can_run_installinfo = \
@@ -519,6 +525,8 @@ example_ds_queue_SOURCES = example/ds/queue.c
 example_ds_queue_LDADD = $(LIBS)
 example_ds_stack_SOURCES = example/ds/stack.c
 example_ds_stack_LDADD = $(LIBS)
+example_ds_dictionary_SOURCES = example/ds/dictionary.c
+example_ds_dictionary_LDADD = $(LIBS)
 evad_SOURCES = eva/eva.c        \
                                   eva/console.c    \
                                   eva/echo.c
@@ -833,6 +841,12 @@ example/ds/$(am__dirstamp):
 example/ds/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) example/ds/$(DEPDIR)
 	@: > example/ds/$(DEPDIR)/$(am__dirstamp)
+example/ds/dictionary.$(OBJEXT): example/ds/$(am__dirstamp) \
+	example/ds/$(DEPDIR)/$(am__dirstamp)
+
+example-ds-dictionary$(EXEEXT): $(example_ds_dictionary_OBJECTS) $(example_ds_dictionary_DEPENDENCIES) $(EXTRA_example_ds_dictionary_DEPENDENCIES) 
+	@rm -f example-ds-dictionary$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_ds_dictionary_OBJECTS) $(example_ds_dictionary_LDADD) $(LIBS)
 example/ds/list.$(OBJEXT): example/ds/$(am__dirstamp) \
 	example/ds/$(DEPDIR)/$(am__dirstamp)
 
@@ -925,6 +939,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@example/client/$(DEPDIR)/simple.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/command/$(DEPDIR)/string.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/console/$(DEPDIR)/io.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@example/ds/$(DEPDIR)/dictionary.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/ds/$(DEPDIR)/list.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/ds/$(DEPDIR)/queue.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/ds/$(DEPDIR)/stack.Po@am__quote@ # am--include-marker
@@ -1216,6 +1231,7 @@ distclean: distclean-am
 	-rm -f example/client/$(DEPDIR)/simple.Po
 	-rm -f example/command/$(DEPDIR)/string.Po
 	-rm -f example/console/$(DEPDIR)/io.Po
+	-rm -f example/ds/$(DEPDIR)/dictionary.Po
 	-rm -f example/ds/$(DEPDIR)/list.Po
 	-rm -f example/ds/$(DEPDIR)/queue.Po
 	-rm -f example/ds/$(DEPDIR)/stack.Po
@@ -1317,6 +1333,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f example/client/$(DEPDIR)/simple.Po
 	-rm -f example/command/$(DEPDIR)/string.Po
 	-rm -f example/console/$(DEPDIR)/io.Po
+	-rm -f example/ds/$(DEPDIR)/dictionary.Po
 	-rm -f example/ds/$(DEPDIR)/list.Po
 	-rm -f example/ds/$(DEPDIR)/queue.Po
 	-rm -f example/ds/$(DEPDIR)/stack.Po
