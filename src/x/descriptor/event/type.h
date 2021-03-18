@@ -20,5 +20,6 @@
 #define xdescriptoreventtype_alloff     (xdescriptoreventtype_readoff | xdescriptoreventtype_writeoff)
 #define xdescriptoreventtype_connect    xdescriptoreventtype_open
 #define xdescriptoreventtype_listen     xdescriptoreventtype_open
+#define xdescriptoreventtype_connecting xdescriptoreventtype_opening
 
 #endif // __NOVEMBERIZING_X__DESCRIPTOR__EVENT_TYPE__H__

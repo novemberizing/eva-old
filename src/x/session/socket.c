@@ -1,3 +1,6 @@
+/**
+ * 
+ */
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -7,6 +10,13 @@
 
 #include "../server.h"
 #include "socket.h"
+
+
+
+
+
+
+
 
 static void xsessionsocketeventhandler_tcp(xsessionsocketevent * event);
 static xint64 xsessionsocketsubscriber_tcp(xsessionsocket * descriptor, xuint32 event, void * data, xint64 result);
