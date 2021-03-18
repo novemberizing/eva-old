@@ -11,15 +11,24 @@
 
 static xint64 xsocketon(xsocket * o, xuint32 event, void * param, xint64 result)
 {
-    if(xsocketcheck(o, xsocketstatus_exception))
+    xint64 n = xsuccess;
+    
+    if(event == xsocketeventtype_exception)
     {
-
+        n = o->on(o, event, param, xsuccess);
     }
-    xint64 n = o->on(o, event, xnil, xsuccess);
-
-    if(n < 0)
+    else
     {
-        
+        n = o->on(o, event, param, xsuccess);
+        if(n < 0)
+        {
+            if((o->status & xsocketstatus_exception) == xsocketstatus_void)
+            {
+                o->status |= xsocketstatus_exception;
+                xexceptionset(o->exception, xsocketon, 0, xexceptiontype_user, "");
+                n = xsocketon(o, event, xaddressof(o->exception), n);
+            }
+        }
     }
 
     return n;
@@ -59,21 +68,21 @@ extern xint64 xsocketcreate(xsocket * o)
             {
                 o->status |= xsocketstatus_exception;
                 xexceptionset(xaddressof(o->exception), socket, errno, 0, "");
-
-                if(o->subscription && o->subscription->enginenode.engine)
-                {
-                }
+                xsocketon(o, xsocketeventtype_exception, xaddressof(o->exception), xfail);
                 xlogfunction_end("%s(...) => %ld", __func__, xfail);
                 return xfail;
             }
         }
         else
         {
-            xassertion(xsocketcheck(o, xsocketstatus_create) == xfalse, "");
+            // 크리티컬하지 않지만, 체크를 한다.
+            xassertion(xtrue, "");
             if((o->status & xsocketstatus_create) == xsocketstatus_void)
             {
                 o->status |= xsocketstatus_create;
-                // 이벤트 콜백을 호출하도록 합니다.
+                xint64 ret = xsocketon(o, xsocketeventtype_create, xnil, xsuccess);
+                xlogfunction_end("%s(...) => %ld", __func__, ret);
+                return ret;
             }
             return xsuccess;
         }
@@ -84,43 +93,43 @@ extern xint64 xsocketcreate(xsocket * o)
 }
 
 
-// extern xint64 xsocketbind(xsocket * o, void * addr, xuint32 addrlen)
-// {
-//     xlogfunction_start("%s(%p, %p, %u)", __func__, o, addr, addrlen);
+extern xint64 xsocketbind(xsocket * o, void * addr, xuint32 addrlen)
+{
+    xlogfunction_start("%s(%p, %p, %u)", __func__, o, addr, addrlen);
 
-//     xassertion(o == xnil, "");
-//     xassertion(o->handle.f < 0 || (o->status & xsocketstatus_create) == xsocketstatus_void, "");
+    xassertion(o == xnil, "");
+    xassertion(o->handle.f < 0 || (o->status & xsocketstatus_create) == xsocketstatus_void, "");
 
-//     if((o->status & xsocketstatus_exception) == xsocketstatus_void)
-//     {
-//         if((o->status & xsocketstatus_bind) == xsocketstatus_void)
-//         {
-//             xint32 ret = bind(o->handle.f, (struct sockaddr *) addr, addrlen);
+    if((o->status & xsocketstatus_exception) == xsocketstatus_void)
+    {
+        if((o->status & xsocketstatus_bind) == xsocketstatus_void)
+        {
+            xint32 ret = bind(o->handle.f, (struct sockaddr *) addr, addrlen);
 
-//             if(ret == xsuccess)
-//             {
-//                 o->status |= xsocketstatus_bind;
+            if(ret == xsuccess)
+            {
+                o->status |= xsocketstatus_bind;
 
-//                 xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
-//                 return xsuccess;
-//             }
-//             else
-//             {
-//                 o->status |= xsocketstatus_exception;
-//                 xexceptionset(xaddressof(o->exception), bind, errno, 0, "");
+                xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
+                return xsuccess;
+            }
+            else
+            {
+                o->status |= xsocketstatus_exception;
+                xexceptionset(xaddressof(o->exception), bind, errno, 0, "");
 
-//                 xlogfunction_end("%s(...) => %ld", __func__, xfail);
-//                 return xfail;
-//             }
-//         }
+                xlogfunction_end("%s(...) => %ld", __func__, xfail);
+                return xfail;
+            }
+        }
 
-//         xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
-//         return xsuccess;
-//     }
+        xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
+        return xsuccess;
+    }
 
-//     xlogfunction_end("%s(...) => %ld", __func__, xfail);
-//     return xfail;
-// }
+    xlogfunction_end("%s(...) => %ld", __func__, xfail);
+    return xfail;
+}
 
 // extern xint64 xsocketlisten(xsocket * o, xint32 backlog)
 // {
