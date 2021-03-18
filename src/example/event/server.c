@@ -11,7 +11,7 @@
 #include <x/thread.h>
 #include <x/event/engine.h>
 
-static xint64 xsessionsubscriber_echo(xsession * session, xuint64 event, void * data, xint64 result);
+static xint64 xsessionsubscriber_echo(xsession * session, xuint32 event, void * data, xint64 result);
 
 int main(int argc, char ** argv)
 {
@@ -35,7 +35,7 @@ int main(int argc, char ** argv)
     return ret;
 }
 
-static xint64 xsessionsubscriber_echo(xsession * session, xuint64 event, void * data, xint64 result)
+static xint64 xsessionsubscriber_echo(xsession * session, xuint32 event, void * data, xint64 result)
 {
     // ECHO SERVER 의 스트리밍은 데이터 카피가 일어나지 않도록 하나의 INPUT & OUTPUT STREAM 을 합칠 수 있다.
     if(event == xsessioneventtype_open)

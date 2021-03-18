@@ -9,7 +9,7 @@ struct xclient;
 
 typedef struct xclient xclient;
 
-typedef xint64 (*xclientsubscriber)(xclient *, xuint64, void *, xint64);
+typedef xint64 (*xclientsubscriber)(xclient *, xuint32, void *, xint64);
 
 typedef xclient * (*xclientfactory)(xclientpool *);
 typedef void (*xclientreleaser)(xclient *);
@@ -23,8 +23,6 @@ struct xclient
     xclient * next;
     xclientpool * cntr;
 };
-
-
 
 extern xclient * xclientnew(xint32 domain, xint32 type, xint32 protocol, const void * addr, xuint32 addrlen, xclientsubscriber on, xuint64 size);
 extern xclient * xclientrem(xclient * client);

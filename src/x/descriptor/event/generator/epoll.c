@@ -40,13 +40,20 @@ static inline xint32 xdescriptoreventgenerator_epoll_register(int epollfd, xdesc
                 event.data.ptr = subscrption;
                 event.events = (EPOLLERR | EPOLLPRI | EPOLLHUP | EPOLLRDHUP | EPOLLONESHOT | EPOLLET);
 
-                if((descriptor->status & xdescriptorstatus_out) == xdescriptorstatus_void)
+                if(descriptor->status & xdescriptorstatus_opening)
                 {
                     event.events |= EPOLLOUT;
                 }
-                if((descriptor->status & xdescriptorstatus_in) == xdescriptorstatus_void)
+                else
                 {
-                    event.events |= EPOLLIN;
+                    if((descriptor->status & xdescriptorstatus_out) == xdescriptorstatus_void)
+                    {
+                        event.events |= EPOLLOUT;
+                    }
+                    if((descriptor->status & xdescriptorstatus_in) == xdescriptorstatus_void)
+                    {
+                        event.events |= EPOLLIN;
+                    }
                 }
 
                 int ret = epoll_ctl(epollfd, EPOLL_CTL_ADD, descriptor->handle.f, &event);
@@ -140,13 +147,20 @@ static inline xint32 xdescriptoreventgenerator_epoll_update(int epollfd, xdescri
             event.data.ptr = subscrption;
             event.events = (EPOLLHUP | EPOLLERR | EPOLLRDHUP | EPOLLPRI | EPOLLET | EPOLLONESHOT);
 
-            if((descriptor->status & xdescriptorstatus_out) == xdescriptorstatus_void)
+            if(descriptor->status & xdescriptorstatus_opening)
             {
                 event.events |= EPOLLOUT;
             }
-            if((descriptor->status & xdescriptorstatus_in) == xdescriptorstatus_void)
+            else
             {
-                event.events |= EPOLLIN;
+                if((descriptor->status & xdescriptorstatus_out) == xdescriptorstatus_void)
+                {
+                    event.events |= EPOLLOUT;
+                }
+                if((descriptor->status & xdescriptorstatus_in) == xdescriptorstatus_void)
+                {
+                    event.events |= EPOLLIN;
+                }
             }
 
             if(descriptor->status & xdescriptorstatus_register)
@@ -384,6 +398,11 @@ extern void xdescriptoreventgenerator_once(xdescriptoreventgenerator * o)
                 }
                 if(generator->events[i].events & EPOLLOUT)
                 {
+                    if(subscription->descriptor->status & xdescriptorstatus_opening)
+                    {
+                        xdescriptorevent_dispatch_open(subscription->descriptor);
+                        continue;
+                    }
                     xdescriptorevent_dispatch_out(subscription->descriptor);
                 }
                 if(generator->events[i].events & EPOLLIN)

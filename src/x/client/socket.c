@@ -7,6 +7,9 @@
 
 #include "../thread.h"
 
+/**
+ * 리팩토링 ...
+ */
 #include "socket.h"
 #include "socket/event/type.h"
 #include "socket/status.h"
@@ -17,6 +20,17 @@ static xint64 xclientsocketprocessor_tcp(xclientsocket * o, xuint32 event, void 
 static xint64 xclientsocketsubscriber_tcp(xclientsocket * o, xuint32 event, void * parameter, xint64 result);
 static xint32 xclientsocketcheck_tcp(xclientsocket * o, xuint32 event);
 static void xclientsocketeventhandler_tcp(xclientsocketevent * event);
+
+extern xint32 xclientsocketcheck(xclientsocket * o, xuint32 status)
+{
+    xlogfunction_start("%s(%p, %u)", __func__, o, status);
+    xint32 ret = xfalse;
+    
+    xassertion(xtrue, "implement this");
+
+    xlogfunction_end("%s(...) => %d", __func__, ret);
+    return ret;
+}
 
 extern xint32 xclientsocketcheck_close(xclientsocket * descriptor)
 {
@@ -99,9 +113,9 @@ static xint64 xclientsocketprocessor_tcp_open(xclientsocket * descriptor, void *
 {
     xlogfunction_start("%s(%p, %p)", __func__, descriptor, data);
 
-    if(xclientsocketcheck_close(descriptor) == xfalse)
+    if(xclientsocketcheck(descriptor, xclientsocketstatus_close) == xfalse)
     {
-        if(xclientsocketcheck_open(descriptor) == xfalse)
+        if(xclientsocketcheck(descriptor, xclientsocketstatus_open) == xfalse)
         {
             if((descriptor->status & xsocketstatus_create) == xsocketstatus_void)
             {
@@ -113,7 +127,7 @@ static xint64 xclientsocketprocessor_tcp_open(xclientsocket * descriptor, void *
             }
             xdescriptornonblock_set((xdescriptor *) descriptor, xtrue);
 
-            if((descriptor->status & xsocketstatus_connect) == xsocketstatus_void)
+            if((descriptor->status & (xsocketstatus_connect | xsocketstatus_connecting)) == xsocketstatus_void)
             {
                 if(xsocketconnect((xsocket *) descriptor, descriptor->addr, descriptor->addrlen) != xsuccess)
                 {
@@ -133,7 +147,7 @@ static xint64 xclientsocketprocessor_tcp_in(xclientsocket * descriptor, void * d
 {
     xlogfunction_start("%s(%p, %p)", __func__, descriptor, data);
 
-    if(xdescriptorcheck_open((xdescriptor *) descriptor))
+    if(xclientsocketcheck(descriptor, xclientsocketstatus_open))
     {
         xstreamadjust(descriptor->stream.in, xfalse);
         // TODO: 8192 CHANGE OPTIMIZED VALUE
@@ -212,6 +226,7 @@ static xint64 xclientsocketsubscriber_tcp(xclientsocket * descriptor, xuint32 ev
 {
     xlogfunction_start("%s(%p, %u, %p, %ld)", __func__, descriptor, event, parameter, result);
     xclient * client = descriptor->client;
+
     if(descriptor->exception.number)
     {
         xcheck(xtrue, "exception errno => %d", descriptor->exception.number);
@@ -245,21 +260,25 @@ extern xint32 xclientsocketcheck_open(xclientsocket * o)
 {
     xlogfunction_start("%s(%p)", __func__, o);
     xassertion(o == xnil, "");
+
     if(o->handle.f < 0)
     {
         xlogfunction_end("%s(...) => %d", __func__, xfalse);
         return xfalse;
     }
+
     if(o->status & (xsocketstatus_exception | xsocketstatus_rem | xsocketstatus_close))
     {
         xlogfunction_end("%s(...) => %d", __func__, xfalse);
         return xfalse;
     }
+
     if((o->status & (xsocketstatus_open | xsocketstatus_connecting | xsocketstatus_connect)) == xsocketstatus_void)
     {
         xlogfunction_end("%s(...) => %d", __func__, xfalse);
         return xfalse;
     }
+
     xlogfunction_end("%s(...) => %d", __func__, xtrue);
     return xtrue;
 }

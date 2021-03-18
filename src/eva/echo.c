@@ -21,7 +21,7 @@ struct service
 
 static struct service service = { xnil, xnil };
 
-static xint64 subscriber(xsession * session, xuint64 event, void * data, xint64 result);
+static xint64 subscriber(xsession * session, xuint32 event, void * data, xint64 result);
 
 /**
  * @fn          extern xserver * evaechoserver_get(void)
@@ -79,7 +79,7 @@ extern void evaechoserver_term(void)
  * @todo        제로 카피를 적용할 수 있도록 프로세스를 튜닝하도로 하자.
  * 
  */
-static xint64 subscriber(xsession * session, xuint64 event, void * data, xint64 result)
+static xint64 subscriber(xsession * session, xuint32 event, void * data, xint64 result)
 {
     if(event == xsessioneventtype_open)
     {

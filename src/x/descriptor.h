@@ -62,6 +62,7 @@ extern xint32 xdescriptorcheck_register(xdescriptor * descriptor);
 extern xint32 xdescriptornonblock_set(xdescriptor * descriptor, xint32 on);
 
 extern xint64 xdescriptorevent_dispatch_on(xdescriptor * descriptor);
+extern xint64 xdescriptorevent_dispatch_opening(xdescriptor * descriptor);
 extern xint64 xdescriptorevent_dispatch_open(xdescriptor * descriptor);
 extern xint64 xdescriptorevent_dispatch_in(xdescriptor * descriptor);
 extern xint64 xdescriptorevent_dispatch_out(xdescriptor * descriptor);
@@ -71,6 +72,7 @@ extern xint64 xdescriptorevent_dispatch_exception(xdescriptor * descriptor);
 
 extern xint64 xdescriptorevent_processor_on(xdescriptor * descriptor);
 extern xint64 xdescriptorevent_processor_open(xdescriptor * descriptor);
+extern xint64 xdescriptorevent_processor_opening(xdescriptor * descriptor);
 extern xint64 xdescriptorevent_processor_in(xdescriptor * descriptor);
 extern xint64 xdescriptorevent_processor_out(xdescriptor * descriptor);
 extern xint64 xdescriptorevent_processor_close(xdescriptor * descriptor);

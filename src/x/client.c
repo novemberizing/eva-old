@@ -10,6 +10,7 @@
 #include "socket.h"
 #include "client.h"
 #include "client/socket.h"
+#include "client/socket/status.h"
 
 extern xclient * xclientnew(xint32 domain, xint32 type, xint32 protocol, const void * addr, xuint32 addrlen, xclientsubscriber on, xuint64 size)
 {
@@ -122,7 +123,7 @@ extern xint64 xclientconnect(xclient * client)
 extern xint64 xclientsend(xclient * client, const void * data, xuint64 len)
 {
     xlogfunction_start("%s(%p, %p, %lu)", __func__, client, data, len);
-    if(xclientsocketcheck_open(client->descriptor))
+    if(xclientsocketcheck(client->descriptor, xclientsocketstatus_open))
     {
         if(data && len)
         {
@@ -160,7 +161,7 @@ extern xint64 xclientsend(xclient * client, const void * data, xuint64 len)
         xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
         return xsuccess;
     }
-    else if(xclientsocketcheck_connecting(client->descriptor))
+    else if(xclientsocketcheck(client->descriptor, xclientsocketstatus_connecting))
     {
 
         xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
@@ -175,7 +176,7 @@ extern xint64 xclientrecv(xclient * client, void * buffer, xuint64 len)
 {
     xlogfunction_start("%s(%p, %p, %lu)", __func__, client, buffer, len);
 
-    if(xclientsocketcheck_open(client->descriptor))
+    if(xclientsocketcheck(client->descriptor, xclientsocketstatus_open))
     {
         if(buffer && len)
         {
@@ -249,7 +250,7 @@ extern xint64 xclientrecv(xclient * client, void * buffer, xuint64 len)
         xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
         return xsuccess;
     }
-    else if(xclientsocketcheck_connecting(client->descriptor))
+    else if(xclientsocketcheck(client->descriptor, xclientsocketstatus_connecting))
     {
         xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
         return xsuccess;

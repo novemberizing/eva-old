@@ -14,4 +14,6 @@
 
 #define xdescriptorstatus_flush         xdescriptoreventtype_flush
 
+#define xdescriptorstatus_opening       xdescriptoreventtype_opening
+
 #endif // __NOVEMBERIZING_X__DESCRIPTOR__STATUS__H__

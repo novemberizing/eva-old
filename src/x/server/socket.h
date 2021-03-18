@@ -39,7 +39,7 @@ extern const char * xserversocketeventtype_str(xuint32 event);
 typedef xserversocket * (*xserversocketdestructor)(xserversocket *);
 typedef xint64 (*xserversocketprocessor)(xserversocket *, xuint32, void *);
 typedef xint64 (*xserversocketsubscriber)(xserversocket *, xuint32, void *, xint64);
-typedef xint32 (*xserversocketcheck)(xserversocket *, xuint32);
+typedef xint32 (*xserversocketchecker)(xserversocket *, xuint32);
 
 struct xserversocket
 {
@@ -52,7 +52,7 @@ struct xserversocket
     /** INHERITED DESCRIPTOR */
     xdescriptorhandle                handle;        /**!< descriptor handle */
     xserversocketprocessor           process;       /**!< descriptor process function */
-    xserversocketcheck               check;         /**!< descriptor status checker  */
+    xserversocketchecker             check;         /**!< descriptor status checker  */
     xserversocketsubscriber          on;            /**!< descriptor event subscriber */
     xserversocketevent               event;         /**!< descriptor default event */
     xexception                       exception;     /**!< descriptor exception */
@@ -72,6 +72,7 @@ extern xserversocket * xserversocket_rem(xserversocket * descriptor);
 
 extern xint32 xserversocketcheck_open(xserversocket * descriptor);
 extern xint32 xserversocketcheck_rem(xserversocket * descriptor);
+
 extern void xserversocketbacklog_set(xserversocket * descriptor, xint32 backlog);
 // 
 // extern xclientsocket * xclientsocket_new(xclient * client, xint32 domain, xint32 type, xint32 protocol, const void * addr, xuint32 addrlen);

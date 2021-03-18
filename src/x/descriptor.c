@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
 
 #include "descriptor.h"
 #include "thread.h"
@@ -188,6 +190,21 @@ extern xint64 xdescriptorevent_processor_register(xdescriptor * descriptor)
         xlogfunction_end("%s(...) => %ld", __func__, n);
         return n;
     }
+    else if(xdescriptorcheck_close(descriptor) == xfalse && (descriptor->status & xdescriptorstatus_opening))
+    {
+        if(descriptor->status & xdescriptorstatus_void)
+        {
+            xassertion(xtrue, "check this - maybe client");
+
+            xdescriptoreventsubscription * subscription = descriptor->subscription;
+            xdescriptoreventgenerator * generator = subscription->generatornode.generator;
+            xint64 n = xdescriptoreventgenerator_descriptor_update(generator, descriptor);
+            n = descriptor->on(descriptor, xdescriptoreventtype_register, xnil, n == xsuccess);
+
+            xlogfunction_end("%s(...) => %ld", __func__, n);
+            return n;
+        }
+    }
 
     xlogfunction_end("%s(...) => %ld", __func__, xfail);
     return xfail;
@@ -270,6 +287,31 @@ extern xint64 xdescriptorevent_processor_exception(xdescriptor * descriptor)
     return xsuccess;
 }
 
+extern xint64 xdescriptorevent_processor_opening(xdescriptor * descriptor)
+{
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
+    xdescriptoreventsubscription * subscription = descriptor->subscription;
+    xdescriptoreventgenerator *       generator = subscription->generatornode.generator;
+    xint64                                    n = xsuccess;
+
+    xassertion(xtrue, "implement this");
+
+    xint32 code = 0;
+    socklen_t size = sizeof(xint32);
+    if(getsockopt(descriptor->handle.f, SOL_SOCKET, SO_ERROR, &code, xaddressof(size)) == xsuccess)
+    {
+
+    }
+    else
+    {
+
+    }
+
+    xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
+    return xsuccess;
+}
+
 extern xint64 xdescriptorevent_dispatch_on(xdescriptor * descriptor)
 {
     xlogfunction_start("%s(%p)", __func__, descriptor);
@@ -296,6 +338,47 @@ extern xint64 xdescriptorevent_dispatch_on(xdescriptor * descriptor)
         xlogfunction_end("%s(...) => %ld", __func__, ret);
         return ret;
     }
+}
+
+extern xint64 xdescriptorevent_dispatch_opening(xdescriptor * descriptor)
+{
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
+    xdescriptoreventsubscription * subscription = descriptor->subscription;
+
+    if(xdescriptorcheck_close(descriptor) == xfalse)
+    {
+        if((descriptor->status & xdescriptorstatus_open) == xdescriptorstatus_void)
+        {
+            if(subscription)
+            {
+                if(xeventengine_descriptor_dispatch(descriptor) != xsuccess)
+                {
+                    xint64 ret = xdescriptorevent_processor_opening(descriptor);
+
+                    xlogfunction_end("%s(...) => %ld", __func__, ret);
+                    return ret;
+                }
+
+                xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
+                return xsuccess;
+            }
+            else
+            {
+                xint64 ret = xdescriptorevent_processor_opening(descriptor);
+
+                xlogfunction_end("%s(...) => %ld", __func__, ret);
+                return ret;
+            }
+        }
+        // 두번 오픈이 호출된 것이다. 큰 문제는 없지만, 체크는 할 필요가 있다.
+        // 이것을 호출한 것은 불필요한 로직이 호출된 것이다.
+        xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
+        return xsuccess;
+    }
+
+    xlogfunction_end("%s(...) => %ld", __func__, xfail);
+    return xfail;
 }
 
 extern xint64 xdescriptorevent_dispatch_open(xdescriptor * descriptor)

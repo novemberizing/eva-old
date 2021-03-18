@@ -31,8 +31,8 @@ typedef struct xevaechoclient xevaechoclient;
 
 static struct service service = { xnil, xnil };
 
-static xint64 xevaechoserver_handler(xsession * session, xuint64 event, void * data, xint64 result);
-static xint64 xevaechoclient_handler(xclient * o, xuint64 event, void * parameter, xint64 result);
+static xint64 xevaechoserver_handler(xsession * session, xuint32 event, void * data, xint64 result);
+static xint64 xevaechoclient_handler(xclient * o, xuint32 event, void * parameter, xint64 result);
 
 extern xserver * xevaechoserver_get(xuint32 protocol)
 {
@@ -88,7 +88,7 @@ extern void xevaechoserver_term(void)
     }
 }
 
-static xint64 xevaechoserver_handler(xsession * session, xuint64 event, void * data, xint64 result)
+static xint64 xevaechoserver_handler(xsession * session, xuint32 event, void * data, xint64 result)
 {
     if(event == xsessioneventtype_open)
     {
@@ -129,7 +129,7 @@ extern xclient * xevaechoclient_gen(xuint32 protocol, const char * ip, xstream *
     return xnil;
 }
 
-static xint64 xevaechoclient_handler(xclient * o, xuint64 event, void * parameter, xint64 result)
+static xint64 xevaechoclient_handler(xclient * o, xuint32 event, void * parameter, xint64 result)
 {
     xevaechoclient * client = (xevaechoclient *) o;
 
@@ -146,9 +146,11 @@ static xint64 xevaechoclient_handler(xclient * o, xuint64 event, void * paramete
     {
         if(result > 0)
         {
+            printf("%s\n", "hello world");
             client->completed = client->completed + result;
         }
     }
+    printf("client event => %u\n", event);
 
     return result;
 }

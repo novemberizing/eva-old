@@ -4,7 +4,7 @@
 int main(int argc, char ** argv)
 {
     xlogconsole_set(xtrue);
-    xevaconfigloginit("/novemberizing", xlogtype_assertion);
+    xevaconfigloginit("/novemberizing", xlogtype_all);
 
     xevaserveradd(xtransmissioncontrolprotocol, 7, xevaechoserver_get(xtransmissioncontrolprotocol));
 
