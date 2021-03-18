@@ -11,631 +11,75 @@
 
 #include "event/engine.h"
 
-extern xint32 xdescriptorcheck_rem(xdescriptor * descriptor)
+static xint64 xdescriptoron(xdescriptor * descriptor, xuint32 event, void * param, xint64 result)
 {
-    xlogfunction_start("%s(%p)", __func__, descriptor);
-
-    xint32 ret = (descriptor->status & xdescriptorstatus_rem) && descriptor->handle.f < 0 && descriptor->event.queue == xnil;
-
-    xlogfunction_end("%s(...) => %d", __func__, ret);
-    return ret;
-}
-
-extern xint32 xdescriptorcheck_close(xdescriptor * descriptor)
-{
-    xlogfunction_start("%s(%p)", __func__, descriptor);
-    xint32 ret = descriptor->status & (xdescriptorstatus_close | xdescriptorstatus_exception | xdescriptorstatus_rem);
-
-    xlogfunction_end("%s(...) => %d", __func__, ret);
-    return ret;
-}
-
-extern xint32 xdescriptorcheck_open(xdescriptor * descriptor)
-{
-    xlogfunction_start("%s(%p)", __func__, descriptor);
-
-    xint32 ret = xdescriptorcheck_close(descriptor) == xfalse && (descriptor->status & xdescriptorstatus_open);
-
-    xlogfunction_end("%s(...) => %d", __func__, ret);
-    return ret;
-}
-
-extern xint32 xdescriptorcheck_register(xdescriptor * descriptor)
-{
-    xlogfunction_start("%s(%p)", __func__, descriptor);
-    xint32 ret = (descriptor->status & xdescriptorstatus_register);
-    xlogfunction_end("%s(...) => %d", __func__, ret);
-    return ret;
-}
-
-extern xint64 xdescriptorevent_processor_on(xdescriptor * descriptor)
-{
-    xlogfunction_start("%s(%p)", __func__, descriptor);
-
-    xassertion(descriptor == xnil, "");
-
-    if(xdescriptorcheck_close(descriptor))
+    if(event == xdescriptoreventtype_exception)
     {
-        xdescriptorevent_processor_unregister(descriptor);
-        xint64 ret = xdescriptorevent_processor_close(descriptor);
-
-        xlogfunction_end("%s(...) => %d", __func__, ret);
-        return ret;
-    }
-    else if((descriptor->status & xdescriptorstatus_open) == xdescriptorstatus_void)
-    {
-        xdescriptorevent_processor_open(descriptor);
-    }
-    xuint32 status = (descriptor->status & (xdescriptorstatus_in | xdescriptorstatus_out));
-
-    xdescriptorevent_processor_out(descriptor);
-    xdescriptorevent_processor_in(descriptor);
-    xdescriptorevent_processor_out(descriptor);
-
-    if((descriptor->status & (xdescriptorstatus_in | xdescriptorstatus_out)) != (xdescriptorstatus_in | xdescriptorstatus_out))
-    {
-        xdescriptorevent_processor_register(descriptor);
-    }
-
-    if(xdescriptorcheck_close(descriptor))
-    {
-        xdescriptorevent_processor_unregister(descriptor);
-        xdescriptorevent_processor_close(descriptor);
-
-        xlogfunction_end("%s(...) => %d", __func__, xfail);
-        return xfail;
-    }
-
-    xlogfunction_end("%s(...) => %d", __func__, xsuccess);
-    return xsuccess;
-}
-
-/**
- * 이 함수는 
- */
-extern xint64 xdescriptorevent_processor_open(xdescriptor * descriptor)
-{
-    xlogfunction_start("%s(%p)", __func__, descriptor);
-
-    xassertion(xdescriptorcheck_open(descriptor), "");
-    xassertion(descriptor->process == xnil, "");
-
-    xint64 n = descriptor->process(descriptor, xdescriptoreventtype_open, xnil);
-    n = descriptor->on(descriptor, xdescriptoreventtype_open, xnil, n);
-
-    xlogfunction_end("%s(...) => %ld", __func__, n);
-    return n;
-}
-
-extern xint64 xdescriptorevent_processor_out(xdescriptor * descriptor)
-{
-    xlogfunction_start("%s(%p)", descriptor);
-
-    if(xdescriptorcheck_open(descriptor))
-    {
-        xint64 n = descriptor->process(descriptor, xdescriptoreventtype_out, xnil);
-        n = descriptor->on(descriptor, xdescriptoreventtype_out, xnil, n);
-
-        xlogfunction_end("%s(...) => %ld", __func__, n);
-        return n;
-    }
-
-    xlogfunction_end("%s(...) => %ld", __func__, xfail);
-    return xfail;
-}
-
-extern xint64 xdescriptorevent_processor_in(xdescriptor * descriptor)
-{
-    xlogfunction_start("%s(%p)", __func__, descriptor);
-
-    if(xdescriptorcheck_open(descriptor))
-    {
-        xint64 n = descriptor->process(descriptor, xdescriptoreventtype_in, xnil);
-        n = descriptor->on(descriptor, xdescriptoreventtype_in, xnil, n);
-
-        xlogfunction_end("%s(...) => %ld", __func__, n);
-        return n;
-    }
-
-    xlogfunction_end("%s(...) => %ld", __func__, xfail);
-    return xfail;
-}
-
-extern xint64 xdescriptorevent_processor_close(xdescriptor * descriptor)
-{
-    xlogfunction_start("%s(%p)", __func__, descriptor);
-
-    xassertion(descriptor->event.queue, "");
-    xassertion(descriptor->status & xdescriptorstatus_register, "");
-
-    xdescriptoreventsubscription * subscription = descriptor->subscription;
-    xdescriptoreventgenerator *       generator = subscription->generatornode.generator;
-    xint64                                    n = xsuccess;
-
-    if(subscription->generatornode.list == generator->alive)
-    {
-        xdescriptoreventgeneratorsubscriptionlist_del(descriptor->subscription);
-    }
-
-    n = descriptor->process(descriptor, xdescriptoreventtype_close, xnil);
-    n = descriptor->on(descriptor, xdescriptoreventtype_close, xnil, n);
-    
-    /**
-     * 콘솔 입출력의 경우 핸들 값이 설정된 상태일 수 있다.
-     * 이 함수는 UNREGISTER 가 수행된 상태에서 호출이 된다.
-     */
-    descriptor->exception = xexception_void;
-    descriptor->status    = (descriptor->status & xdescriptorstatus_rem) ? xdescriptorstatus_rem : xdescriptorstatus_void;
-
-    if(subscription->generatornode.list != generator->queue)
-    {
-        xdescriptoreventgeneratorsubscriptionlist_push(generator->queue, subscription);
-    }
-
-    xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
-    return xsuccess;
-}
-
-extern xint64 xdescriptorevent_processor_register(xdescriptor * descriptor)
-{
-    xlogfunction_start("%s(%p)", __func__, descriptor);
-
-    if(xdescriptorcheck_open(descriptor))
-    {
-        xdescriptoreventsubscription * subscription = descriptor->subscription;
-        xdescriptoreventgenerator * generator = subscription->generatornode.generator;
-        xint64 n = xdescriptoreventgenerator_descriptor_update(generator, descriptor);
-        n = descriptor->on(descriptor, xdescriptoreventtype_register, xnil, n == xsuccess);
-
-        xlogfunction_end("%s(...) => %ld", __func__, n);
-        return n;
-    }
-    else if(xdescriptorcheck_close(descriptor) == xfalse && (descriptor->status & xdescriptorstatus_opening))
-    {
-        if(descriptor->status & xdescriptorstatus_void)
-        {
-            xassertion(xtrue, "check this - maybe client");
-
-            xdescriptoreventsubscription * subscription = descriptor->subscription;
-            xdescriptoreventgenerator * generator = subscription->generatornode.generator;
-            xint64 n = xdescriptoreventgenerator_descriptor_update(generator, descriptor);
-            n = descriptor->on(descriptor, xdescriptoreventtype_register, xnil, n == xsuccess);
-
-            xlogfunction_end("%s(...) => %ld", __func__, n);
-            return n;
-        }
-    }
-
-    xlogfunction_end("%s(...) => %ld", __func__, xfail);
-    return xfail;
-}
-
-extern xint64 xdescriptorevent_processor_unregister(xdescriptor * descriptor)
-{
-    xlogfunction_start("%s(%p)", __func__, descriptor);
-
-    xdescriptoreventsubscription * subscription = descriptor->subscription;
-    xdescriptoreventgenerator * generator = subscription->generatornode.generator;
-    xdescriptoreventgenerator_descriptor_unregister(generator, descriptor);
-    descriptor->on(descriptor, xdescriptoreventtype_register, xnil, xfalse);
-
-    xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
-    return xsuccess;
-}
-
-extern xint64 xdescriptorevent_processor_rem(xdescriptor * descriptor)
-{
-    xlogfunction_start("%s(%p)", __func__, descriptor);
-
-    if(xdescriptorcheck_rem(descriptor))
-    {
-        xdescriptoreventsubscription * subscription = descriptor->subscription;
-        xeventengine * engine = subscription->enginenode.engine;
-
-        xeventengine_descriptor_unregister(engine, descriptor);
-
-        // TODO: CHECK SUBSCRIPTION
-        xassertion(subscription->enginenode.engine || subscription->enginenode.prev || subscription->enginenode.next, "");
-        xassertion(subscription->generatornode.prev || subscription->generatornode.next || subscription->generatornode.list, "");
-
-        descriptor->subscription = xnil;
-        descriptor->on(descriptor, xdescriptoreventtype_rem, xnil, 0);
-
-        descriptor->status = xdescriptorstatus_void;
-        descriptor = descriptor->rem(descriptor);
-
-        free(subscription);
+        result = descriptor->on(descriptor, event, param, result);
     }
     else
     {
-        xassertion((descriptor->status & xdescriptorstatus_rem) == xdescriptorstatus_void, "");
-
-        xdescriptoreventsubscription * subscription = descriptor->subscription;
-        xdescriptoreventgenerator * generator = subscription->generatornode.generator;
-        xdescriptoreventgeneratorsubscriptionlist_push(generator->queue, subscription);
-    }
-
-    xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
-    return xsuccess;
-}
-
-extern xint64 xdescriptorevent_processor_exception(xdescriptor * descriptor)
-{
-    xlogfunction_start("%s(%p)", __func__, descriptor);
-
-    xdescriptoreventsubscription * subscription = descriptor->subscription;
-    xdescriptoreventgenerator *       generator = subscription->generatornode.generator;
-    xint64                                    n = xsuccess;
-
-    n = descriptor->process(descriptor, xdescriptoreventtype_exception, xnil);
-    n = descriptor->on(descriptor, xdescriptoreventtype_exception, xnil, n);
-
-    if(subscription->generatornode.list == generator->alive)
-    {
-        xdescriptoreventgeneratorsubscriptionlist_del(descriptor->subscription);
-    }
-    
-    n = descriptor->process(descriptor, xdescriptoreventtype_close, xnil);
-    n = descriptor->on(descriptor, xdescriptoreventtype_close, xnil, n);
-
-    if(subscription->generatornode.list != generator->queue)
-    {
-        xdescriptoreventgeneratorsubscriptionlist_push(generator->queue, subscription);
-    }
-
-    xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
-    return xsuccess;
-}
-
-extern xint64 xdescriptorevent_processor_opening(xdescriptor * descriptor)
-{
-    xlogfunction_start("%s(%p)", __func__, descriptor);
-
-    xdescriptoreventsubscription * subscription = descriptor->subscription;
-    xdescriptoreventgenerator *       generator = subscription->generatornode.generator;
-    xint64                                    n = xsuccess;
-
-    xassertion(xtrue, "implement this");
-
-    xint32 code = 0;
-    socklen_t size = sizeof(xint32);
-    if(getsockopt(descriptor->handle.f, SOL_SOCKET, SO_ERROR, &code, xaddressof(size)) == xsuccess)
-    {
-
-    }
-    else
-    {
-
-    }
-
-    xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
-    return xsuccess;
-}
-
-extern xint64 xdescriptorevent_dispatch_on(xdescriptor * descriptor)
-{
-    xlogfunction_start("%s(%p)", __func__, descriptor);
-
-    xdescriptoreventsubscription * subscription = descriptor->subscription;
-
-    if(subscription)
-    {
-        if(xeventengine_descriptor_dispatch(descriptor) != xsuccess)
+        result = descriptor->on(descriptor, event, param, result);
+        if(result < 0)
         {
-            xint64 ret = xdescriptorevent_processor_on(descriptor);
-
-            xlogfunction_end("%s(...) => %ld", __func__, ret);
-            return ret;
-        }
-
-        xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
-        return xsuccess;
-    }
-    else
-    {
-        xint64 ret = xdescriptorevent_processor_on(descriptor);
-
-        xlogfunction_end("%s(...) => %ld", __func__, ret);
-        return ret;
-    }
-}
-
-extern xint64 xdescriptorevent_dispatch_opening(xdescriptor * descriptor)
-{
-    xlogfunction_start("%s(%p)", __func__, descriptor);
-
-    xdescriptoreventsubscription * subscription = descriptor->subscription;
-
-    if(xdescriptorcheck_close(descriptor) == xfalse)
-    {
-        if((descriptor->status & xdescriptorstatus_open) == xdescriptorstatus_void)
-        {
-            if(subscription)
-            {
-                if(xeventengine_descriptor_dispatch(descriptor) != xsuccess)
-                {
-                    xint64 ret = xdescriptorevent_processor_opening(descriptor);
-
-                    xlogfunction_end("%s(...) => %ld", __func__, ret);
-                    return ret;
-                }
-
-                xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
-                return xsuccess;
-            }
-            else
-            {
-                xint64 ret = xdescriptorevent_processor_opening(descriptor);
-
-                xlogfunction_end("%s(...) => %ld", __func__, ret);
-                return ret;
-            }
-        }
-        // 두번 오픈이 호출된 것이다. 큰 문제는 없지만, 체크는 할 필요가 있다.
-        // 이것을 호출한 것은 불필요한 로직이 호출된 것이다.
-        xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
-        return xsuccess;
-    }
-
-    xlogfunction_end("%s(...) => %ld", __func__, xfail);
-    return xfail;
-}
-
-extern xint64 xdescriptorevent_dispatch_open(xdescriptor * descriptor)
-{
-    xlogfunction_start("%s(%p)", __func__, descriptor);
-
-    xdescriptoreventsubscription * subscription = descriptor->subscription;
-
-    if(xdescriptorcheck_close(descriptor) == xfalse)
-    {
-        if((descriptor->status & xdescriptorstatus_open) == xdescriptorstatus_void)
-        {
-            if(subscription)
-            {
-                if(xeventengine_descriptor_dispatch(descriptor) != xsuccess)
-                {
-                    xint64 ret = xdescriptorevent_processor_open(descriptor);
-
-                    xlogfunction_end("%s(...) => %ld", __func__, ret);
-                    return ret;
-                }
-
-                xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
-                return xsuccess;
-            }
-            else
-            {
-                xint64 ret = xdescriptorevent_processor_open(descriptor);
-
-                xlogfunction_end("%s(...) => %ld", __func__, ret);
-                return ret;
-            }
-        }
-        // 두번 오픈이 호출된 것이다. 큰 문제는 없지만, 체크는 할 필요가 있다.
-        // 이것을 호출한 것은 불필요한 로직이 호출된 것이다.
-        xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
-        return xsuccess;
-    }
-
-    xlogfunction_end("%s(...) => %ld", __func__, xfail);
-    return xfail;
-}
-extern xint64 xdescriptorevent_dispatch_in(xdescriptor * descriptor)
-{
-    xlogfunction_start("%s(%p)", __func__, descriptor);
-
-    xdescriptoreventsubscription * subscription = descriptor->subscription;
-
-    if(xdescriptorcheck_open(descriptor))
-    {
-        if(subscription)
-        {
-            if(xeventengine_descriptor_dispatch(descriptor) != xsuccess)
-            {
-                xint64 n = xdescriptorevent_processor_in(descriptor);
-                if(n > 0)
-                {
-                    xeventengine_queue_push(subscription->enginenode.engine, (xevent *) xaddressof(descriptor->event));
-                }
-                else if(n == 0)
-                {
-                    if((descriptor->status & xdescriptorstatus_in) == xdescriptorstatus_void)
-                    {
-                        xassertion(xtrue, "implement this");
-                    }
-                }
-
-                xlogfunction_end("%s(...) => %ld", __func__, n);
-                return n;
-            }
-
-            xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
-            return xsuccess;
-        }
-        else
-        {
-            xint64 ret = xdescriptorevent_processor_in(descriptor);
-
-            xlogfunction_end("%s(...) => %ld", __func__, ret);
-            return ret;
+            descriptor->status |= xdescriptorstatus_exception;
+            result = descriptor->on(descriptor, xdescriptoreventtype_exception, xaddressof(descriptor->exception), result);
         }
     }
-
-    xlogfunction_end("%s(...) => %ld", __func__, xfail);
-    return xfail;
-}
-extern xint64 xdescriptorevent_dispatch_out(xdescriptor * descriptor)
-{
-    xlogfunction_start("%s(%p)", __func__, descriptor);
-
-    xdescriptoreventsubscription * subscription = descriptor->subscription;
-
-    if(xdescriptorcheck_open(descriptor))
-    {
-        if(subscription)
-        {
-            if(xeventengine_descriptor_dispatch(descriptor) != xsuccess)
-            {
-                xint64 n = xdescriptorevent_processor_out(descriptor);
-                if(n > 0)
-                {
-                    xeventengine_queue_push(subscription->enginenode.engine, (xevent *) xaddressof(descriptor->event));
-                }
-                else if(n == 0)
-                {
-                    if((descriptor->status & xdescriptorstatus_out) == xdescriptorstatus_void)
-                    {
-                        xassertion(xtrue, "implement this");
-                    }
-                }
-
-                xlogfunction_end("%s(...) => %ld", __func__, n);
-                return n;
-            }
-
-            xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
-            return xsuccess;
-        }
-        else
-        {
-            xint64 ret = xdescriptorevent_processor_out(descriptor);
-
-            xlogfunction_end("%s(...) => %ld", __func__, ret);
-            return ret;
-        }
-    }
-
-    xlogfunction_end("%s(...) => %ld", __func__, xfail);
-    return xfail;
+    return result;
 }
 
-extern xint64 xdescriptorevent_dispatch_close(xdescriptor * descriptor)
-{
-    xlogfunction_start("%s(%p)", __func__, descriptor);
+static xint32 xdescriptorstatuscheck_open(xdescriptor * descriptor);
+static xint32 xdescriptorstatuscheck_in(xdescriptor * descriptor);
+static xint32 xdescriptorstatuscheck_out(xdescriptor * descriptor);
+static xint32 xdescriptorstatuscheck_close(xdescriptor * descriptor);
+static xint32 xdescriptorstatuscheck_exception(xdescriptor * descriptor);
+static xint32 xdescriptorstatuscheck_rem(xdescriptor * descriptor);
+static xint32 xdescriptorstatuscheck_register(xdescriptor * descriptor);
+static xint32 xdescriptorstatuscheck_readoff(xdescriptor * descriptor);
+static xint32 xdescriptorstatuscheck_writeoff(xdescriptor * descriptor);
+static xint32 xdescriptorstatuscheck_alloff(xdescriptor * descriptor);
+static xint32 xdescriptorstatuscheck_opening(xdescriptor * descriptor);
+static xint32 xdescriptorstatuscheck_create(xdescriptor * descriptor);
+static xint32 xdescriptorstatuscheck_bind(xdescriptor * descriptor);
 
-    xdescriptoreventsubscription * subscription = descriptor->subscription;
-
-    if((descriptor->status & xdescriptorstatus_close) == xdescriptorstatus_void)
-    {
-        descriptor->status |= xdescriptorstatus_close;
-        if(subscription)
-        {
-            if(xeventengine_descriptor_dispatch(descriptor) != xsuccess)
-            {
-                xdescriptorevent_processor_unregister(descriptor);
-                xint64 ret = xdescriptorevent_processor_close(descriptor);
-                xlogfunction_end("%s(...) => %ld", __func__, ret);
-                return ret;
-            }
-
-            xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
-            return xsuccess;
-        }
-        else
-        {
-            xint64 ret = xdescriptorevent_processor_close(descriptor);
-            xlogfunction_end("%s(...) => %ld", __func__, ret);
-            return ret;
-        }    
-    }
-    
-    xlogfunction_end("%s(...) => %ld", __func__, xfail);
-    return xfail;
-}
-
-/**
- * 
- * 이 함수는 메인 함수에서 불려야 한다.
- */
-extern xint64 xdescriptorevent_dispatch_rem(xdescriptor * descriptor)
-{
-    xlogfunction_start("%s(%p)", __func__, descriptor);
-
-    xdescriptoreventsubscription * subscription = descriptor->subscription;
-
-    if((descriptor->status & xdescriptorstatus_rem) == xdescriptorstatus_void)
-    {
-        descriptor->status |= xdescriptorstatus_rem;
-        if(subscription)
-        {
-            if(xeventengine_descriptor_dispatch(descriptor) != xsuccess)
-            {
-                xdescriptorevent_processor_unregister(descriptor);
-                xdescriptorevent_processor_close(descriptor);
-                xint64 ret = xdescriptorevent_processor_rem(descriptor);
-
-                xlogfunction_end("%s(...) => %ld", __func__, ret);
-                return ret;
-            }
-
-            xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
-            return xsuccess;
-        }
-        else
-        {
-            xdescriptorevent_processor_unregister(descriptor);
-            xdescriptorevent_processor_close(descriptor);
-            xint64 ret = xdescriptorevent_processor_rem(descriptor);
-
-            xlogfunction_end("%s(...) => %ld", __func__, ret);
-            return ret;
-        }    
-    }
-    
-    xlogfunction_end("%s(...) => %ld", __func__, xfail);
-    return xfail;
-}
-
-extern xint64 xdescriptorevent_dispatch_exception(xdescriptor * descriptor)
-{
-    xlogfunction_start("%s(%p)", __func__, descriptor);
-
-    xdescriptoreventsubscription * subscription = descriptor->subscription;
-
-    if((descriptor->status & xdescriptorstatus_exception) == xdescriptorstatus_void)
-    {
-        descriptor->status |= xdescriptorstatus_exception;
-        if(subscription)
-        {
-            if(xeventengine_descriptor_dispatch(descriptor) != xsuccess)
-            {
-                xdescriptorevent_processor_unregister(descriptor);
-                xint64 ret = xdescriptorevent_processor_exception(descriptor);
-
-                xlogfunction_end("%s(...) => %ld", __func__, ret);
-                return ret;
-            }
-
-            xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
-            return xsuccess;
-        }
-        else
-        {
-            xint64 ret = xdescriptorevent_processor_exception(descriptor);
-
-            xlogfunction_end("%s(...) => %ld", __func__, ret);
-            return ret;
-        }    
-    }
-    
-    xlogfunction_end("%s(...) => %ld", __func__, xfail);
-    return xfail;
-}
+static xint64 xdescriptoreventprocess_void(xdescriptor * descriptor);
+static xint64 xdescriptoreventprocess_open(xdescriptor * descriptor);
+static xint64 xdescriptoreventprocess_in(xdescriptor * descriptor);
+static xint64 xdescriptoreventprocess_out(xdescriptor * descriptor);
+static xint64 xdescriptoreventprocess_close(xdescriptor * descriptor);
+static xint64 xdescriptoreventprocess_exception(xdescriptor * descriptor);
+static xint64 xdescriptoreventprocess_rem(xdescriptor * descriptor);
+static xint64 xdescriptoreventprocess_register(xdescriptor * descriptor);
+static xint64 xdescriptoreventprocess_readoff(xdescriptor * descriptor);
+static xint64 xdescriptoreventprocess_writeoff(xdescriptor * descriptor);
+static xint64 xdescriptoreventprocess_opening(xdescriptor * descriptor);
+static xint64 xdescriptoreventprocess_create(xdescriptor * descriptor);
+static xint64 xdescriptoreventprocess_bind(xdescriptor * descriptor);
+static xint64 xdescriptoreventprocess_alloff(xdescriptor * descriptor);
+static xint64 xdescriptoreventprocess_connect(xdescriptor * descriptor);
+static xint64 xdescriptoreventprocess_listen(xdescriptor * descriptor);
+static xint64 xdescriptoreventprocess_connecting(xdescriptor * descriptor);
+static xint64 xdescriptoreventprocess_unregister(xdescriptor * descriptor);
 
 extern xint64 xdescriptorclose(xdescriptor * descriptor)
 {
     xlogfunction_start("%s(%p)", __func__, descriptor);
 
-    if(descriptor->handle.f >= 0)
+    xassertion(descriptor == xnil, "");
+
+    if(descriptor->handle.f > xdescriptorsystemno_max)
     {
-        int ret = close(descriptor->handle.f);
-        xassertion(ret != xsuccess, "");
-        descriptor->handle.f = xinvalid;
+        if(close(descriptor->handle.f) != xsuccess)
+        {
+            xlogcaution("close(%d) => fail (%d)", descriptor->handle.f, errno);
+        }
         descriptor->status |= xdescriptorstatus_close;
+        descriptor->handle.f = xinvalid;
+        xdescriptoron(descriptor, xdescriptoreventtype_close, xnil, xsuccess);
     }
 
-    xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
+    xlogfunction_end("%s(...) => %ld", xsuccess);
     return xsuccess;
 }
 
@@ -643,105 +87,179 @@ extern xint64 xdescriptorread(xdescriptor * descriptor, void * buffer, xuint64 s
 {
     xlogfunction_start("%s(%p, %p, %lu)", __func__, descriptor, buffer, size);
 
-    if(xdescriptorcheck_open(descriptor))
+    xassertion(descriptor == xnil, "");
+
+    xint64 n = xfail;
+
+    if(xdescriptorstatuscheck_in(descriptor))
     {
         if(buffer && size)
         {
-            xint64 n = read(descriptor->handle.f, buffer, size);
+            n = read(descriptor->handle.f, buffer, size);
+
             if(n > 0)
             {
                 descriptor->status |= xdescriptorstatus_in;
-
-                xlogfunction_end("%s(...) => %ld", __func__, n);
-                return n;
+                n = xdescriptoron(descriptor, xdescriptoreventtype_in, buffer, n);
             }
             else if(n == 0)
             {
-                descriptor->status |= xdescriptorstatus_exception;
-                descriptor->exception.func = read;
-                descriptor->exception.number = 0;
-
-                xlogfunction_end("%s(...) => %ld", __func__, xfail);
-                return xfail;
+                // N IS ZERO => END OF FILE
+                descriptor->status &= (~xdescriptorstatus_in);
+                n = xdescriptoron(descriptor, xdescriptoreventtype_in, buffer, n);
             }
             else
             {
                 if(errno != EAGAIN)
                 {
+                    xexceptionset(xaddressof(descriptor->exception), read, errno, xexceptiontype_system, "");
                     descriptor->status |= xdescriptorstatus_exception;
-                    descriptor->exception.func = read;
-                    descriptor->exception.number = errno;
-
-                    xlogfunction_end("%s(...) => %ld", __func__, xfail);
-                    return xfail;
+                    n = xdescriptoron(descriptor, xdescriptoreventtype_exception, xnil, n);
                 }
-                descriptor->status &= (~xdescriptorstatus_in);
-
-                xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
-                return xsuccess;
+                else
+                {
+                    descriptor->status &= (~xdescriptorstatus_in);
+                    n = xsuccess;
+                }
             }
         }
         else
         {
-            xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
-            return xsuccess;
+            xlogcaution("buffer: %p, size: %lu", buffer, size);
+            n = xsuccess;
         }
     }
+    else
+    {
+        n = xdescriptorstatuscheck_close(descriptor) ? xfail : xsuccess;
+    }
 
-    xlogfunction_end("%s(...) => %ld", __func__, xfail);
-    return xfail;
+    xlogfunction_end("%s(...) => %ld", n);
+    return n;
 }
 
 extern xint64 xdescriptorwrite(xdescriptor * descriptor, const void * data, xuint64 len)
 {
     xlogfunction_start("%s(%p, %p, %lu)", __func__, descriptor, data, len);
 
-    if(xdescriptorcheck_open(descriptor))
+    xassertion(descriptor == xnil, "");
+
+    xint64 n = xfail;
+    if(xdescriptorstatuscheck_out(descriptor))
     {
         if(data && len)
         {
-            xint64 n = write(descriptor->handle.f, data, len);
+            n = write(descriptor->handle.f, data, len);
 
             if(n > 0)
             {
                 descriptor->status |= xdescriptorstatus_out;
-
-                xlogfunction_end("%s(...) => %ld", __func__, n);
-                return n;
+                n = xdescriptoron(descriptor, xdescriptoreventtype_out, xnil, n);
             }
             else if(n == 0)
             {
-                xassertion(n == 0, "check this");
-
-                xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
-                return xsuccess;
+                // 이 부분에 대해서 고민을 더 해보자.
+                xassertion(xtrue, "");
             }
             else
             {
                 if(errno != EAGAIN)
                 {
+                    xexceptionset(xaddressof(descriptor->exception), read, errno, xexceptiontype_system, "");
                     descriptor->status |= xdescriptorstatus_exception;
-                    descriptor->exception.func = write;
-                    descriptor->exception.number = errno;
-
-                    xlogfunction_end("%s(...) => %ld", __func__, xfail);
-                    return xfail;
+                    n = xdescriptoron(descriptor, xdescriptoreventtype_exception, xnil, n);
                 }
-                descriptor->status &= (~xdescriptorstatus_out);
-
-                xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
-                return xsuccess;
+                else
+                {
+                    descriptor->status &= (~xdescriptorstatus_out);
+                    n = xsuccess;
+                }
             }
         }
         else
         {
-            xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
-            return xsuccess;
+            xlogcaution("data: %p, size: %lu", data, len);
+            n = xsuccess;
         }
     }
+    else
+    {
+        n = xdescriptorstatuscheck_close(descriptor) ? xfail : xsuccess;
+    }
 
-    xlogfunction_end("%s(...) => %ld", __func__, xfail);
-    return xfail;
+    return n;
+}
+
+extern xint32 xdescriptorstatuscheck(xdescriptor * descriptor, xuint32 status)
+{
+    xint32 ret = xfalse;
+
+    switch(status)
+    {
+        case xdescriptorstatus_void:        xassertion(xtrue, "");                              break;
+        case xdescriptorstatus_open:        ret = xdescriptorstatuscheck_open(descriptor);      break;
+        case xdescriptorstatus_in:          ret = xdescriptorstatuscheck_in(descriptor);        break;
+        case xdescriptorstatus_out:         ret = xdescriptorstatuscheck_out(descriptor);       break;
+        case xdescriptorstatus_close:       ret = xdescriptorstatuscheck_close(descriptor);     break;
+        case xdescriptorstatus_exception:   ret = xdescriptorstatuscheck_exception(descriptor); break;
+        case xdescriptorstatus_rem:         ret = xdescriptorstatuscheck_rem(descriptor);       break;
+        case xdescriptorstatus_register:    ret = xdescriptorstatuscheck_register(descriptor);  break;
+        case xdescriptorstatus_readoff:     ret = xdescriptorstatuscheck_readoff(descriptor);   break;
+        case xdescriptorstatus_writeoff:    ret = xdescriptorstatuscheck_writeoff(descriptor);  break;
+        case xdescriptorstatus_opening:     ret = xdescriptorstatuscheck_opening(descriptor);   break;
+        case xdescriptorstatus_create:      ret = xdescriptorstatuscheck_create(descriptor);    break;
+        case xdescriptorstatus_bind:        ret = xdescriptorstatuscheck_bind(descriptor);      break;
+        case xdescriptorstatus_alloff:      ret = xdescriptorstatuscheck_alloff(descriptor);    break;
+        default:                            xassertion(xtrue, "");                              break;
+    }
+
+    return ret;
+}
+
+extern xint64 xdescriptoreventdispatch(xdescriptor * descriptor, xuint32 event)
+{
+    xint64 ret = xsuccess;
+
+    xdescriptoreventsubscription * subscription = descriptor->subscription;
+
+    if(subscription)
+    {
+        if(xeventengine_descriptor_dispatch(descriptor, event) != xsuccess)
+        {
+            ret = xdescriptoreventprocess(descriptor, xdescriptoreventtype_void);
+        }
+    }
+    else
+    {
+        ret = xdescriptoreventprocess(descriptor, event);
+    }
+
+    return ret;
+}
+
+extern xint64 xdescriptorevent_process(xdescriptor * descriptor, xuint32 event)
+{
+    xint64 ret = xfail;
+    switch(event)
+    {
+        case xdescriptoreventtype_void:         ret = xdescriptoreventprocess_void(descriptor);         break;
+        case xdescriptoreventtype_open:         ret = xdescriptoreventprocess_open(descriptor);         break;
+        case xdescriptoreventtype_in:           ret = xdescriptoreventprocess_in(descriptor);           break;
+        case xdescriptoreventtype_out:          ret = xdescriptoreventprocess_out(descriptor);          break;
+        case xdescriptoreventtype_close:        ret = xdescriptoreventprocess_close(descriptor);        break;
+        case xdescriptoreventtype_exception:    ret = xdescriptoreventprocess_exception(descriptor);    break;
+        case xdescriptoreventtype_rem:          ret = xdescriptoreventprocess_rem(descriptor);          break;
+        case xdescriptoreventtype_register:     ret = xdescriptoreventprocess_register(descriptor);     break;
+        case xdescriptoreventtype_readoff:      ret = xdescriptoreventprocess_readoff(descriptor);      break;
+        case xdescriptoreventtype_writeoff:     ret = xdescriptoreventprocess_writeoff(descriptor);     break;
+        case xdescriptoreventtype_opening:      ret = xdescriptoreventprocess_opening(descriptor);      break;
+        case xdescriptoreventtype_create:       ret = xdescriptoreventprocess_create(descriptor);       break;
+        case xdescriptoreventtype_bind:         ret = xdescriptoreventprocess_bind(descriptor);         break;
+        case xdescriptoreventtype_alloff:       ret = xdescriptoreventprocess_alloff(descriptor);       break;
+
+        default:                                xassertion(xtrue, "");                                  break;
+    }
+    return ret;
 }
 
 extern xint32 xdescriptornonblock_set(xdescriptor * descriptor, xint32 on)
@@ -753,9 +271,9 @@ extern xint32 xdescriptornonblock_set(xdescriptor * descriptor, xint32 on)
     int mask = fcntl(descriptor->handle.f, F_GETFL, 0);
     if(mask < 0)
     {
-        descriptor->exception.func   = fcntl;
-        descriptor->exception.number = errno;
-        descriptor->status          |= xdescriptorstatus_exception;
+        descriptor->status |= xdescriptorstatus_exception;
+        xexceptionset(xaddressof(descriptor->exception), fcntl, errno, xexceptiontype_system, "");
+        xdescriptoron(descriptor, xdescriptoreventtype_exception, xaddressof(descriptor->exception), xfail);
 
         xlogfunction_end("%s(...) => %d", __func__, xfail);
         return xfail;
@@ -770,15 +288,507 @@ extern xint32 xdescriptornonblock_set(xdescriptor * descriptor, xint32 on)
     }
     if(fcntl(descriptor->handle.f, F_SETFL, mask) != xsuccess)
     {
-        descriptor->exception.func   = fcntl;
-        descriptor->exception.number = errno;
-        descriptor->status          |= xdescriptorstatus_exception;
+        descriptor->status |= xdescriptorstatus_exception;
+        xexceptionset(xaddressof(descriptor->exception), fcntl, errno, xexceptiontype_system, "");
+        xdescriptoron(descriptor, xdescriptoreventtype_exception, xaddressof(descriptor->exception), xfail);
 
         xlogfunction_end("%s(...) => %d", __func__, xfail);
         return xfail;
     }
 
     xlogfunction_end("%s(...) => %d", __func__, xsuccess);
+    return xsuccess;
+}
+
+static xint32 xdescriptorstatuscheck_open(xdescriptor * descriptor)
+{
+    if(xdescriptorstatuscheck_close(descriptor))
+    {
+        return xfalse;
+    }
+    if(descriptor->status & xdescriptorstatus_open)
+    {
+        if(descriptor->handle.f >= 0)
+        {
+            return xtrue;
+        }
+    }
+    return xfalse;
+}
+
+static xint32 xdescriptorstatuscheck_in(xdescriptor * descriptor)
+{
+    if(xdescriptorstatuscheck_open(descriptor))
+    {
+        if(descriptor->status & xdescriptorstatus_readoff)
+        {
+            return xfalse;
+        }
+        return xtrue;
+    }
+    return xfalse;
+}
+
+static xint32 xdescriptorstatuscheck_out(xdescriptor * descriptor)
+{
+    if(xdescriptorstatuscheck_open(descriptor))
+    {
+        if(descriptor->status & xdescriptorstatus_writeoff)
+        {
+            return xfalse;
+        }
+        return xtrue;
+    }
+    return xfalse;
+}
+
+static xint32 xdescriptorstatuscheck_close(xdescriptor * descriptor)
+{
+    if(descriptor->status & (xdescriptorstatus_close | xdescriptorstatus_exception | xdescriptorstatus_rem))
+    {
+        return xtrue;
+    }
+    if((descriptor->status & xdescriptorstatus_alloff) == xdescriptorstatus_alloff)
+    {
+        return xtrue;
+    }
+    if(descriptor->handle.f < 0)
+    {
+        return xtrue;
+    }
+    return xfalse;
+}
+static xint32 xdescriptorstatuscheck_exception(xdescriptor * descriptor)
+{
+    if(descriptor->status & xdescriptorstatus_exception)
+    {
+        return xtrue;
+    }
+    return xfalse;
+}
+
+static xint32 xdescriptorstatuscheck_rem(xdescriptor * descriptor)
+{
+    if((descriptor->status & xdescriptorstatus_rem) == xdescriptorstatus_void)
+    {
+        return xfalse;
+    }
+    if(descriptor->handle.f >= 0)
+    {
+        return xfalse;
+    }
+    if(descriptor->event.queue)
+    {
+        return xfalse;
+    }
+    if(descriptor->status & xdescriptorstatus_register)
+    {
+        return xfalse;
+    }
+    if(descriptor->subscription->enginenode.engine)
+    {
+        return xfalse;
+    }
+    if(descriptor->subscription->generatornode.generator)
+    {
+        return xfalse;
+    }
+    if(descriptor->subscription->generatornode.list)
+    {
+        return xfalse;
+    }
+    return xtrue;
+}
+
+static xint32 xdescriptorstatuscheck_register(xdescriptor * descriptor)
+{
+    if(descriptor->status & xdescriptorstatus_register)
+    {
+        return xtrue;
+    }
+    return xfalse;
+}
+
+static xint32 xdescriptorstatuscheck_readoff(xdescriptor * descriptor)
+{
+    if(descriptor->status & xdescriptorstatus_readoff)
+    {
+        return xtrue;
+    }
+    return xfalse;
+}
+
+static xint32 xdescriptorstatuscheck_writeoff(xdescriptor * descriptor)
+{
+    if(descriptor->status & xdescriptorstatus_writeoff)
+    {
+        return xtrue;
+    }
+    return xfalse;
+}
+
+static xint32 xdescriptorstatuscheck_alloff(xdescriptor * descriptor)
+{
+    if((descriptor->status & xdescriptorstatus_alloff) == xdescriptorstatus_alloff);
+    {
+        return xtrue;
+    }
+    return xfalse;
+}
+
+static xint32 xdescriptorstatuscheck_opening(xdescriptor * descriptor)
+{
+    if(xdescriptorstatuscheck_close(descriptor))
+    {
+        return xfalse;
+    }
+    if(descriptor->status & xdescriptorstatus_opening)
+    {
+        return xtrue;
+    }
+    return xfalse;
+}
+
+static xint32 xdescriptorstatuscheck_create(xdescriptor * descriptor)
+{
+    if(xdescriptorstatuscheck_close(descriptor))
+    {
+        return xfalse;
+    }
+    if(descriptor->status & xdescriptorstatus_create)
+    {
+        return xtrue;
+    }
+    return xfalse;
+}
+
+static xint32 xdescriptorstatuscheck_bind(xdescriptor * descriptor)
+{
+    if(xdescriptorstatuscheck_close(descriptor))
+    {
+        return xfalse;
+    }
+    if(descriptor->status & xdescriptorstatus_bind)
+    {
+        return xtrue;
+    }
+    return xfalse;
+}
+
+static xint64 xdescriptoreventprocess_void(xdescriptor * descriptor)
+{
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
+    xassertion(descriptor == xnil, "");
+
+    if(xdescriptorstatuscheck_close(descriptor))
+    {
+        xdescriptoreventprocess_unregister(descriptor);
+        xint64 ret = xdescriptoreventprocess_close(descriptor);
+
+        xlogfunction_end("%s(...) => %d", __func__, ret);
+        return ret;
+    }
+    if((descriptor->status & xdescriptorstatus_open) == xdescriptorstatus_void)
+    {
+        if((descriptor->status & xdescriptorstatus_opening) == xdescriptorstatus_void)
+        {
+            xdescriptoreventprocess_open(descriptor);
+        }
+        else
+        {
+            xdescriptoreventprocess_opening(descriptor);
+        }
+    }
+
+    xdescriptoreventprocess_out(descriptor);
+    xdescriptoreventprocess_in(descriptor);
+    xdescriptoreventprocess_out(descriptor);
+
+    if(xdescriptorstatuscheck_close(descriptor) == xfalse)
+    {
+        if((descriptor->status & (xdescriptorstatus_in | xdescriptorstatus_out)) != (xdescriptorstatus_in | xdescriptorstatus_out))
+        {
+            xdescriptoreventprocess_register(descriptor);
+        }
+    }
+
+    if(xdescriptorstatuscheck_close(descriptor))
+    {
+        xdescriptoreventprocess_unregister(descriptor);
+        xdescriptoreventprocess_close(descriptor);
+        xlogfunction_end("%s(...) => %d", __func__, xfail);
+        return xfail;
+    }
+
+    xlogfunction_end("%s(...) => %d", __func__, xsuccess);
+    return xsuccess;
+}
+
+static xint64 xdescriptoreventprocess_open(xdescriptor * descriptor)
+{
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
+    xassertion(descriptor->process == xnil, "");
+
+    xint64 n = descriptor->process(descriptor, xdescriptoreventtype_open, xnil);
+
+    xlogfunction_end("%s(...) => %ld", __func__, n);
+    return n;
+}
+
+static xint64 xdescriptoreventprocess_in(xdescriptor * descriptor)
+{
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
+    xassertion(descriptor->process == xnil, "");
+
+    xint64 n = descriptor->process(descriptor, xdescriptoreventtype_in, xnil);
+
+    xlogfunction_end("%s(...) => %ld", __func__, n);
+    return n;
+}
+
+static xint64 xdescriptoreventprocess_out(xdescriptor * descriptor)
+{
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
+    xassertion(descriptor->process == xnil, "");
+
+    xint64 n = descriptor->process(descriptor, xdescriptoreventtype_out, xnil);
+
+    xlogfunction_end("%s(...) => %ld", __func__, n);
+    return n;
+}
+
+static xint64 xdescriptoreventprocess_close(xdescriptor * descriptor)
+{
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
+    xassertion(descriptor->process == xnil, "");
+    xassertion(descriptor->event.queue, "");
+    xassertion(descriptor->status & xdescriptorstatus_register, "");
+
+    xdescriptoreventsubscription *  subscription = descriptor->subscription;
+    if(subscription)
+    {
+        xdescriptoreventgenerator * generator = subscription->generatornode.generator;
+        if(subscription->generatornode.list == generator->alive)
+        {
+            xdescriptoreventgeneratorsubscriptionlist_del(descriptor->subscription);
+        }
+        descriptor->process(descriptor, xdescriptoreventtype_close, xnil);
+
+        descriptor->exception = xexception_void;
+        descriptor->status    = (descriptor->status & xdescriptorstatus_rem) ? xdescriptorstatus_rem : xdescriptorstatus_void;
+
+        if(subscription->generatornode.list != generator->queue)
+        {
+            xdescriptoreventgeneratorsubscriptionlist_push(generator->queue, subscription);
+        }
+    }
+    else
+    {
+        descriptor->process(descriptor, xdescriptoreventtype_close, xnil);
+    }
+
+    xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
+    return xsuccess;
+}
+
+static xint64 xdescriptoreventprocess_exception(xdescriptor * descriptor)
+{
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
+    xassertion(descriptor->process == xnil, "");
+
+    xint64 n = descriptor->process(descriptor, xdescriptoreventtype_exception, xnil);
+
+    n = xdescriptoreventprocess_close(descriptor);
+
+    xlogfunction_end("%s(...) => %ld", __func__, n);
+    return n;
+}
+
+static xint64 xdescriptoreventprocess_rem(xdescriptor * descriptor)
+{
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+    if(xdescriptorstatuscheck_rem(descriptor))
+    {
+        xdescriptoreventsubscription * subscription = descriptor->subscription;
+        if(subscription)
+        {
+            xeventengine * engine = subscription->enginenode.engine;
+            xeventengine_descriptor_unregister(engine, descriptor);
+
+            // TODO: CHECK SUBSCRIPTION
+            xassertion(subscription->enginenode.engine || subscription->enginenode.prev || subscription->enginenode.next, "");
+            xassertion(subscription->generatornode.prev || subscription->generatornode.next || subscription->generatornode.list, "");
+
+            descriptor->subscription = xnil;
+            descriptor->process(descriptor, xdescriptoreventtype_rem, xnil);
+            free(subscription);
+        }
+        else
+        {
+            descriptor->process(descriptor, xdescriptoreventtype_rem, xnil);
+        }
+    }
+    else
+    {
+        xassertion((descriptor->status & xdescriptorstatus_rem) == xdescriptorstatus_void, "");
+        xdescriptoreventsubscription * subscription = descriptor->subscription;
+        xdescriptoreventgenerator * generator = subscription->generatornode.generator;
+        xdescriptoreventgeneratorsubscriptionlist_push(generator->queue, subscription);
+    }
+    xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
+    return xsuccess;
+}
+
+static xint64 xdescriptoreventprocess_register(xdescriptor * descriptor)
+{
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+    if(xdescriptorstatuscheck_open(descriptor))
+    {
+        xdescriptoreventsubscription * subscription = descriptor->subscription;
+        xdescriptoreventgenerator * generator = subscription->generatornode.generator;
+        xint64 n = xdescriptoreventgenerator_descriptor_update(generator, descriptor);
+        n = descriptor->on(descriptor, xdescriptoreventtype_register, xnil, n == xsuccess);
+        xlogfunction_end("%s(...) => %ld", __func__, n);
+        return n;
+    }
+    else if(xdescriptorstatuscheck_close(descriptor) == xfalse && (descriptor->status & xdescriptorstatus_opening))
+    {
+        xdescriptoreventsubscription * subscription = descriptor->subscription;
+        xdescriptoreventgenerator * generator = subscription->generatornode.generator;
+        xint64 n = xdescriptoreventgenerator_descriptor_update(generator, descriptor);
+        n = descriptor->on(descriptor, xdescriptoreventtype_register, xnil, n == xsuccess);
+        xlogfunction_end("%s(...) => %ld", __func__, n);
+        return n;
+    }
+
+    xlogfunction_end("%s(...) => %ld", __func__, xfail);
+    return xfail;
+}
+
+static xint64 xdescriptoreventprocess_readoff(xdescriptor * descriptor)
+{
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
+    xassertion(descriptor->process == xnil, "");
+
+    xint64 n = descriptor->process(descriptor, xdescriptoreventtype_readoff, xnil);
+
+    xlogfunction_end("%s(...) => %ld", __func__, n);
+    return n;
+}
+
+static xint64 xdescriptoreventprocess_writeoff(xdescriptor * descriptor)
+{
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
+    xassertion(descriptor->process == xnil, "");
+
+    xint64 n = descriptor->process(descriptor, xdescriptoreventtype_writeoff, xnil);
+
+    xlogfunction_end("%s(...) => %ld", __func__, n);
+    return n;
+}
+
+static xint64 xdescriptoreventprocess_opening(xdescriptor * descriptor)
+{
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
+    xassertion(descriptor->process == xnil, "");
+
+    xint64 n = descriptor->process(descriptor, xdescriptoreventtype_opening, xnil);
+
+    xlogfunction_end("%s(...) => %ld", __func__, n);
+    return n;
+}
+
+static xint64 xdescriptoreventprocess_create(xdescriptor * descriptor)
+{
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
+    xassertion(descriptor->process == xnil, "");
+
+    xint64 n = descriptor->process(descriptor, xdescriptoreventtype_create, xnil);
+
+    xlogfunction_end("%s(...) => %ld", __func__, n);
+    return n;
+}
+
+static xint64 xdescriptoreventprocess_bind(xdescriptor * descriptor)
+{
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
+    xassertion(descriptor->process == xnil, "");
+
+    xint64 n = descriptor->process(descriptor, xdescriptoreventtype_bind, xnil);
+
+    xlogfunction_end("%s(...) => %ld", __func__, n);
+    return n;
+}
+
+static xint64 xdescriptoreventprocess_alloff(xdescriptor * descriptor)
+{
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
+    xassertion(descriptor->process == xnil, "");
+
+    xint64 n = descriptor->process(descriptor, xdescriptoreventtype_alloff, xnil);
+
+    xlogfunction_end("%s(...) => %ld", __func__, n);
+    return n;
+}
+
+static xint64 xdescriptoreventprocess_connect(xdescriptor * descriptor)
+{
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
+    xassertion(descriptor->process == xnil, "");
+
+    xint64 n = descriptor->process(descriptor, xdescriptoreventtype_connect, xnil);
+
+    xlogfunction_end("%s(...) => %ld", __func__, n);
+    return n;
+}
+
+static xint64 xdescriptoreventprocess_listen(xdescriptor * descriptor)
+{
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
+    xassertion(descriptor->process == xnil, "");
+
+    xint64 n = descriptor->process(descriptor, xdescriptoreventtype_listen, xnil);
+
+    xlogfunction_end("%s(...) => %ld", __func__, n);
+    return n;
+}
+
+static xint64 xdescriptoreventprocess_connecting(xdescriptor * descriptor)
+{
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
+    xassertion(descriptor->process == xnil, "");
+
+    xint64 n = descriptor->process(descriptor, xdescriptoreventtype_connecting, xnil);
+
+    xlogfunction_end("%s(...) => %ld", __func__, n);
+    return n;
+}
+
+static xint64 xdescriptoreventprocess_unregister(xdescriptor * descriptor)
+{
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
+    xdescriptoreventsubscription * subscription = descriptor->subscription;
+    xdescriptoreventgenerator * generator = subscription->generatornode.generator;
+    xdescriptoreventgenerator_descriptor_unregister(generator, descriptor);
+    descriptor->on(descriptor, xdescriptoreventtype_register, xnil, xfalse);
+
+    xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
     return xsuccess;
 }
 

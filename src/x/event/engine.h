@@ -51,7 +51,7 @@ extern void xeventengine_cancel(xeventengine * engine, xeventenginefunc callback
 
 extern void xeventengine_sync(xeventengine * engine, xint32 on);
 
-extern xint32 xeventengine_descriptor_dispatch(xdescriptor * descriptor);
+extern xint32 xeventengine_descriptor_dispatch(xdescriptor * descriptor, xuint32 event);
 extern xint32 xeventengine_event_dispatch(xeventengine * engine, xevent * event);
 
 extern xeventsubscription * xeventengine_descriptor_register(xeventengine * engine, xdescriptor * descriptor);

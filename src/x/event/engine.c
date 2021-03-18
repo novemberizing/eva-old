@@ -332,7 +332,7 @@ static void xeventenginecallback_internal(xeventengine * engine, xuint32 status)
 /**
  * 
  */
-extern xint32 xeventengine_descriptor_dispatch(xdescriptor * descriptor)
+extern xint32 xeventengine_descriptor_dispatch(xdescriptor * descriptor, xuint32 event)
 {
     xlogfunction_start("%s(%p)", __func__, descriptor);
     xassertion(descriptor == xnil, "");

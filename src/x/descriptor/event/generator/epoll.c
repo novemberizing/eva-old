@@ -75,7 +75,7 @@ static inline xint32 xdescriptoreventgenerator_epoll_register(int epollfd, xdesc
                     xexceptionset(xaddressof(descriptor->exception), epoll_ctl, errno, xexceptiontype_system, "");
 
                     // xdescriptorexception_set(descriptor)
-                    xdescriptorevent_dispatch_exception(descriptor);
+                    xdescriptoreventdispatch(descriptor, xdescriptoreventtype_exception);
 
                     xlogfunction_end("%s(...) => %d", __func__, xfail);
                     return xfail;
@@ -393,21 +393,21 @@ extern void xdescriptoreventgenerator_once(xdescriptoreventgenerator * o)
                 if(generator->events[i].events & (EPOLLERR | EPOLLPRI | EPOLLRDHUP | EPOLLHUP))
                 {
                     xexceptionset(xaddressof(subscription->descriptor->exception), epoll_wait, generator->events[i].events, xexceptiontype_descriptor, ""); 
-                    xdescriptorevent_dispatch_exception(subscription->descriptor);
+                    xdescriptoreventdispatch(subscription->descriptor, xdescriptoreventtype_exception);
                     continue;
                 }
                 if(generator->events[i].events & EPOLLOUT)
                 {
                     if(subscription->descriptor->status & xdescriptorstatus_opening)
                     {
-                        xdescriptorevent_dispatch_open(subscription->descriptor);
+                        xdescriptoreventdispatch(subscription->descriptor, xdescriptoreventtype_opening);
                         continue;
                     }
-                    xdescriptorevent_dispatch_out(subscription->descriptor);
+                    xdescriptoreventdispatch(subscription->descriptor, xdescriptoreventtype_out);
                 }
                 if(generator->events[i].events & EPOLLIN)
                 {
-                    xdescriptorevent_dispatch_in(subscription->descriptor);
+                    xdescriptoreventdispatch(subscription->descriptor, xdescriptoreventtype_in);
                 }
             }
         }
@@ -446,24 +446,24 @@ extern void xdescriptoreventgenerator_queue_once(xdescriptoreventgenerator * o)
                 if(descriptor->handle.f >= 0)
                 {
                     xassertion(descriptor->status & xdescriptorstatus_close, "");
-                    xdescriptorevent_processor_close(descriptor);
+                    xdescriptoreventprocess(descriptor, xdescriptoreventtype_close);
                 }
 
                 if(descriptor->status & xdescriptorstatus_rem)
                 {
-                    xdescriptorevent_processor_rem(descriptor);
+                    xdescriptoreventprocess(descriptor, xdescriptoreventtype_rem);
                     // TODO: CHECK GENERATOR QUEUE SIZE
                 }
                 __xsynclock(generator->queue->sync);
                 continue;
             }
             
-            if(xdescriptorevent_processor_open(descriptor) == xsuccess)
+            if(xdescriptoreventprocess(descriptor, xdescriptoreventtype_open) == xsuccess)
             {
                 __xsynclock(generator->alive->sync);
                 xdescriptoreventgeneratorsubscriptionlist_push(generator->alive, subscription);
                 __xsyncunlock(generator->alive->sync);
-                if(xdescriptorevent_processor_register(descriptor) >= 0)
+                if(xdescriptoreventprocess(descriptor, xdescriptoreventtype_register) >= 0)
                 {
                     __xsynclock(generator->queue->sync);
                     continue;
