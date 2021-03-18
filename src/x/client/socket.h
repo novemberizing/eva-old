@@ -52,4 +52,6 @@ extern xclientsocket * xclientsocket_rem(xclientsocket * o);
 extern xint32 xclientsocketcheck_open(xclientsocket * o);
 extern xint32 xclientsocketcheck_connecting(xclientsocket * o);
 
+extern const char * xclientsocketeventtype_str(xuint32 event);
+
 #endif // __NOVEMBERIZING_X__CLIENT__SOCKET__H__

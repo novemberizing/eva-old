@@ -52,9 +52,4 @@ typedef xdescriptor * (*xdescriptordestructor)(xdescriptor *);
 #include <x/socket/event/type.h>
 #include <x/socket/status.h>
 
-// #define xdescriptorstatus_create        xdescriptoreventmask_create
-// #define xdescriptorstatus_bind          xdescriptoreventmask_bind
-// #define xdescriptorstatus_connect       xdescriptoreventmask_connect
-// #define xdescriptorstatus_connecting    xdescriptoreventmask_connecting
-
 #endif // __NOVEMBERIZING_X__IO__H__

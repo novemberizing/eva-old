@@ -273,3 +273,13 @@ extern xint64 xclientshutdown(xclient * client, xuint64 how)
     xlogfunction_end("%s(...) => %ld", __func__, ret);
     return ret;
 }
+
+extern xstream * xclientstreamout_get(xclient * client)
+{
+    return client->descriptor->stream.out;
+}
+
+extern xstream * xclientstreamin_get(xclient * client)
+{
+    return client->descriptor->stream.in;
+}

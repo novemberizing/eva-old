@@ -85,14 +85,10 @@ static void xevaconfigterm(void)
 extern void xevaserveradd(xint32 protocol, xint32 port, xserver * server)
 {
     xuint64 key = xunsigned64from_integer32(protocol, port);
-    printf("%lu\n", key);
+
     if(__singleton.servers == xnil)
     {
         __singleton.servers = xmapnew(xnil);
-    }
-    if(__singleton.clients == xnil)
-    {
-        __singleton.clients = xlistnew();
     }
     xmapnode * prev = xmapadd(__singleton.servers, xvalunsigned64(key), xvalobject(server), xnil);
     if(prev)
@@ -206,6 +202,10 @@ extern void xevaquit(void)
 
 extern void xevaclientadd(xclient * client)
 {
-    xassertion(xtrue, "implement this");
+//    xassertion(xtrue, "implement this");
+    if(__singleton.clients == xnil)
+    {
+        __singleton.clients = xlistnew();
+    }
     xlistpushback(__singleton.clients, xvalobject(client));
 }

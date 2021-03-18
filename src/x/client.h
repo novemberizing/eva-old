@@ -3,6 +3,7 @@
 
 #include <x/std.h>
 #include <x/io.h>
+#include <x/stream.h>
 
 struct xclient;
 
@@ -38,5 +39,8 @@ extern xint64 xclientrecv(xclient * client, void * buffer, xuint64 len);
 
 extern xint64 xclientclose(xclient * client);
 extern xint64 xclientshutdown(xclient * client, xuint64 how);
+
+extern xstream * xclientstreamout_get(xclient * client);
+extern xstream * xclientstreamin_get(xclient * client);
 
 #endif // __NOVEMBERIZING_X__CLIENT__H__

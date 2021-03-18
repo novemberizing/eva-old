@@ -8,6 +8,8 @@
 #include "../thread.h"
 
 #include "socket.h"
+#include "socket/event/type.h"
+#include "socket/status.h"
 
 #include "../socket/status.h"
 
@@ -15,6 +17,40 @@ static xint64 xclientsocketprocessor_tcp(xclientsocket * o, xuint32 event, void 
 static xint64 xclientsocketsubscriber_tcp(xclientsocket * o, xuint32 event, void * parameter, xint64 result);
 static xint32 xclientsocketcheck_tcp(xclientsocket * o, xuint32 event);
 static void xclientsocketeventhandler_tcp(xclientsocketevent * event);
+
+extern xint32 xclientsocketcheck_close(xclientsocket * descriptor)
+{
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+    xint32 ret = (descriptor->status & (xclientsocketstatus_exception | xclientsocketstatus_close | xclientsocketstatus_rem));
+
+    xlogfunction_end("%s(...) => %d", __func__, ret);
+    return ret;
+}
+
+extern xint32 xclientsocketcheck_rem(xclientsocket * descriptor)
+{
+    xlogfunction_start("%s(%p)", __func__, descriptor);
+
+    xassertion(descriptor == xnil, "");
+
+    if(descriptor->subscription)
+    {
+        xlogfunction_end("%s(...) => %d", __func__, xfalse);
+        return xfalse;
+    }
+    if(descriptor->handle.f >= 0)
+    {
+        xlogfunction_end("%s(...) => %d", __func__, xfalse);
+        return xfalse;
+    }
+    if(descriptor->event.queue || descriptor->event.next || descriptor->event.prev)
+    {
+        xlogfunction_end("%s(...) => %d", __func__, xfalse);
+        return xfalse;
+    }
+    xlogfunction_end("%s(...) => %d", __func__, xtrue);
+    return xtrue;
+}
 
 extern xclientsocket * xclientsocket_new(xclient * client, xint32 domain, xint32 type, xint32 protocol, const void * addr, xuint32 addrlen)
 {
@@ -59,22 +95,134 @@ extern xclientsocket * xclientsocket_rem(xclientsocket * o)
     return xnil;
 }
 
-static xint64 xclientsocketprocessor_tcp(xclientsocket * o, xuint32 event, void * parameter)
+static xint64 xclientsocketprocessor_tcp_open(xclientsocket * descriptor, void * data)
 {
-    xlogfunction_start("%s(%p, %u, $p)", __func__, o, event, parameter);
-    xassertion(xtrue, "implement this");
+    xlogfunction_start("%s(%p, %p)", __func__, descriptor, data);
 
-    xlogfunction_end("%s(...) => %d", __func__, xfail);
+    if(xclientsocketcheck_close(descriptor) == xfalse)
+    {
+        if(xclientsocketcheck_open(descriptor) == xfalse)
+        {
+            if((descriptor->status & xsocketstatus_create) == xsocketstatus_void)
+            {
+                if(xsocketcreate((xsocket *) descriptor) != xsuccess)
+                {
+                    xlogfunction_end("%s(...) => %ld", __func__, xfail);
+                    return xfail;
+                }
+            }
+            xdescriptornonblock_set((xdescriptor *) descriptor, xtrue);
+
+            if((descriptor->status & xsocketstatus_connect) == xsocketstatus_void)
+            {
+                if(xsocketconnect((xsocket *) descriptor, descriptor->addr, descriptor->addrlen) != xsuccess)
+                {
+                    xlogfunction_end("%s(...) => %ld", __func__, xfail);
+                    return xfail;
+                }
+            }
+        }
+        xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
+        return xsuccess;
+    }
+    xlogfunction_end("%s(...) => %ld", __func__, xfail);
     return xfail;
 }
 
-static xint64 xclientsocketsubscriber_tcp(xclientsocket * o, xuint32 event, void * parameter, xint64 result)
+static xint64 xclientsocketprocessor_tcp_in(xclientsocket * descriptor, void * data)
 {
-    xlogfunction_start("%s(%p, %u, %p, %ld)", __func__, o, event, parameter, result);
-    xassertion(xtrue, "implement this");
+    xlogfunction_start("%s(%p, %p)", __func__, descriptor, data);
+
+    if(xdescriptorcheck_open((xdescriptor *) descriptor))
+    {
+        xstreamadjust(descriptor->stream.in, xfalse);
+        // TODO: 8192 CHANGE OPTIMIZED VALUE
+        xstreamcapacity_set(descriptor->stream.in, xstreamcapacity_get(descriptor->stream.in) + 8192);
+
+        xint64 n = xdescriptorread((xdescriptor *) descriptor, xstreamback(descriptor->stream.in), xstreamremain(descriptor->stream.in));
+        if(n > 0)
+        {
+            xstreamsize_set(descriptor->stream.in, n + xstreamsize_get(descriptor->stream.in));
+
+            xlogfunction_end("%s(...) => %ld", __func__,  n);
+            return n;
+        }
+
+        xlogfunction_end("%s(...) => %ld", __func__,  n);
+        return n;
+    }
+
+    xlogfunction_end("%s(...) => %ld", xfail);
+    return xfail;
+}
+
+static xint64 xclientsocketprocessor_tcp_out(xclientsocket * descriptor, void * data)
+{
+    xlogfunction_start("%s(%p, %p)", __func__, descriptor, data);
+
+    if(xdescriptorcheck_open((xdescriptor *) descriptor))
+    {
+        if(xstreamlen(descriptor->stream.out) > 0)
+        {
+            xint64 n = xdescriptorwrite((xdescriptor *) descriptor, xstreamfront(descriptor->stream.out), xstreamlen(descriptor->stream.out));
+            if(n > 0)
+            {
+                xstreampos_set(descriptor->stream.out, xstreampos_get(descriptor->stream.out) + n);
+            }
+            xlogfunction_end("%s(...) => %ld", __func__, n);
+            return n;
+        }
+
+        xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
+        return xsuccess;
+    }
+
+    xlogfunction_end("%s(...) => %ld", __func__, xfail);
+    return xfail;
+}
+
+static xint64 xclientsocketprocessor_tcp_close(xclientsocket * descriptor, void * data)
+{
+    xlogfunction_start("%s(%p, %p)", __func__, descriptor, data);
+
+    xsocketshutdown((xsocket *) descriptor, xsocketeventtype_offall);
+    xint64 ret = xdescriptorclose((xdescriptor *) descriptor);
+
+    xlogfunction_end("%s(...) => %ld", __func__, ret);
+    return ret;
+}
+
+static xint64 xclientsocketprocessor_tcp(xclientsocket * descriptor, xuint32 event, void * parameter)
+{
+    xlogfunction_start("%s(%p, %u, $p)", __func__, descriptor, event, parameter);
+    xint64 ret = xsuccess;
+    switch(event)
+    {
+        case xclientsocketeventtype_open:   ret = xclientsocketprocessor_tcp_open(descriptor, parameter);   break;
+        case xclientsocketeventtype_in:     ret = xclientsocketprocessor_tcp_in(descriptor, parameter);     break;
+        case xclientsocketeventtype_out:    ret = xclientsocketprocessor_tcp_out(descriptor, parameter);    break;
+        case xclientsocketeventtype_close:  ret = xclientsocketprocessor_tcp_close(descriptor, parameter);  break;
+    }
 
     xlogfunction_end("%s(...) => %d", __func__, xfail);
-    return xfail;
+    return ret;
+}
+
+static xint64 xclientsocketsubscriber_tcp(xclientsocket * descriptor, xuint32 event, void * parameter, xint64 result)
+{
+    xlogfunction_start("%s(%p, %u, %p, %ld)", __func__, descriptor, event, parameter, result);
+    xclient * client = descriptor->client;
+    if(descriptor->exception.number)
+    {
+        xcheck(xtrue, "exception errno => %d", descriptor->exception.number);
+    }
+
+    xcheck(xtrue, "event: %s, result: %ld", xclientsocketeventtype_str(event), result);
+
+    xint64 ret = client->on(client, event, parameter, result);
+
+    xlogfunction_end("%s(...) => %ld", __func__, ret);
+    return ret;
 }
 
 static xint32 xclientsocketcheck_tcp(xclientsocket * o, xuint32 event)
@@ -122,4 +270,27 @@ extern xint32 xclientsocketcheck_connecting(xclientsocket * o)
     xint32 ret = (o->status & xsocketstatus_connecting);
     xlogfunction_end("%s(...) => %d", __func__, ret);
     return ret;
+}
+
+extern const char * xclientsocketeventtype_str(xuint32 event)
+{
+    switch(event)
+    {
+        case xsocketeventtype_open:         return "open";
+        case xsocketeventtype_in:           return "in";
+        case xsocketeventtype_out:          return "out";
+        case xsocketeventtype_close:        return "close";
+        case xsocketeventtype_exception:    return "exception";
+        case xsocketeventtype_rem:          return "rem";
+        case xsocketeventtype_register:     return "register";
+        case xsocketeventtype_create:       return "create";
+        case xsocketeventtype_bind:         return "bind";
+        case xsocketeventtype_connect:      return "connect";
+        case xsocketeventtype_connecting:   return "connecting";
+        case xsocketeventtype_listen:       return "listen";
+        case xsocketeventtype_offin:        return "off in";
+        case xsocketeventtype_offout:       return "off out";
+        case xsocketeventtype_offall:       return "off all";
+        default:                            return "unknown";
+    }
 }

@@ -255,7 +255,7 @@ extern xint64 xsocketconnect(xsocket * o, void * addr, xuint32 addrlen)
             int ret = connect(o->handle.f, (struct sockaddr *) addr, addrlen);
             if(ret == xsuccess)
             {
-                o->status |= xsocketstatus_connect;
+                o->status |= (xsocketstatus_connect | xsocketstatus_open | xsocketstatus_out);
 
                 xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
                 return xsuccess;

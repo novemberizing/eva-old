@@ -47,7 +47,7 @@ libnovemberizing_a_SOURCES = x/std.c                                          \
                              x/client/socket.c                                \
                              x/eva.c                                          \
                              x/eva/cli.c                                      \
-                             x/eva/server/echo.c
+                             x/eva/extension/echo.c
 
 
 
