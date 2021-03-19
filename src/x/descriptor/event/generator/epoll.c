@@ -336,7 +336,7 @@ extern void xdescriptoreventgenerator_register(xdescriptoreventgenerator * o, xd
                     int ret = xdescriptoreventgenerator_epoll_register(generator->f, subscription, xfalse);
                     if(ret == xsuccess)
                     {
-                        descriptor->on(descriptor, xdescriptoreventtype_register, xnil, xtrue);
+                        descriptor->on(descriptor, xdescriptoreventtype_register, xdescriptorparamgen(xnil), xtrue);
                         xdescriptoreventgeneratorsubscriptionlist_push(generator->alive, subscription);
                     }
                     xlogfunction_end("%s(...)", __func__);
@@ -362,7 +362,7 @@ extern void xdescriptoreventgenerator_unregister(xdescriptoreventgenerator * o, 
         if(descriptor->status & xdescriptorstatus_register)
         {
             xdescriptoreventgenerator_epoll_unregister(generator->f, subscription, xtrue);
-            descriptor->on(descriptor, xdescriptoreventtype_register, xnil, xfalse);
+            descriptor->on(descriptor, xdescriptoreventtype_register, xdescriptorparamgen(xnil), xfalse);
         }
     }
     if(subscription->generatornode.list)
@@ -552,7 +552,7 @@ extern void xdescriptoreventgenerator_alive_clear(xdescriptoreventgenerator * ge
 
         xdescriptor * descriptor = subscription->descriptor;
         descriptor->status &= (~xdescriptorstatus_register);
-        descriptor->on(descriptor, xdescriptoreventtype_register, xnil, xfalse);
+        descriptor->on(descriptor, xdescriptoreventtype_register, xdescriptorparamgen(xnil), xfalse);
 
         subscription->generatornode.generator = xnil;
         
@@ -611,7 +611,7 @@ extern xint64 xdescriptoreventgenerator_descriptor_unregister(xdescriptoreventge
 
     if(xdescriptoreventgenerator_epoll_unregister(generator->f, subscription, xtrue) == xsuccess)
     {
-        descriptor->on(descriptor, xdescriptoreventtype_register, xnil, xtrue);
+        descriptor->on(descriptor, xdescriptoreventtype_register, xdescriptorparamgen(xnil), xtrue);
     }
 
     xlogfunction_end("%s(...) => %d", __func__, xsuccess);

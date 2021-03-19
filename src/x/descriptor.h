@@ -18,14 +18,18 @@
 #include <x/descriptor/handle.h>
 #include <x/descriptor/event.h>
 
+union xdescriptorparam;
+
 #define xdescriptorsystemno_max     2
 
 struct xdescriptoreventsubscription;
 
+typedef union xdescriptorparam xdescriptorparam;
+
 typedef struct xdescriptoreventsubscription xdescriptoreventsubscription;
 
-typedef xint64 (*xdescriptorprocessor)(xdescriptor *, xuint32, void *);         /**!< 디스크립터 이벤트 프로세서 */
-typedef xint64 (*xdescriptorobserver)(xdescriptor *, xuint32, void *, xint64);  /**!< 디스크립터 이벤트 서브스크리라이버 */
+typedef xint64 (*xdescriptorprocessor)(xdescriptor *, xuint32, xdescriptorparam);         /**!< 디스크립터 이벤트 프로세서 */
+typedef xint64 (*xdescriptorobserver)(xdescriptor *, xuint32, xdescriptorparam, xint64);  /**!< 디스크립터 이벤트 서브스크리라이버 */
 typedef xint32 (*xdescriptorstatuschecker)(xdescriptor *, xuint32);             /**!< 디스크립터 이벤트 체크 함수 타입 */
 
 /**
@@ -52,6 +56,15 @@ struct xdescriptor
     xexception                     exception;      /**!< descriptor exception */
 };
 
+union xdescriptorparam
+{
+    void * p;
+    const void * c;
+};
+
+#define xdescriptorparamgen(v)          (xdescriptorparam) { .p = v }
+#define xdescriptorparamgen_const(v)    (xdescriptorparam) { .c = v }
+
 extern xint64 xdescriptorclose(xdescriptor * descriptor);
 
 extern xint64 xdescriptorclose(xdescriptor * descriptor);
@@ -67,5 +80,7 @@ extern xint64 xdescriptoreventprocess(xdescriptor * descriptor, xuint32 event);
 extern xuint32 xdescriptorstatus_get(xdescriptor * descriptor);
 
 extern xdescriptoreventsubscription * xdescriptoreventsubscription_get(xdescriptor * descriptor);
+
+extern const char * xdescriptoreventtype_str(xuint32 event);
 
 #endif // __NOVEMBERIZING_X__DESCRIPTOR__H__

@@ -13,7 +13,7 @@ typedef struct xconsole xconsole;
 typedef struct xconsoledescriptor xconsoledescriptor;
 typedef struct xconsoledescriptorevent xconsoledescriptorevent;
 
-typedef xint64 (*xconsolesubscriber)(xconsole *, xconsoledescriptor * descriptor, xuint32, void *, xint64);
+typedef xint64 (*xconsolesubscriber)(xconsole *, xconsoledescriptor *, xuint32, xdescriptorparam, xint64);
 
 struct xconsole
 {
@@ -22,15 +22,20 @@ struct xconsole
     xconsolesubscriber   on;
 };
 
-extern void xconsoleterm(void);
-extern xconsole * xconsoleget(void);
 extern xconsole * xconsoleinit(xconsolesubscriber on);
+extern void xconsoleterm(void);
+
+
+// 아래의 메서드들 중에 CONSOLE IN/OUT, FLUSH 를 제외하고 모두 숨기자.
+
+extern xconsole * xconsoleget(void);
+
 
 extern xdescriptor * xconsoledescriptorin_get(void);
 extern xdescriptor * xconsoledescriptorout_get(void);
 extern void xconsolesubscriber_set(xconsolesubscriber subscriber);
 
-extern xint64 xconsolesubscriber_default(xconsole * console, xconsoledescriptor * descriptor, xuint32 event, void * parameter, xint64 value);
+extern xint64 xconsolesubscriber_default(xconsole * console, xconsoledescriptor * descriptor, xuint32 event, xdescriptorparam, xint64 value);
 
 extern xint64 xconsoleout_string(const char * s);
 extern xint64 xconsolein_string(char * buffer, xuint64 size);
