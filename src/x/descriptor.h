@@ -28,9 +28,9 @@ typedef union xdescriptorparam xdescriptorparam;
 
 typedef struct xdescriptoreventsubscription xdescriptoreventsubscription;
 
-typedef xint64 (*xdescriptorprocessor)(xdescriptor *, xuint32, xdescriptorparam);         /**!< 디스크립터 이벤트 프로세서 */
-typedef xint64 (*xdescriptorobserver)(xdescriptor *, xuint32, xdescriptorparam, xint64);  /**!< 디스크립터 이벤트 서브스크리라이버 */
-typedef xint32 (*xdescriptorstatuschecker)(xdescriptor *, xuint32);             /**!< 디스크립터 이벤트 체크 함수 타입 */
+typedef xint64 (*xdescriptorobserver)(xdescriptor *, xuint32, xdescriptorparam, xint64);
+typedef xint64 (*xdescriptorprocessor)(xdescriptor *, xuint32);
+typedef xint32 (*xdescriptorstatuschecker)(xdescriptor *, xuint32);
 
 /**
  * @struct      xdescriptor
@@ -65,22 +65,61 @@ union xdescriptorparam
 #define xdescriptorparamgen(v)          (xdescriptorparam) { .p = v }
 #define xdescriptorparamgen_const(v)    (xdescriptorparam) { .c = v }
 
-extern xint64 xdescriptorclose(xdescriptor * descriptor);
+extern xint64 xdescriptoron(xdescriptor * descriptor, xuint32 event, xdescriptorparam param, xint64 result);
 
-extern xint64 xdescriptorclose(xdescriptor * descriptor);
 extern xint64 xdescriptorread(xdescriptor * descriptor, void * buffer, xuint64 size);
 extern xint64 xdescriptorwrite(xdescriptor * descriptor, const void * data, xuint64 len);
+extern xint64 xdescriptorclose(xdescriptor * descriptor);
+extern xint64 xdescriptorexception(xdescriptor * descriptor);
+extern xint64 xdescriptorrem(xdescriptor * descriptor);
+extern xint64 xdescriptorregister(xdescriptor * descriptor);
+extern xint64 xdescriptorclear(xdescriptor * descriptor);
+extern xint64 xdescriptorunregister(xdescriptor * descriptor);
+extern xint32 xdescriptornonblock(xdescriptor * descriptor, xint32 on);
 
-extern xint32 xdescriptornonblock_set(xdescriptor * descriptor, xint32 on);
-
-extern xint32 xdescriptorstatuscheck(xdescriptor * descriptor, xuint32 status);
 extern xint64 xdescriptoreventdispatch(xdescriptor * descriptor, xuint32 event);
-extern xint64 xdescriptoreventprocess(xdescriptor * descriptor, xuint32 event);
 
-extern xuint32 xdescriptorstatus_get(xdescriptor * descriptor);
 
-extern xdescriptoreventsubscription * xdescriptoreventsubscription_get(xdescriptor * descriptor);
 
-extern const char * xdescriptoreventtype_str(xuint32 event);
+
+// extern xuint32 xdescriptorstatus_get(xdescriptor * descriptor);
+
+
+// extern xint64 xdescriptorclose(xdescriptor * descriptor);
+// extern xint64 xdescriptorread(xdescriptor * descriptor, void * buffer, xuint64 size);
+// extern xint64 xdescriptorwrite(xdescriptor * descriptor, const void * data, xuint64 len);
+// extern xint64 xdescriptorclear(xdescriptor * descriptor);
+// extern xint32 xdescriptornonblock(xdescriptor * descriptor, xint32 on);
+
+
+
+// extern xint64 xdescriptoreventdispatch(xdescriptor * descriptor, xuint32 event);
+
+// extern xuint32 xdescriptorstatus_get(xdescriptor * descriptor);
+
+// extern xdescriptoreventsubscription * xdescriptoreventsubscription_get(xdescriptor * descriptor);
+
+// extern const char * xdescriptoreventtype_str(xuint32 event);
+
+// extern xint64 xdescriptoreventprocess(xdescriptor * descriptor, xuint32 event);
+
+// static xint64 xdescriptoreventprocess_void(xdescriptor * descriptor, xdescriptorobserver on);
+// static xint64 xdescriptoreventprocess_open(xdescriptor * descriptor, xdescriptorobserver on);
+// static xint64 xdescriptoreventprocess_in(xdescriptor * descriptor, xdescriptorobserver on);
+// static xint64 xdescriptoreventprocess_out(xdescriptor * descriptor, xdescriptorobserver on);
+// static xint64 xdescriptoreventprocess_close(xdescriptor * descriptor, xdescriptorobserver on);
+// static xint64 xdescriptoreventprocess_exception(xdescriptor * descriptor, xdescriptorobserver on);
+// static xint64 xdescriptoreventprocess_rem(xdescriptor * descriptor, xdescriptorobserver on);
+// static xint64 xdescriptoreventprocess_register(xdescriptor * descriptor, xdescriptorobserver on);
+// static xint64 xdescriptoreventprocess_readoff(xdescriptor * descriptor, xdescriptorobserver on);
+// static xint64 xdescriptoreventprocess_writeoff(xdescriptor * descriptor, xdescriptorobserver on);
+// static xint64 xdescriptoreventprocess_opening(xdescriptor * descriptor, xdescriptorobserver on);
+// static xint64 xdescriptoreventprocess_create(xdescriptor * descriptor, xdescriptorobserver on);
+// static xint64 xdescriptoreventprocess_bind(xdescriptor * descriptor, xdescriptorobserver on);
+// static xint64 xdescriptoreventprocess_alloff(xdescriptor * descriptor, xdescriptorobserver on);
+// static xint64 xdescriptoreventprocess_connect(xdescriptor * descriptor, xdescriptorobserver on);
+// static xint64 xdescriptoreventprocess_listen(xdescriptor * descriptor, xdescriptorobserver on);
+// static xint64 xdescriptoreventprocess_connecting(xdescriptor * descriptor, xdescriptorobserver on);
+// static xint64 xdescriptoreventprocess_unregister(xdescriptor * descriptor, xdescriptorobserver on);
 
 #endif // __NOVEMBERIZING_X__DESCRIPTOR__H__

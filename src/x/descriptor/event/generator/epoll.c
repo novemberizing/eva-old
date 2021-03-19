@@ -607,11 +607,13 @@ extern xint64 xdescriptoreventgenerator_descriptor_unregister(xdescriptoreventge
 
     xassertion(o != subscription->generatornode.generator, "");
     xassertion(descriptor->handle.f < 0, "");
-    xassertion(generator->alive != subscription->generatornode.list, "");
 
-    if(xdescriptoreventgenerator_epoll_unregister(generator->f, subscription, xtrue) == xsuccess)
+    if(generator->alive == subscription->generatornode.list)
     {
-        descriptor->on(descriptor, xdescriptoreventtype_register, xdescriptorparamgen(xnil), xtrue);
+        if(xdescriptoreventgenerator_epoll_unregister(generator->f, subscription, xtrue) == xsuccess)
+        {
+            descriptor->on(descriptor, xdescriptoreventtype_register, xdescriptorparamgen(xnil), xtrue);
+        }
     }
 
     xlogfunction_end("%s(...) => %d", __func__, xsuccess);

@@ -19,4 +19,6 @@ struct xdescriptoreventsubscription
              xdescriptoreventgeneratorsubscriptionlist * list; } generatornode;
 };
 
+extern xdescriptoreventsubscription * xdescriptoreventsubscription_rem(xdescriptoreventsubscription * subscription);
+
 #endif // __NOVEMBERIZING_X__DESCRIPTOR__SUBSCRIPTION__H__

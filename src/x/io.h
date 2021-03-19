@@ -24,13 +24,11 @@ struct xsessionsocket;
 struct xsocket;
 struct xclientpool;
 
-struct xdescriptorexception;
 struct xdescriptoreventgenerator;
 struct xdescriptoreventgeneratorsubscriptions;
 struct xdescriptoreventsubscription;
 
 
-typedef struct xdescriptorexception xdescriptorexception;
 typedef struct xdescriptoreventgenerator xdescriptoreventgenerator;
 typedef struct xdescriptoreventsubscription xdescriptoreventsubscription;
 typedef struct xdescriptoreventgeneratorsubscriptions xdescriptoreventgeneratorsubscriptions;

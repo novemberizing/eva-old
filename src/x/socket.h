@@ -39,16 +39,9 @@ struct xsocket
 extern xint64 xsocketcreate(xsocket * o);
 extern xint64 xsocketbind(xsocket * o, void * addr, xuint32 addrlen);
 extern xint64 xsocketlisten(xsocket * o, xint32 backlog);
-extern xint64 xsocketread(xsocket * o, void * buffer, xuint64 size);
-extern xint64 xsocketwrite(xsocket * o, const void * data, xuint64 len);
-extern xint64 xsocketclose(xsocket * o);
 extern xint64 xsocketshutdown(xsocket * o, xuint32 how);
 extern xint64 xsocketconnect(xsocket * o, void * addr, xuint32 addrlen);
 extern xint64 xsocketconnecting(xsocket * o);
 extern xint32 xsocketresuseaddr_set(xsocket * o, xint32 on);
-
-extern xint32 xsocketstatuscheck(xsocket * o, xuint32 status);
-
-#define xsocketeventtype_str(event) xdescriptoreventtype_str(event) 
 
 #endif // __NOVEMBERIZING_X__SOCKET__H__
