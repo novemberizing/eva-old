@@ -9,10 +9,10 @@
 
 struct xdescriptoreventgenerator
 {
-    xdescriptoreventgeneratorsubscriptionlist * alive;
-    xdescriptoreventgeneratorsubscriptionlist * queue;
     xeventengine *                              engine;
     xsync *                                     sync;
+    xdescriptoreventgeneratorsubscriptionlist * alive;
+    xdescriptoreventgeneratorsubscriptionlist * queue;
 };
 
 extern xdescriptoreventgenerator * xdescriptoreventgenerator_new(xeventengine * engine);

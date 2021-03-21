@@ -31,6 +31,7 @@ extern xdescriptoreventgeneratorsubscriptionlist * xdescriptoreventgeneratorsubs
 extern xdescriptoreventgeneratorsubscriptionlist * xdescriptoreventgeneratorsubscriptionlist_rem(xdescriptoreventgeneratorsubscriptionlist * list)
 {
     xlogfunction_start("%s(%p)", __func__, list);
+
     xassertion(list == xnil || list->size > 0, "");
 
     list->sync = xsyncrem(list->sync);

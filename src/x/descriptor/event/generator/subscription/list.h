@@ -18,6 +18,7 @@ struct xdescriptoreventgeneratorsubscriptionlist
 extern xdescriptoreventgeneratorsubscriptionlist * xdescriptoreventgeneratorsubscriptionlist_new(void);
 extern xdescriptoreventgeneratorsubscriptionlist * xdescriptoreventgeneratorsubscriptionlist_rem(xdescriptoreventgeneratorsubscriptionlist * list);
 
+extern void xdescriptoreventgeneratorsubscriptionlist_clear(xdescriptoreventgeneratorsubscriptionlist * list);
 extern void xdescriptoreventgeneratorsubscriptionlist_push(xdescriptoreventgeneratorsubscriptionlist * list, xdescriptoreventsubscription * subscription);
 extern xdescriptoreventsubscription * xdescriptoreventgeneratorsubscriptionlist_pop(xdescriptoreventgeneratorsubscriptionlist * list);
 extern xdescriptoreventsubscription * xdescriptoreventgeneratorsubscriptionlist_del(xdescriptoreventsubscription * subscription);

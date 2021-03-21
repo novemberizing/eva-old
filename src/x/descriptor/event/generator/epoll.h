@@ -14,10 +14,10 @@ typedef struct xdescriptoreventgenerator_epoll xdescriptoreventgenerator_epoll;
 struct xdescriptoreventgenerator_epoll
 {
     /** INHERITED DESCRIPTOR EVENT GENERATOR */
-    xdescriptoreventgeneratorsubscriptionlist * alive;
-    xdescriptoreventgeneratorsubscriptionlist * queue;
     xeventengine *                              engine;
     xsync *                                     sync;
+    xdescriptoreventgeneratorsubscriptionlist * alive;
+    xdescriptoreventgeneratorsubscriptionlist * queue;
     /** MEMBER */
     xint32                                      f;
     xint32                                      max;
