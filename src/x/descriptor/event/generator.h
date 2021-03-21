@@ -25,6 +25,8 @@ extern xint64 xdescriptoreventgenerator_descriptor_register(xdescriptoreventgene
 extern xint64 xdescriptoreventgenerator_descriptor_update(xdescriptoreventgenerator * o, xdescriptor * descriptor);
 extern xint64 xdescriptoreventgenerator_descriptor_unregister(xdescriptoreventgenerator * o, xdescriptor * descriptor);
 
+extern xint64 xdescriptoreventgenerator_descriptor_dispatch(xdescriptoreventgenerator * o, xdescriptor * descriptor);
+
 extern void xdescriptoreventgenerator_register(xdescriptoreventgenerator * o, xdescriptoreventsubscription * subscription);
 extern void xdescriptoreventgenerator_unregister(xdescriptoreventgenerator * o, xdescriptoreventsubscription * subscription);
 

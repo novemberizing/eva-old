@@ -42,6 +42,6 @@ extern xint64 xsocketlisten(xsocket * o, xint32 backlog);
 extern xint64 xsocketshutdown(xsocket * o, xuint32 how);
 extern xint64 xsocketconnect(xsocket * o, void * addr, xuint32 addrlen);
 extern xint64 xsocketconnecting(xsocket * o);
-extern xint32 xsocketresuseaddr_set(xsocket * o, xint32 on);
+extern xint32 xsocketresuseaddr(xsocket * o, xint32 on);
 
 #endif // __NOVEMBERIZING_X__SOCKET__H__

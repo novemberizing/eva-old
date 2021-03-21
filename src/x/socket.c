@@ -110,16 +110,14 @@ extern xint64 xsocketlisten(xsocket * o, xint32 backlog)
                     }
                     else
                     {
-                        if(xdescriptornonblock((xdescriptor *) o, xtrue) == xsuccess)
+                        
+                        if((ret = xsocketresuseaddr(o, xtrue)) == xsuccess)
                         {
-                            o->status |= (xsocketstatus_listen | xsocketstatus_out);
-                            ret = xdescriptoron((xdescriptor *) o, xsocketeventtype_listen, xdescriptorparamgen(xnil), xsuccess);
-                        }
-                        else
-                        {
-                            o->status |= xsocketstatus_exception;
-                            xexceptionset(xaddressof(o->exception), xdescriptornonblock, 0, xexceptiontype_lib, "");
-                            ret = xdescriptoron((xdescriptor *) o, xsocketeventtype_exception, xdescriptorparamgen(xaddressof(o->exception)), xfail);
+                            if((ret = xdescriptornonblock((xdescriptor *) o, xtrue)) == xsuccess)
+                            {
+                                o->status |= (xsocketstatus_listen | xsocketstatus_out);
+                                ret = xdescriptoron((xdescriptor *) o, xsocketeventtype_listen, xdescriptorparamgen(xnil), xsuccess);
+                            }
                         }
                     }
                 }
@@ -207,25 +205,33 @@ extern xint64 xsocketconnect(xsocket * o, void * addr, xuint32 addrlen)
         {
             if((o->status & xsocketstatus_create) && o->handle.f >= 0)
             {
-                ret = connect(o->handle.f, addr, addrlen);
-
-                if(ret == xsuccess)
+                if((o->subscription && o->subscription->enginenode.engine) || (o->mask & xdescriptormask_nonblock))
                 {
-                    o->status |= xsocketstatus_connect;
-                    ret = xdescriptoron((xdescriptor *) o, xsocketeventtype_connect, xdescriptorparamgen(xnil), ret);
+                    ret = xdescriptornonblock((xsocket *) o, xtrue);
                 }
-                else
+                
+                if((o->status & xsocketstatus_exception) == xsocketstatus_void)
                 {
-                    if(errno == EAGAIN || errno == EINPROGRESS)
+                    ret = connect(o->handle.f, addr, addrlen);
+
+                    if(ret == xsuccess)
                     {
-                        o->status |= xsocketstatus_connecting;
-                        ret = xdescriptoron((xdescriptor *) o, xsocketstatus_connecting, xdescriptorparamgen(xnil), ret);
+                        o->status |= xsocketstatus_connect;
+                        ret = xdescriptoron((xdescriptor *) o, xsocketeventtype_connect, xdescriptorparamgen(xnil), ret);
                     }
                     else
                     {
-                        o->status |= xsocketstatus_exception;
-                        xexceptionset(xaddressof(o->exception), connect, errno, xexceptiontype_system, "");
-                        ret = xdescriptoron((xdescriptor *) o, xsocketeventtype_exception, xdescriptorparamgen(xaddressof(o->exception)), xfail);                                            
+                        if(errno == EAGAIN || errno == EINPROGRESS)
+                        {
+                            o->status |= xsocketstatus_connecting;
+                            ret = xdescriptoron((xdescriptor *) o, xsocketstatus_connecting, xdescriptorparamgen(xnil), ret);
+                        }
+                        else
+                        {
+                            o->status |= xsocketstatus_exception;
+                            xexceptionset(xaddressof(o->exception), connect, errno, xexceptiontype_system, "");
+                            ret = xdescriptoron((xdescriptor *) o, xsocketeventtype_exception, xdescriptorparamgen(xaddressof(o->exception)), xfail);                                            
+                        }
                     }
                 }
             }
@@ -247,5 +253,51 @@ extern xint64 xsocketconnect(xsocket * o, void * addr, xuint32 addrlen)
     return ret;
 }
 
-extern xint64 xsocketconnecting(xsocket * o);
-extern xint32 xsocketresuseaddr_set(xsocket * o, xint32 on);
+extern xint64 xsocketconnecting(xsocket * o)
+{
+    xlogfunction_start("%s(%p)", __func__, o);
+    xint64 ret = xsuccess;
+    if(xdescriptorstatuscheck_opening((xdescriptor *) o))
+    {
+        int code = 0;
+        socklen_t size = sizeof(int);
+        if(getsockopt(o->handle.f, SOL_SOCKET, SO_ERROR, xaddressof(code), xaddressof(size)) == xsuccess)
+        {
+            if(code == EAGAIN || code == EINPROGRESS)
+            {
+                ret = xsuccess;
+            }
+            else if(code == 0)
+            {
+                o->status &= (~xsocketstatus_connecting);
+                o->status |= xsocketstatus_connect;
+                ret = xdescriptoron((xdescriptor *) o, xsocketeventtype_connect, xdescriptorparamgen(xnil), xsuccess);
+            }
+            else
+            {
+                o->status |= xsocketstatus_exception;
+                xexceptionset(xaddressof(o->exception), xsocketconnecting, code, xexceptiontype_lib, "");
+                ret = xdescriptoron((xdescriptor *) o, xsocketeventtype_exception, xdescriptorparamgen(xaddressof(o->exception)), xfail);
+            }
+        }
+        else
+        {
+            o->status |= xsocketstatus_exception;
+            xexceptionset(xaddressof(o->exception), getsockopt, errno, xexceptiontype_system, "");
+            ret = xdescriptoron((xdescriptor *) o, xsocketeventtype_exception, xdescriptorparamgen(xaddressof(o->exception)), xfail);
+        }
+    }
+    xlogfunction_end("%s(...) => %ld", __func__, ret);
+    return ret;
+}
+
+extern xint32 xsocketresuseaddr(xsocket * o, xint32 on)
+{
+    xlogfunction_start("%s(%p, %d)", __func__, o, on);
+    xint32 ret = xfail;
+
+    xassertion(xtrue, "implement this");
+
+    xlogfunction_end("%s(...) => %d", ret);
+    return ret;
+}

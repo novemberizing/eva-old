@@ -11,12 +11,12 @@ struct xserversocket;
 typedef struct xserver xserver;
 typedef struct xserversocket xserversocket;
 
-typedef xint64 (*xserversubscriber)(xserver *, xuint32, void *, xint64);
+typedef xint64 (*xserverobserver)(xserver *, xuint32, xdescriptorparam, xint64);
 
 struct xserver
 {
     xserversocket *                      descriptor;
-    xserversubscriber                    on;
+    xserverobserver                      on;
     /** TODO: 아래의 로직은 세션 풀로 다시 만들자. 그리고 사용자가 커스터마이징할 수 있도록 하자. */
     struct { xsessionlist alive;
              xsessionsubscriber on;

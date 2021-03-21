@@ -89,17 +89,22 @@ extern void xeventqueue_push(xeventqueue * queue, xevent * event)
 
     xassertion(event->queue || event->prev || event->next, "");
 
-    event->prev = queue->tail;
-    if(event->prev)
+    if(event->queue == xnil)
     {
-        event->prev->next = event;
+        event->queue = queue;
+        event->prev = queue->tail;
+        if(event->prev)
+        {
+            event->prev->next = event;
+        }
+        else
+        {
+            queue->head = event;
+        }
+        queue->tail = event;
+        queue->size = queue->size + 1;
     }
-    else
-    {
-        queue->head = event;
-    }
-    queue->tail = event;
-    queue->size = queue->size + 1;
+    
 }
 
 /**

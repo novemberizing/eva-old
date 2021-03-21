@@ -4,7 +4,7 @@
 #include <x/std.h>
 
 #define xexceptiontype_void                     0
-#define xexceptiontype_system                   1
+#define xexceptiontype_sys                      1
 #define xexceptiontype_user                     2
 #define xexceptiontype_descriptor               3
 #define xexceptiontype_lib                      4
