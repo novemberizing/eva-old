@@ -16,7 +16,7 @@
 extern const char * xserversocketeventtype_str(xuint32 event);
 
 typedef xserversocket * (*xserversocketdestructor)(xserversocket *);
-typedef xint64 (*xserversocketprocessor)(xserversocket *, xuint32, xdescriptorparam);
+typedef xint64 (*xserversocketprocessor)(xserversocket *, xuint32);
 typedef xint64 (*xserversocketobserver)(xserversocket *, xuint32, xdescriptorparam, xint64);
 typedef xint32 (*xserversocketchecker)(xserversocket *, xuint32);
 

@@ -18,7 +18,7 @@ struct xsessionsocket;
 typedef struct xsession xsession;
 typedef struct xsessionsocket xsessionsocket;
 
-typedef xint64 (*xsessionsubscriber)(xsession *, xuint32, void *, xint64);
+typedef xint64 (*xsessionobserver)(xsession *, xuint32, void *, xint64);
 
 typedef xsession * (*xsessionfactory)(xint32, xint32, xint32);
 typedef void (*xsessionreleaser)(xsession *);

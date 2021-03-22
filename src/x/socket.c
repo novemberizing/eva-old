@@ -12,68 +12,62 @@
 
 extern xint64 xsocketcreate(xsocket * o)
 {
-    xlogfunction_start("%s(%p)", __func__, o);
     xint64 ret = xfail;
-
     if(xdescriptorstatuscheck_close((xdescriptor *) o) == xfalse)
     {
         if(o->handle.f < 0)
         {
             o->handle.f = socket(o->domain, o->type, o->protocol);
 
-            if(o->handle.f < 0)
+            if(o->handle.f >= 0)
             {
-                o->status |= xsocketstatus_exception;
-                xexceptionset(xaddressof(o->exception), socket, errno, xexceptiontype_system, "");
-                ret = xdescriptoron((xdescriptor *) o, xsocketeventtype_exception, xdescriptorparamgen(xaddressof(o->exception)), xfail);
+                o->status |= xdescriptorstatus_create;
+
+                ret = xdescriptoron((xdescriptor *) o, xdescriptoreventtype_create, xdescriptorparamgen(xnil), xsuccess);
             }
             else
             {
-                o->status |= xsocketstatus_create;
-                ret = xdescriptoron((xdescriptor *) o, xsocketeventtype_create, xdescriptorparamgen(xnil), xsuccess);
+                xdescriptorexception((xdescriptor *) o, socket, errno, xexceptiontype_sys, "");
             }
         }
         else
         {
-            xassertion(o->status & xsocketstatus_create, "");
-
-            if((o->status & xsocketstatus_create) == xsocketstatus_void)
+            if((o->status & xdescriptorstatus_create) == xdescriptorstatus_void)
             {
-                o->status |= xsocketstatus_create;
-                ret = xdescriptoron((xdescriptor *) o, xsocketeventtype_create, xdescriptorparamgen(xnil), xsuccess);
+                o->status |= xdescriptorstatus_create;
+                ret = xdescriptoron((xdescriptor *) o, xdescriptoreventtype_create, xdescriptorparamgen(xnil), xsuccess);
+            }
+            else
+            {
+                ret = xsuccess;
             }
         }
     }
-
-    xlogfunction_end("%s(...) => %ld", __func__, ret);
     return ret;
 }
 
 extern xint64 xsocketbind(xsocket * o, void * addr, xuint32 addrlen)
 {
-    xlogfunction_start("%s(%p)", __func__, o);
     xint64 ret = xfail;
-
     if(xdescriptorstatuscheck_close((xdescriptor *) o) == xfalse)
     {
         if(o->handle.f >= 0)
         {
-            if(o->status & xsocketstatus_create)
+            xassertion((o->status & xdescriptorstatus_create) == xdescriptorstatus_void, "");
+            if(o->status & xdescriptorstatus_create)
             {
-                if((o->status & xsocketstatus_bind) == xsocketstatus_void)
+                if((o->status & xdescriptorstatus_bind) == xdescriptorstatus_void)
                 {
-                    ret = bind(o->handle.f, addr, addrlen);
-
-                    if(ret < 0)
+                    xsocketresuseaddr(o, xtrue);
+                    if((ret = bind(o->handle.f, addr, addrlen)) == xsuccess)
                     {
-                        o->status |= xsocketstatus_exception;
-                        xexceptionset(xaddressof(o->exception), bind, errno, xexceptiontype_system, "");
-                        ret = xdescriptoron((xdescriptor *) o, xsocketeventtype_exception, xdescriptorparamgen(xaddressof(o->exception)), xfail);
+                        o->status |= xdescriptorstatus_bind;
+
+                        ret = xdescriptoron((xdescriptor *) o, xdescriptoreventtype_bind, xdescriptorparamgen(xnil), xsuccess);
                     }
                     else
                     {
-                        o->status |= xsocketstatus_bind;
-                        ret = xdescriptoron((xdescriptor *) o, xsocketeventtype_bind, xdescriptorparamgen(xnil), xsuccess);
+                        xdescriptorexception((xdescriptor *) o, bind, errno, xexceptiontype_sys, "");
                     }
                 }
                 else
@@ -83,42 +77,35 @@ extern xint64 xsocketbind(xsocket * o, void * addr, xuint32 addrlen)
             }
         }
     }
-
-    xlogfunction_end("%s(...) => %ld", __func__, ret);
     return ret;
 }
 extern xint64 xsocketlisten(xsocket * o, xint32 backlog)
 {
-    xlogfunction_start("%s(%p)", __func__, o);
     xint64 ret = xfail;
 
     if(xdescriptorstatuscheck_close((xdescriptor *) o) == xfalse)
     {
         if(o->handle.f >= 0)
         {
-            if((o->status & (xsocketstatus_create | xsocketstatus_bind)) == (xsocketstatus_create | xsocketstatus_bind))
+            xassertion((o->status & xdescriptorstatus_create) == xdescriptorstatus_void, "");
+            if((o->status & (xdescriptorstatus_create | xdescriptorstatus_bind)) == (xdescriptorstatus_create | xdescriptorstatus_bind))
             {
-                if((o->status & xsocketstatus_listen) == xsocketstatus_void)
+                if((o->status & xdescriptorstatus_listen) == xdescriptorstatus_void)
                 {
-                    ret = listen(o->handle.f, backlog);
-
-                    if(ret < 0)
+                    if((ret = listen(o->handle.f, backlog)) == xsuccess)
                     {
-                        o->status |= xsocketstatus_exception;
-                        xexceptionset(xaddressof(o->exception), listen, errno, xexceptiontype_system, "");
-                        ret = xdescriptoron((xdescriptor *) o, xsocketeventtype_exception, xdescriptorparamgen(xaddressof(o->exception)), xfail);
+                        o->status |= xdescriptorstatus_listen;
+
+                        ret = xdescriptoron((xdescriptor *) o, xdescriptorstatus_listen, xdescriptorparamgen(xnil), xsuccess);
+
+                        if((o->subscription && o->subscription->enginenode.engine) || (o->mask & xdescriptormask_nonblock))
+                        {
+                            xdescriptornonblock((xdescriptor *) o, xtrue);
+                        }
                     }
                     else
                     {
-                        
-                        if((ret = xsocketresuseaddr(o, xtrue)) == xsuccess)
-                        {
-                            if((ret = xdescriptornonblock((xdescriptor *) o, xtrue)) == xsuccess)
-                            {
-                                o->status |= (xsocketstatus_listen | xsocketstatus_out);
-                                ret = xdescriptoron((xdescriptor *) o, xsocketeventtype_listen, xdescriptorparamgen(xnil), xsuccess);
-                            }
-                        }
+                        xdescriptorexception((xdescriptor *) o, listen, errno, xexceptiontype_sys, "");
                     }
                 }
                 else
@@ -129,175 +116,156 @@ extern xint64 xsocketlisten(xsocket * o, xint32 backlog)
         }
     }
 
-    xlogfunction_end("%s(...) => %ld", __func__, ret);
     return ret;
 }
+
 extern xint64 xsocketshutdown(xsocket * o, xuint32 how)
 {
     if(o->handle.f > xdescriptorsystemno_max)
     {
-        if(how == xsocketeventtype_readoff)
+        if(how == xdescriptoreventtype_readoff)
         {
-            if((o->status & xsocketstatus_readoff) == xsocketstatus_void)
+            if((o->status & xdescriptorstatus_readoff) == xdescriptorstatus_void)
             {
-                if(shutdown(o->handle.f, SHUT_RD) < 0)
+                if(shutdown(o->handle.f, SHUT_RD) != xsuccess)
                 {
-                    o->status |= xsocketstatus_exception;
-                    xexceptionset(xaddressof(o->exception), shutdown, errno, xexceptiontype_system, "");
-                    xdescriptoron((xdescriptor *) o, xsocketeventtype_exception, xdescriptorparamgen(xaddressof(o->exception)), xfail);
+                    xassertion(xtrue, "shutdown(...) => %d", errno);
                 }
 
-                o->status |= xsocketstatus_readoff;
-                xdescriptoron((xdescriptor *) o, xsocketeventtype_readoff, xdescriptorparamgen(xnil), xsuccess);
+                o->status |= xdescriptorstatus_readoff;
+                xdescriptoron((xdescriptor *) o, xdescriptoreventtype_readoff, xdescriptorparamgen(xnil), xsuccess);
             }
         }
-        else if(how == xsocketeventtype_writeoff)
+        else if(how == xdescriptoreventtype_writeoff)
         {
-            if((o->status & xsocketstatus_writeoff) == xsocketstatus_void)
+            if((o->status & xdescriptorstatus_writeoff) == xdescriptorstatus_void)
             {
-                if(shutdown(o->handle.f, SHUT_WR) < 0)
+                if(shutdown(o->handle.f, SHUT_WR) != xsuccess)
                 {
-                    o->status |= xsocketstatus_exception;
-                    xexceptionset(xaddressof(o->exception), shutdown, errno, xexceptiontype_system, "");
-                    xdescriptoron((xdescriptor *) o, xsocketeventtype_exception, xdescriptorparamgen(xaddressof(o->exception)), xfail);
+                    xassertion(xtrue, "shutdown(...) => %d", errno);
                 }
 
-                o->status |= xsocketstatus_writeoff;
-                xdescriptoron((xdescriptor *) o, xsocketeventtype_writeoff, xdescriptorparamgen(xnil), xsuccess);
+                o->status |= xdescriptorstatus_writeoff;
+                xdescriptoron((xdescriptor *) o, xdescriptoreventtype_writeoff, xdescriptorparamgen(xnil), xsuccess);
             }
         }
-        else if(how == xsocketeventtype_alloff)
+        else if(how == xdescriptoreventtype_alloff)
         {
-            if((o->status & xsocketstatus_alloff) == xsocketstatus_void)
+            if((o->status & xdescriptoreventtype_alloff) != xdescriptoreventtype_alloff)
             {
-                if(shutdown(o->handle.f, SHUT_RDWR) < 0)
+                if(shutdown(o->handle.f, SHUT_RDWR) != xsuccess)
                 {
-                    o->status |= xsocketstatus_exception;
-                    xexceptionset(xaddressof(o->exception), shutdown, errno, xexceptiontype_system, "");
-                    xdescriptoron((xdescriptor *) o, xsocketeventtype_exception, xdescriptorparamgen(xaddressof(o->exception)), xfail);
+                    xassertion(xtrue, "shutdown(...) => %d", errno);
                 }
 
-                o->status |= xsocketstatus_alloff;
-                xdescriptoron((xdescriptor *) o, xsocketstatus_alloff, xdescriptorparamgen(xnil), xsuccess);
+                o->status |= xdescriptorstatus_alloff;
+                xdescriptoron((xdescriptor *) o, xdescriptoreventtype_alloff, xdescriptorparamgen(xnil), xsuccess);
             }
         }
         else
         {
             xassertion(xtrue, "");
         }
-
-        if((o->status & xsocketstatus_alloff) == xsocketstatus_alloff)
-        {
-            o->status |= xsocketstatus_close;
-        }
     }
-    
+
     return xsuccess;
 }
+
 extern xint64 xsocketconnect(xsocket * o, void * addr, xuint32 addrlen)
 {
-    xlogfunction_start("%s(%p, %p, %u)", __func__, o, addr, addrlen);
     xint64 ret = xfail;
-
     if(xdescriptorstatuscheck_close((xdescriptor *) o) == xfalse)
     {
-        if((o->status & (xsocketstatus_open | xsocketstatus_opening)) == xsocketstatus_void)
+        if(o->handle.f >= 0 && (o->status & xsocketstatus_create))
         {
-            if((o->status & xsocketstatus_create) && o->handle.f >= 0)
+            if((o->status & (xdescriptorstatus_open | xdescriptorstatus_connect | xdescriptorstatus_connecting)) == xdescriptorstatus_void)
             {
                 if((o->subscription && o->subscription->enginenode.engine) || (o->mask & xdescriptormask_nonblock))
                 {
-                    ret = xdescriptornonblock((xsocket *) o, xtrue);
+                    xdescriptornonblock((xdescriptor *) o, xtrue);
                 }
-                
-                if((o->status & xsocketstatus_exception) == xsocketstatus_void)
-                {
-                    ret = connect(o->handle.f, addr, addrlen);
 
-                    if(ret == xsuccess)
+                if((o->status & xdescriptorstatus_exception) == xdescriptorstatus_void)
+                {
+                    if((ret = connect(o->handle.f, addr, addrlen)) == xsuccess)
                     {
-                        o->status |= xsocketstatus_connect;
-                        ret = xdescriptoron((xdescriptor *) o, xsocketeventtype_connect, xdescriptorparamgen(xnil), ret);
+                        o->status |= (xdescriptorstatus_open | xdescriptorstatus_connect | xdescriptorstatus_out);
+                        ret = xdescriptoron((xdescriptor *) o, xdescriptoreventtype_open, xdescriptorparamgen(xnil), xsuccess);
                     }
                     else
                     {
                         if(errno == EAGAIN || errno == EINPROGRESS)
                         {
-                            o->status |= xsocketstatus_connecting;
-                            ret = xdescriptoron((xdescriptor *) o, xsocketstatus_connecting, xdescriptorparamgen(xnil), ret);
+                            o->status |= xdescriptorstatus_connecting;
+                            ret = xdescriptoron((xdescriptor *) o, xdescriptoreventtype_opening, xdescriptorparamgen(xnil), xsuccess);
                         }
                         else
                         {
-                            o->status |= xsocketstatus_exception;
-                            xexceptionset(xaddressof(o->exception), connect, errno, xexceptiontype_system, "");
-                            ret = xdescriptoron((xdescriptor *) o, xsocketeventtype_exception, xdescriptorparamgen(xaddressof(o->exception)), xfail);                                            
+                            xdescriptorexception((xdescriptor *) o, connect, errno, xexceptiontype_sys, "");
                         }
                     }
                 }
             }
             else
             {
-                xassertion(xtrue, "");
-                o->status |= xsocketstatus_exception;
-                xexceptionset(xaddressof(o->exception), xsocketconnect, 0, xexceptiontype_lib, "");
-                ret = xdescriptoron((xdescriptor *) o, xsocketeventtype_exception, xdescriptorparamgen(xaddressof(o->exception)), xfail);
+                ret = xsuccess;
             }
         }
-        else
-        {
-            xassertion(o->status & xsocketstatus_opening, "");
-        }
     }
-
-    xlogfunction_end("%s(...) => %ld", __func__, ret);
     return ret;
 }
 
 extern xint64 xsocketconnecting(xsocket * o)
 {
-    xlogfunction_start("%s(%p)", __func__, o);
-    xint64 ret = xsuccess;
-    if(xdescriptorstatuscheck_opening((xdescriptor *) o))
+    xint64 ret = xfail;
+    if(xdescriptorstatuscheck_close((xdescriptor *) o) == xfalse)
     {
-        int code = 0;
-        socklen_t size = sizeof(int);
-        if(getsockopt(o->handle.f, SOL_SOCKET, SO_ERROR, xaddressof(code), xaddressof(size)) == xsuccess)
+        if(o->status & xdescriptorstatus_connecting)
         {
-            if(code == EAGAIN || code == EINPROGRESS)
+            xint32 code = 0;
+            socklen_t size = sizeof(xint32);
+            if(getsockopt(o->handle.f, SOL_SOCKET, SO_ERROR, xaddressof(code), xaddressof(size)) == xsuccess)
             {
-                ret = xsuccess;
-            }
-            else if(code == 0)
-            {
-                o->status &= (~xsocketstatus_connecting);
-                o->status |= xsocketstatus_connect;
-                ret = xdescriptoron((xdescriptor *) o, xsocketeventtype_connect, xdescriptorparamgen(xnil), xsuccess);
+                if(code == EAGAIN || code == EINPROGRESS)
+                {
+                    ret = xsuccess;
+                }
+                else if(code == 0)
+                {
+                    o->status &= (~xdescriptorstatus_connecting);
+                    o->status |= (xdescriptorstatus_open | xdescriptorstatus_connect | xdescriptorstatus_out);
+                    ret = xdescriptoron((xdescriptor *) o, xdescriptoreventtype_open, xdescriptorparamgen(xnil), xsuccess);
+                }
+                else
+                {
+                    xdescriptorexception((xdescriptor *) o, connect, code, xexceptiontype_sys, "");
+                }
             }
             else
             {
-                o->status |= xsocketstatus_exception;
-                xexceptionset(xaddressof(o->exception), xsocketconnecting, code, xexceptiontype_lib, "");
-                ret = xdescriptoron((xdescriptor *) o, xsocketeventtype_exception, xdescriptorparamgen(xaddressof(o->exception)), xfail);
+                xdescriptorexception((xdescriptor *) o, getsockopt, errno, xexceptiontype_sys, "");
             }
         }
         else
         {
-            o->status |= xsocketstatus_exception;
-            xexceptionset(xaddressof(o->exception), getsockopt, errno, xexceptiontype_system, "");
-            ret = xdescriptoron((xdescriptor *) o, xsocketeventtype_exception, xdescriptorparamgen(xaddressof(o->exception)), xfail);
+            // 리턴 값에 대한 고민을 하자.
+            ret = xfail;
         }
     }
-    xlogfunction_end("%s(...) => %ld", __func__, ret);
     return ret;
 }
 
 extern xint32 xsocketresuseaddr(xsocket * o, xint32 on)
 {
-    xlogfunction_start("%s(%p, %d)", __func__, o, on);
     xint32 ret = xfail;
 
-    xassertion(xtrue, "implement this");
+    if(o->handle.f >= 0)
+    {
+        if((ret = setsockopt(o->handle.f, SOL_SOCKET, SO_REUSEADDR, xaddressof(on), sizeof(int))) != xsuccess)
+        {
+            xdescriptorexception((xdescriptor *) o, setsockopt, errno, xexceptiontype_sys, "");
+        }
+    }
 
-    xlogfunction_end("%s(...) => %d", ret);
     return ret;
 }

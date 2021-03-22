@@ -71,11 +71,10 @@ extern xint64 xdescriptorread(xdescriptor * descriptor, void * buffer, xuint64 s
 extern xint64 xdescriptorwrite(xdescriptor * descriptor, const void * data, xuint64 len);
 extern xint64 xdescriptorclose(xdescriptor * descriptor);
 extern xint64 xdescriptorexception(xdescriptor * descriptor, void * func, xint32 number, xuint32 type, const char * message);
-extern xint64 xdescriptorrem(xdescriptor * descriptor);
 
 extern xint32 xdescriptornonblock(xdescriptor * descriptor, xint32 on);
 
-extern xint64 xdescriptoreventdispatch(xdescriptor * descriptor, xuint32 event);
+// extern xint64 xdescriptoreventdispatch(xdescriptor * descriptor, xuint32 event);
 
 
 
