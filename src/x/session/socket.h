@@ -31,7 +31,7 @@
 #define xsessionsocketstatus_listen         xsocketstatus_listen
 
 typedef xsessionsocket * (*xsessionsocketdestructor)(xsessionsocket *);
-typedef xint64 (*xsessionsocketprocessor)(xsessionsocket *, xuint32, void *);
+typedef xint64 (*xsessionsocketprocessor)(xsessionsocket *, xuint32);
 typedef xint64 (*xsessionsocketsubscriber)(xsessionsocket *, xuint32, void *, xint64);
 typedef xint32 (*xsessionsocketchecker)(xsessionsocket *, xuint32);
 

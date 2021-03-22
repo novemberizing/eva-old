@@ -10,10 +10,10 @@
 
 #include "../socket.h"
 #include "../socket/processor/tcp.h"
-#include "../socket/event/handler/tcp.h"
 
 #include "../session/socket.h"
 #include "socket.h"
+#include "socket/event/avail.h"
 
 static xserversocketprocessor xserversocketprocessor_get(xint32 domain, xint32 type, xint32 protocol);
 
@@ -31,7 +31,7 @@ extern xserversocket * xserversocket_new(xserver * server, xint32 domain, xint32
     o->mask             = xdescriptormask_void;
     o->status           = xsocketstatus_void;
     o->handle.f         = xinvalid;
-    o->process          = xserversocketprocess;
+    o->process          = xserversocketprocessor_get(domain, type, protocol);
     o->check            = xnil;
     o->on               = xserversocketon;
     o->event.descriptor = o;
@@ -48,31 +48,24 @@ extern xserversocket * xserversocket_new(xserver * server, xint32 domain, xint32
     return o;
 }
 
-extern xserversocket * xserversocket_rem(xserversocket * descriptor)
+extern xserversocket * xserversocket_rem(xserversocket * o)
 {
-    if(descriptor)
+    if(o)
     {
-        xassertion(xtrue, "implement this");
-        // xassertion(xdescriptoreventavail_rem(descriptor) == )
-        // o->rem              = xserversocket_rem;
-        // o->subscription     = xnil;
-        // o->sync             = xnil;
-        // o->mask             = xdescriptormask_void;
-        // o->status           = xsocketstatus_void;
-        // o->handle.f         = xinvalid;
-        // o->process          = xserversocketprocess;
-        // o->check            = xnil;
-        // o->event.descriptor = o;
-        // o->event.on         = xserversocketeventon;
-        // o->exception        = xexception_void;
-        // o->domain           = domain;
-        // o->type             = type;
-        // o->protocol         = protocol;
-        // o->addr             = xobjectdup(addr, addrlen);
-        // o->addrlen          = addrlen;
-        // o->backlog          = SOMAXCONN;
-        // o->server           = server;
+        xassertion(xserversocketeventavail_rem(o) == xfalse, "");
+
+        o->subscription = xobjectrem(o->subscription);
+        o->sync = xsyncrem(o->sync);
+        if(o->handle.f >= 0)
+        {
+            if(close(o->handle.f) != xsuccess)
+            {
+                xassertion(xtrue, "close(...) => %d", errno);
+            }
+        }
+        o->addr = xobjectrem(o->addr);
     }
+
     return xnil;
 }
 

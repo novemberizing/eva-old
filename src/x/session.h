@@ -20,7 +20,7 @@ typedef struct xsessionsocket xsessionsocket;
 
 typedef xint64 (*xsessionobserver)(xsession *, xuint32, void *, xint64);
 
-typedef xsession * (*xsessionfactory)(xint32, xint32, xint32);
+typedef xsession * (*xsessionfactory)(xserver *, xint32, xint32, xint32);
 typedef void (*xsessionreleaser)(xsession *);
 
 struct xsession

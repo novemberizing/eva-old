@@ -4,6 +4,6 @@
 #include <x/socket.h>
 #include <x/server/socket.h>
 
-extern xint64 xsocketprocessortcp_server(xserversocket * o, xuint32 event, xdescriptorparam param);
+extern xint64 xsocketprocessortcp_server(xserversocket * o, xuint32 event);
 
 #endif // __NOVEMBERIZING_X__SOCKET__PROCESSOR_TCP__H__

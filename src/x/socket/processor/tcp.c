@@ -1,173 +1,244 @@
+#include <unistd.h>
+#include <errno.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+
 #include "tcp.h"
 
-typedef xint64 (*xserversocketfunc)(xserversocket * o);
+#include "../../session/socket.h"
 
-static xint64 xserversocketprocess(xserversocket * o);      // 0
-static xint64 xserversocketopen(xserversocket * o);         // 1
-static xint64 xserversocketaccept(xserversocket * o);       // 2
+typedef xint64 (*xsocketprocessortcpevent_server_proc)(xserversocket * o);
 
-static xint64 xserversocketclose(xserversocket * o);        // 4
-static xint64 xserversocketexception(xserversocket * o);    // 5
-static xint64 xserversocketrem(xserversocket * o);          // 6
-static xint64 xserversocketregister(xserversocket * o);     // 7
-static xint64 xserversocketreadoff(xserversocket * o);      // 9
-static xint64 xserversocketwriteoff(xserversocket * o);     // 10
-static xint64 xserversocketcreate(xserversocket * o);       // 12
-static xint64 xserversocketbind(xserversocket * o);         // 13
-static xint64 xserversocketclear(xserversocket * o);        // 14
-static xint64 xserversocketalloff(xserversocket * o);       // 15
-static xint64 xserversocketlisten(xserversocket * o);       // 17
-static xint64 xserversocketunregister(xserversocket * o);   // 19
+static xint64 xdescriptoreventprocess_void(xserversocket * o);
+static xint64 xdescriptoreventprocessserver_open(xserversocket * o);
+static xint64 xdescriptoreventprocessserver_accept(xserversocket * o);
+static xint64 xdescriptoreventprocessserver_close(xserversocket * o);
+static xint64 xdescriptoreventprocessserver_rem(xserversocket * o);
+static xint64 xdescriptoreventprocessserver_register(xserversocket * o);
+static xint64 xdescriptoreventprocessserver_readoff(xserversocket * o);
+static xint64 xdescriptoreventprocessserver_writeoff(xserversocket * o);
+static xint64 xdescriptoreventprocessserver_create(xserversocket * o);
+static xint64 xdescriptoreventprocessserver_bind(xserversocket * o);
+static xint64 xdescriptoreventprocessserver_clear(xserversocket * o);
+static xint64 xdescriptoreventprocessserver_alloff(xserversocket * o);
+static xint64 xdescriptoreventprocessserver_listen(xserversocket * o);
+static xint64 xdescriptoreventprocessserver_unregister(xserversocket * o);
 
-static xserversocketfunc processors[20] = {
-    xserversocketprocess,           // 0 
-    xserversocketopen,              // 1
-    xserversocketaccept,            // 2
-    xnil,                           // 3
-    xserversocketclose,             // 4
-    xserversocketexception,         // 5
-    xserversocketrem,               // 6
-    xserversocketregister,          // 7
-    xnil,                           // 8
-    xserversocketreadoff,           // 9
-    xserversocketwriteoff,          // 10
-    xnil,                           // 11
-    xserversocketcreate,            // 12
-    xserversocketbind,              // 13
-    xserversocketclear,             // 14
-    xserversocketalloff,            // 15
-    xnil,                           // 16
-    xserversocketlisten,            // 17
-    xnil,                           // 18
-    xserversocketunregister         // 19
+static xsocketprocessortcpevent_server_proc xsocketprocessortcpevent_server_process[xdescriptoreventtype_max] = {
+    xdescriptoreventprocessserver_void, //  0: xdescriptoreventtype_void
+    xdescriptoreventprocessserver_open, //  1: xdescriptoreventtype_open
+    xdescriptoreventprocessserver_accept, //  2: xdescriptoreventtype_in
+    xnil, //  3: xdescriptoreventtype_out
+    xdescriptoreventprocessserver_close, //  4: xdescriptoreventtype_close
+    xnil, //  5: xdescriptoreventtype_exception
+    xdescriptoreventprocessserver_rem, //  6: xdescriptoreventtype_rem
+    xdescriptoreventprocessserver_register, //  7: xdescriptoreventtype_register
+    xnil, //  8: xdescriptoreventtype_flush
+    xdescriptoreventprocessserver_readoff, //  9: xdescriptoreventtype_readoff
+    xdescriptoreventprocessserver_writeoff, // 10: xdescriptoreventtype_writeoff
+    xnil, // 11: xdescriptoreventtype_opening
+    xdescriptoreventprocessserver_create, // 12: xdescriptoreventtype_create
+    xdescriptoreventprocessserver_bind, // 13: xdescriptoreventtype_bind
+    xdescriptoreventprocessserver_clear, // 14: xdescriptoreventtype_clear
+    xdescriptoreventprocessserver_alloff, // 15: xdescriptoreventtype_alloff
+    xnil, // 16: xdescriptoreventtype_connect
+    xdescriptoreventprocessserver_listen, // 17: xdescriptoreventtype_listen
+    xnil, // 18: xdescriptoreventtype_connecting
+    xdescriptoreventprocessserver_unregister, // 19: xdescriptoreventtype_unregister
+    xnil, // 20: xdescriptoreventtype_readend
+    xnil  // 21: xdescriptoreventtype_writeend
 };
 
-extern xint64 xsocketprocessortcp_server(xserversocket * o, xuint32 event, xdescriptorparam param)
+extern xint64 xsocketprocessortcp_server(xserversocket * o, xuint32 event)
 {
-    xlogfunction_start("%s(%p, %u, %p)", __func__, o, event, param.p);
+    xassertion(event >= xdescriptoreventtype_max, "");
 
-
-
-    xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
-    return xsuccess;
+    if(event < xdescriptoreventtype_max)
+    {
+        xsocketprocessortcpevent_server_proc process = xsocketprocessortcpevent_server_process[event];
+        if(process)
+        {
+            return process(o);
+        }
+    }
+    return xfail;
 }
 
-static xint64 xserversocketprocess(xserversocket * o)
+static xint32 __maximum_retry_count = 32;
+
+static xint64 xdescriptoreventprocessserver_void(xserversocket * o)
 {
-    xlogfunction_start("%s(%p, %u, %p)", __func__, o);
+    xassertion(o->subscription == xnil, "");
+
     if(xdescriptorstatuscheck_close((xdescriptor *) o))
     {
-        xserversocketunregister(o);
-        xserversocketclose(o);
+        xdescriptoreventgenerator_descriptor_unregister(o->subscription->generatornode.generator, (xdescriptor *) o);
+        xdescriptorclose((xdescriptor *) o);
+        xdescriptoreventgenerator_descriptor_dispatch(o->subscription->generatornode.generator, (xdescriptor *) o);
+
         return xsuccess;
     }
 
-    xserversocketopen(o);
-    xserversocketaccept(o);
-    xserversocketregister(o);
+    if(xdescriptorstatuscheck_open((xdescriptor *) o) == xfalse)
+    {
+        xdescriptoreventprocessserver_open(o);
+    }
+
+    if(xdescriptorstatuscheck_close((xdescriptor *) o) == xfalse)
+    {
+        if((o->status & xdescriptorstatus_register) == xdescriptorstatus_void)
+        {
+            xdescriptoreventgenerator_descriptor_register(o->subscription->generatornode.generator, (xdescriptor *) o);
+        }
+
+        for(xint32 i = 0; i < __maximum_retry_count; i ++)
+        {
+            xdescriptoreventprocessserver_accept(o);
+            if((o->status & xdescriptorstatus_in) == xdescriptorstatus_void || xdescriptorstatuscheck_close((xdescriptor *) o))
+            {
+                break;
+            }
+        }
+
+        if(xdescriptorstatuscheck_close((xdescriptor *) o) == xfalse && (o->status & xdescriptorstatus_in) == xdescriptorstatus_void)
+        {
+            xdescriptoreventgenerator_descriptor_update(o->subscription->generatornode.generator, (xdescriptor *) o);
+        }
+    }
 
     if(xdescriptorstatuscheck_close((xdescriptor *) o))
     {
-        xserversocketunregister(o);
-        xserversocketclose(o);
+        xdescriptoreventgenerator_descriptor_unregister(o->subscription->generatornode.generator, (xdescriptor *) o);
+        xdescriptorclose((xdescriptor *) o);
+        xdescriptoreventgenerator_descriptor_dispatch(o->subscription->generatornode.generator, (xdescriptor *) o);
+
+        return xsuccess;
     }
-    xlogfunction_end("%s(...) => %ld", __func__, xsuccess);
+
     return xsuccess;
 }
 
-static xint64 xserversocketopen(xserversocket * o)
+static xint64 xdescriptoreventprocessserver_open(xserversocket * o)
 {
-    xlogfunction_start("%s(%p, %u, %p)", __func__);
-    xint64 ret = xfail;
-    if(xdescriptorstatuscheck_close((xdescriptor *) o) == xfalse)
+    if(xserversocketeventavail_open(o))
     {
-        if(o->status & xsocketstatus_open)
+        xsocketcreate((xsocket *) o);
+        xsocketbind((xsocket *) o, o->addr, o->addrlen);
+        xsocketlisten((xsocket *) o, o->backlog);
+    }
+
+    return xdescriptorstatuscheck_open((xdescriptor *) o) ? xsuccess : xfail;
+}
+
+static xint64 xdescriptoreventprocessserver_accept(xserversocket * o)
+{
+    if(xserversocketstatuscheck_open(o))
+    {
+        int f = accept(o->handle.f, xnil, xnil);
+
+        if(f >= 0)
         {
-            ret = xsuccess;
-        }
-        else if(o->status & xsocketstatus_opening)
-        {
-            xassertion(xtrue, "");  // 서버 소켓은 오프닝 상태를 허용하지 않는다. 비동기 업셉트만 
+            xsession * session = o->server->session.create(o->server, o->domain, o->type, o->protocol);
+
+            xassertion(session->server == xnil || session->cntr == xnil, "");
+            
+            session->descriptor->handle.f = f;
+            session->descriptor->status |= xdescriptorstatus_open;
+
+            xdescriptoron(session->descriptor, xdescriptoreventtype_open, xdescriptorparamgen(xnil), xsuccess);
+
+            session->descriptor->process(session->descriptor, xdescriptoreventtype_void);
+
+            return xsuccess;
         }
         else
         {
-            if(xsocketcreate((xsocket *) o) == xsuccess)
+            if(errno == EAGAIN)
             {
-                if(xsocketbind((xsocket *) o, o->addr, o->addrlen) == xsuccess)
-                {
-                    if(xsocketlisten((xsocket *) 0, o->backlog) == xsuccess)
-                    {
-                        ret = xsuccess;
-                    }
-                }
-            }
-        }
-    }
-    xlogfunction_end("%s(...) => %ld", __func__, ret);
-    return ret;
-}
-
-static xint64 xserversocketaccept(xserversocket * o)
-{
-    xlogfunction_start("%s(%p)", __func__, o);
-    xint64 ret = xfail;
-    if(xdescriptorstatuscheck_close((xdescriptor *) o) == xfalse)
-    {
-        if(o->status & xsocketstatus_open)
-        {
-            xint32 f = accept(o->handle.f, xnil, xnil);
-            if(f >= 0)
-            {
-
+                o->status &= (~xsocketstatus_in);
             }
             else
             {
-                // EAGAIN,
-
-                // EFALUT
-                // EMFILE
-                // ENFILE
-                // ENOBUFS, ENOMEM
-                // EPERM
-
-
-       ENOTSOCK
-              The file descriptor sockfd does not refer to a socket.
-
-       EOPNOTSUPP
-              The referenced socket is not of type SOCK_STREAM.
-
-       EPROTO Protocol error.
-
-       In addition, Linux accept() may fail if:
-
-       EPERM  Firewall rules forbid connection.
-
-       In addition, network errors for the new socket and as defined for the protocol may be returned.  Various Linux kernels can return other errors such as ENOSR, ESOCKTNOSUPPORT, EPROTONOSUPPORT, ETIMEDOUT.  The value ERESTARTSYS
-       may be seen during a trace.
+                xdescriptorexception((xdescriptor *) o, accept, errno, xexceptiontype_sys, "");
             }
-            xsessionsocket * descriptor = xsessionsocket_n
-            // session descriptor
-            // o->create()
+        }
+    }
+    return xfail;
+}
+
+static xint64 xdescriptoreventprocessserver_close(xserversocket * o)
+{
+    return xdescriptorclose((xdescriptor *) o);
+}
+
+static xint64 xdescriptoreventprocessserver_rem(xserversocket * o)
+{
+    xassertion(xserversocketeventavail_rem(o) == xfalse, "");
+
+    if(xserversocketeventavail_rem(o))
+    {
+        xassertion(xtrue, "implement this");
+        // 서버를 삭제하면 모든 세션을 제거한다. ?????????
+
+        return xsuccess;
+    }
+
+    return xfail;
+}
+
+static xint64 xdescriptoreventprocessserver_register(xserversocket * o)
+{
+    if(xdescriptorstatuscheck_close((xdescriptor *) o) == xfalse)
+    {
+        if(o->status & xdescriptorstatus_register)
+        {
+            return xdescriptoreventgenerator_descriptor_update(o->subscription->generatornode.generator, (xdescriptor *) o);
         }
         else
         {
-            xassertion((o->status & xsocketstatus_open) == xsocketstatus_void, "");
+            return xdescriptoreventgenerator_descriptor_register(o->subscription->generatornode.generator, (xdescriptor *) o);
         }
     }
-    xlogfunction_end("%s(...) => %ld", __func__, ret);
-    return ret;
+    return xfail;
 }
 
-static xint64 xserversocketclose(xserversocket * o);        // 4
-static xint64 xserversocketexception(xserversocket * o);    // 5
-static xint64 xserversocketrem(xserversocket * o);          // 6
-static xint64 xserversocketregister(xserversocket * o);     // 7
-static xint64 xserversocketreadoff(xserversocket * o);      // 9
-static xint64 xserversocketwriteoff(xserversocket * o);     // 10
-static xint64 xserversocketcreate(xserversocket * o);       // 12
-static xint64 xserversocketbind(xserversocket * o);         // 13
-static xint64 xserversocketclear(xserversocket * o);        // 14
-static xint64 xserversocketalloff(xserversocket * o);       // 15
-static xint64 xserversocketlisten(xserversocket * o);       // 17
-static xint64 xserversocketunregister(xserversocket * o);   // 19
+static xint64 xdescriptoreventprocessserver_readoff(xserversocket * o)
+{
+    return xsocketshutdown((xsocket *) o, xdescriptoreventtype_readoff);
+}
+
+
+static xint64 xdescriptoreventprocessserver_writeoff(xserversocket * o)
+{
+    return xsocketshutdown((xsocket *) o, xdescriptoreventtype_writeoff);
+}
+
+static xint64 xdescriptoreventprocessserver_alloff(xserversocket * o)
+{
+    return xsocketshutdown((xsocket *) o, xdescriptoreventtype_alloff);
+}
+
+static xint64 xdescriptoreventprocessserver_create(xserversocket * o)
+{
+    return xsocketcreate((xsocket *) o);
+}
+
+static xint64 xdescriptoreventprocessserver_bind(xserversocket * o)
+{
+    return xsocketbind((xsocket *) o, o->addr, o->addrlen);
+}
+
+static xint64 xdescriptoreventprocessserver_clear(xserversocket * o)
+{
+    return xsuccess;
+}
+
+static xint64 xdescriptoreventprocessserver_listen(xserversocket * o)
+{
+    return xsocketlisten((xsocket *) o, o->backlog);
+}
+
+static xint64 xdescriptoreventprocessserver_unregister(xserversocket * o)
+{
+    return xdescriptoreventgenerator_descriptor_unregister(o->subscription->generatornode.generator, (xdescriptor *) o);
+}

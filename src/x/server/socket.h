@@ -50,7 +50,6 @@ extern xserversocket * xserversocket_new(xserver * server, xint32 domain, xint32
 extern xserversocket * xserversocket_rem(xserversocket * descriptor);
 
 
-
 // extern xint32 xserversocketcheck_open(xserversocket * descriptor);
 // extern xint32 xserversocketcheck_rem(xserversocket * descriptor);
 

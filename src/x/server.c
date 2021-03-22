@@ -11,7 +11,7 @@
 
 static xint64 xserverobserve(xserver * server, xuint32 event, xdescriptorparam param, xint64 result);
 
-extern xsession * xsessionsimple_factory(xint32 domain, xint32 type, xint32 protocol);
+extern xsession * xsessionsimple_factory(xserver * server, xint32 domain, xint32 type, xint32 protocol);
 extern void xsessionsimple_releaser(xsession * session);
 
 extern xserver * xservernew(xint32 domain, xint32 type, xint32 protocol, const void * addr, xuint32 addrlen, xsessionobserver on, xuint64 size)
@@ -48,10 +48,27 @@ static xint64 xserverobserve(xserver * server, xuint32 event, xdescriptorparam p
     return result;
 }
 
-extern xsession * xsessionsimple_factory(xint32 domain, xint32 type, xint32 protocol)
+extern xsession * xsessionsimple_factory(xserver * server, xint32 domain, xint32 type, xint32 protocol)
 {
     xsession * session = calloc(sizeof(xsession), 1);
     session->descriptor = xsessionsocket_new(domain, type, protocol);
+
+    session->server = server;
+    session->cntr = xaddressof(server->session.alive);
+
+    session->prev = server->session.alive.tail;
+
+    if(session->prev)
+    {
+        session->prev->next = session;
+    }
+    else
+    {
+        server->session.alive.head = session;
+    }
+    server->session.alive.tail = session;
+    server->session.alive.size = server->session.alive.size + 1;
+
     return session;
 }
 
@@ -60,6 +77,30 @@ extern void xsessionsimple_releaser(xsession * session)
     if(session)
     {
         xassertion(xsessionsocketeventavail_rem(session->descriptor) == xfalse, "");
+
+        xassertion(session->cntr == xnil || session->server == xnil, "");
+
+        xsession * next = session->next;
+        xsession * prev = session->prev;
+        if(prev)
+        {
+            prev->next = next;
+        }
+        else
+        {
+            session->cntr->head = next;
+        }
+        if(next)
+        {
+            next->prev = prev;
+        }
+        else
+        {
+            session->cntr->tail = prev;
+        }
+        session->cntr->size = session->cntr->size - 1;
+        session->cntr = xnil;
+        session->server = xnil;
 
         session->descriptor = session->descriptor->rem(session->descriptor);
         free(session);
