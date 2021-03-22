@@ -18,7 +18,7 @@ struct xsessionsocket;
 typedef struct xsession xsession;
 typedef struct xsessionsocket xsessionsocket;
 
-typedef xint64 (*xsessionobserver)(xsession *, xuint32, void *, xint64);
+typedef xint64 (*xsessionobserver)(xsession *, xuint32, xdescriptorparam, xint64);
 
 typedef xsession * (*xsessionfactory)(xserver *, xint32, xint32, xint32);
 typedef void (*xsessionreleaser)(xsession *);
@@ -33,10 +33,5 @@ struct xsession
     xsession * next;
     xsessionlist * cntr;
 };
-
-extern xstream * xsessionstreamin_get(xsession * session);
-extern void xsessionstreamin_set(xsession * session, xstream * stream);
-extern xstream * xsessionstreamout_get(xsession * session);
-extern void xsessionstreamout_set(xsession * session, xstream * stream);
 
 #endif // __NOVEMBERIZING_X__SESSION__H__

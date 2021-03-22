@@ -9,7 +9,7 @@
 #include "../thread.h"
 
 #include "../socket.h"
-#include "../socket/processor/tcp.h"
+#include "../socket/processor/tcp/server.h"
 
 #include "../session/socket.h"
 #include "socket.h"
