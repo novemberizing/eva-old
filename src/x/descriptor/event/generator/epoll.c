@@ -77,20 +77,24 @@ extern void xdescriptoreventgenerator_once(xdescriptoreventgenerator * o)
                 {
                     xdescriptoreventdispatch_exception(subscription->descriptor, xdescriptoreventgenerator_once, generator->events[i].events, xexceptiontype_descriptor, "");
                 }
-                if(generator->events[i].events & EPOLLOUT)
+                else
                 {
-                    subscription->descriptor->status |= xdescriptorstatus_out;
-                    if(subscription->descriptor->status & xdescriptorstatus_connecting)
+                    if(generator->events[i].events & EPOLLOUT)
                     {
-                        xdescriptoreventdispatch_connecting(subscription->descriptor);
+                        subscription->descriptor->status |= xdescriptorstatus_out;
+                        if(subscription->descriptor->status & xdescriptorstatus_connecting)
+                        {
+                            xdescriptoreventdispatch_connecting(subscription->descriptor);
+                        }
+                        xdescriptoreventdispatch_out(subscription->descriptor);
                     }
-                    xdescriptoreventdispatch_out(subscription->descriptor);
+                    if(generator->events[i].events & EPOLLIN)
+                    {
+                        subscription->descriptor->status |= xdescriptorstatus_in;
+                        xdescriptoreventdispatch_in(subscription->descriptor);
+                    }
                 }
-                if(generator->events[i].events & EPOLLIN)
-                {
-                    subscription->descriptor->status |= xdescriptorstatus_in;
-                    xdescriptoreventdispatch_in(subscription->descriptor);
-                }
+
                 xdescriptoreventdispatch_void(subscription->descriptor);
             }
         }
@@ -148,12 +152,21 @@ extern xint64 xdescriptoreventgenerator_descriptor_register(xdescriptoreventgene
 
     if(subscription->generatornode.list == generator->alive)
     {
-        xassertion(subscription->generatornode.list == generator->alive, "");
-
-        if(xdescriptoreventgenerator_epoll_mod(generator, subscription) == xsuccess)
+        if(descriptor->status & xdescriptorstatus_register)
         {
-            return xsuccess;
+            if(xdescriptoreventgenerator_epoll_mod(generator, subscription) == xsuccess)
+            {
+                return xsuccess;
+            }
         }
+        else
+        {
+            if(xdescriptoreventgenerator_epoll_add(generator, subscription) == xsuccess)
+            {
+                return xsuccess;
+            }
+        }
+
         xdescriptoreventgeneratorsubscriptionlist_del(subscription);
     }
     else if(subscription->generatornode.list == xnil)
@@ -220,8 +233,6 @@ extern xint64 xdescriptoreventgenerator_descriptor_dispatch(xdescriptoreventgene
     {
         xdescriptoreventsubscription * subscription = descriptor->subscription;
 
-        xassertion(subscription->generatornode.list != generator->alive, "");
-
         if(subscription->generatornode.list != generator->alive)
         {
             if(subscription->generatornode.list == xnil)
@@ -232,7 +243,11 @@ extern xint64 xdescriptoreventgenerator_descriptor_dispatch(xdescriptoreventgene
             {
                 return xsuccess;
             }
-        }        
+        }
+        else
+        {
+            xassertion(xtrue, "");
+        }     
     }
     else
     {
@@ -246,7 +261,7 @@ extern void xdescriptoreventgenerator_register(xdescriptoreventgenerator * o, xd
 {
     xdescriptoreventgenerator_epoll * generator = (xdescriptoreventgenerator_epoll *) o;
 
-    xassertion(subscription->generatornode.generator, "");
+    xassertion(subscription->generatornode.generator != o, "");
 
     xdescriptor * descriptor = subscription->descriptor;
 
@@ -384,7 +399,7 @@ static xint32 xdescriptoreventgenerator_epoll_add(xdescriptoreventgenerator_epol
     if(generator->f >= 0)
     {
         xdescriptor * descriptor = subscription->descriptor;
-        xassertion(descriptor->handle.f >= 0, "");
+        xassertion(descriptor->handle.f < 0, "");
         if(descriptor->handle.f >= 0)
         {
             xassertion(descriptor->status & xdescriptorstatus_register, "");
@@ -514,17 +529,18 @@ static xint32 xdescriptoreventgenerator_epoll_del(xdescriptoreventgenerator_epol
             if(descriptor->status & xdescriptorstatus_register)
             {
                 descriptor->status &= (~xdescriptorstatus_register);
-                if(epoll_ctl(generator->f, EPOLL_CTL_ADD, descriptor->handle.f, xnil) != xsuccess)
+                if(epoll_ctl(generator->f, EPOLL_CTL_DEL, descriptor->handle.f, xnil) != xsuccess)
                 {
                     xassertion(xtrue, "");
                 }
             }
             else
             {
-                if(epoll_ctl(generator->f, EPOLL_CTL_ADD, descriptor->handle.f, xnil) == xsuccess)
+                if(epoll_ctl(generator->f, EPOLL_CTL_DEL, descriptor->handle.f, xnil) == xsuccess)
                 {
                     xassertion(xtrue, "");
                 }
+                // xassertion(xtrue, "");
             }
         }
     }

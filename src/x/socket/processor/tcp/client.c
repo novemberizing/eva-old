@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -93,11 +94,6 @@ static xint64 xclientsocketprocess_void(xclientsocket * o)
 
     if(xdescriptorstatuscheck_open((xdescriptor *) o))
     {
-        if((o->status & xdescriptorstatus_register) == xdescriptorstatus_void)
-        {
-            xdescriptoreventgenerator_descriptor_register(o->subscription->generatornode.generator, (xdescriptor *) o);
-        }
-
         for(xint32 i = 0; i < __maximum_retry_count; i++)
         {
             xclientsocketprocess_out(o);
@@ -113,8 +109,28 @@ static xint64 xclientsocketprocess_void(xclientsocket * o)
             }
             else
             {
+                
                 break;
             }
+        }
+    }
+
+    if(xdescriptorstatuscheck_close((xdescriptor *) o) == xfalse)
+    {
+        if((o->status & xdescriptorstatus_connect) || (o->status & xdescriptorstatus_connecting))
+        {
+            if((o->status & xdescriptorstatus_register) == xdescriptorstatus_void)
+            {
+                xdescriptoreventgenerator_descriptor_register(o->subscription->generatornode.generator, (xdescriptor *) o);
+            }
+            else
+            {
+                xdescriptoreventgenerator_descriptor_update(o->subscription->generatornode.generator, (xdescriptor *) o);
+            }
+        }
+        else
+        {
+            xassertion(xtrue, "");
         }
     }
 
@@ -141,10 +157,13 @@ static xint64 xclientsocketprocess_open(xclientsocket * o)
             xint32 code = xsocketerror((xsocket *) o);
             if(code != xsuccess)
             {
-                if((o->status & xdescriptorstatus_exception) == xdescriptorstatus_void)
+                if(code != EAGAIN && code != EINPROGRESS)
                 {
-                    o->status |= xdescriptorstatus_exception;
-                    xexceptionset(xaddressof(o->exception), connect, code, xexceptiontype_sys, "");
+                    if((o->status & xdescriptorstatus_exception) == xdescriptorstatus_void)
+                    {
+                        o->status |= xdescriptorstatus_exception;
+                        xexceptionset(xaddressof(o->exception), connect, code, xexceptiontype_sys, "");
+                    }
                 }
             }
             else
@@ -157,11 +176,19 @@ static xint64 xclientsocketprocess_open(xclientsocket * o)
         else
         {
             xclientsocketconnect(o, o->addr, o->addrlen);
+
+            if(xdescriptorstatuscheck_close((xdescriptor *) o) == xfalse)
+            {
+                if(o->subscription)
+                {
+                    xdescriptoreventgeneratorsubscriptionlist_push(o->subscription->generatornode.generator->alive, (xdescriptoreventsubscription *) o->subscription);
+                }
+            }
         }
     }
     
 
-    return o->status & xdescriptorstatus_exception;
+    return o->status & xdescriptorstatus_exception ? xfail : xsuccess;
 }
 
 static xint64 xclientsocketprocess_in(xclientsocket * o)
@@ -228,7 +255,7 @@ static xint64 xclientsocketprocess_create(xclientsocket * o)
 
 static xint64 xclientsocketprocess_clear(xclientsocket * o)
 {
-    xassertion(o->handle.f >= 0, "");
+//    xassertion(o->handle.f >= 0, "");
 
     o->status = (o->status & xdescriptorstatus_rem);
     xstreamclear(o->stream.in);

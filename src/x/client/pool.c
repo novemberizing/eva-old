@@ -7,6 +7,15 @@
 
 #include "../log.h"
 
+static xint64 xclienton(xclient * client, xuint32 event, xdescriptorparam param, xint64 result)
+{
+    if(client->pool)
+    {
+        result = client->pool->on(client->pool, client, event, param, result);
+    }
+    return result;
+}
+
 extern xclientpool * xclientpoolnew(xclientpoolobserver on, xuint64 size)
 {
     xassertion(size < sizeof(xclientpool), "");
@@ -50,6 +59,11 @@ extern void xclientpooladd(xclientpool * pool, xclient * client)
         pool->tail = client;
         pool->size = pool->size + 1;
         client->pool = pool;
+
+        if(client->on == xnil)
+        {
+            client->on = xclienton;
+        }
     }
 }
 

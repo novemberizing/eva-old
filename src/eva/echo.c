@@ -59,7 +59,6 @@ extern void evaechoserver_term(void)
 {
     if(service.tcp != xnil)
     {
-        // printf("subscription => %p\n", service.tcp->descriptor);
         service.tcp = xserverrem(service.tcp);
     }
     if(service.udp != xnil)

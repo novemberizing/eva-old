@@ -7,7 +7,7 @@ struct xclientpool;
 
 typedef struct xclientpool xclientpool;
 
-typedef void (*xclientpoolobserver)(xclientpool *, xclient *, xuint64, xdescriptorparam, xint64);
+typedef xint64 (*xclientpoolobserver)(xclientpool *, xclient *, xuint64, xdescriptorparam, xint64);
 
 struct xclientpool
 {

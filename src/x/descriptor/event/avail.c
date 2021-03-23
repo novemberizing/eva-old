@@ -7,7 +7,7 @@ extern xint32 xdescriptoreventavail_open(xdescriptor * descriptor)
         return xfalse;
     }
 
-    return descriptor->handle.f >= 0 && (descriptor->status & xdescriptorstatus_open);
+    return (descriptor->status & xdescriptorstatus_open) == xdescriptorstatus_void;
 }
 
 extern xint32 xdescriptoreventavail_rem(xdescriptor * descriptor)

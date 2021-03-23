@@ -416,10 +416,14 @@ extern xuint64 xstreampush(xstream * o, const xbyte * data, xuint64 len)
 extern void xstreamclear(xstream * o)
 {
     xlogfunction_start("%s(%p)", __func__, o);
-    switch(o->type)
+    if(o)
     {
-        case xstreamtype_buffer: xstreambuffer_clear((xstreambuffer *) o);  break;
+        switch(o->type)
+        {
+            case xstreamtype_buffer: xstreambuffer_clear((xstreambuffer *) o);  break;
+        }
     }
+
     xlogfunction_end("%s(...)", __func__);
 }
 
