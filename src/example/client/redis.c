@@ -27,12 +27,16 @@ static xint64 on(xclient * client, xuint32 event, xdescriptorparam param, xint64
 
 int main(int argc, char ** argv)
 {
+    xlogconsole_set(xtrue);
+    xlogmask_set(xlogtype_assertion);
+
     char buffer[16] = { 0, };
 
     struct sockaddr_in addr;
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = inet_addr("127.0.0.1");
     addr.sin_port = htons(6379);
+
     xclient * client = xclientnew(AF_INET, SOCK_STREAM, IPPROTO_TCP, xaddressof(addr), sizeof(struct sockaddr_in), on, sizeof(xclient));
 
     xclientconnect(client);
@@ -40,6 +44,8 @@ int main(int argc, char ** argv)
     xclientsend(client, "PING\r\n", 6);
     xclientrecv(client, buffer, 7);
 
+    xclientclose(client);
     xclientrem(client);
+
     return 0;
 }

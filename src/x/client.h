@@ -18,6 +18,10 @@ struct xclient
 {
     xclientsocket * descriptor;
     xclientobserver on;
+
+    xclientpool *   pool;
+    xclient *       prev;
+    xclient *       next;
 };
 
 extern xclient * xclientnew(xint32 domain, xint32 type, xint32 protocol, const void * addr, xuint32 addrlen, xclientobserver on, xuint64 size);

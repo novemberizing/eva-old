@@ -13,6 +13,7 @@ struct xdescriptoreventgenerator
     xsync *                                     sync;
     xdescriptoreventgeneratorsubscriptionlist * alive;
     xdescriptoreventgeneratorsubscriptionlist * queue;
+    xclientpoollist *                           clientpoollist;
 };
 
 extern xdescriptoreventgenerator * xdescriptoreventgenerator_new(xeventengine * engine);
@@ -20,6 +21,9 @@ extern xdescriptoreventgenerator * xdescriptoreventgenerator_rem(xdescriptoreven
 
 extern void xdescriptoreventgenerator_once(xdescriptoreventgenerator * o);
 extern void xdescriptoreventgenerator_queue_once(xdescriptoreventgenerator * o);
+
+extern void xdescriptoreventgenerator_clientpool_add(xdescriptoreventgenerator * o, xclientpool * pool);
+extern void xdescriptoreventgenerator_clientpool_del(xdescriptoreventgenerator * o, xclientpool * pool);
 
 extern xint64 xdescriptoreventgenerator_descriptor_register(xdescriptoreventgenerator * o, xdescriptor * descriptor);
 extern xint64 xdescriptoreventgenerator_descriptor_update(xdescriptoreventgenerator * o, xdescriptor * descriptor);

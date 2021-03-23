@@ -50,6 +50,7 @@ libnovemberizing_a_SOURCES = x/std.c                                          \
                              x/session.c                                      \
                              x/session/socket.c                               \
                              x/client.c                                       \
+                             x/client/pool.c                                  \
                              x/client/socket.c                                \
                              x/client/socket/event/avail.c                    \
                              x/eva.c                                          \
@@ -62,13 +63,17 @@ LIBS = libnovemberizing.a                                                    \
        -lpthread
 
 noinst_PROGRAMS = example-helloworld                                         \
-                  example-client-redis
+                  example-client-redis                                       \
+                  example-client-pool
 
 example_helloworld_SOURCES   = example/helloworld.c
 example_helloworld_LDADD     = $(LIBS)
 
 example_client_redis_SOURCES = example/client/redis.c
 example_client_redis_LDADD   = $(LIBS)
+
+example_client_pool_SOURCES  = example/client/pool.c
+example_client_pool_LDADD    = $(LIBS)
 
 nobase_include_HEADERS = x/std.h                \
                          x/thread.h             \

@@ -9,6 +9,7 @@
 
 #include "socket.h"
 #include "client.h"
+#include "client/pool.h"
 #include "client/socket.h"
 #include "client/socket/status.h"
 
@@ -19,7 +20,11 @@ extern xclient * xclientnew(xint32 domain, xint32 type, xint32 protocol, const v
     xclient * client = (xclient *) calloc(size, 1);
 
     client->descriptor = xclientsocket_new(client, domain, type, protocol, addr, addrlen);
-    client->on = on;
+    client->on         = on;
+
+    client->pool       = xnil;
+    client->prev       = xnil;
+    client->next       = xnil;
     
     return client;
 }
@@ -29,6 +34,8 @@ extern xclient * xclientrem(xclient * client)
     if(client)
     {
         client->descriptor = client->descriptor->rem(client->descriptor);
+
+        xclientpooldel(client);
 
         free(client);
     }
