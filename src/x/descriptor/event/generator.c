@@ -1,3 +1,7 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "../../thread.h"
 #include "generator.h"
 
 #include "../../event/engine.h"
@@ -12,9 +16,9 @@ extern void xdescriptoreventgenerator_clientpool_add(xdescriptoreventgenerator *
         o->clientpoollist = xclientpoollist_new();
     }
     xclientpoollist_add(o->clientpoollist, pool);
-    for(xclient * client = pool->head; client != xnil; client = xclientpool_next(client))
+    for(xclient * client = pool->head; client != xnil; client = client->next)
     {
-        xdescriptor * descriptor = client->descriptor;
+        xdescriptor * descriptor = (xdescriptor *) client->descriptor;
 
         descriptor->subscription = (xdescriptoreventsubscription *) xeventengine_client_register(o->engine, client);
     }
@@ -30,7 +34,7 @@ extern void xdescriptoreventgenerator_clientpool_del(xdescriptoreventgenerator *
         if(o->clientpoollist == pool->cntr)
         {
             xclientpoollist_del(pool->cntr, pool);
-            for(xclient * client = pool->head; client != xnil; client = xclientpool_next(client))
+            for(xclient * client = pool->head; client != xnil; client = client->next)
             {
                 xeventengine_client_unregister(o->engine, client);
                 if(client->descriptor)

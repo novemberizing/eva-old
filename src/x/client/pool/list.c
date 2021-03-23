@@ -1,3 +1,7 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "../../thread.h"
 #include "list.h"
 #include "../pool.h"
 
@@ -41,6 +45,42 @@ extern void xclientpoollist_add(xclientpoollist * list, xclientpool * pool)
         else
         {
             xassertion(pool->cntr == list, "");
+        }
+    }
+}
+
+extern void xclientpoollist_del(xclientpoollist * list, xclientpool * pool)
+{
+    if(list && pool)
+    {
+        if(pool->cntr == list)
+        {
+            xclientpool * prev = pool->prev;
+            xclientpool * next = pool->next;
+            if(prev)
+            {
+                prev->next = next;
+                pool->prev = xnil;
+            }
+            else
+            {
+                list->head = next;
+            }
+            if(next)
+            {
+                next->prev = prev;
+                pool->next = xnil;
+            }
+            else
+            {
+                list->tail = prev;
+            }
+            list->size = list->size - 1;
+            pool->cntr = xnil;
+        }
+        else
+        {
+            xassertion(pool->cntr != list, "");
         }
     }
 }

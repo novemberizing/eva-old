@@ -63,8 +63,8 @@ extern xeventsubscription * xeventengine_server_unregister(xeventengine * engine
 extern xeventsubscription * xeventengine_session_register(xeventengine * engine, xsession * session);
 extern xeventsubscription * xeventengine_session_unregister(xeventengine * engine, xsession * session);
 
-extern void xeventengine_clientpool_register(xeventengine * engine, xclientpool * pool);
-extern void xeventengine_clientpool_unregister(xeventengine * engine, xclientpool * pool);
+extern void xeventengine_clientpool_add(xeventengine * engine, xclientpool * pool);
+extern void xeventengine_clientpool_del(xeventengine * engine, xclientpool * pool);
 
 extern xeventsubscription * xeventengine_client_register(xeventengine * engine, xclient * client);
 extern xeventsubscription * xeventengine_client_unregister(xeventengine * engine, xclient * client);

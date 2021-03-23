@@ -171,7 +171,8 @@ am_libnovemberizing_a_OBJECTS = x/std.$(OBJEXT) x/log.$(OBJEXT) \
 	x/socket/processor/tcp/client.$(OBJEXT) x/server.$(OBJEXT) \
 	x/server/socket.$(OBJEXT) x/session.$(OBJEXT) \
 	x/session/socket.$(OBJEXT) x/client.$(OBJEXT) \
-	x/client/pool.$(OBJEXT) x/client/socket.$(OBJEXT) \
+	x/client/pool.$(OBJEXT) x/client/pool/list.$(OBJEXT) \
+	x/client/socket.$(OBJEXT) \
 	x/client/socket/event/avail.$(OBJEXT) x/eva.$(OBJEXT) \
 	x/eva/cli.$(OBJEXT) x/eva/extension/echo.$(OBJEXT)
 libnovemberizing_a_OBJECTS = $(am_libnovemberizing_a_OBJECTS)
@@ -218,6 +219,7 @@ am__depfiles_remade = example/$(DEPDIR)/helloworld.Po \
 	x/$(DEPDIR)/stream.Po x/$(DEPDIR)/string.Po \
 	x/$(DEPDIR)/sync.Po x/$(DEPDIR)/thread.Po \
 	x/client/$(DEPDIR)/pool.Po x/client/$(DEPDIR)/socket.Po \
+	x/client/pool/$(DEPDIR)/list.Po \
 	x/client/socket/event/$(DEPDIR)/avail.Po \
 	x/command/$(DEPDIR)/string.Po x/descriptor/$(DEPDIR)/status.Po \
 	x/descriptor/event/$(DEPDIR)/avail.Po \
@@ -456,6 +458,7 @@ libnovemberizing_a_SOURCES = x/std.c                                          \
                              x/session/socket.c                               \
                              x/client.c                                       \
                              x/client/pool.c                                  \
+                             x/client/pool/list.c                             \
                              x/client/socket.c                                \
                              x/client/socket/event/avail.c                    \
                              x/eva.c                                          \
@@ -722,6 +725,14 @@ x/client/$(DEPDIR)/$(am__dirstamp):
 	@: > x/client/$(DEPDIR)/$(am__dirstamp)
 x/client/pool.$(OBJEXT): x/client/$(am__dirstamp) \
 	x/client/$(DEPDIR)/$(am__dirstamp)
+x/client/pool/$(am__dirstamp):
+	@$(MKDIR_P) x/client/pool
+	@: > x/client/pool/$(am__dirstamp)
+x/client/pool/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) x/client/pool/$(DEPDIR)
+	@: > x/client/pool/$(DEPDIR)/$(am__dirstamp)
+x/client/pool/list.$(OBJEXT): x/client/pool/$(am__dirstamp) \
+	x/client/pool/$(DEPDIR)/$(am__dirstamp)
 x/client/socket.$(OBJEXT): x/client/$(am__dirstamp) \
 	x/client/$(DEPDIR)/$(am__dirstamp)
 x/client/socket/event/$(am__dirstamp):
@@ -792,6 +803,7 @@ mostlyclean-compile:
 	-rm -f example/client/*.$(OBJEXT)
 	-rm -f x/*.$(OBJEXT)
 	-rm -f x/client/*.$(OBJEXT)
+	-rm -f x/client/pool/*.$(OBJEXT)
 	-rm -f x/client/socket/event/*.$(OBJEXT)
 	-rm -f x/command/*.$(OBJEXT)
 	-rm -f x/descriptor/*.$(OBJEXT)
@@ -842,6 +854,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/thread.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/client/$(DEPDIR)/pool.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/client/$(DEPDIR)/socket.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/client/pool/$(DEPDIR)/list.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/client/socket/event/$(DEPDIR)/avail.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/command/$(DEPDIR)/string.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/descriptor/$(DEPDIR)/status.Po@am__quote@ # am--include-marker
@@ -1054,6 +1067,8 @@ distclean-generic:
 	-rm -f x/$(am__dirstamp)
 	-rm -f x/client/$(DEPDIR)/$(am__dirstamp)
 	-rm -f x/client/$(am__dirstamp)
+	-rm -f x/client/pool/$(DEPDIR)/$(am__dirstamp)
+	-rm -f x/client/pool/$(am__dirstamp)
 	-rm -f x/client/socket/event/$(DEPDIR)/$(am__dirstamp)
 	-rm -f x/client/socket/event/$(am__dirstamp)
 	-rm -f x/command/$(DEPDIR)/$(am__dirstamp)
@@ -1128,6 +1143,7 @@ distclean: distclean-am
 	-rm -f x/$(DEPDIR)/thread.Po
 	-rm -f x/client/$(DEPDIR)/pool.Po
 	-rm -f x/client/$(DEPDIR)/socket.Po
+	-rm -f x/client/pool/$(DEPDIR)/list.Po
 	-rm -f x/client/socket/event/$(DEPDIR)/avail.Po
 	-rm -f x/command/$(DEPDIR)/string.Po
 	-rm -f x/descriptor/$(DEPDIR)/status.Po
@@ -1226,6 +1242,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f x/$(DEPDIR)/thread.Po
 	-rm -f x/client/$(DEPDIR)/pool.Po
 	-rm -f x/client/$(DEPDIR)/socket.Po
+	-rm -f x/client/pool/$(DEPDIR)/list.Po
 	-rm -f x/client/socket/event/$(DEPDIR)/avail.Po
 	-rm -f x/command/$(DEPDIR)/string.Po
 	-rm -f x/descriptor/$(DEPDIR)/status.Po

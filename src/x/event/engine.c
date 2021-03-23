@@ -359,3 +359,13 @@ extern xint32 xeventengine_descriptor_dispatch(xdescriptor * descriptor, xuint32
     xlogfunction_end("%s(...) => %d", __func__, xfail);
     return xfail;
 }
+
+extern void xeventengine_clientpool_add(xeventengine * engine, xclientpool * pool)
+{
+    xdescriptoreventgenerator_clientpool_add(engine->generators.descriptor, pool);
+}
+
+extern void xeventengine_clientpool_del(xeventengine * engine, xclientpool * pool)
+{
+    xdescriptoreventgenerator_clientpool_del(engine->generators.descriptor, pool);
+}

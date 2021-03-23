@@ -51,6 +51,7 @@ libnovemberizing_a_SOURCES = x/std.c                                          \
                              x/session/socket.c                               \
                              x/client.c                                       \
                              x/client/pool.c                                  \
+                             x/client/pool/list.c                             \
                              x/client/socket.c                                \
                              x/client/socket/event/avail.c                    \
                              x/eva.c                                          \

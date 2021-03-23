@@ -30,4 +30,6 @@ extern void xclientpooladd(xclientpool * pool, xclient * client);
 extern void xclientpoolpush(xclientpool * pool, xclient * client);
 extern xclient * xclientpoolpop(xclientpool * pool);
 
+extern xclient * xclientpoolnext(xclient * client);
+
 #endif // __NOVEMBERIZING_X__CLIENT_POOL__H__

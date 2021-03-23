@@ -19,6 +19,7 @@ extern xclientpoollist * xclientpoollist_new(void);
 extern xclientpoollist * xclientpoollist_rem(xclientpoollist * list);
 
 extern void xclientpoollist_add(xclientpoollist * list, xclientpool * pool);
+extern void xclientpoollist_del(xclientpoollist * list, xclientpool * pool);
 
 
 #endif // __NOVEMBERIZING_X__CLIENT_POOL_LIST__H__
