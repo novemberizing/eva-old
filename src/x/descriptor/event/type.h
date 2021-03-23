@@ -21,8 +21,10 @@
 #define xdescriptoreventtype_listen         17
 #define xdescriptoreventtype_connecting     18
 #define xdescriptoreventtype_unregister     19
-#define xdescriptoreventtype_readend        20
-#define xdescriptoreventtype_writeend       21
-#define xdescriptoreventtype_max            22
+#define xdescriptoreventtype_max            20
+
+// #define xdescriptoreventtype_readend        20
+// #define xdescriptoreventtype_writeend       21
+// #define xdescriptoreventtype_max            22
 
 #endif // __NOVEMBERIZING_X__DESCRIPTOR__EVENT_TYPE__H__

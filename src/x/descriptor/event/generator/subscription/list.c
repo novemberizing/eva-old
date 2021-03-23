@@ -3,6 +3,7 @@
 
 #include "list.h"
 
+#include "../../generator.h"
 #include "../../subscription.h"
 
 #include "../../../../thread.h"
@@ -126,4 +127,24 @@ extern xdescriptoreventsubscription * xdescriptoreventgeneratorsubscriptionlist_
 
     xlogfunction_end("%s(...) => %p", __func__, subscription);
     return subscription;
+}
+
+extern void xdescriptoreventgeneratorsubscriptionlist_clear(xdescriptoreventgeneratorsubscriptionlist * list)
+{
+    xlogfunction_start("%s(%p)", __func__, list);
+
+    xassertion(list == xnil, "");
+
+    for(xuint64 i = 0; i < list->size; i++)
+    {
+        xdescriptoreventsubscription * subscription = xdescriptoreventgeneratorsubscriptionlist_pop(list);
+        if(subscription)
+        {
+            xdescriptoreventgenerator_unregister(subscription->generatornode.generator, subscription);
+            continue;
+        }
+        break;
+    }
+
+    xlogfunction_end("%s(...) => %p", __func__);
 }

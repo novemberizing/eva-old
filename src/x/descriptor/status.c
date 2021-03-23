@@ -1,4 +1,31 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "../thread.h"
+
 #include "status.h"
+
+#define xdescriptorstatus_void          0x00000000u
+
+#define xdescriptorstatus_open          0x00000001u
+#define xdescriptorstatus_in            0x00000002u
+#define xdescriptorstatus_out           0x00000004u
+#define xdescriptorstatus_close         0x00000008u
+#define xdescriptorstatus_exception     0x00000010u
+#define xdescriptorstatus_rem           0x00000020u
+#define xdescriptorstatus_register      0x00000040u
+#define xdescriptorstatus_flush         0x00000080u
+#define xdescriptorstatus_readoff       0x00000100u
+#define xdescriptorstatus_writeoff      0x00000200u
+#define xdescriptorstatus_connecting    0x00000400u
+#define xdescriptorstatus_create        0x00000800u
+#define xdescriptorstatus_bind          0x00001000u
+#define xdescriptorstatus_readend       0x00002000u
+#define xdescriptorstatus_writeend      0x00004000u
+#define xdescriptorstatus_listen        0x00008000u
+#define xdescriptorstatus_connect       0x00010000u
+
+#define xdescriptorstatus_alloff        (xdescriptorstatus_readoff | xdescriptorstatus_writeoff)
 
 extern xint32 xdescriptorstatuscheck(xdescriptor * descriptor, xuint32 status)
 {
@@ -18,7 +45,8 @@ extern xint32 xdescriptorstatuscheck(xdescriptor * descriptor, xuint32 status)
         case xdescriptorstatus_connecting:  return xdescriptorstatuscheck_connecting(descriptor);
         case xdescriptorstatus_create:      return xdescriptorstatuscheck_create(descriptor);
         case xdescriptorstatus_bind:        return xdescriptorstatuscheck_bind(descriptor);
-        case xdescriptorstatus_end:         return xdescriptorstatuscheck_end(descriptor);
+        case xdescriptorstatus_readend:     return xdescriptorstatuscheck_readend(descriptor);
+        case xdescriptorstatus_writeend:    return xdescriptorstatuscheck_writeend(descriptor);
         case xdescriptorstatus_listen:      return xdescriptorstatuscheck_listen(descriptor);
         case xdescriptorstatus_connect:     return xdescriptorstatuscheck_connect(descriptor);
         case xdescriptorstatus_alloff:      return xdescriptorstatuscheck_alloff(descriptor);
@@ -33,52 +61,47 @@ extern xint32 xdescriptorstatuscheck_void(xdescriptor * descriptor)
 
 extern xint32 xdescriptorstatuscheck_open(xdescriptor * descriptor)
 {
-    if(xdescriptorstatuscheck_close(descriptor))
+    if(descriptor->handle.f >= 0)
     {
-        return xfalse;
+        if(descriptor->status & (xdescriptorstatus_rem | xdescriptorstatus_close | xdescriptorstatus_exception))
+        {
+            return xfalse;
+        }
+        return descriptor->status & xdescriptorstatus_open;
     }
-    if(descriptor->handle.f < 0)
-    {
-        return xfalse;
-    }
-    return descriptor->status & xdescriptorstatus_open;
+
+    return xfalse;
 }
 
 extern xint32 xdescriptorstatuscheck_in(xdescriptor * descriptor)
 {
-    if(descriptorstatuscheck_close(descriptor))
+    if(descriptor->handle.f >= 0)
     {
-        return xfalse;
+        if(descriptor->status & xdescriptorstatus_open)
+        {
+            return (descriptor->status & xdescriptorstatus_readoff) == xdescriptorstatus_void;
+        }
     }
-    if(descriptor->handle.f < 0)
-    {
-        return xfalse;
-    }
-    if(descriptor->status & (xdescriptorstatus_open | xdescriptorstatus_connecting))
-    {
-        return (descriptor->status & xdescriptorstatus_readoff) == xdescriptorstatus_void;
-    }
+
+    return xfalse;
 }
 
 extern xint32 xdescriptorstatuscheck_out(xdescriptor * descriptor)
 {
-    if(descriptorstatuscheck_close(descriptor))
+    if(descriptor->handle.f >= 0)
     {
-        return xfalse;
+        if(descriptor->status & xdescriptorstatus_open)
+        {
+            return (descriptor->status & xdescriptorstatus_writeoff) == xdescriptorstatus_void;
+        }
     }
-    if(descriptor->handle.f < 0)
-    {
-        return xfalse;
-    }
-    if(descriptor->status & (xdescriptorstatus_open | xdescriptorstatus_connecting))
-    {
-        return (descriptor->status & xdescriptorstatus_writeoff) == xdescriptorstatus_void;
-    }
+
+    return xfalse;
 }
 
 extern xint32 xdescriptorstatuscheck_close(xdescriptor * descriptor)
 {
-    return descriptor->status & (xdescriptorstatus_close | xdescriptorstatus_rem | xdescriptorstatus_exception);
+    return descriptor->status & (xdescriptorstatus_rem | xdescriptorstatus_close | xdescriptorstatus_exception);
 }
 
 extern xint32 xdescriptorstatuscheck_exception(xdescriptor * descriptor)
@@ -93,8 +116,9 @@ extern xint32 xdescriptorstatuscheck_rem(xdescriptor * descriptor)
 
 extern xint32 xdescriptorstatuscheck_register(xdescriptor * descriptor)
 {
-    return descriptor->handle.f >= 0 && descriptor->status & xdescriptorstatus_register;
+    return descriptor->handle.f >= 0 && (descriptor->status & xdescriptorstatus_register);
 }
+
 extern xint32 xdescriptorstatuscheck_flush(xdescriptor * descriptor)
 {
     return descriptor->status & xdescriptorstatus_flush;
@@ -102,17 +126,17 @@ extern xint32 xdescriptorstatuscheck_flush(xdescriptor * descriptor)
 
 extern xint32 xdescriptorstatuscheck_readoff(xdescriptor * descriptor)
 {
-    return descriptor->status & xdescriptorstatus_readoff;
+    return descriptor->handle.f < 0 || (descriptor->status & xdescriptorstatus_readoff);
 }
 
 extern xint32 xdescriptorstatuscheck_writeoff(xdescriptor * descriptor)
 {
-    return descriptor->status & xdescriptorstatus_writeoff;
+    return descriptor->handle.f < 0 || (descriptor->status & xdescriptorstatus_writeoff);
 }
 
 extern xint32 xdescriptorstatuscheck_connecting(xdescriptor * descriptor)
 {
-    if(xdescriptorstatuscheck_close(descriptor))
+    if(descriptor->status & (xdescriptorstatus_rem | xdescriptorstatus_close | xdescriptorstatus_exception))
     {
         return xfalse;
     }
@@ -121,30 +145,33 @@ extern xint32 xdescriptorstatuscheck_connecting(xdescriptor * descriptor)
 
 extern xint32 xdescriptorstatuscheck_create(xdescriptor * descriptor)
 {
-    if(xdescriptorstatuscheck_close(descriptor))
+    if(descriptor->status & (xdescriptorstatus_rem | xdescriptorstatus_close | xdescriptorstatus_exception))
     {
         return xfalse;
     }
     return descriptor->status & xdescriptorstatus_create;
 }
-
 extern xint32 xdescriptorstatuscheck_bind(xdescriptor * descriptor)
 {
-    if(xdescriptorstatuscheck_close(descriptor))
+    if(descriptor->status & (xdescriptorstatus_rem | xdescriptorstatus_close | xdescriptorstatus_exception))
     {
         return xfalse;
     }
     return descriptor->status & xdescriptorstatus_bind;
 }
 
-extern xint32 xdescriptorstatuscheck_end(xdescriptor * descriptor)
+extern xint32 xdescriptorstatuscheck_readend(xdescriptor * descriptor)
 {
-    return descriptor->status & xdescriptorstatus_end;
+    return descriptor->status & xdescriptorstatus_readend;
 }
 
+extern xint32 xdescriptorstatuscheck_writeend(xdescriptor * descriptor)
+{
+    return descriptor->status & xdescriptorstatus_writeend;
+}
 extern xint32 xdescriptorstatuscheck_listen(xdescriptor * descriptor)
 {
-    if(xdescriptorstatuscheck_close(descriptor))
+    if(descriptor->status & (xdescriptorstatus_rem | xdescriptorstatus_close | xdescriptorstatus_exception))
     {
         return xfalse;
     }
@@ -153,7 +180,7 @@ extern xint32 xdescriptorstatuscheck_listen(xdescriptor * descriptor)
 
 extern xint32 xdescriptorstatuscheck_connect(xdescriptor * descriptor)
 {
-    if(xdescriptorstatuscheck_close(descriptor))
+    if(descriptor->status & (xdescriptorstatus_rem | xdescriptorstatus_close | xdescriptorstatus_exception))
     {
         return xfalse;
     }
@@ -162,5 +189,5 @@ extern xint32 xdescriptorstatuscheck_connect(xdescriptor * descriptor)
 
 extern xint32 xdescriptorstatuscheck_alloff(xdescriptor * descriptor)
 {
-    return (descriptor->status & xdescriptorstatus_alloff) == xdescriptorstatus_alloff;
+    return descriptor->handle.f < 0 || (descriptor->status & xdescriptorstatus_alloff) == xdescriptorstatus_alloff;
 }

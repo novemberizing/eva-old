@@ -45,7 +45,7 @@ extern xint64 xclientconnect(xclient * client)
         xsocketcreate((xsocket *) o);
         xclientsocketconnect(o, o->addr, o->addrlen);
 
-        return xclientsocketstatuscheck_close(o) == xfalse && (o->status & (xsocketstatus_connect | xsocketstatus_connecting));
+        return xdescriptorstatuscheck_close((xdescriptor *) o) == xfalse && (o->status & (xsocketstatus_connect | xsocketstatus_connecting));
     }
     else
     {

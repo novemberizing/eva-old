@@ -3,11 +3,11 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
-#include "tcp.h"
+#include "server.h"
 
-#include "../../session/socket.h"
+#include "../../../session/socket.h"
 
-typedef xint64 (*xsocketprocessortcpevent_server_proc)(xserversocket * o);
+typedef xint64 (*xsocketeventprocessortcp)(xserversocket * o);
 
 static xint64 xdescriptoreventprocess_void(xserversocket * o);
 static xint64 xdescriptoreventprocessserver_open(xserversocket * o);
@@ -24,7 +24,7 @@ static xint64 xdescriptoreventprocessserver_alloff(xserversocket * o);
 static xint64 xdescriptoreventprocessserver_listen(xserversocket * o);
 static xint64 xdescriptoreventprocessserver_unregister(xserversocket * o);
 
-static xsocketprocessortcpevent_server_proc xsocketprocessortcpevent_server_process[xdescriptoreventtype_max] = {
+static xsocketeventprocessortcp xsocketprocessors[xdescriptoreventtype_max] = {
     xdescriptoreventprocessserver_void, //  0: xdescriptoreventtype_void
     xdescriptoreventprocessserver_open, //  1: xdescriptoreventtype_open
     xdescriptoreventprocessserver_accept, //  2: xdescriptoreventtype_in
@@ -44,9 +44,7 @@ static xsocketprocessortcpevent_server_proc xsocketprocessortcpevent_server_proc
     xnil, // 16: xdescriptoreventtype_connect
     xdescriptoreventprocessserver_listen, // 17: xdescriptoreventtype_listen
     xnil, // 18: xdescriptoreventtype_connecting
-    xdescriptoreventprocessserver_unregister, // 19: xdescriptoreventtype_unregister
-    xnil, // 20: xdescriptoreventtype_readend
-    xnil  // 21: xdescriptoreventtype_writeend
+    xdescriptoreventprocessserver_unregister // 19: xdescriptoreventtype_unregister
 };
 
 extern xint64 xsocketprocessortcp_server(xserversocket * o, xuint32 event)
@@ -55,7 +53,7 @@ extern xint64 xsocketprocessortcp_server(xserversocket * o, xuint32 event)
 
     if(event < xdescriptoreventtype_max)
     {
-        xsocketprocessortcpevent_server_proc process = xsocketprocessortcpevent_server_process[event];
+        xsocketeventprocessortcp process = xsocketprocessors[event];
         if(process)
         {
             return process(o);

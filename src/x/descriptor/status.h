@@ -29,7 +29,6 @@
 extern xint32 xdescriptorstatuscheck(xdescriptor * descriptor, xuint32 status);
 
 extern xint32 xdescriptorstatuscheck_void(xdescriptor * descriptor);
-
 extern xint32 xdescriptorstatuscheck_open(xdescriptor * descriptor);
 extern xint32 xdescriptorstatuscheck_in(xdescriptor * descriptor);
 extern xint32 xdescriptorstatuscheck_out(xdescriptor * descriptor);
@@ -43,27 +42,10 @@ extern xint32 xdescriptorstatuscheck_writeoff(xdescriptor * descriptor);
 extern xint32 xdescriptorstatuscheck_connecting(xdescriptor * descriptor);
 extern xint32 xdescriptorstatuscheck_create(xdescriptor * descriptor);
 extern xint32 xdescriptorstatuscheck_bind(xdescriptor * descriptor);
-extern xint32 xdescriptorstatuscheck_end(xdescriptor * descriptor);
+extern xint32 xdescriptorstatuscheck_readend(xdescriptor * descriptor);
+extern xint32 xdescriptorstatuscheck_writeend(xdescriptor * descriptor);
 extern xint32 xdescriptorstatuscheck_listen(xdescriptor * descriptor);
 extern xint32 xdescriptorstatuscheck_connect(xdescriptor * descriptor);
-
 extern xint32 xdescriptorstatuscheck_alloff(xdescriptor * descriptor);
-
-// extern xint32 xdescriptorstatuscheck_void(xdescriptor * descriptor);
-// extern xint32 xdescriptorstatuscheck_open(xdescriptor * descriptor);
-// extern xint32 xdescriptorstatuscheck_in(xdescriptor * descriptor);
-// extern xint32 xdescriptorstatuscheck_out(xdescriptor * descriptor);
-// extern xint32 xdescriptorstatuscheck_close(xdescriptor * descriptor);
-// extern xint32 xdescriptorstatuscheck_exception(xdescriptor * descriptor);
-// extern xint32 xdescriptorstatuscheck_rem(xdescriptor * descriptor);
-// extern xint32 xdescriptorstatuscheck_register(xdescriptor * descriptor);
-// extern xint32 xdescriptorstatuscheck_flush(xdescriptor * descriptor);
-// extern xint32 xdescriptorstatuscheck_readoff(xdescriptor * descriptor);
-// extern xint32 xdescriptorstatuscheck_writeoff(xdescriptor * descriptor);
-// extern xint32 xdescriptorstatuscheck_opening(xdescriptor * descriptor);
-// extern xint32 xdescriptorstatuscheck_create(xdescriptor * descriptor);
-// extern xint32 xdescriptorstatuscheck_bind(xdescriptor * descriptor);
-// extern xint32 xdescriptorstatuscheck_alloff(xdescriptor * descriptor);
-// extern xint32 xdescriptorstatuscheck_end(xdescriptor * descriptor);
 
 #endif // __NOVEMBERIZING_X__DESCRIPTOR__STATUS__H__
