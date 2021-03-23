@@ -3,14 +3,14 @@
 
 #include <x/std.h>
 
-struct xevaconfiglog;
+// struct xevaconfiglog;
 
-typedef struct xevaconfiglog xevaconfiglog;
+// typedef struct xevaconfiglog xevaconfiglog;
 
-struct xevaconfiglog
-{
-    char * path;
-    xuint32 types;
-};
+// struct xevaconfiglog
+// {
+//     char * path;
+//     xuint32 types;
+// };
 
 #endif // __NOVEMBERIZING_X__EVA__CONFIG__LOG__H__

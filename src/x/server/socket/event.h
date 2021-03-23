@@ -3,7 +3,7 @@
 
 #include <x/event.h>
 #include <x/event/queue.h>
-#include <x/client/socket.h>
+#include <x/server/socket.h>
 
 struct xserversocketevent;
 

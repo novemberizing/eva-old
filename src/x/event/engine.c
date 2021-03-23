@@ -12,6 +12,8 @@
 #include "../server/socket.h"
 #include "../session.h"
 #include "../session/socket.h"
+#include "../client.h"
+#include "../client/socket.h"
 
 #include "./processor/pool.h"
 #include "../descriptor/event/subscription.h"

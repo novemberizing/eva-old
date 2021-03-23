@@ -18,13 +18,15 @@ struct xclient
 {
     xclientsocket * descriptor;
     xclientobserver on;
-
-    xclient * prev;
-    xclient * next;
-    xclientpool * cntr;
 };
 
 extern xclient * xclientnew(xint32 domain, xint32 type, xint32 protocol, const void * addr, xuint32 addrlen, xclientobserver on, xuint64 size);
 extern xclient * xclientrem(xclient * client);
+
+extern xint64 xclientconnect(xclient * client);
+
+extern xint64 xclientread(xclient * client);
+extern xint64 xclientwrite(xclient * client);
+extern xint64 xclientclose(xclient * client);
 
 #endif // __NOVEMBERIZING_X__CLIENT__H__

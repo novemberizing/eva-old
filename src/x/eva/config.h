@@ -3,13 +3,13 @@
 
 #include <x/eva/config/log.h>
 
-struct xevaconfig;
+// struct xevaconfig;
 
-typedef struct xevaconfig xevaconfig;
+// typedef struct xevaconfig xevaconfig;
 
-struct xevaconfig
-{
-    xevaconfiglog log;
-};
+// struct xevaconfig
+// {
+//     xevaconfiglog log;
+// };
 
 #endif // __NOVEMBERIZING_X__EVA__CONFIG__H__

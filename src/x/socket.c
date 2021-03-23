@@ -79,6 +79,8 @@ extern xint64 xsocketbind(xsocket * o, void * addr, xuint32 addrlen)
     }
     return ret;
 }
+
+
 extern xint64 xsocketlisten(xsocket * o, xint32 backlog)
 {
     xint64 ret = xfail;
@@ -171,89 +173,7 @@ extern xint64 xsocketshutdown(xsocket * o, xuint32 how)
     return xsuccess;
 }
 
-extern xint64 xsocketconnect(xsocket * o, void * addr, xuint32 addrlen)
-{
-    xint64 ret = xfail;
-    if(xdescriptorstatuscheck_close((xdescriptor *) o) == xfalse)
-    {
-        if(o->handle.f >= 0 && (o->status & xsocketstatus_create))
-        {
-            if((o->status & (xdescriptorstatus_open | xdescriptorstatus_connect | xdescriptorstatus_connecting)) == xdescriptorstatus_void)
-            {
-                if((o->subscription && o->subscription->enginenode.engine) || (o->mask & xdescriptormask_nonblock))
-                {
-                    xdescriptornonblock((xdescriptor *) o, xtrue);
-                }
 
-                if((o->status & xdescriptorstatus_exception) == xdescriptorstatus_void)
-                {
-                    if((ret = connect(o->handle.f, addr, addrlen)) == xsuccess)
-                    {
-                        o->status |= (xdescriptorstatus_open | xdescriptorstatus_connect | xdescriptorstatus_out);
-                        ret = xdescriptoron((xdescriptor *) o, xdescriptoreventtype_open, xdescriptorparamgen(xnil), xsuccess);
-                    }
-                    else
-                    {
-                        if(errno == EAGAIN || errno == EINPROGRESS)
-                        {
-                            o->status |= xdescriptorstatus_connecting;
-                            ret = xdescriptoron((xdescriptor *) o, xdescriptoreventtype_opening, xdescriptorparamgen(xnil), xsuccess);
-                        }
-                        else
-                        {
-                            xdescriptorexception((xdescriptor *) o, connect, errno, xexceptiontype_sys, "");
-                        }
-                    }
-                }
-            }
-            else
-            {
-                ret = xsuccess;
-            }
-        }
-    }
-    return ret;
-}
-
-extern xint64 xsocketconnecting(xsocket * o)
-{
-    xint64 ret = xfail;
-    if(xdescriptorstatuscheck_close((xdescriptor *) o) == xfalse)
-    {
-        if(o->status & xdescriptorstatus_connecting)
-        {
-            xint32 code = 0;
-            socklen_t size = sizeof(xint32);
-            if(getsockopt(o->handle.f, SOL_SOCKET, SO_ERROR, xaddressof(code), xaddressof(size)) == xsuccess)
-            {
-                if(code == EAGAIN || code == EINPROGRESS)
-                {
-                    ret = xsuccess;
-                }
-                else if(code == 0)
-                {
-                    o->status &= (~xdescriptorstatus_connecting);
-                    o->status |= (xdescriptorstatus_open | xdescriptorstatus_connect | xdescriptorstatus_out);
-                    ret = xdescriptoron((xdescriptor *) o, xdescriptoreventtype_open, xdescriptorparamgen(xnil), xsuccess);
-                }
-                else
-                {
-                    xdescriptorexception((xdescriptor *) o, connect, code, xexceptiontype_sys, "");
-                }
-            }
-            else
-            {
-                xdescriptorexception((xdescriptor *) o, getsockopt, errno, xexceptiontype_sys, "");
-            }
-        }
-        else
-        {
-            // 리턴 값에 대한 고민을 하자.
-            ret = xfail;
-        }
-    }
-    return ret;
-}
 
 extern xint32 xsocketresuseaddr(xsocket * o, xint32 on)
 {
@@ -268,4 +188,25 @@ extern xint32 xsocketresuseaddr(xsocket * o, xint32 on)
     }
 
     return ret;
+}
+
+extern xint32 xsocketerror(xsocket * o)
+{
+    if(o->handle.f >= 0)
+    {
+        xint32 code = 0;
+        socklen_t size = sizeof(xint32);
+
+        if(getsockopt(o->handle.f, SOL_SOCKET, SO_ERROR, xaddressof(code), xaddressof(size)) == xsuccess)
+        {
+            return code;
+        }
+        else
+        {
+            xdescriptorexception((xdescriptor *) o, getsockopt, errno, xexceptiontype_sys, "");
+            return errno;
+        }
+    }
+
+    return EBADF;
 }

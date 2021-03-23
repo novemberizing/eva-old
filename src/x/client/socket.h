@@ -48,13 +48,15 @@ struct xclientsocket
 extern xclientsocket * xclientsocket_new(xclient * client, xint32 domain, xint32 type, xint32 protocol, const void * addr, xuint32 addrlen);
 extern xclientsocket * xclientsocket_rem(xclientsocket * o);
 
-extern xint32 xclientsocketcheck(xclientsocket * o, xuint32 status);
+extern xint64 xclientsocketconnect(xclientsocket * o, void * addr, xuint32 addrlen);
+
+// extern xint32 xclientsocketcheck(xclientsocket * o, xuint32 status);
 
 // extern xint32 xclientsocketcheck_open(xclientsocket * o);
 // extern xint32 xclientsocketcheck_connecting(xclientsocket * o);
 // extern xint32 xclientsocketcheck_close(xclientsocket * o);
 // extern xint32 xclientsocketcheck_rem(xclientsocket * o);
 
-extern const char * xclientsocketeventtype_str(xuint32 event);
+// extern const char * xclientsocketeventtype_str(xuint32 event);
 
 #endif // __NOVEMBERIZING_X__CLIENT__SOCKET__H__
