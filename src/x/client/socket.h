@@ -15,8 +15,8 @@ struct xclientsocket;
 typedef struct xclientsocket xclientsocket;
 
 typedef xclientsocket * (*xclientsocketdestructor)(xclientsocket *);
-typedef xint64 (*xclientsocketprocessor)(xclientsocket *, xuint32, void *);
-typedef xint64 (*xclientsocketsubscriber)(xclientsocket *, xuint32, void *, xint64);
+typedef xint64 (*xclientsocketprocessor)(xclientsocket *, xuint32);
+typedef xint64 (*xclientsocketobserver)(xclientsocket *, xuint32, xdescriptorparam, xint64);
 typedef xint32 (*xclientsocketchecker)(xclientsocket *, xuint32);
 
 struct xclientsocket
@@ -31,7 +31,7 @@ struct xclientsocket
     xdescriptorhandle                handle;        /**!< descriptor handle */
     xclientsocketprocessor           process;       /**!< descriptor process function */
     xclientsocketchecker             check;         /**!< descriptor status checker  */
-    xclientsocketsubscriber          on;            /**!< descriptor event subscriber */
+    xclientsocketobserver            on;            /**!< descriptor event subscriber */
     xclientsocketevent               event;         /**!< descriptor default event */
     xexception                       exception;     /**!< descriptor exception */
     /** SOCKET MEMBER */
@@ -50,13 +50,5 @@ extern xclientsocket * xclientsocket_rem(xclientsocket * o);
 
 extern xint64 xclientsocketconnect(xclientsocket * o, void * addr, xuint32 addrlen);
 
-// extern xint32 xclientsocketcheck(xclientsocket * o, xuint32 status);
-
-// extern xint32 xclientsocketcheck_open(xclientsocket * o);
-// extern xint32 xclientsocketcheck_connecting(xclientsocket * o);
-// extern xint32 xclientsocketcheck_close(xclientsocket * o);
-// extern xint32 xclientsocketcheck_rem(xclientsocket * o);
-
-// extern const char * xclientsocketeventtype_str(xuint32 event);
 
 #endif // __NOVEMBERIZING_X__CLIENT__SOCKET__H__

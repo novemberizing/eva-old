@@ -92,7 +92,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-noinst_PROGRAMS = example-helloworld$(EXEEXT)
+noinst_PROGRAMS = example-helloworld$(EXEEXT) \
+	example-client-redis$(EXEEXT)
 subdir = src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -167,14 +168,17 @@ am_libnovemberizing_a_OBJECTS = x/std.$(OBJEXT) x/log.$(OBJEXT) \
 	x/client/socket.$(OBJEXT) x/eva.$(OBJEXT) x/eva/cli.$(OBJEXT) \
 	x/eva/extension/echo.$(OBJEXT)
 libnovemberizing_a_OBJECTS = $(am_libnovemberizing_a_OBJECTS)
-am_example_helloworld_OBJECTS = example/helloworld.$(OBJEXT)
-example_helloworld_OBJECTS = $(am_example_helloworld_OBJECTS)
+am_example_client_redis_OBJECTS = example/client/redis.$(OBJEXT)
+example_client_redis_OBJECTS = $(am_example_client_redis_OBJECTS)
 am__DEPENDENCIES_1 = libnovemberizing.a
-example_helloworld_DEPENDENCIES = $(am__DEPENDENCIES_1)
+example_client_redis_DEPENDENCIES = $(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+am_example_helloworld_OBJECTS = example/helloworld.$(OBJEXT)
+example_helloworld_OBJECTS = $(am_example_helloworld_OBJECTS)
+example_helloworld_DEPENDENCIES = $(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -191,15 +195,16 @@ DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = example/$(DEPDIR)/helloworld.Po \
-	x/$(DEPDIR)/array.Po x/$(DEPDIR)/client.Po \
-	x/$(DEPDIR)/command.Po x/$(DEPDIR)/console.Po \
-	x/$(DEPDIR)/descriptor.Po x/$(DEPDIR)/dictionary.Po \
-	x/$(DEPDIR)/eva.Po x/$(DEPDIR)/exception.Po \
-	x/$(DEPDIR)/list.Po x/$(DEPDIR)/log.Po x/$(DEPDIR)/map.Po \
-	x/$(DEPDIR)/object.Po x/$(DEPDIR)/queue.Po \
-	x/$(DEPDIR)/server.Po x/$(DEPDIR)/session.Po \
-	x/$(DEPDIR)/set.Po x/$(DEPDIR)/socket.Po x/$(DEPDIR)/stack.Po \
-	x/$(DEPDIR)/std.Po x/$(DEPDIR)/stream.Po x/$(DEPDIR)/string.Po \
+	example/client/$(DEPDIR)/redis.Po x/$(DEPDIR)/array.Po \
+	x/$(DEPDIR)/client.Po x/$(DEPDIR)/command.Po \
+	x/$(DEPDIR)/console.Po x/$(DEPDIR)/descriptor.Po \
+	x/$(DEPDIR)/dictionary.Po x/$(DEPDIR)/eva.Po \
+	x/$(DEPDIR)/exception.Po x/$(DEPDIR)/list.Po \
+	x/$(DEPDIR)/log.Po x/$(DEPDIR)/map.Po x/$(DEPDIR)/object.Po \
+	x/$(DEPDIR)/queue.Po x/$(DEPDIR)/server.Po \
+	x/$(DEPDIR)/session.Po x/$(DEPDIR)/set.Po \
+	x/$(DEPDIR)/socket.Po x/$(DEPDIR)/stack.Po x/$(DEPDIR)/std.Po \
+	x/$(DEPDIR)/stream.Po x/$(DEPDIR)/string.Po \
 	x/$(DEPDIR)/sync.Po x/$(DEPDIR)/thread.Po \
 	x/client/$(DEPDIR)/socket.Po x/command/$(DEPDIR)/string.Po \
 	x/descriptor/event/$(DEPDIR)/generator.Po \
@@ -233,9 +238,10 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(libnovemberizing_a_SOURCES) $(example_helloworld_SOURCES)
+SOURCES = $(libnovemberizing_a_SOURCES) \
+	$(example_client_redis_SOURCES) $(example_helloworld_SOURCES)
 DIST_SOURCES = $(libnovemberizing_a_SOURCES) \
-	$(example_helloworld_SOURCES)
+	$(example_client_redis_SOURCES) $(example_helloworld_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -297,7 +303,7 @@ INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
-LIBS = libnovemberizing.a             \
+LIBS = libnovemberizing.a                                                    \
        -lpthread
 
 LIBTOOL = @LIBTOOL@
@@ -431,6 +437,8 @@ libnovemberizing_a_SOURCES = x/std.c                                          \
 
 example_helloworld_SOURCES = example/helloworld.c
 example_helloworld_LDADD = $(LIBS)
+example_client_redis_SOURCES = example/client/redis.c
+example_client_redis_LDADD = $(LIBS)
 nobase_include_HEADERS = x/std.h                \
                          x/thread.h             \
                          x/sync.h               \
@@ -674,6 +682,18 @@ libnovemberizing.a: $(libnovemberizing_a_OBJECTS) $(libnovemberizing_a_DEPENDENC
 	$(AM_V_at)-rm -f libnovemberizing.a
 	$(AM_V_AR)$(libnovemberizing_a_AR) libnovemberizing.a $(libnovemberizing_a_OBJECTS) $(libnovemberizing_a_LIBADD)
 	$(AM_V_at)$(RANLIB) libnovemberizing.a
+example/client/$(am__dirstamp):
+	@$(MKDIR_P) example/client
+	@: > example/client/$(am__dirstamp)
+example/client/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) example/client/$(DEPDIR)
+	@: > example/client/$(DEPDIR)/$(am__dirstamp)
+example/client/redis.$(OBJEXT): example/client/$(am__dirstamp) \
+	example/client/$(DEPDIR)/$(am__dirstamp)
+
+example-client-redis$(EXEEXT): $(example_client_redis_OBJECTS) $(example_client_redis_DEPENDENCIES) $(EXTRA_example_client_redis_DEPENDENCIES) 
+	@rm -f example-client-redis$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_client_redis_OBJECTS) $(example_client_redis_LDADD) $(LIBS)
 example/$(am__dirstamp):
 	@$(MKDIR_P) example
 	@: > example/$(am__dirstamp)
@@ -690,6 +710,7 @@ example-helloworld$(EXEEXT): $(example_helloworld_OBJECTS) $(example_helloworld_
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 	-rm -f example/*.$(OBJEXT)
+	-rm -f example/client/*.$(OBJEXT)
 	-rm -f x/*.$(OBJEXT)
 	-rm -f x/client/*.$(OBJEXT)
 	-rm -f x/command/*.$(OBJEXT)
@@ -711,6 +732,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@example/$(DEPDIR)/helloworld.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@example/client/$(DEPDIR)/redis.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/array.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/client.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/command.Po@am__quote@ # am--include-marker
@@ -934,6 +956,8 @@ distclean-generic:
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
 	-rm -f example/$(DEPDIR)/$(am__dirstamp)
 	-rm -f example/$(am__dirstamp)
+	-rm -f example/client/$(DEPDIR)/$(am__dirstamp)
+	-rm -f example/client/$(am__dirstamp)
 	-rm -f x/$(DEPDIR)/$(am__dirstamp)
 	-rm -f x/$(am__dirstamp)
 	-rm -f x/client/$(DEPDIR)/$(am__dirstamp)
@@ -977,6 +1001,7 @@ clean-am: clean-generic clean-libLIBRARIES clean-libtool \
 
 distclean: distclean-am
 		-rm -f example/$(DEPDIR)/helloworld.Po
+	-rm -f example/client/$(DEPDIR)/redis.Po
 	-rm -f x/$(DEPDIR)/array.Po
 	-rm -f x/$(DEPDIR)/client.Po
 	-rm -f x/$(DEPDIR)/command.Po
@@ -1065,6 +1090,7 @@ installcheck-am:
 
 maintainer-clean: maintainer-clean-am
 		-rm -f example/$(DEPDIR)/helloworld.Po
+	-rm -f example/client/$(DEPDIR)/redis.Po
 	-rm -f x/$(DEPDIR)/array.Po
 	-rm -f x/$(DEPDIR)/client.Po
 	-rm -f x/$(DEPDIR)/command.Po

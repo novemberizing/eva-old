@@ -51,13 +51,17 @@ libnovemberizing_a_SOURCES = x/std.c                                          \
 
 
 
-LIBS = libnovemberizing.a             \
+LIBS = libnovemberizing.a                                                    \
        -lpthread
 
-noinst_PROGRAMS = example-helloworld
+noinst_PROGRAMS = example-helloworld                                         \
+                  example-client-redis
 
-example_helloworld_SOURCES = example/helloworld.c
-example_helloworld_LDADD   = $(LIBS)
+example_helloworld_SOURCES   = example/helloworld.c
+example_helloworld_LDADD     = $(LIBS)
+
+example_client_redis_SOURCES = example/client/redis.c
+example_client_redis_LDADD   = $(LIBS)
 
 nobase_include_HEADERS = x/std.h                \
                          x/thread.h             \
