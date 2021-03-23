@@ -161,6 +161,7 @@ am_libnovemberizing_a_OBJECTS = x/std.$(OBJEXT) x/log.$(OBJEXT) \
 	x/event/generator/set.$(OBJEXT) x/descriptor.$(OBJEXT) \
 	x/descriptor/status.$(OBJEXT) \
 	x/descriptor/event/avail.$(OBJEXT) \
+	x/descriptor/event/type.$(OBJEXT) \
 	x/descriptor/event/dispatch.$(OBJEXT) \
 	x/descriptor/event/generator.$(OBJEXT) \
 	x/descriptor/event/generator/epoll.$(OBJEXT) \
@@ -218,6 +219,7 @@ am__depfiles_remade = example/$(DEPDIR)/helloworld.Po \
 	x/descriptor/event/$(DEPDIR)/avail.Po \
 	x/descriptor/event/$(DEPDIR)/dispatch.Po \
 	x/descriptor/event/$(DEPDIR)/generator.Po \
+	x/descriptor/event/$(DEPDIR)/type.Po \
 	x/descriptor/event/generator/$(DEPDIR)/epoll.Po \
 	x/descriptor/event/generator/subscription/$(DEPDIR)/list.Po \
 	x/eva/$(DEPDIR)/cli.Po x/eva/extension/$(DEPDIR)/echo.Po \
@@ -434,6 +436,7 @@ libnovemberizing_a_SOURCES = x/std.c                                          \
                              x/descriptor.c                                   \
                              x/descriptor/status.c                            \
                              x/descriptor/event/avail.c                       \
+                             x/descriptor/event/type.c                        \
                              x/descriptor/event/dispatch.c                    \
                              x/descriptor/event/generator.c                   \
                              x/descriptor/event/generator/epoll.c             \
@@ -639,6 +642,8 @@ x/descriptor/event/$(DEPDIR)/$(am__dirstamp):
 x/descriptor/event/avail.$(OBJEXT):  \
 	x/descriptor/event/$(am__dirstamp) \
 	x/descriptor/event/$(DEPDIR)/$(am__dirstamp)
+x/descriptor/event/type.$(OBJEXT): x/descriptor/event/$(am__dirstamp) \
+	x/descriptor/event/$(DEPDIR)/$(am__dirstamp)
 x/descriptor/event/dispatch.$(OBJEXT):  \
 	x/descriptor/event/$(am__dirstamp) \
 	x/descriptor/event/$(DEPDIR)/$(am__dirstamp)
@@ -825,6 +830,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@x/descriptor/event/$(DEPDIR)/avail.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/descriptor/event/$(DEPDIR)/dispatch.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/descriptor/event/$(DEPDIR)/generator.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/descriptor/event/$(DEPDIR)/type.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/descriptor/event/generator/$(DEPDIR)/epoll.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/descriptor/event/generator/subscription/$(DEPDIR)/list.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/eva/$(DEPDIR)/cli.Po@am__quote@ # am--include-marker
@@ -1108,6 +1114,7 @@ distclean: distclean-am
 	-rm -f x/descriptor/event/$(DEPDIR)/avail.Po
 	-rm -f x/descriptor/event/$(DEPDIR)/dispatch.Po
 	-rm -f x/descriptor/event/$(DEPDIR)/generator.Po
+	-rm -f x/descriptor/event/$(DEPDIR)/type.Po
 	-rm -f x/descriptor/event/generator/$(DEPDIR)/epoll.Po
 	-rm -f x/descriptor/event/generator/subscription/$(DEPDIR)/list.Po
 	-rm -f x/eva/$(DEPDIR)/cli.Po
@@ -1203,6 +1210,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f x/descriptor/event/$(DEPDIR)/avail.Po
 	-rm -f x/descriptor/event/$(DEPDIR)/dispatch.Po
 	-rm -f x/descriptor/event/$(DEPDIR)/generator.Po
+	-rm -f x/descriptor/event/$(DEPDIR)/type.Po
 	-rm -f x/descriptor/event/generator/$(DEPDIR)/epoll.Po
 	-rm -f x/descriptor/event/generator/subscription/$(DEPDIR)/list.Po
 	-rm -f x/eva/$(DEPDIR)/cli.Po

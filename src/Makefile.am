@@ -36,6 +36,7 @@ libnovemberizing_a_SOURCES = x/std.c                                          \
                              x/descriptor.c                                   \
                              x/descriptor/status.c                            \
                              x/descriptor/event/avail.c                       \
+                             x/descriptor/event/type.c                        \
                              x/descriptor/event/dispatch.c                    \
                              x/descriptor/event/generator.c                   \
                              x/descriptor/event/generator/epoll.c             \

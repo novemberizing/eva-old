@@ -1,6 +1,8 @@
 #ifndef   __NOVEMBERIZING_X__DESCRIPTOR__EVENT_TYPE__H__
 #define   __NOVEMBERIZING_X__DESCRIPTOR__EVENT_TYPE__H__
 
+#include <x/std.h>
+
 #define xdescriptoreventtype_void            0
 #define xdescriptoreventtype_open            1
 #define xdescriptoreventtype_in              2
@@ -23,8 +25,6 @@
 #define xdescriptoreventtype_unregister     19
 #define xdescriptoreventtype_max            20
 
-// #define xdescriptoreventtype_readend        20
-// #define xdescriptoreventtype_writeend       21
-// #define xdescriptoreventtype_max            22
+extern const char * xdescriptoreventtype_str(xuint64 event);
 
 #endif // __NOVEMBERIZING_X__DESCRIPTOR__EVENT_TYPE__H__
