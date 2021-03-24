@@ -8,7 +8,53 @@
 #include "console/descriptor.h"
 #include "event/engine.h"
 
+static xconsoledescriptor * xconsoledescriptor_rem(xconsoledescriptor * o);
 
+struct xconsole
+{
+    xconsoledescriptor in;
+    xconsoledescriptor out;
+    xconsoleobserver   on;
+};
+
+static xconsole singleton = {
+    {
+        xconsoledescriptor_rem,             // rem
+        xnil,                               // subscription
+        xnil,                               // sync
+        xdescriptormask_void,               // mask
+        xdescriptorstatus_void,             // status
+        xdescriptorhandle_invalid,          // handle
+        xnil,                               // process: todo
+        xnil,                               // check: deprecated
+        xnil,                               // observer: todo
+        { xnil, xnil, xnil, xnil, xnil },   // event: todo
+        xexception_void,                    // exception
+        xnil,                               // console
+        xnil                                // stream
+    },
+    {
+        xconsoledescriptor_rem,             // rem
+        xnil,                               // subscription
+        xnil,                               // sync
+        xdescriptormask_void,               // mask
+        xdescriptorstatus_void,             // status
+        xdescriptorhandle_invalid,          // handle
+        xnil,                               // process: todo
+        xnil,                               // check: deprecated
+        xnil,                               // observer: todo
+        { xnil, xnil, xnil, xnil, xnil },   // event: todo
+        xexception_void,                    // exception
+        xnil,                               // console
+        xnil                                // stream
+    },
+    xnil
+};
+
+extern void xconsoleobserver_set(xconsoleobserver on)
+{
+    singleton.on = on;
+}
 
 // /**
 //  * 로직을 합번 정리할 필요가 있다.

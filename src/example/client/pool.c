@@ -53,6 +53,8 @@ int main(int argc, char ** argv)
     xclientpooladd(pool, xclientnew(AF_INET, SOCK_STREAM, IPPROTO_TCP, xaddressof(addr), sizeof(struct sockaddr_in), xnil, sizeof(xclientpool)));
 
     xeventengine_clientpool_add(engine, pool);
+
+    // xeventengine_cli_set(evacli);
     
     xeventengine_run(engine);
 
