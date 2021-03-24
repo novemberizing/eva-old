@@ -347,7 +347,7 @@ extern xint32 xeventengine_descriptor_dispatch(xdescriptor * descriptor, xuint32
         xassertion(engine == xnil, "");
         if(xeventprocessorpool_size(engine->processors) > 0)
         {
-            if(descriptor->event.queue == xnil)
+            if(descriptor->event.queue != xnil)
             {
                 xeventengine_queue_push(engine, (xevent *) xaddressof(descriptor->event));
             }

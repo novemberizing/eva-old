@@ -141,6 +141,12 @@ extern xint64 xdescriptorclose(xdescriptor * descriptor)
 {
     if(descriptor->handle.f >= 0)
     {
+        xdescriptoreventsubscription * subscription = descriptor->subscription;
+        xdescriptoreventgenerator * generator = subscription ? descriptor->subscription->generatornode.generator : xnil;
+        if(generator)
+        {
+            xdescriptoreventgenerator_descriptor_unregister(generator, descriptor);
+        }
         if(descriptor->handle.f > xdescriptorsystemno_max)
         {
             if(close(descriptor->handle.f) != xsuccess)
@@ -151,6 +157,10 @@ extern xint64 xdescriptorclose(xdescriptor * descriptor)
             descriptor->process(descriptor, xdescriptoreventtype_clear);
             xdescriptoron(descriptor, xdescriptoreventtype_close, xdescriptorparamgen(xnil), xsuccess);
             descriptor->handle.f = xinvalid;
+        }
+        if(generator)
+        {
+            xdescriptoreventgenerator_descriptor_dispatch(generator, descriptor);
         }
     }
 

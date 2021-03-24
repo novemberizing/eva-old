@@ -80,10 +80,7 @@ static xint64 xclientsocketprocess_void(xclientsocket * o)
 {
     if(xdescriptorstatuscheck_close((xdescriptor *) o))
     {
-        xdescriptoreventgenerator_descriptor_unregister(o->subscription->generatornode.generator, (xdescriptor *) o);
         xdescriptorclose((xdescriptor *) o);
-        xdescriptoreventgenerator_descriptor_dispatch(o->subscription->generatornode.generator, (xdescriptor *) o);
-
         return xsuccess;
     }
 
@@ -117,20 +114,31 @@ static xint64 xclientsocketprocess_void(xclientsocket * o)
 
     if(xdescriptorstatuscheck_close((xdescriptor *) o) == xfalse)
     {
-        if((o->status & xdescriptorstatus_connect) || (o->status & xdescriptorstatus_connecting))
+        if(o->subscription)
         {
-            if((o->status & xdescriptorstatus_register) == xdescriptorstatus_void)
+            if((o->status & xdescriptorstatus_connect) || (o->status & xdescriptorstatus_connecting))
             {
-                xdescriptoreventgenerator_descriptor_register(o->subscription->generatornode.generator, (xdescriptor *) o);
+                if((o->status & xdescriptorstatus_register) == xdescriptorstatus_void)
+                {
+                    xdescriptoreventgenerator_descriptor_register(o->subscription->generatornode.generator, (xdescriptor *) o);
+                }
+                else
+                {
+                    if((o->status & (xdescriptorstatus_in | xdescriptorstatus_out)) != (xdescriptorstatus_in | xdescriptorstatus_out))
+                    {
+                        xdescriptoreventgenerator_descriptor_update(o->subscription->generatornode.generator, (xdescriptor *) o);
+                    }
+                    else
+                    {
+                        xassertion(xtrue, "");
+                        xeventengine_event_dispatch(o->subscription->enginenode.engine, xaddressof(o->event));
+                    }
+                }
             }
             else
             {
-                xdescriptoreventgenerator_descriptor_update(o->subscription->generatornode.generator, (xdescriptor *) o);
+                xassertion(xtrue, "");
             }
-        }
-        else
-        {
-            xassertion(xtrue, "");
         }
     }
 
@@ -181,16 +189,17 @@ static xint64 xclientsocketprocess_open(xclientsocket * o)
                 }
             }
         }
-        else
+        else if((o->status & xdescriptorstatus_connect) == xdescriptorstatus_void)
         {
             xclientsocketconnect(o, o->addr, o->addrlen);
-            
 
             if(xdescriptorstatuscheck_close((xdescriptor *) o) == xfalse)
             {
-                if(o->subscription)
+                xdescriptoreventsubscription * subscription = o->subscription;
+                xdescriptoreventgenerator * generator = subscription ? subscription->generatornode.generator : xnil;
+                if(generator)
                 {
-                    xdescriptoreventgeneratorsubscriptionlist_push(o->subscription->generatornode.generator->alive, (xdescriptoreventsubscription *) o->subscription);
+                    xdescriptoreventgeneratorsubscriptionlist_push(generator->alive, subscription);
                 }
             }
         }
