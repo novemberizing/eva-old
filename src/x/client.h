@@ -36,4 +36,6 @@ extern xint64 xclientclose(xclient * client);
 extern xint64 xclientsend(xclient * client, const char * data, xuint64 len);
 extern xint64 xclientrecv(xclient * client, char * buffer, xuint64 size);
 
+extern xint64 xclientsendf(xclient * client, const char * format, ...);
+
 #endif // __NOVEMBERIZING_X__CLIENT__H__

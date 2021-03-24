@@ -9,6 +9,7 @@ lib_LIBRARIES = libnovemberizing.a
 libnovemberizing_a_SOURCES = x/std.c                                          \
                              x/log.c                                          \
                              x/string.c                                       \
+                             x/string/format.c                                \
                              x/dictionary.c                                   \
                              x/array.c                                        \
                              x/list.c                                         \
@@ -65,16 +66,24 @@ LIBS = libnovemberizing.a                                                    \
 
 noinst_PROGRAMS = example-helloworld                                         \
                   example-client-redis                                       \
-                  example-client-pool
+                  example-client-pool                                        \
+                  example-string-simple                                      \
+                  example-string-format
 
-example_helloworld_SOURCES   = example/helloworld.c
-example_helloworld_LDADD     = $(LIBS)
+example_helloworld_SOURCES    = example/helloworld.c
+example_helloworld_LDADD      = $(LIBS)
 
-example_client_redis_SOURCES = example/client/redis.c
-example_client_redis_LDADD   = $(LIBS)
+example_client_redis_SOURCES  = example/client/redis.c
+example_client_redis_LDADD    = $(LIBS)
 
-example_client_pool_SOURCES  = example/client/pool.c
-example_client_pool_LDADD    = $(LIBS)
+example_client_pool_SOURCES   = example/client/pool.c
+example_client_pool_LDADD     = $(LIBS)
+
+example_string_format_SOURCES = example/string/format.c
+example_string_format_LDADD   = $(LIBS)
+
+example_string_simple_SOURCES = example/string/simple.c
+example_string_simple_LDADD   = $(LIBS)
 
 nobase_include_HEADERS = x/std.h                \
                          x/thread.h             \

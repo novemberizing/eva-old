@@ -87,6 +87,8 @@ extern xbyte * xstreamback(xstream * o)
 {
     xlogfunction_start("%s(%p)", __func__, o);
 
+    xassertion(o == xnil, "");
+
     xbyte * ret = xnil;
     switch(o->type)
     {
@@ -117,6 +119,8 @@ extern xbyte * xstreamback(xstream * o)
 extern xbyte * xstreamfront(xstream * o)
 {
     xlogfunction_start("%s(%p)", __func__, o);
+
+    xassertion(o == xnil, "");
 
     xbyte * ret = xnil;
     switch(o->type)
@@ -149,6 +153,8 @@ extern xuint64 xstreamremain(xstream * o)
 {
     xlogfunction_start("%s(%p)", __func__, o);
 
+    xassertion(o == xnil, "");
+
     xuint64 ret = 0;
     switch(o->type)
     {
@@ -179,6 +185,8 @@ extern xuint64 xstreamremain(xstream * o)
 extern xuint64 xstreamlen(xstream * o)
 {
     xlogfunction_start("%s(%p)", __func__, o);
+
+    xassertion(o == xnil, "");
 
     xuint64 ret = 0;
     switch(o->type)
@@ -212,6 +220,8 @@ extern xuint64 xstreamcapacity_set(xstream * o, xuint64 v)
 {
     xlogfunction_start("%s(%p, %lu)", __func__, o, v);
 
+    xassertion(o == xnil, "");
+
     xuint64 ret = 0;
     switch(o->type)
     {
@@ -235,6 +245,8 @@ extern xuint64 xstreamcapacity_set(xstream * o, xuint64 v)
 extern xuint64 xstreamcapacity_get(xstream * o)
 {
     xlogfunction_start("%s(%p)", __func__, o);
+
+    xassertion(o == xnil, "");
 
     xuint64 ret = 0;
     switch(o->type)
@@ -264,6 +276,8 @@ extern xuint64 xstreamsize_set(xstream * o, xuint64 n)
 {
     xlogfunction_start("%s(%p, %lu)", __func__, o, n);
 
+    xassertion(o == xnil, "");
+
     xuint64 ret = 0;
     switch(o->type)
     {
@@ -289,6 +303,8 @@ extern xuint64 xstreamsize_set(xstream * o, xuint64 n)
 extern xuint64 xstreamsize_get(xstream * o)
 {
     xlogfunction_start("%s(%p)", __func__, o);
+
+    xassertion(o == xnil, "");
 
     xuint64 ret = 0;
     switch(o->type)
@@ -323,6 +339,8 @@ extern xuint64 xstreampos_set(xstream * o, xuint64 n)
 {
     xlogfunction_start("%s(%p, %lu)", __func__, o, n);
 
+    xassertion(o == xnil, "");
+
     xuint64 ret = 0;
     switch(o->type)
     {
@@ -353,6 +371,9 @@ extern xuint64 xstreampos_set(xstream * o, xuint64 n)
 extern xuint64 xstreampos_get(xstream * o)
 {
     xlogfunction_start("%s(%p)", __func__, o);
+
+    xassertion(o == xnil, "");
+
     xuint64 ret = 0;
 
     switch(o->type)
@@ -386,6 +407,8 @@ extern xuint64 xstreampos_get(xstream * o)
 extern xuint64 xstreamadjust(xstream * o, xint32 force)
 {
     xlogfunction_start("%s(%p, %d)", __func__, o, force);
+
+    xassertion(o == xnil, "");
     
     xuint64 ret = 0;
     switch(o->type)
@@ -402,6 +425,8 @@ extern xuint64 xstreampush(xstream * o, const xbyte * data, xuint64 len)
 {
     xlogfunction_start("%s(%p, $p, %lu)", __func__, o, data, len);
 
+    xassertion(o == xnil, "");
+
     xuint64 ret = 0;
     switch(o->type)
     {
@@ -416,6 +441,9 @@ extern xuint64 xstreampush(xstream * o, const xbyte * data, xuint64 len)
 extern void xstreamclear(xstream * o)
 {
     xlogfunction_start("%s(%p)", __func__, o);
+
+    xassertion(o == xnil, "");
+    
     if(o)
     {
         switch(o->type)

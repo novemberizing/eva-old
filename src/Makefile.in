@@ -93,7 +93,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 noinst_PROGRAMS = example-helloworld$(EXEEXT) \
-	example-client-redis$(EXEEXT) example-client-pool$(EXEEXT)
+	example-client-redis$(EXEEXT) example-client-pool$(EXEEXT) \
+	example-string-simple$(EXEEXT) example-string-format$(EXEEXT)
 subdir = src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -147,11 +148,11 @@ libnovemberizing_a_AR = $(AR) $(ARFLAGS)
 libnovemberizing_a_LIBADD =
 am__dirstamp = $(am__leading_dot)dirstamp
 am_libnovemberizing_a_OBJECTS = x/std.$(OBJEXT) x/log.$(OBJEXT) \
-	x/string.$(OBJEXT) x/dictionary.$(OBJEXT) x/array.$(OBJEXT) \
-	x/list.$(OBJEXT) x/stack.$(OBJEXT) x/queue.$(OBJEXT) \
-	x/set.$(OBJEXT) x/map.$(OBJEXT) x/object.$(OBJEXT) \
-	x/exception.$(OBJEXT) x/thread.$(OBJEXT) \
-	x/thread/posix.$(OBJEXT) x/sync.$(OBJEXT) \
+	x/string.$(OBJEXT) x/string/format.$(OBJEXT) \
+	x/dictionary.$(OBJEXT) x/array.$(OBJEXT) x/list.$(OBJEXT) \
+	x/stack.$(OBJEXT) x/queue.$(OBJEXT) x/set.$(OBJEXT) \
+	x/map.$(OBJEXT) x/object.$(OBJEXT) x/exception.$(OBJEXT) \
+	x/thread.$(OBJEXT) x/thread/posix.$(OBJEXT) x/sync.$(OBJEXT) \
 	x/sync/posix/mutex.$(OBJEXT) x/stream.$(OBJEXT) \
 	x/stream/buffer.$(OBJEXT) x/command.$(OBJEXT) \
 	x/command/string.$(OBJEXT) x/event/queue.$(OBJEXT) \
@@ -190,6 +191,12 @@ example_client_redis_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_example_helloworld_OBJECTS = example/helloworld.$(OBJEXT)
 example_helloworld_OBJECTS = $(am_example_helloworld_OBJECTS)
 example_helloworld_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_example_string_format_OBJECTS = example/string/format.$(OBJEXT)
+example_string_format_OBJECTS = $(am_example_string_format_OBJECTS)
+example_string_format_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_example_string_simple_OBJECTS = example/string/simple.$(OBJEXT)
+example_string_simple_OBJECTS = $(am_example_string_simple_OBJECTS)
+example_string_simple_DEPENDENCIES = $(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -207,7 +214,9 @@ depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = example/$(DEPDIR)/helloworld.Po \
 	example/client/$(DEPDIR)/pool.Po \
-	example/client/$(DEPDIR)/redis.Po x/$(DEPDIR)/array.Po \
+	example/client/$(DEPDIR)/redis.Po \
+	example/string/$(DEPDIR)/format.Po \
+	example/string/$(DEPDIR)/simple.Po x/$(DEPDIR)/array.Po \
 	x/$(DEPDIR)/client.Po x/$(DEPDIR)/command.Po \
 	x/$(DEPDIR)/console.Po x/$(DEPDIR)/descriptor.Po \
 	x/$(DEPDIR)/dictionary.Po x/$(DEPDIR)/eva.Po \
@@ -237,8 +246,8 @@ am__depfiles_remade = example/$(DEPDIR)/helloworld.Po \
 	x/server/$(DEPDIR)/socket.Po x/session/$(DEPDIR)/socket.Po \
 	x/socket/$(DEPDIR)/handle.Po \
 	x/socket/processor/tcp/$(DEPDIR)/client.Po \
-	x/stream/$(DEPDIR)/buffer.Po x/sync/posix/$(DEPDIR)/mutex.Po \
-	x/thread/$(DEPDIR)/posix.Po
+	x/stream/$(DEPDIR)/buffer.Po x/string/$(DEPDIR)/format.Po \
+	x/sync/posix/$(DEPDIR)/mutex.Po x/thread/$(DEPDIR)/posix.Po
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -259,10 +268,13 @@ am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
 SOURCES = $(libnovemberizing_a_SOURCES) $(example_client_pool_SOURCES) \
-	$(example_client_redis_SOURCES) $(example_helloworld_SOURCES)
+	$(example_client_redis_SOURCES) $(example_helloworld_SOURCES) \
+	$(example_string_format_SOURCES) \
+	$(example_string_simple_SOURCES)
 DIST_SOURCES = $(libnovemberizing_a_SOURCES) \
 	$(example_client_pool_SOURCES) $(example_client_redis_SOURCES) \
-	$(example_helloworld_SOURCES)
+	$(example_helloworld_SOURCES) $(example_string_format_SOURCES) \
+	$(example_string_simple_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -416,6 +428,7 @@ lib_LIBRARIES = libnovemberizing.a
 libnovemberizing_a_SOURCES = x/std.c                                          \
                              x/log.c                                          \
                              x/string.c                                       \
+                             x/string/format.c                                \
                              x/dictionary.c                                   \
                              x/array.c                                        \
                              x/list.c                                         \
@@ -471,6 +484,10 @@ example_client_redis_SOURCES = example/client/redis.c
 example_client_redis_LDADD = $(LIBS)
 example_client_pool_SOURCES = example/client/pool.c
 example_client_pool_LDADD = $(LIBS)
+example_string_format_SOURCES = example/string/format.c
+example_string_format_LDADD = $(LIBS)
+example_string_simple_SOURCES = example/string/simple.c
+example_string_simple_LDADD = $(LIBS)
 nobase_include_HEADERS = x/std.h                \
                          x/thread.h             \
                          x/sync.h               \
@@ -558,6 +575,14 @@ x/$(DEPDIR)/$(am__dirstamp):
 x/std.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
 x/log.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
 x/string.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
+x/string/$(am__dirstamp):
+	@$(MKDIR_P) x/string
+	@: > x/string/$(am__dirstamp)
+x/string/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) x/string/$(DEPDIR)
+	@: > x/string/$(DEPDIR)/$(am__dirstamp)
+x/string/format.$(OBJEXT): x/string/$(am__dirstamp) \
+	x/string/$(DEPDIR)/$(am__dirstamp)
 x/dictionary.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
 x/array.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
 x/list.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
@@ -796,11 +821,30 @@ example/helloworld.$(OBJEXT): example/$(am__dirstamp) \
 example-helloworld$(EXEEXT): $(example_helloworld_OBJECTS) $(example_helloworld_DEPENDENCIES) $(EXTRA_example_helloworld_DEPENDENCIES) 
 	@rm -f example-helloworld$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(example_helloworld_OBJECTS) $(example_helloworld_LDADD) $(LIBS)
+example/string/$(am__dirstamp):
+	@$(MKDIR_P) example/string
+	@: > example/string/$(am__dirstamp)
+example/string/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) example/string/$(DEPDIR)
+	@: > example/string/$(DEPDIR)/$(am__dirstamp)
+example/string/format.$(OBJEXT): example/string/$(am__dirstamp) \
+	example/string/$(DEPDIR)/$(am__dirstamp)
+
+example-string-format$(EXEEXT): $(example_string_format_OBJECTS) $(example_string_format_DEPENDENCIES) $(EXTRA_example_string_format_DEPENDENCIES) 
+	@rm -f example-string-format$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_string_format_OBJECTS) $(example_string_format_LDADD) $(LIBS)
+example/string/simple.$(OBJEXT): example/string/$(am__dirstamp) \
+	example/string/$(DEPDIR)/$(am__dirstamp)
+
+example-string-simple$(EXEEXT): $(example_string_simple_OBJECTS) $(example_string_simple_DEPENDENCIES) $(EXTRA_example_string_simple_DEPENDENCIES) 
+	@rm -f example-string-simple$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_string_simple_OBJECTS) $(example_string_simple_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 	-rm -f example/*.$(OBJEXT)
 	-rm -f example/client/*.$(OBJEXT)
+	-rm -f example/string/*.$(OBJEXT)
 	-rm -f x/*.$(OBJEXT)
 	-rm -f x/client/*.$(OBJEXT)
 	-rm -f x/client/pool/*.$(OBJEXT)
@@ -820,6 +864,7 @@ mostlyclean-compile:
 	-rm -f x/socket/*.$(OBJEXT)
 	-rm -f x/socket/processor/tcp/*.$(OBJEXT)
 	-rm -f x/stream/*.$(OBJEXT)
+	-rm -f x/string/*.$(OBJEXT)
 	-rm -f x/sync/posix/*.$(OBJEXT)
 	-rm -f x/thread/*.$(OBJEXT)
 
@@ -829,6 +874,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@example/$(DEPDIR)/helloworld.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/client/$(DEPDIR)/pool.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/client/$(DEPDIR)/redis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@example/string/$(DEPDIR)/format.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@example/string/$(DEPDIR)/simple.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/array.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/client.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/command.Po@am__quote@ # am--include-marker
@@ -878,6 +925,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@x/socket/$(DEPDIR)/handle.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/socket/processor/tcp/$(DEPDIR)/client.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/stream/$(DEPDIR)/buffer.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/string/$(DEPDIR)/format.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/sync/posix/$(DEPDIR)/mutex.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/thread/$(DEPDIR)/posix.Po@am__quote@ # am--include-marker
 
@@ -1063,6 +1111,8 @@ distclean-generic:
 	-rm -f example/$(am__dirstamp)
 	-rm -f example/client/$(DEPDIR)/$(am__dirstamp)
 	-rm -f example/client/$(am__dirstamp)
+	-rm -f example/string/$(DEPDIR)/$(am__dirstamp)
+	-rm -f example/string/$(am__dirstamp)
 	-rm -f x/$(DEPDIR)/$(am__dirstamp)
 	-rm -f x/$(am__dirstamp)
 	-rm -f x/client/$(DEPDIR)/$(am__dirstamp)
@@ -1101,6 +1151,8 @@ distclean-generic:
 	-rm -f x/socket/processor/tcp/$(am__dirstamp)
 	-rm -f x/stream/$(DEPDIR)/$(am__dirstamp)
 	-rm -f x/stream/$(am__dirstamp)
+	-rm -f x/string/$(DEPDIR)/$(am__dirstamp)
+	-rm -f x/string/$(am__dirstamp)
 	-rm -f x/sync/posix/$(DEPDIR)/$(am__dirstamp)
 	-rm -f x/sync/posix/$(am__dirstamp)
 	-rm -f x/thread/$(DEPDIR)/$(am__dirstamp)
@@ -1118,6 +1170,8 @@ distclean: distclean-am
 		-rm -f example/$(DEPDIR)/helloworld.Po
 	-rm -f example/client/$(DEPDIR)/pool.Po
 	-rm -f example/client/$(DEPDIR)/redis.Po
+	-rm -f example/string/$(DEPDIR)/format.Po
+	-rm -f example/string/$(DEPDIR)/simple.Po
 	-rm -f x/$(DEPDIR)/array.Po
 	-rm -f x/$(DEPDIR)/client.Po
 	-rm -f x/$(DEPDIR)/command.Po
@@ -1167,6 +1221,7 @@ distclean: distclean-am
 	-rm -f x/socket/$(DEPDIR)/handle.Po
 	-rm -f x/socket/processor/tcp/$(DEPDIR)/client.Po
 	-rm -f x/stream/$(DEPDIR)/buffer.Po
+	-rm -f x/string/$(DEPDIR)/format.Po
 	-rm -f x/sync/posix/$(DEPDIR)/mutex.Po
 	-rm -f x/thread/$(DEPDIR)/posix.Po
 	-rm -f Makefile
@@ -1217,6 +1272,8 @@ maintainer-clean: maintainer-clean-am
 		-rm -f example/$(DEPDIR)/helloworld.Po
 	-rm -f example/client/$(DEPDIR)/pool.Po
 	-rm -f example/client/$(DEPDIR)/redis.Po
+	-rm -f example/string/$(DEPDIR)/format.Po
+	-rm -f example/string/$(DEPDIR)/simple.Po
 	-rm -f x/$(DEPDIR)/array.Po
 	-rm -f x/$(DEPDIR)/client.Po
 	-rm -f x/$(DEPDIR)/command.Po
@@ -1266,6 +1323,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f x/socket/$(DEPDIR)/handle.Po
 	-rm -f x/socket/processor/tcp/$(DEPDIR)/client.Po
 	-rm -f x/stream/$(DEPDIR)/buffer.Po
+	-rm -f x/string/$(DEPDIR)/format.Po
 	-rm -f x/sync/posix/$(DEPDIR)/mutex.Po
 	-rm -f x/thread/$(DEPDIR)/posix.Po
 	-rm -f Makefile

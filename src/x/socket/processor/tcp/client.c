@@ -171,11 +171,20 @@ static xint64 xclientsocketprocess_open(xclientsocket * o)
                 o->status &= (~xdescriptorstatus_connecting);
                 o->status |= (xdescriptorstatus_open | xdescriptorstatus_connect | xdescriptorstatus_out);
                 xdescriptoron((xdescriptor *) o, xdescriptoreventtype_connect, xdescriptorparamgen(xnil), xsuccess);
+                if(o->stream.in == xnil)
+                {
+                    o->stream.in = xstreamnew(xstreamtype_buffer);
+                }
+                if(o->stream.out == xnil)
+                {
+                    o->stream.out = xstreamnew(xstreamtype_buffer);
+                }
             }
         }
         else
         {
             xclientsocketconnect(o, o->addr, o->addrlen);
+            
 
             if(xdescriptorstatuscheck_close((xdescriptor *) o) == xfalse)
             {
@@ -290,6 +299,15 @@ static xint64 xclientsocketprocess_opening(xclientsocket * o)
                 o->status &= (~xdescriptorstatus_connecting);
                 o->status |= (xdescriptorstatus_open | xdescriptorstatus_connect | xdescriptorstatus_out);
                 xdescriptoron((xdescriptor *) o, xdescriptoreventtype_connect, xdescriptorparamgen(xnil), xsuccess);
+
+                if(o->stream.in == xnil)
+                {
+                    o->stream.in = xstreamnew(xstreamtype_buffer);
+                }
+                if(o->stream.out == xnil)
+                {
+                    o->stream.out = xstreamnew(xstreamtype_buffer);
+                }
 
                 return xsuccess;
             }

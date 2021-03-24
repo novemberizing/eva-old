@@ -144,3 +144,24 @@ extern xint64 xclientrecv(xclient * client, char * buffer, xuint64 size)
 
     return ret;
 }
+
+extern xint64 xclientsendf(xclient * client, const char * format, ...)
+{
+    xassertion(xtrue, "implement this");
+    // xclientsocket *                  descriptor = client->descriptor;
+    // xdescriptoreventsubscription * subscription = descriptor->subscription;
+
+    // if(subscription && subscription->enginenode.engine)
+    // {
+    //     if(descriptor->stream.out == xnil)
+    //     {
+    //         descriptor->stream.out = xstreamnew(xstreamtype_buffer);
+    //     }
+    // }
+    // xuint64 formatlen = strlen(format);
+
+    // for(xuint64 i = 0; i < formatlen; i++)
+    // {
+
+    // }
+}

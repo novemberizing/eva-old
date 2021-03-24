@@ -25,6 +25,10 @@ static xint64 on(xclientpool * pool, xclient * client, xuint64 event, xdescripto
         printf("exception type => %d\n", exception->type);
         printf("event on => %s\n", xdescriptoreventtype_str(event));
     }
+    else if(event == xdescriptoreventtype_open)
+    {
+        xclientsendf(client, "PING\r\n");
+    }
     else
     {
         printf("event on => %s\n", xdescriptoreventtype_str(event));
