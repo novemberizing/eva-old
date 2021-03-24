@@ -15,9 +15,7 @@ typedef struct xconsoledescriptorevent xconsoledescriptorevent;
 
 typedef xint64 (*xconsoleobserver)(xconsole *, xconsoledescriptor *, xuint32, xdescriptorparam, xint64);
 
-extern void xconsoleobserver_set(xconsoleobserver on);
-
-extern void xconsoleinit(void);
+extern void xconsoleinit(xconsoleobserver on);
 extern void xconsoleterm(void);
 
 // struct xconsole

@@ -9,6 +9,13 @@
 #include "event/engine.h"
 
 static xconsoledescriptor * xconsoledescriptor_rem(xconsoledescriptor * o);
+static xint64 xconsoledescriptorprocess_in(xconsoledescriptor * descriptor, xuint32 event);
+static xint64 xconsoledescriptorprocess_out(xconsoledescriptor * descriptor, xuint32 event);
+
+static xint64 xconsoledescriptoron(xconsoledescriptor * descriptor, xuint32 event, xdescriptorparam param, xint64 result);
+
+static void xconsoledescriptoreventon_in(xconsoledescriptorevent * event);
+static void xconsoledescriptoreventon_out(xconsoledescriptorevent * event);
 
 struct xconsole
 {
@@ -19,41 +26,114 @@ struct xconsole
 
 static xconsole singleton = {
     {
-        xconsoledescriptor_rem,             // rem
-        xnil,                               // subscription
-        xnil,                               // sync
-        xdescriptormask_void,               // mask
-        xdescriptorstatus_void,             // status
-        xdescriptorhandle_invalid,          // handle
-        xnil,                               // process: todo
-        xnil,                               // check: deprecated
-        xnil,                               // observer: todo
-        { xnil, xnil, xnil, xnil, xnil },   // event: todo
-        xexception_void,                    // exception
-        xnil,                               // console
-        xnil                                // stream
+        xconsoledescriptor_rem,             // singleton.in.rem
+        xnil,                               // singleton.in.subscription
+        xnil,                               // singleton.in.sync
+        xdescriptormask_void,               // singleton.in.mask
+        xdescriptorstatus_void,             // singleton.in.status
+        xdescriptorhandle_invalid,          // singleton.in.handle
+        xconsoledescriptorprocess_in,       // singleton.in.process
+        xnil,                               // singleton.in.check: deprecated
+        xconsoledescriptoron,               // singleton.in.observer
+        {
+            xnil,                               // singleton.in.event.prev
+            xnil,                               // singleton.in.event.next
+            xnil,                               // singleton.in.event.queue
+            xconsoledescriptoreventon_in,       // singleton.in.event.on
+            xnil                                // singleton.in.event.descriptor
+        },
+        xexception_void,                    // singleton.in.exception
+        xnil,                               // singleton.in.console
+        xnil                                // singleton.in.stream
     },
     {
-        xconsoledescriptor_rem,             // rem
-        xnil,                               // subscription
-        xnil,                               // sync
-        xdescriptormask_void,               // mask
-        xdescriptorstatus_void,             // status
-        xdescriptorhandle_invalid,          // handle
-        xnil,                               // process: todo
-        xnil,                               // check: deprecated
-        xnil,                               // observer: todo
-        { xnil, xnil, xnil, xnil, xnil },   // event: todo
-        xexception_void,                    // exception
-        xnil,                               // console
-        xnil                                // stream
+        xconsoledescriptor_rem,             // singleton.out.rem
+        xnil,                               // singleton.out.subscription
+        xnil,                               // singleton.out.sync
+        xdescriptormask_void,               // singleton.out.mask
+        xdescriptorstatus_void,             // singleton.out.status
+        xdescriptorhandle_invalid,          // singleton.out.handle
+        xconsoledescriptorprocess_out,      // singleton.out.process
+        xnil,                               // singleton.out.check: deprecated
+        xconsoledescriptoron,               // singleton.out.observer
+        {
+            xnil,                               // singleton.out.event.prev
+            xnil,                               // singleton.out.event.next
+            xnil,                               // singleton.out.event.queue
+            xconsoledescriptoreventon_out,      // singleton.out.event.on
+            xnil                                // singleton.out.event.descriptor
+        },
+        xexception_void,                    // singleton.out.exception
+        xnil,                               // singleton.out.console
+        xnil                                // singleton.out.stream
     },
-    xnil
+    xnil                                // singleton.on
 };
 
 extern void xconsoleobserver_set(xconsoleobserver on)
 {
     singleton.on = on;
+}
+
+extern void xconsoleinit(xconsoleobserver on)
+{
+    xassertion(singleton.on || on == xnil, "");
+
+    if(singleton.on == xnil)
+    {
+        singleton.in.handle.f          = STDIN_FILENO;
+        singleton.in.event.descriptor  = xaddressof(singleton.in);
+        singleton.in.console           = xaddressof(singleton);
+
+        singleton.out.handle.f         = STDOUT_FILENO;
+        singleton.out.event.descriptor = xaddressof(singleton.out);
+        singleton.out.console          = xaddressof(singleton);
+
+        singleton.on = on;
+    }
+}
+
+static xconsoledescriptor * xconsoledescriptor_rem(xconsoledescriptor * o)
+{
+    if(o)
+    {
+        xassertion(o->event.queue, "");
+        xassertion(o->subscription->enginenode.engine || o->subscription->generatornode.generator || o->subscription->generatornode.list, "");
+
+        o->subscription = xobjectrem(o->subscription);
+        o->sync = xsyncrem(o->sync);
+        o->handle.f = xinvalid;
+        o->stream = xstreamrem(o->stream);
+        o->exception = xexception_void;
+    }
+
+    return o;
+}
+
+static xint64 xconsoledescriptorprocess_in(xconsoledescriptor * descriptor, xuint32 event)
+{
+    xassertion(xtrue, "");
+}
+
+static xint64 xconsoledescriptorprocess_out(xconsoledescriptor * descriptor, xuint32 event)
+{
+    xassertion(xtrue, "");
+}
+
+static xint64 xconsoledescriptoron(xconsoledescriptor * descriptor, xuint32 event, xdescriptorparam param, xint64 result)
+{
+    xconsole * console = descriptor->console;
+    return console->on(console, descriptor, event, param, result);
+}
+
+static void xconsoledescriptoreventon_in(xconsoledescriptorevent * event)
+{
+    xconsoledescriptorprocess_in(event->descriptor, xdescriptoreventtype_void);
+}
+
+static void xconsoledescriptoreventon_out(xconsoledescriptorevent * event)
+{
+    xconsoledescriptorprocess_out(event->descriptor, xdescriptoreventtype_void);
 }
 
 // /**

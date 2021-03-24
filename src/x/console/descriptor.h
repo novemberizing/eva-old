@@ -12,7 +12,7 @@
 #include <x/console/descriptor/event/subscription.h>
 
 typedef xconsoledescriptor * (*xconsoledescriptordestructor)(xconsoledescriptor *);
-typedef xint64 (*xconsoledescriptorprocessor)(xconsoledescriptor *, xuint32, xdescriptorparam);             /**!< 디스크립터 이벤트 프로세서 */
+typedef xint64 (*xconsoledescriptorprocessor)(xconsoledescriptor *, xuint32);             /**!< 디스크립터 이벤트 프로세서 */
 typedef xint64 (*xconsoledescriptorobserver)(xconsoledescriptor *, xuint32, xdescriptorparam, xint64);    /**!< 디스크립터 이벤트 서브스크리라이버 */
 typedef xint32 (*xconsoledescriptorchecker)(xconsoledescriptor *, xuint32);
 
