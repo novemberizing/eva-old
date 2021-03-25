@@ -23,6 +23,14 @@ extern xint64 xevacli(xconsole * console, xconsoledescriptor * descriptor, xuint
     {
 
     }
+    else if(event == xdescriptoreventtype_open)
+    {
+        if(descriptor == xconsoledescriptorout_get())
+        {
+            // TODO: IMPLEMENT THIS `eva> ....`
+            xassertion(xtrue, "implement this");
+        }
+    }
     else
     {
 

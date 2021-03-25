@@ -250,6 +250,7 @@ extern xeventsubscription * xeventengine_server_unregister(xeventengine * engine
 extern xeventsubscription * xeventengine_descriptor_register(xeventengine * engine, xdescriptor * descriptor)
 {
     xlogfunction_start("%s(%p, %p)", __func__, engine, descriptor);
+
     xassertion(engine == xnil || descriptor == xnil, "");
 
     xassertion(descriptor->subscription, "");   // 이 로직은 어떻게 처리해야 할까?
@@ -261,6 +262,7 @@ extern xeventsubscription * xeventengine_descriptor_register(xeventengine * engi
     xdescriptoreventgenerator_register(engine->generators.descriptor, subscription);
 
     xlogfunction_end("%s(...) => %p", __func__, subscription);
+
     return (xeventsubscription *) subscription;
 }
 
