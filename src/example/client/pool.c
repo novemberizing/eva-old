@@ -23,19 +23,20 @@ static xint64 on(xclientpool * pool, xclient * client, xuint64 event, xdescripto
         {
             end = xtimeget();
             xtime diff = xtimediff(xaddressof(end), xaddressof(start));
+
             total = total + result / 7;
             n = n + result % 7;
+
             if(n >= 7)
             {
                 total = total + n / 7;
-
                 n = n % 7;
             }
 
             xclientsendf(client, xstringformatserialize ,"PING\r\n");
 
             printf("event on => %s / [%ld.%09ld / %ld]\n", xdescriptoreventtype_str(event), diff.second, diff.nanosecond, total);
-            
+
             for(xuint64 i = 0; i < 64; i++)
             {
                 xclientsendf(client, xstringformatserialize ,"PING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\n");
@@ -46,7 +47,6 @@ static xint64 on(xclientpool * pool, xclient * client, xuint64 event, xdescripto
     {
         if(result > 0)
         {
-            
             // printf("event on => %s / %s", xdescriptoreventtype_str(event), (const char *) param.c);
         }
     }
@@ -61,7 +61,9 @@ static xint64 on(xclientpool * pool, xclient * client, xuint64 event, xdescripto
     {
         printf("event on => %s\n", xdescriptoreventtype_str(event));
         start = xtimeget();
+
         xclientsendf(client, xstringformatserialize ,"PING\r\n");
+
         for(xuint64 i = 0; i < 64; i++)
         {
             xclientsendf(client, xstringformatserialize ,"PING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\n");
@@ -81,15 +83,18 @@ int main(int argc, char ** argv)
 
     struct sockaddr_in addr;
     addr.sin_family = AF_INET;
-    // addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-    addr.sin_addr.s_addr = inet_addr("192.168.0.128");
+    addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    // addr.sin_addr.s_addr = inet_addr("192.168.0.128");
     addr.sin_port = htons(6379);
     
     xeventengine * engine = xeventengine_new();
 
     xclientpool * pool = xclientpoolnew(on, sizeof(xclientpool));
 
-    xclientpooladd(pool, xclientnew(AF_INET, SOCK_STREAM, IPPROTO_TCP, xaddressof(addr), sizeof(struct sockaddr_in), xnil, sizeof(xclientpool)));
+    for(xint32 i = 0; i < 32; i++)
+    {
+        xclientpooladd(pool, xclientnew(AF_INET, SOCK_STREAM, IPPROTO_TCP, xaddressof(addr), sizeof(struct sockaddr_in), xnil, sizeof(xclientpool)));
+    }
 
     xeventengine_clientpool_add(engine, pool);
 
