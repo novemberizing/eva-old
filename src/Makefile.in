@@ -94,7 +94,8 @@ build_triplet = @build@
 host_triplet = @host@
 noinst_PROGRAMS = example-helloworld$(EXEEXT) \
 	example-client-redis$(EXEEXT) example-client-pool$(EXEEXT) \
-	example-string-simple$(EXEEXT) example-string-format$(EXEEXT)
+	example-string-simple$(EXEEXT) example-string-format$(EXEEXT) \
+	example-console-engine$(EXEEXT)
 subdir = src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -178,7 +179,7 @@ am_libnovemberizing_a_OBJECTS = x/std.$(OBJEXT) x/log.$(OBJEXT) \
 	x/client/pool/list.$(OBJEXT) x/client/socket.$(OBJEXT) \
 	x/client/socket/event/avail.$(OBJEXT) \
 	x/client/socket/event/process/tcp.$(OBJEXT) x/eva.$(OBJEXT) \
-	x/eva/cli.$(OBJEXT) x/eva/extension/echo.$(OBJEXT)
+	x/eva/cli.$(OBJEXT)
 libnovemberizing_a_OBJECTS = $(am_libnovemberizing_a_OBJECTS)
 am_example_client_pool_OBJECTS = example/client/pool.$(OBJEXT)
 example_client_pool_OBJECTS = $(am_example_client_pool_OBJECTS)
@@ -191,6 +192,9 @@ am__v_lt_1 =
 am_example_client_redis_OBJECTS = example/client/redis.$(OBJEXT)
 example_client_redis_OBJECTS = $(am_example_client_redis_OBJECTS)
 example_client_redis_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_example_console_engine_OBJECTS = example/console/engine.$(OBJEXT)
+example_console_engine_OBJECTS = $(am_example_console_engine_OBJECTS)
+example_console_engine_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_example_helloworld_OBJECTS = example/helloworld.$(OBJEXT)
 example_helloworld_OBJECTS = $(am_example_helloworld_OBJECTS)
 example_helloworld_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -218,6 +222,7 @@ am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = example/$(DEPDIR)/helloworld.Po \
 	example/client/$(DEPDIR)/pool.Po \
 	example/client/$(DEPDIR)/redis.Po \
+	example/console/$(DEPDIR)/engine.Po \
 	example/string/$(DEPDIR)/format.Po \
 	example/string/$(DEPDIR)/simple.Po x/$(DEPDIR)/array.Po \
 	x/$(DEPDIR)/client.Po x/$(DEPDIR)/command.Po \
@@ -244,9 +249,9 @@ am__depfiles_remade = example/$(DEPDIR)/helloworld.Po \
 	x/descriptor/event/$(DEPDIR)/type.Po \
 	x/descriptor/event/generator/$(DEPDIR)/epoll.Po \
 	x/descriptor/event/generator/subscription/$(DEPDIR)/list.Po \
-	x/eva/$(DEPDIR)/cli.Po x/eva/extension/$(DEPDIR)/echo.Po \
-	x/event/$(DEPDIR)/engine.Po x/event/$(DEPDIR)/processor.Po \
-	x/event/$(DEPDIR)/queue.Po x/event/$(DEPDIR)/subscription.Po \
+	x/eva/$(DEPDIR)/cli.Po x/event/$(DEPDIR)/engine.Po \
+	x/event/$(DEPDIR)/processor.Po x/event/$(DEPDIR)/queue.Po \
+	x/event/$(DEPDIR)/subscription.Po \
 	x/event/generator/$(DEPDIR)/set.Po \
 	x/event/processor/$(DEPDIR)/event.Po \
 	x/event/processor/$(DEPDIR)/pool.Po \
@@ -274,11 +279,13 @@ am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
 SOURCES = $(libnovemberizing_a_SOURCES) $(example_client_pool_SOURCES) \
-	$(example_client_redis_SOURCES) $(example_helloworld_SOURCES) \
-	$(example_string_format_SOURCES) \
+	$(example_client_redis_SOURCES) \
+	$(example_console_engine_SOURCES) \
+	$(example_helloworld_SOURCES) $(example_string_format_SOURCES) \
 	$(example_string_simple_SOURCES)
 DIST_SOURCES = $(libnovemberizing_a_SOURCES) \
 	$(example_client_pool_SOURCES) $(example_client_redis_SOURCES) \
+	$(example_console_engine_SOURCES) \
 	$(example_helloworld_SOURCES) $(example_string_format_SOURCES) \
 	$(example_string_simple_SOURCES)
 am__can_run_installinfo = \
@@ -484,8 +491,7 @@ libnovemberizing_a_SOURCES = x/std.c                                          \
                              x/client/socket/event/avail.c                    \
                              x/client/socket/event/process/tcp.c              \
                              x/eva.c                                          \
-                             x/eva/cli.c                                      \
-                             x/eva/extension/echo.c
+                             x/eva/cli.c
 
 example_helloworld_SOURCES = example/helloworld.c
 example_helloworld_LDADD = $(LIBS)
@@ -497,6 +503,8 @@ example_string_format_SOURCES = example/string/format.c
 example_string_format_LDADD = $(LIBS)
 example_string_simple_SOURCES = example/string/simple.c
 example_string_simple_LDADD = $(LIBS)
+example_console_engine_SOURCES = example/console/engine.c
+example_console_engine_LDADD = $(LIBS)
 nobase_include_HEADERS = x/std.h                \
                          x/thread.h             \
                          x/sync.h               \
@@ -800,14 +808,6 @@ x/eva/$(DEPDIR)/$(am__dirstamp):
 	@: > x/eva/$(DEPDIR)/$(am__dirstamp)
 x/eva/cli.$(OBJEXT): x/eva/$(am__dirstamp) \
 	x/eva/$(DEPDIR)/$(am__dirstamp)
-x/eva/extension/$(am__dirstamp):
-	@$(MKDIR_P) x/eva/extension
-	@: > x/eva/extension/$(am__dirstamp)
-x/eva/extension/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) x/eva/extension/$(DEPDIR)
-	@: > x/eva/extension/$(DEPDIR)/$(am__dirstamp)
-x/eva/extension/echo.$(OBJEXT): x/eva/extension/$(am__dirstamp) \
-	x/eva/extension/$(DEPDIR)/$(am__dirstamp)
 
 libnovemberizing.a: $(libnovemberizing_a_OBJECTS) $(libnovemberizing_a_DEPENDENCIES) $(EXTRA_libnovemberizing_a_DEPENDENCIES) 
 	$(AM_V_at)-rm -f libnovemberizing.a
@@ -831,6 +831,18 @@ example/client/redis.$(OBJEXT): example/client/$(am__dirstamp) \
 example-client-redis$(EXEEXT): $(example_client_redis_OBJECTS) $(example_client_redis_DEPENDENCIES) $(EXTRA_example_client_redis_DEPENDENCIES) 
 	@rm -f example-client-redis$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(example_client_redis_OBJECTS) $(example_client_redis_LDADD) $(LIBS)
+example/console/$(am__dirstamp):
+	@$(MKDIR_P) example/console
+	@: > example/console/$(am__dirstamp)
+example/console/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) example/console/$(DEPDIR)
+	@: > example/console/$(DEPDIR)/$(am__dirstamp)
+example/console/engine.$(OBJEXT): example/console/$(am__dirstamp) \
+	example/console/$(DEPDIR)/$(am__dirstamp)
+
+example-console-engine$(EXEEXT): $(example_console_engine_OBJECTS) $(example_console_engine_DEPENDENCIES) $(EXTRA_example_console_engine_DEPENDENCIES) 
+	@rm -f example-console-engine$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_console_engine_OBJECTS) $(example_console_engine_LDADD) $(LIBS)
 example/$(am__dirstamp):
 	@$(MKDIR_P) example
 	@: > example/$(am__dirstamp)
@@ -866,6 +878,7 @@ mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 	-rm -f example/*.$(OBJEXT)
 	-rm -f example/client/*.$(OBJEXT)
+	-rm -f example/console/*.$(OBJEXT)
 	-rm -f example/string/*.$(OBJEXT)
 	-rm -f x/*.$(OBJEXT)
 	-rm -f x/client/*.$(OBJEXT)
@@ -879,7 +892,6 @@ mostlyclean-compile:
 	-rm -f x/descriptor/event/generator/*.$(OBJEXT)
 	-rm -f x/descriptor/event/generator/subscription/*.$(OBJEXT)
 	-rm -f x/eva/*.$(OBJEXT)
-	-rm -f x/eva/extension/*.$(OBJEXT)
 	-rm -f x/event/*.$(OBJEXT)
 	-rm -f x/event/generator/*.$(OBJEXT)
 	-rm -f x/event/processor/*.$(OBJEXT)
@@ -897,6 +909,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@example/$(DEPDIR)/helloworld.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/client/$(DEPDIR)/pool.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/client/$(DEPDIR)/redis.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@example/console/$(DEPDIR)/engine.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/string/$(DEPDIR)/format.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/string/$(DEPDIR)/simple.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/array.Po@am__quote@ # am--include-marker
@@ -939,7 +952,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@x/descriptor/event/generator/$(DEPDIR)/epoll.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/descriptor/event/generator/subscription/$(DEPDIR)/list.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/eva/$(DEPDIR)/cli.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@x/eva/extension/$(DEPDIR)/echo.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/event/$(DEPDIR)/engine.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/event/$(DEPDIR)/processor.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/event/$(DEPDIR)/queue.Po@am__quote@ # am--include-marker
@@ -1137,6 +1149,8 @@ distclean-generic:
 	-rm -f example/$(am__dirstamp)
 	-rm -f example/client/$(DEPDIR)/$(am__dirstamp)
 	-rm -f example/client/$(am__dirstamp)
+	-rm -f example/console/$(DEPDIR)/$(am__dirstamp)
+	-rm -f example/console/$(am__dirstamp)
 	-rm -f example/string/$(DEPDIR)/$(am__dirstamp)
 	-rm -f example/string/$(am__dirstamp)
 	-rm -f x/$(DEPDIR)/$(am__dirstamp)
@@ -1163,8 +1177,6 @@ distclean-generic:
 	-rm -f x/descriptor/event/generator/subscription/$(am__dirstamp)
 	-rm -f x/eva/$(DEPDIR)/$(am__dirstamp)
 	-rm -f x/eva/$(am__dirstamp)
-	-rm -f x/eva/extension/$(DEPDIR)/$(am__dirstamp)
-	-rm -f x/eva/extension/$(am__dirstamp)
 	-rm -f x/event/$(DEPDIR)/$(am__dirstamp)
 	-rm -f x/event/$(am__dirstamp)
 	-rm -f x/event/generator/$(DEPDIR)/$(am__dirstamp)
@@ -1198,6 +1210,7 @@ distclean: distclean-am
 		-rm -f example/$(DEPDIR)/helloworld.Po
 	-rm -f example/client/$(DEPDIR)/pool.Po
 	-rm -f example/client/$(DEPDIR)/redis.Po
+	-rm -f example/console/$(DEPDIR)/engine.Po
 	-rm -f example/string/$(DEPDIR)/format.Po
 	-rm -f example/string/$(DEPDIR)/simple.Po
 	-rm -f x/$(DEPDIR)/array.Po
@@ -1240,7 +1253,6 @@ distclean: distclean-am
 	-rm -f x/descriptor/event/generator/$(DEPDIR)/epoll.Po
 	-rm -f x/descriptor/event/generator/subscription/$(DEPDIR)/list.Po
 	-rm -f x/eva/$(DEPDIR)/cli.Po
-	-rm -f x/eva/extension/$(DEPDIR)/echo.Po
 	-rm -f x/event/$(DEPDIR)/engine.Po
 	-rm -f x/event/$(DEPDIR)/processor.Po
 	-rm -f x/event/$(DEPDIR)/queue.Po
@@ -1303,6 +1315,7 @@ maintainer-clean: maintainer-clean-am
 		-rm -f example/$(DEPDIR)/helloworld.Po
 	-rm -f example/client/$(DEPDIR)/pool.Po
 	-rm -f example/client/$(DEPDIR)/redis.Po
+	-rm -f example/console/$(DEPDIR)/engine.Po
 	-rm -f example/string/$(DEPDIR)/format.Po
 	-rm -f example/string/$(DEPDIR)/simple.Po
 	-rm -f x/$(DEPDIR)/array.Po
@@ -1345,7 +1358,6 @@ maintainer-clean: maintainer-clean-am
 	-rm -f x/descriptor/event/generator/$(DEPDIR)/epoll.Po
 	-rm -f x/descriptor/event/generator/subscription/$(DEPDIR)/list.Po
 	-rm -f x/eva/$(DEPDIR)/cli.Po
-	-rm -f x/eva/extension/$(DEPDIR)/echo.Po
 	-rm -f x/event/$(DEPDIR)/engine.Po
 	-rm -f x/event/$(DEPDIR)/processor.Po
 	-rm -f x/event/$(DEPDIR)/queue.Po

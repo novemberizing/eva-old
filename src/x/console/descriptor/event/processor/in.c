@@ -82,7 +82,7 @@ static xint64 xconsoledescriptoreventprocessorin_void(xconsoledescriptor * o)
 
     xassertion(console == xnil, "");
 
-    xconsoledescriptor * out = xconsoledescriptorin_get(console);
+    xconsoledescriptor * out = xconsoledescriptorin_get();
 
     if((out->status & xdescriptorstatus_flush) == xdescriptorstatus_void)
     {
@@ -124,10 +124,30 @@ static xint64 xconsoledescriptoreventprocessorin_in(xconsoledescriptor * o)
     xstreamadjust(o->stream, xfalse);
     if(xstreamremain(o->stream) < streambuffersize)
     {
-        xstreamcapacity_set(o->stream, streambuffersize - xstreamremain(o->stream));
+        xstreamcapacity_set(o->stream, xstreamcapacity_get(o->stream) + streambuffersize - xstreamremain(o->stream));
     }
 
-    return xdescriptorread((xdescriptor *) o, xstreamback(o->stream), xstreamremain(o->stream));
+    xint64 ret = xdescriptorread((xdescriptor *) o, xstreamback(o->stream), xstreamremain(o->stream));
+
+    if(ret > 0)
+    {
+        xstreamsize_set(o->stream, xstreamsize_get(o->stream) + ret);
+    }
+
+    return ret;
+
+    //             if(ret > 0)
+    // {
+    //     xstreamsize_set(o->stream.in, xstreamsize_get(o->stream.in) + ret);
+
+    //     if(size <= xstreamlen(o->stream.in))
+    //     {
+    //         memcpy(buffer, xstreamfront(o->stream.in), size);
+    //         xstreampos_set(o->stream.in, xstreampos_get(o->stream.in) + size);
+    //         return size;
+    //     }
+    //     return xsuccess;
+    // }
 }
 
 static xint64 xconsoledescriptoreventprocessorin_out(xconsoledescriptor * o)
@@ -170,6 +190,10 @@ static xint64 xconsoledescriptoreventprocessorin_register(xconsoledescriptor * o
         if((o->status & xdescriptorstatus_register) == xdescriptorstatus_void)
         {
             xdescriptoreventgenerator_descriptor_register(generator, (xdescriptor *) o);
+        }
+        else
+        {
+            xdescriptoreventgenerator_descriptor_update(generator, (xdescriptor *) o);
         }
         return xsuccess;
     }

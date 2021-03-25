@@ -84,27 +84,22 @@ static xint64 xconsoledescriptoreventprocessorout_void(xconsoledescriptor * o)
 
     xconsoledescriptoreventprocessorout_flush(o);
 
-    if((o->status & xdescriptorstatus_in) == xdescriptorstatus_void)
+    if((o->status & xdescriptorstatus_out) == xdescriptorstatus_void)
     {
         xconsoledescriptoreventprocessorout_register(o);
     }
     else
     {
-        if(o->event.queue == xnil)
+        if(o->event.queue == xnil && xstreamlen(o->stream) > 0)
         {
             xconsoledescriptoreventsubscription * subscription = o->subscription;
             xeventengine * engine = subscription ? subscription->enginenode.engine : xnil;
             if(engine)
             {
-                if(o->event.queue == xnil)
-                {
-                    xeventengine_queue_push(engine, (xevent *) xaddressof(o->event));
-                }
+                xeventengine_queue_push(engine, (xevent *) xaddressof(o->event));
             }
         }
     }
-
-    return xsuccess;
 
     return xsuccess;
 }
@@ -118,19 +113,28 @@ static xint64 xconsoledescriptoreventprocessorout_open(xconsoledescriptor * o)
 
 static xint64 xconsoledescriptoreventprocessorout_in(xconsoledescriptor * o)
 {
-    xstreamadjust(o->stream, xfalse);
-    if(xstreamremain(o->stream) < streambuffersize)
-    {
-        xstreamcapacity_set(o->stream, streambuffersize - xstreamremain(o->stream));
-    }
-
-    return xdescriptorread((xdescriptor *) o, xstreamback(o->stream), xstreamremain(o->stream));
+    xassertion(xtrue, "");
+    return xfail;
 }
 
 static xint64 xconsoledescriptoreventprocessorout_out(xconsoledescriptor * o)
 {
-    xassertion(xtrue, "");
-    return xfail;
+    xint64 ret = xdescriptorwrite((xdescriptor *) o, xstreamfront(o->stream), xstreamlen(o->stream));
+
+    if(ret > 0)
+    {
+        xstreampos_set(o->stream, xstreampos_get(o->stream) + ret);
+        xstreamadjust(o->stream, xfalse);
+    }
+
+    return ret;
+    // xstreamadjust(o->stream, xfalse);
+    // if(xstreamremain(o->stream) < streambuffersize)
+    // {
+    //     xstreamcapacity_set(o->stream, streambuffersize - xstreamremain(o->stream));
+    // }
+
+    // return xdescriptorread((xdescriptor *) o, xstreamback(o->stream), xstreamremain(o->stream));
 }
 
 static xint64 xconsoledescriptoreventprocessorout_close(xconsoledescriptor * o)

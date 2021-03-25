@@ -59,8 +59,7 @@ libnovemberizing_a_SOURCES = x/std.c                                          \
                              x/client/socket/event/avail.c                    \
                              x/client/socket/event/process/tcp.c              \
                              x/eva.c                                          \
-                             x/eva/cli.c                                      \
-                             x/eva/extension/echo.c
+                             x/eva/cli.c
 
 
 
@@ -71,22 +70,27 @@ noinst_PROGRAMS = example-helloworld                                         \
                   example-client-redis                                       \
                   example-client-pool                                        \
                   example-string-simple                                      \
-                  example-string-format
+                  example-string-format                                      \
+                  example-console-engine
 
-example_helloworld_SOURCES    = example/helloworld.c
-example_helloworld_LDADD      = $(LIBS)
+example_helloworld_SOURCES     = example/helloworld.c
+example_helloworld_LDADD       = $(LIBS)
 
-example_client_redis_SOURCES  = example/client/redis.c
-example_client_redis_LDADD    = $(LIBS)
+example_client_redis_SOURCES   = example/client/redis.c
+example_client_redis_LDADD     = $(LIBS)
 
-example_client_pool_SOURCES   = example/client/pool.c
-example_client_pool_LDADD     = $(LIBS)
+example_client_pool_SOURCES    = example/client/pool.c
+example_client_pool_LDADD      = $(LIBS)
 
-example_string_format_SOURCES = example/string/format.c
-example_string_format_LDADD   = $(LIBS)
+example_string_format_SOURCES  = example/string/format.c
+example_string_format_LDADD    = $(LIBS)
 
-example_string_simple_SOURCES = example/string/simple.c
-example_string_simple_LDADD   = $(LIBS)
+example_string_simple_SOURCES  = example/string/simple.c
+example_string_simple_LDADD    = $(LIBS)
+
+example_console_engine_SOURCES = example/console/engine.c
+example_console_engine_LDADD   = $(LIBS)
+
 
 nobase_include_HEADERS = x/std.h                \
                          x/thread.h             \

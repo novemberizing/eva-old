@@ -15,8 +15,8 @@ typedef struct xconsoledescriptorevent xconsoledescriptorevent;
 
 typedef xint64 (*xconsoleobserver)(xconsole *, xconsoledescriptor *, xuint32, xdescriptorparam, xint64);
 
-extern xconsoledescriptor * xconsoledescriptorin_get(xconsole * o);
-extern xconsoledescriptor * xconsoledescriptorout_get(xconsole * o);
+extern xconsoledescriptor * xconsoledescriptorin_get(void);
+extern xconsoledescriptor * xconsoledescriptorout_get(void);
 
 extern void xconsoleinit(xconsoleobserver on);
 extern void xconsoleterm(void);

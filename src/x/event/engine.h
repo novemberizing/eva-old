@@ -35,14 +35,15 @@ typedef void (*xeventenginefunc)(xeventengine *);       /**!< 이벤트 엔진�
  */
 struct xeventengine
 {
-    xeventenginesubscriber                             on;
-    xeventenginefunc                                   cancel;
-    xeventqueue *                                      queue;
-    xeventqueue *                                      main;
-    xsync *                                            sync;
-    xeventsubscriptionlist                             subscriptions;
-    xeventgeneratorset                                 generators;
-    xeventprocessorpool *                              processors;
+    xeventenginesubscriber on;
+    xeventenginefunc       cancel;
+    xeventqueue *          queue;
+    xeventqueue *          main;
+    xsync *                sync;
+    xeventsubscriptionlist subscriptions;
+    xeventgeneratorset     generators;
+    xeventprocessorpool *  processors;
+    xconsoleobserver       cli;
 };
 
 extern xeventengine * xeventengine_new(void);
@@ -71,5 +72,7 @@ extern xeventsubscription * xeventengine_client_unregister(xeventengine * engine
 
 extern void xeventengine_main_push(xeventengine * engine, xevent * event);
 extern void xeventengine_queue_push(xeventengine * engine, xevent * event);
+
+extern void xeventengine_cli(xeventengine * engine, xconsoleobserver cli);
 
 #endif // __NOVEMBERIZING_X__EVENT__ENGINE__H__

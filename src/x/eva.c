@@ -13,9 +13,8 @@
 #include <x/server/socket.h>
 #include <x/console.h>
 #include <x/event/engine.h>
-#include <x/eva/config.h>
 
-
+// #include <x/eva/config.h>
 // struct xeva
 // {
 //     xeventengine * engine;

@@ -95,17 +95,27 @@ extern void xconsoleinit(xconsoleobserver on)
 
         singleton.in.on(xaddressof(singleton.in), xdescriptorstatus_open, xdescriptorparamgen(xnil), xsuccess);
         singleton.out.on(xaddressof(singleton.out), xdescriptorstatus_open, xdescriptorparamgen(xnil), xsuccess);
+
+        if(singleton.in.stream == xnil)
+        {
+            singleton.in.stream = xstreamnew(xstreamtype_buffer);
+        }
+
+        if(singleton.out.stream == xnil)
+        {
+            singleton.out.stream = xstreamnew(xstreamtype_buffer);
+        }
     }
 }
 
-extern xconsoledescriptor * xconsoledescriptorin_get(xconsole * o)
+extern xconsoledescriptor * xconsoledescriptorin_get(void)
 {
-    return xaddressof(o->in);
+    return xaddressof(singleton.in);
 }
 
-extern xconsoledescriptor * xconsoledescriptorout_get(xconsole * o)
+extern xconsoledescriptor * xconsoledescriptorout_get(void)
 {
-    return xaddressof(o->out);
+    return xaddressof(singleton.out);
 }
 
 static xconsoledescriptor * xconsoledescriptor_rem(xconsoledescriptor * o)

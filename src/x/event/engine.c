@@ -58,6 +58,22 @@ extern xint32 xeventengine_run(xeventengine * engine)
         // xeventengine_generators_on(engine);
         xeventgeneratorset_on(xaddressof(engine->generators));
         xeventprocessorpool_on(engine->processors);
+
+        if(engine->cli)
+        {
+            xconsoleinit(engine->cli);
+
+            xdescriptor * in = (xdescriptor *) xconsoledescriptorin_get();
+            xdescriptor * out = (xdescriptor *) xconsoledescriptorout_get();
+
+            xdescriptornonblock(in, xtrue);
+            xdescriptornonblock(out, xtrue);
+
+            xeventengine_descriptor_register(engine, in);
+            xeventengine_descriptor_register(engine, out);
+        }
+
+
         while(engine->cancel == xnil)
         {
             // 어느 시점에 ENGINE SYNC 의 UNLOCK/LOCK 을 수행해야 하는지 확인할 필요가 있다.
@@ -368,4 +384,14 @@ extern void xeventengine_clientpool_add(xeventengine * engine, xclientpool * poo
 extern void xeventengine_clientpool_del(xeventengine * engine, xclientpool * pool)
 {
     xdescriptoreventgenerator_clientpool_del(engine->generators.descriptor, pool);
+}
+
+extern void xeventengine_cli(xeventengine * engine, xconsoleobserver cli)
+{
+    xassertion(engine->cli, "");
+
+    if(engine->cli == xnil)
+    {
+        engine->cli = cli;
+    }
 }
