@@ -151,8 +151,9 @@ am_libnovemberizing_a_OBJECTS = x/std.$(OBJEXT) x/log.$(OBJEXT) \
 	x/string.$(OBJEXT) x/string/format.$(OBJEXT) \
 	x/dictionary.$(OBJEXT) x/array.$(OBJEXT) x/list.$(OBJEXT) \
 	x/stack.$(OBJEXT) x/queue.$(OBJEXT) x/set.$(OBJEXT) \
-	x/map.$(OBJEXT) x/object.$(OBJEXT) x/exception.$(OBJEXT) \
-	x/thread.$(OBJEXT) x/thread/posix.$(OBJEXT) x/sync.$(OBJEXT) \
+	x/map.$(OBJEXT) x/time.$(OBJEXT) x/object.$(OBJEXT) \
+	x/exception.$(OBJEXT) x/thread.$(OBJEXT) \
+	x/thread/posix.$(OBJEXT) x/sync.$(OBJEXT) \
 	x/sync/posix/mutex.$(OBJEXT) x/stream.$(OBJEXT) \
 	x/stream/buffer.$(OBJEXT) x/command.$(OBJEXT) \
 	x/command/string.$(OBJEXT) x/event/queue.$(OBJEXT) \
@@ -228,7 +229,7 @@ am__depfiles_remade = example/$(DEPDIR)/helloworld.Po \
 	x/$(DEPDIR)/session.Po x/$(DEPDIR)/set.Po \
 	x/$(DEPDIR)/socket.Po x/$(DEPDIR)/stack.Po x/$(DEPDIR)/std.Po \
 	x/$(DEPDIR)/stream.Po x/$(DEPDIR)/string.Po \
-	x/$(DEPDIR)/sync.Po x/$(DEPDIR)/thread.Po \
+	x/$(DEPDIR)/sync.Po x/$(DEPDIR)/thread.Po x/$(DEPDIR)/time.Po \
 	x/client/$(DEPDIR)/pool.Po x/client/$(DEPDIR)/socket.Po \
 	x/client/pool/$(DEPDIR)/list.Po \
 	x/client/socket/event/$(DEPDIR)/avail.Po \
@@ -441,6 +442,7 @@ libnovemberizing_a_SOURCES = x/std.c                                          \
                              x/queue.c                                        \
                              x/set.c                                          \
                              x/map.c                                          \
+                             x/time.c                                         \
                              x/object.c                                       \
                              x/exception.c                                    \
                              x/thread.c                                       \
@@ -597,6 +599,7 @@ x/stack.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
 x/queue.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
 x/set.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
 x/map.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
+x/time.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
 x/object.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
 x/exception.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
 x/thread.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
@@ -919,6 +922,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/string.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/sync.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/thread.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/time.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/client/$(DEPDIR)/pool.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/client/$(DEPDIR)/socket.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/client/pool/$(DEPDIR)/list.Po@am__quote@ # am--include-marker
@@ -1219,6 +1223,7 @@ distclean: distclean-am
 	-rm -f x/$(DEPDIR)/string.Po
 	-rm -f x/$(DEPDIR)/sync.Po
 	-rm -f x/$(DEPDIR)/thread.Po
+	-rm -f x/$(DEPDIR)/time.Po
 	-rm -f x/client/$(DEPDIR)/pool.Po
 	-rm -f x/client/$(DEPDIR)/socket.Po
 	-rm -f x/client/pool/$(DEPDIR)/list.Po
@@ -1323,6 +1328,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f x/$(DEPDIR)/string.Po
 	-rm -f x/$(DEPDIR)/sync.Po
 	-rm -f x/$(DEPDIR)/thread.Po
+	-rm -f x/$(DEPDIR)/time.Po
 	-rm -f x/client/$(DEPDIR)/pool.Po
 	-rm -f x/client/$(DEPDIR)/socket.Po
 	-rm -f x/client/pool/$(DEPDIR)/list.Po

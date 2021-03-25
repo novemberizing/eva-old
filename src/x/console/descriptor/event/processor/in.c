@@ -101,7 +101,10 @@ static xint64 xconsoledescriptoreventprocessorin_void(xconsoledescriptor * o)
             xeventengine * engine = subscription ? subscription->enginenode.engine : xnil;
             if(engine)
             {
-                xeventengine_queue_push(engine, (xevent *) xaddressof(o->event));
+                if(o->event.queue == xnil)
+                {
+                    xeventengine_queue_push(engine, (xevent *) xaddressof(o->event));
+                }
             }
         }
     }

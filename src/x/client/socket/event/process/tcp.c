@@ -135,8 +135,10 @@ static xint64 xclientsocketprocess_out(xclientsocket * o)
     xint64 ret = xdescriptorwrite((xdescriptor *) o, xstreamfront(o->stream.out), xstreamlen(o->stream.out));
     if(ret > 0)
     {
-        xstreamadjust(o->stream.in, xtrue);
+        xstreampos_set(o->stream.out, xstreampos_get(o->stream.out) + ret);
+        xstreamadjust(o->stream.out, xtrue);
     }
+
     return ret;
 }
 

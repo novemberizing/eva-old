@@ -93,7 +93,6 @@ extern xint64 xclientsocketconnect(xclientsocket * o, void * addr, xuint32 addrl
                     {
                         o->status &= (~xdescriptorstatus_connecting);
                         o->status |= (xdescriptorstatus_open | xdescriptorstatus_connect | xdescriptorstatus_out);
-
                         if((ret = xdescriptoron((xdescriptor *) o, xdescriptoreventtype_open, xdescriptorparamgen(xnil), xsuccess)) == xsuccess)
                         {
                             if(o->stream.in == xnil)
@@ -132,6 +131,7 @@ extern xint64 xclientsocketconnect(xclientsocket * o, void * addr, xuint32 addrl
                     if((ret = connect(o->handle.f, addr, addrlen)) == xsuccess)
                     {
                         o->status |= (xdescriptorstatus_open | xdescriptorstatus_connect | xdescriptorstatus_out);
+
                         if((ret = xdescriptoron((xdescriptor *) o, xdescriptoreventtype_open, xdescriptorparamgen(xnil), xsuccess)) == xsuccess)
                         {
                             if(o->stream.in == xnil)
@@ -158,6 +158,11 @@ extern xint64 xclientsocketconnect(xclientsocket * o, void * addr, xuint32 addrl
                     }
                 }
 
+                /**
+                 * 기본 이벤트 등록은 VOID 에서 이루어지면 어떻게 해야할까? 
+                 * TODO: 리팩터링 대상이다. 이벤트 엔진에 등록은 I/O 가 끝난 후에 이루어져야 한다.
+                 * 그렇기 때문에, 오픈과 등록은 별개로 나뉘어야 한다.
+                 */
                 if(o->status & (xdescriptorstatus_connecting | xdescriptorstatus_connect))
                 {
                     if(generator)
@@ -173,7 +178,7 @@ extern xint64 xclientsocketconnect(xclientsocket * o, void * addr, xuint32 addrl
                         }
                         else
                         {
-                            xassertion(o->status & xdescriptorstatus_register, "");
+                            // xassertion(o->status & xdescriptorstatus_register, "");
                         }
                     }
                 }

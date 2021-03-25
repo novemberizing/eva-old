@@ -5,18 +5,50 @@
 
 #include <stdio.h>
 
+#include <x/time.h>
 #include <x/client/pool.h>
 #include <x/event/engine.h>
+
+xtime start = { 0, 0 };
+xtime end = { 0, 0 };
+
+xuint64 n = 0;
+xuint64 total = 0;
 
 static xint64 on(xclientpool * pool, xclient * client, xuint64 event, xdescriptorparam param, xint64 result)
 {
     if(event == xdescriptoreventtype_in)
     {
-        printf("event on => %s / %s", xdescriptoreventtype_str(event), (char *) param.p);
+        if(result > 0)
+        {
+            end = xtimeget();
+            xtime diff = xtimediff(xaddressof(end), xaddressof(start));
+            total = total + result / 7;
+            n = n + result % 7;
+            if(n >= 7)
+            {
+                total = total + n / 7;
+
+                n = n % 7;
+            }
+
+            xclientsendf(client, xstringformatserialize ,"PING\r\n");
+
+            printf("event on => %s / [%ld.%09ld / %ld]\n", xdescriptoreventtype_str(event), diff.second, diff.nanosecond, total);
+            
+            for(xuint64 i = 0; i < 64; i++)
+            {
+                xclientsendf(client, xstringformatserialize ,"PING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\n");
+            }
+        }
     }
     else if(event == xdescriptoreventtype_out)
     {
-        printf("event on => %s / %s", xdescriptoreventtype_str(event), (const char *) param.c);
+        if(result > 0)
+        {
+            
+            // printf("event on => %s / %s", xdescriptoreventtype_str(event), (const char *) param.c);
+        }
     }
     else if(event == xdescriptoreventtype_exception)
     {
@@ -27,11 +59,17 @@ static xint64 on(xclientpool * pool, xclient * client, xuint64 event, xdescripto
     }
     else if(event == xdescriptoreventtype_open)
     {
+        printf("event on => %s\n", xdescriptoreventtype_str(event));
+        start = xtimeget();
         xclientsendf(client, xstringformatserialize ,"PING\r\n");
+        for(xuint64 i = 0; i < 64; i++)
+        {
+            xclientsendf(client, xstringformatserialize ,"PING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\n");
+        }
     }
     else
     {
-        printf("event on => %s\n", xdescriptoreventtype_str(event));
+        // printf("event on => %s\n", xdescriptoreventtype_str(event));
     }
     return result;
 }
@@ -43,7 +81,8 @@ int main(int argc, char ** argv)
 
     struct sockaddr_in addr;
     addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    // addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    addr.sin_addr.s_addr = inet_addr("192.168.0.128");
     addr.sin_port = htons(6379);
     
     xeventengine * engine = xeventengine_new();

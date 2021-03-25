@@ -466,7 +466,6 @@ static xint32 xdescriptoreventgenerator_epoll_mod(xdescriptoreventgenerator_epol
         xassertion((descriptor->status & xdescriptorstatus_register) == xdescriptorstatus_void, "");
         if(descriptor->handle.f >= 0)
         {
-            xassertion(descriptor->status & xdescriptorstatus_register, "");
             struct epoll_event event;
             event.events = (EPOLLRDHUP | EPOLLERR | EPOLLHUP | EPOLLPRI | EPOLLET | EPOLLONESHOT);
             event.data.ptr = subscription;

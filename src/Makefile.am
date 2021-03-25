@@ -17,6 +17,7 @@ libnovemberizing_a_SOURCES = x/std.c                                          \
                              x/queue.c                                        \
                              x/set.c                                          \
                              x/map.c                                          \
+                             x/time.c                                         \
                              x/object.c                                       \
                              x/exception.c                                    \
                              x/thread.c                                       \

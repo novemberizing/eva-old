@@ -22,6 +22,7 @@ extern xint64 xdescriptoron(xdescriptor * descriptor, xuint32 event, xdescriptor
     else
     {
         xint64 ret = descriptor->on(descriptor, event, param, result);
+
         if(result >= 0 && ret < 0)
         {
             descriptor->status |= xdescriptorstatus_exception;
@@ -42,32 +43,32 @@ extern xint64 xdescriptorread(xdescriptor * descriptor, void * buffer, xuint64 s
         {
             if(buffer && size)
             {
-            ret = read(descriptor->handle.f, buffer, size);
-            if(ret > 0) 
-            {
-                descriptor->status &= (~xdescriptorstatus_readend);
-                descriptor->status |= xdescriptorstatus_in;
-                ret = xdescriptoron(descriptor, xdescriptoreventtype_in, xdescriptorparamgen(buffer), ret);
-            }
-            else if(ret == 0)
-            {
-                descriptor->status &= (~xdescriptorstatus_in);
-                descriptor->status |= xdescriptorstatus_readend;
-                ret = xsuccess;
-            }
-            else
-            {
-                if(errno == EAGAIN)
+                ret = read(descriptor->handle.f, buffer, size);
+                if(ret > 0) 
                 {
-                    descriptor->status &= (~(xdescriptorstatus_in | xdescriptorstatus_readend));
+                    descriptor->status &= (~xdescriptorstatus_readend);
+                    descriptor->status |= xdescriptorstatus_in;
+                    ret = xdescriptoron(descriptor, xdescriptoreventtype_in, xdescriptorparamgen(buffer), ret);
+                }
+                else if(ret == 0)
+                {
+                    descriptor->status &= (~xdescriptorstatus_in);
+                    descriptor->status |= xdescriptorstatus_readend;
                     ret = xsuccess;
                 }
                 else
                 {
-                    xdescriptorexception(descriptor, read, errno, xexceptiontype_sys, "");
-                    ret = xfail;
+                    if(errno == EAGAIN)
+                    {
+                        descriptor->status &= (~(xdescriptorstatus_in | xdescriptorstatus_readend));
+                        ret = xsuccess;
+                    }
+                    else
+                    {
+                        xdescriptorexception(descriptor, read, errno, xexceptiontype_sys, "");
+                        ret = xfail;
+                    }
                 }
-            }
             }
             else
             {
@@ -232,7 +233,10 @@ extern xint64 xdescriptorregister(xdescriptor * descriptor)
                 }
                 else
                 {
-                    xeventengine_queue_push(subscription->enginenode.engine, (xevent *) xaddressof(descriptor->event));
+                    if(descriptor->event.queue == xnil)
+                    {
+                        xeventengine_queue_push(subscription->enginenode.engine, (xevent *) xaddressof(descriptor->event));
+                    }
                 }
             }
 
