@@ -13,7 +13,7 @@
 #include "socket/event.h"
 #include "socket/event/type.h"
 #include "socket/event/avail.h"
-#include "socket/process/tcp.h"
+#include "socket/event/process/tcp.h"
 
 static xclientsocketprocessor xclientsocketprocessor_get(xint32 domain, xint32 type, xint32 protocol);
 static xint64 xclientsocketon(xclientsocket * o, xuint32 event, xdescriptorparam param, xint64 result);

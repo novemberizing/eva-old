@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../../../thread.h"
+#include "../../../../thread.h"
 
 #include "tcp.h"
 
-#include "../event/avail.h"
+#include "../avail.h"
 
 static const xuint64 socketbuffersize = 8192;
 static const xint32 maxretrycount = 32;
