@@ -1,5 +1,7 @@
 #include <stdio.h>
+#include <stdlib.h>
 
+#include "../thread.h"
 #include "cli.h"
 
 extern xint64 xevacli(xconsole * console, xconsoledescriptor * descriptor, xuint32 event, xdescriptorparam param, xint64 result)

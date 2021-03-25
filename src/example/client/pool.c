@@ -34,13 +34,16 @@ static xint64 on(xclientpool * pool, xclient * client, xuint64 event, xdescripto
             }
 
             xclientsendf(client, xstringformatserialize ,"PING\r\n");
-
-            printf("event on => %s / [%ld.%09ld / %ld]\n", xdescriptoreventtype_str(event), diff.second, diff.nanosecond, total);
-
-            for(xuint64 i = 0; i < 64; i++)
+            if(total % 10000 == 0)
             {
-                xclientsendf(client, xstringformatserialize ,"PING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\n");
+                printf("event on => %s / [%ld.%09ld / %ld]\n", xdescriptoreventtype_str(event), diff.second, diff.nanosecond, total);
             }
+            
+
+            // for(xuint64 i = 0; i < 64; i++)
+            // {
+            //     xclientsendf(client, xstringformatserialize ,"PING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\n");
+            // }
         }
     }
     else if(event == xdescriptoreventtype_out)
@@ -64,10 +67,10 @@ static xint64 on(xclientpool * pool, xclient * client, xuint64 event, xdescripto
 
         xclientsendf(client, xstringformatserialize ,"PING\r\n");
 
-        for(xuint64 i = 0; i < 64; i++)
-        {
-            xclientsendf(client, xstringformatserialize ,"PING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\n");
-        }
+        // for(xuint64 i = 0; i < 64; i++)
+        // {
+        //     xclientsendf(client, xstringformatserialize ,"PING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\n");
+        // }
     }
     else
     {
@@ -91,7 +94,7 @@ int main(int argc, char ** argv)
 
     xclientpool * pool = xclientpoolnew(on, sizeof(xclientpool));
 
-    for(xint32 i = 0; i < 32; i++)
+    for(xint32 i = 0; i < 64; i++)
     {
         xclientpooladd(pool, xclientnew(AF_INET, SOCK_STREAM, IPPROTO_TCP, xaddressof(addr), sizeof(struct sockaddr_in), xnil, sizeof(xclientpool)));
     }
