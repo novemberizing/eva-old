@@ -4,20 +4,24 @@
 #include <sys/socket.h>
 
 #include "handle.h"
+#include "../descriptor.h"
 
 #include "../log.h"
 
 extern xint32 xsockethandle_shutdown(xint32 f)
 {
-    if(shutdown(f, SHUT_RDWR) != xsuccess)
+    if(f > xdescriptorsystemno_max)
     {
-        xlogcaution("shutdown(...) => %d", errno);
-    }
+        if(shutdown(f, SHUT_RDWR) != xsuccess)
+        {
+            xlogcaution("shutdown(...) => %d", errno);
+        }
 
-    if(close(f) != xsuccess)
-    {
-        xlogcaution("close(...) => %d", errno);
+        if(close(f) != xsuccess)
+        {
+            xlogcaution("close(...) => %d", errno);
+        }
+        return xinvalid;
     }
-
-    return xinvalid;
+    return f;
 }

@@ -10,11 +10,21 @@ static xint64 on(xclient * client, xuint32 event, xdescriptorparam param, xint64
 {
     if(event == xdescriptoreventtype_in)
     {
-        printf("event on => %s / %s", xdescriptoreventtype_str(event), (char *) param.p);
+        if(result > 0)
+        {
+            char * s = (char *) param.p;
+            s[result] = 0;
+            printf("event on => %s / %s", xdescriptoreventtype_str(event), (char *) param.p);
+        }
     }
     else if(event == xdescriptoreventtype_out)
     {
-        printf("event on => %s / %s", xdescriptoreventtype_str(event), (const char *) param.c);
+        if(result > 0)
+        {
+            char * s = (char *) param.p;
+            s[result] = 0;
+            printf("event on => %s / %s", xdescriptoreventtype_str(event), (char *) param.p);
+        }
     }
     else
     {
