@@ -27,7 +27,7 @@ static xint64 on(xclientpool * pool, xclient * client, xuint64 event, xdescripto
     }
     else if(event == xdescriptoreventtype_open)
     {
-        xclientsendf(client, "PING\r\n");
+        xclientsendf(client, xstringformatserialize ,"PING\r\n");
     }
     else
     {

@@ -10,6 +10,7 @@
 #define   __NOVEMBERIZING_X__STREAM__H__
 
 #include <x/std.h>
+#include <x/string/format.h>
 
 #define xstreamtype_buffer          (1)                     /**!< 바이트 버퍼 스트림 타입 */
 
@@ -49,6 +50,9 @@ extern xuint64 xstreampos_set(xstream * o, xuint64 n);
 extern xuint64 xstreampos_get(xstream * o);
 
 extern xuint64 xstreampush(xstream * o, const xbyte * data, xuint64 len);
+extern void xstreamformat(xstream * o, xstringserializer serialize, const char * format, ...);
+extern void xstreamformatv(xstream * o, xstringserializer serialize, const char * format, va_list ap);
+
 extern void xstreamclear(xstream * o);
 
 

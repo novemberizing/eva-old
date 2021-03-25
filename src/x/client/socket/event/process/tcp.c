@@ -68,8 +68,6 @@ extern xint64 xclientsocketprocess_tcp(xclientsocket * o, xuint32 event)
 
 static xint64 xclientsocketprocess_void(xclientsocket * o)
 {
-    xassertion(xtrue, "todo");
-
     if(xdescriptorstatuscheck_close((xdescriptor *) o))
     {
         xdescriptorclose((xdescriptor *) o);

@@ -48,7 +48,7 @@ static char * xstringserialize_simple(char * s, xuint64 * index, xuint64 * capac
     return xstringncpy(s, index, capacity, str, n);
 }
 
-static char * xstringserialize(char * s, xuint64 * index, xuint64 * capacity, xint32 specifier, const char * format, va_list ap)
+extern char * xstringformatserialize(char * s, xuint64 * index, xuint64 * capacity, xint32 specifier, const char * format, va_list ap)
 {
     switch(specifier)
     {
@@ -160,14 +160,14 @@ extern char * xsprintf(char * s, xuint64 * index, xuint64 * capacity, const char
 {
     va_list ap;
     va_start(ap, format);
-    s = xstringformatv(s, index, capacity, xstringserialize, format, ap);
+    s = xstringformatv(s, index, capacity, xstringformatserialize, format, ap);
     va_end(ap);
     return s;
 }
 
 extern char * xvsprintf(char * s, xuint64 * index, xuint64 * capacity, const char * format, va_list ap)
 {
-    return xstringformatv(s, index, capacity, xstringserialize, format, ap);
+    return xstringformatv(s, index, capacity, xstringformatserialize, format, ap);
 }
 
 // // stream ... string ...

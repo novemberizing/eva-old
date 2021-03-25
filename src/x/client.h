@@ -4,6 +4,7 @@
 #include <x/std.h>
 #include <x/io.h>
 #include <x/stream.h>
+#include <x/string/format.h>
 
 struct xclient;
 
@@ -36,6 +37,6 @@ extern xint64 xclientclose(xclient * client);
 extern xint64 xclientsend(xclient * client, const char * data, xuint64 len);
 extern xint64 xclientrecv(xclient * client, char * buffer, xuint64 size);
 
-extern xint64 xclientsendf(xclient * client, const char * format, ...);
+extern xint64 xclientsendf(xclient * client, xstringserializer serialize, const char * format, ...);
 
 #endif // __NOVEMBERIZING_X__CLIENT__H__

@@ -20,6 +20,8 @@ extern char * xvsprintf(char * s, xuint64 * index, xuint64 * capacity, const cha
 extern char * xstringformat(char * s, xuint64 * index, xuint64 * capacity, xstringserializer serializer, const char * format, ...);
 extern char * xstringformatv(char * s, xuint64 * index, xuint64 * capacity, xstringserializer serializer, const char * format, va_list ap);
 
+
+extern char * xstringformatserialize(char * s, xuint64 * index, xuint64 * capacity, xint32 specifier, const char * format, va_list ap);
 // typedef xstring * (*xstringserializer)(xstring *, xint32, const char *, va_list);
 
 // extern xstring * xsprintf(xstring * o, const char * format, ...);

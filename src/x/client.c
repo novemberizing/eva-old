@@ -8,6 +8,9 @@
 #include "thread.h"
 
 #include "socket.h"
+
+#include "descriptor/event/avail.h"
+
 #include "client.h"
 #include "client/pool.h"
 #include "client/socket.h"
@@ -145,23 +148,20 @@ extern xint64 xclientrecv(xclient * client, char * buffer, xuint64 size)
     return ret;
 }
 
-extern xint64 xclientsendf(xclient * client, const char * format, ...)
+extern xint64 xclientsendf(xclient * client, xstringserializer serialize, const char * format, ...)
 {
-    xassertion(xtrue, "implement this");
-    // xclientsocket *                  descriptor = client->descriptor;
-    // xdescriptoreventsubscription * subscription = descriptor->subscription;
+//    xassertion(xtrue, "implement this");
 
-    // if(subscription && subscription->enginenode.engine)
-    // {
-    //     if(descriptor->stream.out == xnil)
-    //     {
-    //         descriptor->stream.out = xstreamnew(xstreamtype_buffer);
-    //     }
-    // }
-    // xuint64 formatlen = strlen(format);
+    xclientsocket * o = client->descriptor;
+    if(xdescriptoreventavail_in((xdescriptor *) o))
+    {
+        va_list ap;
+        va_start(ap, format);
+        xstreamformatv(o->stream.out, serialize, format, ap);
+        va_end(ap);
 
-    // for(xuint64 i = 0; i < formatlen; i++)
-    // {
-
-    // }
+        return xdescriptorwrite((xdescriptor *) o, xstreamfront(o->stream.out), xstreamlen(o->stream.out));
+    }
+    return xdescriptorstatuscheck_close((xdescriptor *) o) ? xfail : xsuccess;
+    
 }

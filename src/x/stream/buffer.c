@@ -373,3 +373,16 @@ extern void xstreambuffer_clear(xstreambuffer * o)
 
     xlogfunction_end("%s(%p)", __func__);
 }
+
+extern void xstreambuffer_format(xstreambuffer * o, xstringserializer serialize, const char * format, ...)
+{
+    va_list ap;
+    va_start(ap, format);
+    xstreambuffer_formatv(o, serialize, format, ap);
+    va_end(ap);
+}
+
+extern void xstreambuffer_formatv(xstreambuffer * o, xstringserializer serialize, const char * format, va_list ap)
+{
+    o->buffer = xstringformatv(o->buffer, xaddressof(o->size), xaddressof(o->capacity), serialize, format, ap);
+}

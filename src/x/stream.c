@@ -460,3 +460,22 @@ extern xstream * xstreamgen_str(const char * s)
     xstreambuffer * stream = xstreambuffer_new();
     xstreambuffer_push(stream, s, strlen(s));
 }
+
+extern void xstreamformat(xstream * o, xstringserializer serialize, const char * format, ...)
+{
+    va_list ap;
+    va_start(ap, format);
+    switch(o->type)
+    {
+        case xstreamtype_buffer: xstreambuffer_formatv((xstreambuffer *) o, serialize, format, ap);  break;
+    }
+    va_end(ap);
+}
+
+extern void xstreamformatv(xstream * o, xstringserializer serialize, const char * format, va_list ap)
+{
+    switch(o->type)
+    {
+        case xstreamtype_buffer: xstreambuffer_formatv((xstreambuffer *) o, serialize, format, ap);  break;
+    }
+}
