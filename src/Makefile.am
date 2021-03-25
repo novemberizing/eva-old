@@ -43,9 +43,10 @@ libnovemberizing_a_SOURCES = x/std.c                                          \
                              x/descriptor/event/generator/epoll.c             \
                              x/descriptor/event/generator/subscription/list.c \
                              x/console.c                                      \
+                             x/console/descriptor/event/processor/in.c        \
+                             x/console/descriptor/event/processor/out.c       \
                              x/socket.c                                       \
                              x/socket/handle.c                                \
-                             x/socket/processor/tcp/client.c                  \
                              x/server.c                                       \
                              x/server/socket.c                                \
                              x/session.c                                      \
@@ -55,6 +56,7 @@ libnovemberizing_a_SOURCES = x/std.c                                          \
                              x/client/pool/list.c                             \
                              x/client/socket.c                                \
                              x/client/socket/event/avail.c                    \
+                             x/client/socket/process/tcp.c                    \
                              x/eva.c                                          \
                              x/eva/cli.c                                      \
                              x/eva/extension/echo.c

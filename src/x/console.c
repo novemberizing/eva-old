@@ -6,16 +6,9 @@
 #include "thread.h"
 #include "console.h"
 #include "console/descriptor.h"
+#include "console/descriptor/event/processor/in.h"
+#include "console/descriptor/event/processor/out.h"
 #include "event/engine.h"
-
-static xconsoledescriptor * xconsoledescriptor_rem(xconsoledescriptor * o);
-static xint64 xconsoledescriptorprocess_in(xconsoledescriptor * descriptor, xuint32 event);
-static xint64 xconsoledescriptorprocess_out(xconsoledescriptor * descriptor, xuint32 event);
-
-static xint64 xconsoledescriptoron(xconsoledescriptor * descriptor, xuint32 event, xdescriptorparam param, xint64 result);
-
-static void xconsoledescriptoreventon_in(xconsoledescriptorevent * event);
-static void xconsoledescriptoreventon_out(xconsoledescriptorevent * event);
 
 struct xconsole
 {
@@ -24,50 +17,57 @@ struct xconsole
     xconsoleobserver   on;
 };
 
+static xconsoledescriptor * xconsoledescriptor_rem(xconsoledescriptor * o);
+
+static xint64 xconsoledescriptoron(xconsoledescriptor * descriptor, xuint32 event, xdescriptorparam param, xint64 result);
+
+static void xconsoledescriptoreventon_in(xconsoledescriptorevent * event);
+static void xconsoledescriptoreventon_out(xconsoledescriptorevent * event);
+
 static xconsole singleton = {
     {
-        xconsoledescriptor_rem,             // singleton.in.rem
-        xnil,                               // singleton.in.subscription
-        xnil,                               // singleton.in.sync
-        xdescriptormask_void,               // singleton.in.mask
-        xdescriptorstatus_void,             // singleton.in.status
-        xdescriptorhandle_invalid,          // singleton.in.handle
-        xconsoledescriptorprocess_in,       // singleton.in.process
-        xnil,                               // singleton.in.check: deprecated
-        xconsoledescriptoron,               // singleton.in.observer
+        xconsoledescriptor_rem,                 // singleton.in.rem
+        xnil,                                   // singleton.in.subscription
+        xnil,                                   // singleton.in.sync
+        xdescriptormask_void,                   // singleton.in.mask
+        xdescriptorstatus_void,                 // singleton.in.status
+        xdescriptorhandle_invalid,              // singleton.in.handle
+        xconsoledescriptoreventprocessorin,     // singleton.in.process
+        xnil,                                   // singleton.in.check: deprecated
+        xconsoledescriptoron,                   // singleton.in.observer
         {
-            xnil,                               // singleton.in.event.prev
-            xnil,                               // singleton.in.event.next
-            xnil,                               // singleton.in.event.queue
-            xconsoledescriptoreventon_in,       // singleton.in.event.on
-            xnil                                // singleton.in.event.descriptor
+            xnil,                                   // singleton.in.event.prev
+            xnil,                                   // singleton.in.event.next
+            xnil,                                   // singleton.in.event.queue
+            xconsoledescriptoreventon_in,           // singleton.in.event.on
+            xnil                                    // singleton.in.event.descriptor
         },
-        xexception_void,                    // singleton.in.exception
-        xnil,                               // singleton.in.console
-        xnil                                // singleton.in.stream
+        xexception_void,                        // singleton.in.exception
+        xnil,                                   // singleton.in.console
+        xnil                                    // singleton.in.stream
     },
     {
-        xconsoledescriptor_rem,             // singleton.out.rem
-        xnil,                               // singleton.out.subscription
-        xnil,                               // singleton.out.sync
-        xdescriptormask_void,               // singleton.out.mask
-        xdescriptorstatus_void,             // singleton.out.status
-        xdescriptorhandle_invalid,          // singleton.out.handle
-        xconsoledescriptorprocess_out,      // singleton.out.process
-        xnil,                               // singleton.out.check: deprecated
-        xconsoledescriptoron,               // singleton.out.observer
+        xconsoledescriptor_rem,                 // singleton.out.rem
+        xnil,                                   // singleton.out.subscription
+        xnil,                                   // singleton.out.sync
+        xdescriptormask_void,                   // singleton.out.mask
+        xdescriptorstatus_void,                 // singleton.out.status
+        xdescriptorhandle_invalid,              // singleton.out.handle
+        xconsoledescriptoreventprocessorout,    // singleton.out.process
+        xnil,                                   // singleton.out.check: deprecated
+        xconsoledescriptoron,                   // singleton.out.observer
         {
-            xnil,                               // singleton.out.event.prev
-            xnil,                               // singleton.out.event.next
-            xnil,                               // singleton.out.event.queue
-            xconsoledescriptoreventon_out,      // singleton.out.event.on
-            xnil                                // singleton.out.event.descriptor
+            xnil,                                   // singleton.out.event.prev
+            xnil,                                   // singleton.out.event.next
+            xnil,                                   // singleton.out.event.queue
+            xconsoledescriptoreventon_out,          // singleton.out.event.on
+            xnil                                    // singleton.out.event.descriptor
         },
-        xexception_void,                    // singleton.out.exception
-        xnil,                               // singleton.out.console
-        xnil                                // singleton.out.stream
+        xexception_void,                        // singleton.out.exception
+        xnil,                                   // singleton.out.console
+        xnil                                    // singleton.out.stream
     },
-    xnil                                // singleton.on
+    xnil                                    // singleton.on
 };
 
 extern void xconsoleobserver_set(xconsoleobserver on)
@@ -98,6 +98,16 @@ extern void xconsoleinit(xconsoleobserver on)
     }
 }
 
+extern xconsoledescriptor * xconsoledescriptorin_get(xconsole * o)
+{
+    return xaddressof(o->in);
+}
+
+extern xconsoledescriptor * xconsoledescriptorout_get(xconsole * o)
+{
+    return xaddressof(o->out);
+}
+
 static xconsoledescriptor * xconsoledescriptor_rem(xconsoledescriptor * o)
 {
     if(o)
@@ -117,154 +127,6 @@ static xconsoledescriptor * xconsoledescriptor_rem(xconsoledescriptor * o)
     return o;
 }
 
-typedef xint64 (*xconsoledescriptorprocessorfunc)(xconsoledescriptor *);
-
-static xint64 xconsoledescriptoreventprocessin_void(xconsoledescriptor * o)
-{
-    if(xdescriptorstatuscheck_close((xdescriptor *) o))
-    {
-        xdescriptorclose((xdescriptor *) o);
-
-        return xsuccess;
-    }
-
-    xconsoledescriptoreventprocessin_open(o);
-    
-    xconsoledescriptoreventprocessin_in(o);
-
-    if((o->status & xdescriptorstatus_in) == xdescriptorstatus_void)
-    {
-
-    }
-    else
-    {
-
-    }
-
-    return xsuccess;
-}
-
-static xint64 xconsoledescriptoreventprocessin_open(xconsoledescriptor * o)
-{
-
-
-    return xsuccess;
-}
-
-static xint64 xconsoledescriptoreventprocessin_in(xconsoledescriptor * o);
-static xint64 xconsoledescriptoreventprocessin_out(xconsoledescriptor * o);
-static xint64 xconsoledescriptoreventprocessin_close(xconsoledescriptor * o);
-static xint64 xconsoledescriptoreventprocessin_exception(xconsoledescriptor * o);
-static xint64 xconsoledescriptoreventprocessin_rem(xconsoledescriptor * o);
-static xint64 xconsoledescriptoreventprocessin_register(xconsoledescriptor * o);
-static xint64 xconsoledescriptoreventprocessin_flush(xconsoledescriptor * o);
-static xint64 xconsoledescriptoreventprocessin_readoff(xconsoledescriptor * o);
-static xint64 xconsoledescriptoreventprocessin_writeoff(xconsoledescriptor * o);
-static xint64 xconsoledescriptoreventprocessin_opening(xconsoledescriptor * o);
-static xint64 xconsoledescriptoreventprocessin_create(xconsoledescriptor * o);
-static xint64 xconsoledescriptoreventprocessin_bind(xconsoledescriptor * o);
-static xint64 xconsoledescriptoreventprocessin_clear(xconsoledescriptor * o);
-static xint64 xconsoledescriptoreventprocessin_alloff(xconsoledescriptor * o);
-static xint64 xconsoledescriptoreventprocessin_connect(xconsoledescriptor * o);
-static xint64 xconsoledescriptoreventprocessin_listen(xconsoledescriptor * o);
-static xint64 xconsoledescriptoreventprocessin_connecting(xconsoledescriptor * o);
-static xint64 xconsoledescriptoreventprocessin_unregister(xconsoledescriptor * o);
-
-static xconsoledescriptorprocessorfunc consoleinprocessors[xdescriptoreventtype_max] = {
-    xconsoledescriptoreventprocessin_void,          // xdescriptoreventtype_void            0
-    xconsoledescriptoreventprocessin_open,          // xdescriptoreventtype_open            1
-    xconsoledescriptoreventprocessin_in,            // xdescriptoreventtype_in              2
-    xconsoledescriptoreventprocessin_out,           // xdescriptoreventtype_out             3
-    xconsoledescriptoreventprocessin_close,         // xdescriptoreventtype_close           4
-    xconsoledescriptoreventprocessin_exception,     // xdescriptoreventtype_exception       5
-    xconsoledescriptoreventprocessin_rem,           // xdescriptoreventtype_rem             6
-    xconsoledescriptoreventprocessin_register,      // xdescriptoreventtype_register        7
-    xconsoledescriptoreventprocessin_flush,         // xdescriptoreventtype_flush           8
-    xconsoledescriptoreventprocessin_readoff,       // xdescriptoreventtype_readoff         9
-    xconsoledescriptoreventprocessin_writeoff,      // xdescriptoreventtype_writeoff       10
-    xconsoledescriptoreventprocessin_opening,       // xdescriptoreventtype_opening        11
-    xconsoledescriptoreventprocessin_create,        // xdescriptoreventtype_create         12
-    xconsoledescriptoreventprocessin_bind,          // xdescriptoreventtype_bind           13
-    xconsoledescriptoreventprocessin_clear,         // xdescriptoreventtype_clear          14
-    xconsoledescriptoreventprocessin_alloff,        // xdescriptoreventtype_alloff         15
-    xconsoledescriptoreventprocessin_connect,       // xdescriptoreventtype_connect        16
-    xconsoledescriptoreventprocessin_listen,        // xdescriptoreventtype_listen         17
-    xconsoledescriptoreventprocessin_connecting,    // xdescriptoreventtype_connecting     18
-    xconsoledescriptoreventprocessin_unregister     // xdescriptoreventtype_unregister     19
-};
-
-static xint64 xconsoledescriptorprocess_in(xconsoledescriptor * descriptor, xuint32 event)
-{
-    if(event < xdescriptoreventtype_max)
-    {
-        xconsoledescriptorprocessorfunc process = consoleinprocessors[event];
-        if(process)
-        {
-            return process(descriptor);
-        }
-    }
-    xassertion(xtrue, "");
-    return xfail;
-}
-
-static xint64 xconsoledescriptoreventprocessout_void(xconsoledescriptor * o);
-static xint64 xconsoledescriptoreventprocessout_open(xconsoledescriptor * o);
-static xint64 xconsoledescriptoreventprocessout_in(xconsoledescriptor * o);
-static xint64 xconsoledescriptoreventprocessout_out(xconsoledescriptor * o);
-static xint64 xconsoledescriptoreventprocessout_close(xconsoledescriptor * o);
-static xint64 xconsoledescriptoreventprocessout_exception(xconsoledescriptor * o);
-static xint64 xconsoledescriptoreventprocessout_rem(xconsoledescriptor * o);
-static xint64 xconsoledescriptoreventprocessout_register(xconsoledescriptor * o);
-static xint64 xconsoledescriptoreventprocessout_flush(xconsoledescriptor * o);
-static xint64 xconsoledescriptoreventprocessout_readoff(xconsoledescriptor * o);
-static xint64 xconsoledescriptoreventprocessout_writeoff(xconsoledescriptor * o);
-static xint64 xconsoledescriptoreventprocessout_opening(xconsoledescriptor * o);
-static xint64 xconsoledescriptoreventprocessout_create(xconsoledescriptor * o);
-static xint64 xconsoledescriptoreventprocessout_bind(xconsoledescriptor * o);
-static xint64 xconsoledescriptoreventprocessout_clear(xconsoledescriptor * o);
-static xint64 xconsoledescriptoreventprocessout_alloff(xconsoledescriptor * o);
-static xint64 xconsoledescriptoreventprocessout_connect(xconsoledescriptor * o);
-static xint64 xconsoledescriptoreventprocessout_listen(xconsoledescriptor * o);
-static xint64 xconsoledescriptoreventprocessout_connecting(xconsoledescriptor * o);
-static xint64 xconsoledescriptoreventprocessout_unregister(xconsoledescriptor * o);
-
-static xconsoledescriptorprocessorfunc consoleoutprocessors[xdescriptoreventtype_max] = {
-    xconsoledescriptoreventprocessout_void,         // xdescriptoreventtype_void            0
-    xconsoledescriptoreventprocessout_open,         // xdescriptoreventtype_open            1
-    xconsoledescriptoreventprocessout_in,           // xdescriptoreventtype_in              2
-    xconsoledescriptoreventprocessout_out,          // xdescriptoreventtype_out             3
-    xconsoledescriptoreventprocessout_close,        // xdescriptoreventtype_close           4
-    xconsoledescriptoreventprocessout_exception,    // xdescriptoreventtype_exception       5
-    xconsoledescriptoreventprocessout_rem,          // xdescriptoreventtype_rem             6
-    xconsoledescriptoreventprocessout_register,     // xdescriptoreventtype_register        7
-    xconsoledescriptoreventprocessout_flush,        // xdescriptoreventtype_flush           8
-    xconsoledescriptoreventprocessout_readoff,      // xdescriptoreventtype_readoff         9
-    xconsoledescriptoreventprocessout_writeoff,     // xdescriptoreventtype_writeoff       10
-    xconsoledescriptoreventprocessout_opening,      // xdescriptoreventtype_opening        11
-    xconsoledescriptoreventprocessout_create,       // xdescriptoreventtype_create         12
-    xconsoledescriptoreventprocessout_bind,         // xdescriptoreventtype_bind           13
-    xconsoledescriptoreventprocessout_clear,        // xdescriptoreventtype_clear          14
-    xconsoledescriptoreventprocessout_alloff,       // xdescriptoreventtype_alloff         15
-    xconsoledescriptoreventprocessout_connect,      // xdescriptoreventtype_connect        16
-    xconsoledescriptoreventprocessout_listen,       // xdescriptoreventtype_listen         17
-    xconsoledescriptoreventprocessout_connecting,   // xdescriptoreventtype_connecting     18
-    xconsoledescriptoreventprocessout_unregister    // xdescriptoreventtype_unregister     19
-};
-
-static xint64 xconsoledescriptorprocess_out(xconsoledescriptor * descriptor, xuint32 event)
-{
-    if(event < xdescriptoreventtype_max)
-    {
-        xconsoledescriptorprocessorfunc process = consoleoutprocessors[event];
-        if(process)
-        {
-            return process(descriptor);
-        }
-    }
-    xassertion(xtrue, "");
-    return xfail;
-}
-
 static xint64 xconsoledescriptoron(xconsoledescriptor * descriptor, xuint32 event, xdescriptorparam param, xint64 result)
 {
     xconsole * console = descriptor->console;
@@ -273,12 +135,12 @@ static xint64 xconsoledescriptoron(xconsoledescriptor * descriptor, xuint32 even
 
 static void xconsoledescriptoreventon_in(xconsoledescriptorevent * event)
 {
-    xconsoledescriptorprocess_in(event->descriptor, xdescriptoreventtype_void);
+    xconsoledescriptoreventprocessorin(event->descriptor, xdescriptoreventtype_void);
 }
 
 static void xconsoledescriptoreventon_out(xconsoledescriptorevent * event)
 {
-    xconsoledescriptorprocess_out(event->descriptor, xdescriptoreventtype_void);
+    xconsoledescriptoreventprocessorout(event->descriptor, xdescriptoreventtype_void);
 }
 
 // /**

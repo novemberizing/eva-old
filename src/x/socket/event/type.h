@@ -23,5 +23,6 @@
 #define xsocketeventtype_listen         xdescriptoreventtype_listen
 #define xsocketeventtype_connecting     xdescriptoreventtype_connecting
 #define xsocketeventtype_unregister     xdescriptoreventtype_unregister
+#define xsocketeventtype_max            xdescriptoreventtype_max
 
 #endif // __NOVEMBERIZING_X__SOCKET__EVENT_TYPE__H__

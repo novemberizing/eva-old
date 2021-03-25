@@ -13,3 +13,16 @@ extern xint32 xclientsocketeventavail_rem(xclientsocket * o)
 
     return xtrue;
 }
+
+extern xint32 xclientsocketeventavail_open(xclientsocket * o)
+{
+    if(o->status & (xdescriptorstatus_rem | xdescriptorstatus_close | xdescriptorstatus_exception))
+    {
+        return xfalse;
+    }
+    if(o->status & xdescriptorstatus_connecting)
+    {
+        return xtrue;
+    }
+    return (o->status & xdescriptorstatus_connect) == xdescriptorstatus_void;
+}

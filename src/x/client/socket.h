@@ -49,6 +49,7 @@ extern xclientsocket * xclientsocket_new(xclient * client, xint32 domain, xint32
 extern xclientsocket * xclientsocket_rem(xclientsocket * o);
 
 extern xint64 xclientsocketconnect(xclientsocket * o, void * addr, xuint32 addrlen);
+extern xint64 xclientsocketclear(xclientsocket * o);
 
 
 #endif // __NOVEMBERIZING_X__CLIENT__SOCKET__H__

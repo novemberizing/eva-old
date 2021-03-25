@@ -204,3 +204,68 @@ extern xint32 xdescriptornonblock(xdescriptor * descriptor, xint32 on)
     }
     return xfail;
 }
+
+extern xint64 xdescriptorregister(xdescriptor * descriptor)
+{
+    if(xdescriptorstatuscheck_open(descriptor))
+    {
+        xdescriptoreventsubscription * subscription = descriptor->subscription;
+        xdescriptoreventgenerator * generator = subscription ? subscription->generatornode.generator : xnil;
+        
+
+        if(generator)
+        {
+            if(subscription->generatornode.list == xnil)
+            {
+                xdescriptoreventgeneratorsubscriptionlist_push(generator->alive, subscription);
+            }
+
+            if((descriptor->status & xdescriptorstatus_register) == xdescriptorstatus_void)
+            {
+                xdescriptoreventgenerator_descriptor_register(generator, descriptor);
+            }
+            else
+            {
+                if((descriptor->status & (xdescriptorstatus_in | xdescriptorstatus_out)) != (xdescriptorstatus_in | xdescriptorstatus_out))
+                {
+                    xdescriptoreventgenerator_descriptor_update(generator, descriptor);
+                }
+                else
+                {
+                    xeventengine_queue_push(subscription->enginenode.engine, (xevent *) xaddressof(descriptor->event));
+                }
+            }
+
+            return xdescriptorstatuscheck_close(descriptor) ? xfail : xsuccess;
+        }
+    }
+
+
+    return xfail;
+}
+
+extern xint64 xdescriptorunregister(xdescriptor * descriptor)
+{
+    xdescriptoreventsubscription * subscription = descriptor->subscription;
+    xdescriptoreventgenerator * generator = subscription ? subscription->generatornode.generator : xnil;
+
+    if(generator)
+    {
+        if(subscription->generatornode.list == generator->alive)
+        {
+            xdescriptoreventgeneratorsubscriptionlist_push(generator->alive, subscription);
+            xdescriptoreventgenerator_descriptor_unregister(generator, descriptor);
+            return xsuccess;
+        }
+        else if(subscription->generatornode.list == xnil)
+        {
+            return xsuccess;
+        }
+        else
+        {
+            xassertion(xtrue, "");
+        }
+    }
+
+    return xfail;
+}

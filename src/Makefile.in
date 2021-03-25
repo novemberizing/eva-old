@@ -167,14 +167,16 @@ am_libnovemberizing_a_OBJECTS = x/std.$(OBJEXT) x/log.$(OBJEXT) \
 	x/descriptor/event/generator.$(OBJEXT) \
 	x/descriptor/event/generator/epoll.$(OBJEXT) \
 	x/descriptor/event/generator/subscription/list.$(OBJEXT) \
-	x/console.$(OBJEXT) x/socket.$(OBJEXT) \
-	x/socket/handle.$(OBJEXT) \
-	x/socket/processor/tcp/client.$(OBJEXT) x/server.$(OBJEXT) \
-	x/server/socket.$(OBJEXT) x/session.$(OBJEXT) \
-	x/session/socket.$(OBJEXT) x/client.$(OBJEXT) \
-	x/client/pool.$(OBJEXT) x/client/pool/list.$(OBJEXT) \
-	x/client/socket.$(OBJEXT) \
-	x/client/socket/event/avail.$(OBJEXT) x/eva.$(OBJEXT) \
+	x/console.$(OBJEXT) \
+	x/console/descriptor/event/processor/in.$(OBJEXT) \
+	x/console/descriptor/event/processor/out.$(OBJEXT) \
+	x/socket.$(OBJEXT) x/socket/handle.$(OBJEXT) \
+	x/server.$(OBJEXT) x/server/socket.$(OBJEXT) \
+	x/session.$(OBJEXT) x/session/socket.$(OBJEXT) \
+	x/client.$(OBJEXT) x/client/pool.$(OBJEXT) \
+	x/client/pool/list.$(OBJEXT) x/client/socket.$(OBJEXT) \
+	x/client/socket/event/avail.$(OBJEXT) \
+	x/client/socket/process/tcp.$(OBJEXT) x/eva.$(OBJEXT) \
 	x/eva/cli.$(OBJEXT) x/eva/extension/echo.$(OBJEXT)
 libnovemberizing_a_OBJECTS = $(am_libnovemberizing_a_OBJECTS)
 am_example_client_pool_OBJECTS = example/client/pool.$(OBJEXT)
@@ -230,7 +232,11 @@ am__depfiles_remade = example/$(DEPDIR)/helloworld.Po \
 	x/client/$(DEPDIR)/pool.Po x/client/$(DEPDIR)/socket.Po \
 	x/client/pool/$(DEPDIR)/list.Po \
 	x/client/socket/event/$(DEPDIR)/avail.Po \
-	x/command/$(DEPDIR)/string.Po x/descriptor/$(DEPDIR)/status.Po \
+	x/client/socket/process/$(DEPDIR)/tcp.Po \
+	x/command/$(DEPDIR)/string.Po \
+	x/console/descriptor/event/processor/$(DEPDIR)/in.Po \
+	x/console/descriptor/event/processor/$(DEPDIR)/out.Po \
+	x/descriptor/$(DEPDIR)/status.Po \
 	x/descriptor/event/$(DEPDIR)/avail.Po \
 	x/descriptor/event/$(DEPDIR)/dispatch.Po \
 	x/descriptor/event/$(DEPDIR)/generator.Po \
@@ -244,10 +250,9 @@ am__depfiles_remade = example/$(DEPDIR)/helloworld.Po \
 	x/event/processor/$(DEPDIR)/event.Po \
 	x/event/processor/$(DEPDIR)/pool.Po \
 	x/server/$(DEPDIR)/socket.Po x/session/$(DEPDIR)/socket.Po \
-	x/socket/$(DEPDIR)/handle.Po \
-	x/socket/processor/tcp/$(DEPDIR)/client.Po \
-	x/stream/$(DEPDIR)/buffer.Po x/string/$(DEPDIR)/format.Po \
-	x/sync/posix/$(DEPDIR)/mutex.Po x/thread/$(DEPDIR)/posix.Po
+	x/socket/$(DEPDIR)/handle.Po x/stream/$(DEPDIR)/buffer.Po \
+	x/string/$(DEPDIR)/format.Po x/sync/posix/$(DEPDIR)/mutex.Po \
+	x/thread/$(DEPDIR)/posix.Po
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -462,9 +467,10 @@ libnovemberizing_a_SOURCES = x/std.c                                          \
                              x/descriptor/event/generator/epoll.c             \
                              x/descriptor/event/generator/subscription/list.c \
                              x/console.c                                      \
+                             x/console/descriptor/event/processor/in.c        \
+                             x/console/descriptor/event/processor/out.c       \
                              x/socket.c                                       \
                              x/socket/handle.c                                \
-                             x/socket/processor/tcp/client.c                  \
                              x/server.c                                       \
                              x/server/socket.c                                \
                              x/session.c                                      \
@@ -474,6 +480,7 @@ libnovemberizing_a_SOURCES = x/std.c                                          \
                              x/client/pool/list.c                             \
                              x/client/socket.c                                \
                              x/client/socket/event/avail.c                    \
+                             x/client/socket/process/tcp.c                    \
                              x/eva.c                                          \
                              x/eva/cli.c                                      \
                              x/eva/extension/echo.c
@@ -705,6 +712,18 @@ x/descriptor/event/generator/subscription/list.$(OBJEXT):  \
 	x/descriptor/event/generator/subscription/$(am__dirstamp) \
 	x/descriptor/event/generator/subscription/$(DEPDIR)/$(am__dirstamp)
 x/console.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
+x/console/descriptor/event/processor/$(am__dirstamp):
+	@$(MKDIR_P) x/console/descriptor/event/processor
+	@: > x/console/descriptor/event/processor/$(am__dirstamp)
+x/console/descriptor/event/processor/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) x/console/descriptor/event/processor/$(DEPDIR)
+	@: > x/console/descriptor/event/processor/$(DEPDIR)/$(am__dirstamp)
+x/console/descriptor/event/processor/in.$(OBJEXT):  \
+	x/console/descriptor/event/processor/$(am__dirstamp) \
+	x/console/descriptor/event/processor/$(DEPDIR)/$(am__dirstamp)
+x/console/descriptor/event/processor/out.$(OBJEXT):  \
+	x/console/descriptor/event/processor/$(am__dirstamp) \
+	x/console/descriptor/event/processor/$(DEPDIR)/$(am__dirstamp)
 x/socket.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
 x/socket/$(am__dirstamp):
 	@$(MKDIR_P) x/socket
@@ -714,15 +733,6 @@ x/socket/$(DEPDIR)/$(am__dirstamp):
 	@: > x/socket/$(DEPDIR)/$(am__dirstamp)
 x/socket/handle.$(OBJEXT): x/socket/$(am__dirstamp) \
 	x/socket/$(DEPDIR)/$(am__dirstamp)
-x/socket/processor/tcp/$(am__dirstamp):
-	@$(MKDIR_P) x/socket/processor/tcp
-	@: > x/socket/processor/tcp/$(am__dirstamp)
-x/socket/processor/tcp/$(DEPDIR)/$(am__dirstamp):
-	@$(MKDIR_P) x/socket/processor/tcp/$(DEPDIR)
-	@: > x/socket/processor/tcp/$(DEPDIR)/$(am__dirstamp)
-x/socket/processor/tcp/client.$(OBJEXT):  \
-	x/socket/processor/tcp/$(am__dirstamp) \
-	x/socket/processor/tcp/$(DEPDIR)/$(am__dirstamp)
 x/server.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
 x/server/$(am__dirstamp):
 	@$(MKDIR_P) x/server
@@ -769,6 +779,15 @@ x/client/socket/event/$(DEPDIR)/$(am__dirstamp):
 x/client/socket/event/avail.$(OBJEXT):  \
 	x/client/socket/event/$(am__dirstamp) \
 	x/client/socket/event/$(DEPDIR)/$(am__dirstamp)
+x/client/socket/process/$(am__dirstamp):
+	@$(MKDIR_P) x/client/socket/process
+	@: > x/client/socket/process/$(am__dirstamp)
+x/client/socket/process/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) x/client/socket/process/$(DEPDIR)
+	@: > x/client/socket/process/$(DEPDIR)/$(am__dirstamp)
+x/client/socket/process/tcp.$(OBJEXT):  \
+	x/client/socket/process/$(am__dirstamp) \
+	x/client/socket/process/$(DEPDIR)/$(am__dirstamp)
 x/eva.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
 x/eva/$(am__dirstamp):
 	@$(MKDIR_P) x/eva
@@ -849,7 +868,9 @@ mostlyclean-compile:
 	-rm -f x/client/*.$(OBJEXT)
 	-rm -f x/client/pool/*.$(OBJEXT)
 	-rm -f x/client/socket/event/*.$(OBJEXT)
+	-rm -f x/client/socket/process/*.$(OBJEXT)
 	-rm -f x/command/*.$(OBJEXT)
+	-rm -f x/console/descriptor/event/processor/*.$(OBJEXT)
 	-rm -f x/descriptor/*.$(OBJEXT)
 	-rm -f x/descriptor/event/*.$(OBJEXT)
 	-rm -f x/descriptor/event/generator/*.$(OBJEXT)
@@ -862,7 +883,6 @@ mostlyclean-compile:
 	-rm -f x/server/*.$(OBJEXT)
 	-rm -f x/session/*.$(OBJEXT)
 	-rm -f x/socket/*.$(OBJEXT)
-	-rm -f x/socket/processor/tcp/*.$(OBJEXT)
 	-rm -f x/stream/*.$(OBJEXT)
 	-rm -f x/string/*.$(OBJEXT)
 	-rm -f x/sync/posix/*.$(OBJEXT)
@@ -903,7 +923,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@x/client/$(DEPDIR)/socket.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/client/pool/$(DEPDIR)/list.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/client/socket/event/$(DEPDIR)/avail.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/client/socket/process/$(DEPDIR)/tcp.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/command/$(DEPDIR)/string.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/console/descriptor/event/processor/$(DEPDIR)/in.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/console/descriptor/event/processor/$(DEPDIR)/out.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/descriptor/$(DEPDIR)/status.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/descriptor/event/$(DEPDIR)/avail.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/descriptor/event/$(DEPDIR)/dispatch.Po@am__quote@ # am--include-marker
@@ -923,7 +946,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@x/server/$(DEPDIR)/socket.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/session/$(DEPDIR)/socket.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/socket/$(DEPDIR)/handle.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@x/socket/processor/tcp/$(DEPDIR)/client.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/stream/$(DEPDIR)/buffer.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/string/$(DEPDIR)/format.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/sync/posix/$(DEPDIR)/mutex.Po@am__quote@ # am--include-marker
@@ -1121,8 +1143,12 @@ distclean-generic:
 	-rm -f x/client/pool/$(am__dirstamp)
 	-rm -f x/client/socket/event/$(DEPDIR)/$(am__dirstamp)
 	-rm -f x/client/socket/event/$(am__dirstamp)
+	-rm -f x/client/socket/process/$(DEPDIR)/$(am__dirstamp)
+	-rm -f x/client/socket/process/$(am__dirstamp)
 	-rm -f x/command/$(DEPDIR)/$(am__dirstamp)
 	-rm -f x/command/$(am__dirstamp)
+	-rm -f x/console/descriptor/event/processor/$(DEPDIR)/$(am__dirstamp)
+	-rm -f x/console/descriptor/event/processor/$(am__dirstamp)
 	-rm -f x/descriptor/$(DEPDIR)/$(am__dirstamp)
 	-rm -f x/descriptor/$(am__dirstamp)
 	-rm -f x/descriptor/event/$(DEPDIR)/$(am__dirstamp)
@@ -1147,8 +1173,6 @@ distclean-generic:
 	-rm -f x/session/$(am__dirstamp)
 	-rm -f x/socket/$(DEPDIR)/$(am__dirstamp)
 	-rm -f x/socket/$(am__dirstamp)
-	-rm -f x/socket/processor/tcp/$(DEPDIR)/$(am__dirstamp)
-	-rm -f x/socket/processor/tcp/$(am__dirstamp)
 	-rm -f x/stream/$(DEPDIR)/$(am__dirstamp)
 	-rm -f x/stream/$(am__dirstamp)
 	-rm -f x/string/$(DEPDIR)/$(am__dirstamp)
@@ -1199,7 +1223,10 @@ distclean: distclean-am
 	-rm -f x/client/$(DEPDIR)/socket.Po
 	-rm -f x/client/pool/$(DEPDIR)/list.Po
 	-rm -f x/client/socket/event/$(DEPDIR)/avail.Po
+	-rm -f x/client/socket/process/$(DEPDIR)/tcp.Po
 	-rm -f x/command/$(DEPDIR)/string.Po
+	-rm -f x/console/descriptor/event/processor/$(DEPDIR)/in.Po
+	-rm -f x/console/descriptor/event/processor/$(DEPDIR)/out.Po
 	-rm -f x/descriptor/$(DEPDIR)/status.Po
 	-rm -f x/descriptor/event/$(DEPDIR)/avail.Po
 	-rm -f x/descriptor/event/$(DEPDIR)/dispatch.Po
@@ -1219,7 +1246,6 @@ distclean: distclean-am
 	-rm -f x/server/$(DEPDIR)/socket.Po
 	-rm -f x/session/$(DEPDIR)/socket.Po
 	-rm -f x/socket/$(DEPDIR)/handle.Po
-	-rm -f x/socket/processor/tcp/$(DEPDIR)/client.Po
 	-rm -f x/stream/$(DEPDIR)/buffer.Po
 	-rm -f x/string/$(DEPDIR)/format.Po
 	-rm -f x/sync/posix/$(DEPDIR)/mutex.Po
@@ -1301,7 +1327,10 @@ maintainer-clean: maintainer-clean-am
 	-rm -f x/client/$(DEPDIR)/socket.Po
 	-rm -f x/client/pool/$(DEPDIR)/list.Po
 	-rm -f x/client/socket/event/$(DEPDIR)/avail.Po
+	-rm -f x/client/socket/process/$(DEPDIR)/tcp.Po
 	-rm -f x/command/$(DEPDIR)/string.Po
+	-rm -f x/console/descriptor/event/processor/$(DEPDIR)/in.Po
+	-rm -f x/console/descriptor/event/processor/$(DEPDIR)/out.Po
 	-rm -f x/descriptor/$(DEPDIR)/status.Po
 	-rm -f x/descriptor/event/$(DEPDIR)/avail.Po
 	-rm -f x/descriptor/event/$(DEPDIR)/dispatch.Po
@@ -1321,7 +1350,6 @@ maintainer-clean: maintainer-clean-am
 	-rm -f x/server/$(DEPDIR)/socket.Po
 	-rm -f x/session/$(DEPDIR)/socket.Po
 	-rm -f x/socket/$(DEPDIR)/handle.Po
-	-rm -f x/socket/processor/tcp/$(DEPDIR)/client.Po
 	-rm -f x/stream/$(DEPDIR)/buffer.Po
 	-rm -f x/string/$(DEPDIR)/format.Po
 	-rm -f x/sync/posix/$(DEPDIR)/mutex.Po

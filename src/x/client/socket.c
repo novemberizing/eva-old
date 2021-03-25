@@ -7,13 +7,13 @@
 
 #include "../thread.h"
 #include "../socket/handle.h"
-#include "../socket/processor/tcp/client.h"
 
 #include "socket.h"
 #include "socket/status.h"
 #include "socket/event.h"
 #include "socket/event/type.h"
 #include "socket/event/avail.h"
+#include "socket/process/tcp.h"
 
 static xclientsocketprocessor xclientsocketprocessor_get(xint32 domain, xint32 type, xint32 protocol);
 static xint64 xclientsocketon(xclientsocket * o, xuint32 event, xdescriptorparam param, xint64 result);
@@ -64,6 +64,16 @@ extern xclientsocket * xclientsocket_rem(xclientsocket * o)
     return xnil;
 }
 
+extern xint64 xclientsocketclear(xclientsocket * o)
+{
+    xassertion(xdescriptorstatuscheck_close((xdescriptor *) o) == xfalse, "");
+
+    o->stream.in = xstreamrem(o->stream.in);
+    o->stream.out = xstreamrem(o->stream.out);
+
+    return xsuccess;
+}
+
 extern xint64 xclientsocketconnect(xclientsocket * o, void * addr, xuint32 addrlen)
 {
     xint64 ret = xfail;
@@ -71,20 +81,58 @@ extern xint64 xclientsocketconnect(xclientsocket * o, void * addr, xuint32 addrl
     {
         if(o->handle.f >= 0 && (o->status & xsocketstatus_create))
         {
-            if((o->status & (xdescriptorstatus_open | xdescriptorstatus_connect | xdescriptorstatus_connecting)) == xdescriptorstatus_void)
+            if((o->status & xdescriptorstatus_connect) == xdescriptorstatus_void)
             {
-                if((o->subscription && o->subscription->enginenode.engine) || (o->mask & xdescriptormask_nonblock))
-                {
-                    xdescriptornonblock((xdescriptor *) o, xtrue);
-                }
+                xdescriptoreventsubscription * subscription = (xdescriptoreventsubscription *) o->subscription;
+                xdescriptoreventgenerator * generator = subscription ? subscription->generatornode.generator : xnil;
 
-                if((o->status & xdescriptorstatus_exception) == xdescriptorstatus_void)
+                if(o->status & xdescriptorstatus_connecting)
                 {
+                    int code = xsocketerror((xsocket *) o);
+                    if(code == xsuccess)
+                    {
+                        o->status &= (~xdescriptorstatus_connecting);
+                        o->status |= (xdescriptorstatus_open | xdescriptorstatus_connect | xdescriptorstatus_out);
+
+                        if((ret = xdescriptoron((xdescriptor *) o, xdescriptoreventtype_open, xdescriptorparamgen(xnil), xsuccess)) == xsuccess)
+                        {
+                            if(o->stream.in == xnil)
+                            {
+                                o->stream.in = xstreamnew(xstreamtype_buffer);
+                            }
+                            if(o->stream.out == xnil)
+                            {
+                                o->stream.out = xstreamnew(xstreamtype_buffer);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if((o->status & xdescriptorstatus_exception) == xdescriptorstatus_void)
+                        {
+                            if(code != EAGAIN && errno != EINPROGRESS)
+                            {
+                                xdescriptorexception((xdescriptor *) o, connect, code, xexceptiontype_sys, "");
+                            }
+                            else
+                            {
+                                ret = xsuccess;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+
+                    if(generator || (o->mask & xdescriptormask_nonblock))
+                    {
+                        xdescriptornonblock((xdescriptor *) o, xtrue);
+                    }
+
                     if((ret = connect(o->handle.f, addr, addrlen)) == xsuccess)
                     {
                         o->status |= (xdescriptorstatus_open | xdescriptorstatus_connect | xdescriptorstatus_out);
-                        ret = xdescriptoron((xdescriptor *) o, xdescriptoreventtype_open, xdescriptorparamgen(xnil), xsuccess);
-                        if(ret == xsuccess)
+                        if((ret = xdescriptoron((xdescriptor *) o, xdescriptoreventtype_open, xdescriptorparamgen(xnil), xsuccess)) == xsuccess)
                         {
                             if(o->stream.in == xnil)
                             {
@@ -109,6 +157,26 @@ extern xint64 xclientsocketconnect(xclientsocket * o, void * addr, xuint32 addrl
                         }
                     }
                 }
+
+                if(o->status & (xdescriptorstatus_connecting | xdescriptorstatus_connect))
+                {
+                    if(generator)
+                    {
+                        if(subscription->generatornode.list == xnil)
+                        {
+                            xdescriptoreventgeneratorsubscriptionlist_push(generator->alive, subscription);
+                        }
+
+                        if((o->status & xdescriptorstatus_register) == xdescriptorstatus_void)
+                        {
+                            xdescriptoreventgenerator_descriptor_register(generator, (xdescriptor *) o);
+                        }
+                        else
+                        {
+                            xassertion(o->status & xdescriptorstatus_register, "");
+                        }
+                    }
+                }
             }
             else
             {
@@ -127,7 +195,7 @@ static xclientsocketprocessor xclientsocketprocessor_get(xint32 domain, xint32 t
         {
             if(protocol == IPPROTO_TCP)
             {
-                return xsocketprocessortcp_client;
+                return xclientsocketprocess_tcp;
             }
         }
     }
