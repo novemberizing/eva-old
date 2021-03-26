@@ -35,4 +35,6 @@ extern void xconsolestatus_add(xuint32 status);
 extern void xconsolestatus_del(xuint32 status);
 extern xuint32 xconsolestatus_get(void);
 
+extern void xconsoleflush(void);
+
 #endif // __NOVEMBERIZING_X__CONSOLE__H__

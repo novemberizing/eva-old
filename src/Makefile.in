@@ -95,7 +95,7 @@ host_triplet = @host@
 noinst_PROGRAMS = example-helloworld$(EXEEXT) \
 	example-client-redis$(EXEEXT) example-client-pool$(EXEEXT) \
 	example-string-simple$(EXEEXT) example-string-format$(EXEEXT) \
-	example-console-engine$(EXEEXT)
+	example-console-engine$(EXEEXT) example-redis-ping$(EXEEXT)
 subdir = src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -198,6 +198,9 @@ example_console_engine_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_example_helloworld_OBJECTS = example/helloworld.$(OBJEXT)
 example_helloworld_OBJECTS = $(am_example_helloworld_OBJECTS)
 example_helloworld_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_example_redis_ping_OBJECTS = example/redis/ping.$(OBJEXT)
+example_redis_ping_OBJECTS = $(am_example_redis_ping_OBJECTS)
+example_redis_ping_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_example_string_format_OBJECTS = example/string/format.$(OBJEXT)
 example_string_format_OBJECTS = $(am_example_string_format_OBJECTS)
 example_string_format_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -223,6 +226,7 @@ am__depfiles_remade = example/$(DEPDIR)/helloworld.Po \
 	example/client/$(DEPDIR)/pool.Po \
 	example/client/$(DEPDIR)/redis.Po \
 	example/console/$(DEPDIR)/engine.Po \
+	example/redis/$(DEPDIR)/ping.Po \
 	example/string/$(DEPDIR)/format.Po \
 	example/string/$(DEPDIR)/simple.Po x/$(DEPDIR)/array.Po \
 	x/$(DEPDIR)/client.Po x/$(DEPDIR)/command.Po \
@@ -281,12 +285,14 @@ am__v_CCLD_1 =
 SOURCES = $(libnovemberizing_a_SOURCES) $(example_client_pool_SOURCES) \
 	$(example_client_redis_SOURCES) \
 	$(example_console_engine_SOURCES) \
-	$(example_helloworld_SOURCES) $(example_string_format_SOURCES) \
+	$(example_helloworld_SOURCES) $(example_redis_ping_SOURCES) \
+	$(example_string_format_SOURCES) \
 	$(example_string_simple_SOURCES)
 DIST_SOURCES = $(libnovemberizing_a_SOURCES) \
 	$(example_client_pool_SOURCES) $(example_client_redis_SOURCES) \
 	$(example_console_engine_SOURCES) \
-	$(example_helloworld_SOURCES) $(example_string_format_SOURCES) \
+	$(example_helloworld_SOURCES) $(example_redis_ping_SOURCES) \
+	$(example_string_format_SOURCES) \
 	$(example_string_simple_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
@@ -505,6 +511,8 @@ example_string_simple_SOURCES = example/string/simple.c
 example_string_simple_LDADD = $(LIBS)
 example_console_engine_SOURCES = example/console/engine.c
 example_console_engine_LDADD = $(LIBS)
+example_redis_ping_SOURCES = example/redis/ping.c
+example_redis_ping_LDADD = $(LIBS)
 nobase_include_HEADERS = x/std.h                \
                          x/thread.h             \
                          x/sync.h               \
@@ -855,6 +863,18 @@ example/helloworld.$(OBJEXT): example/$(am__dirstamp) \
 example-helloworld$(EXEEXT): $(example_helloworld_OBJECTS) $(example_helloworld_DEPENDENCIES) $(EXTRA_example_helloworld_DEPENDENCIES) 
 	@rm -f example-helloworld$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(example_helloworld_OBJECTS) $(example_helloworld_LDADD) $(LIBS)
+example/redis/$(am__dirstamp):
+	@$(MKDIR_P) example/redis
+	@: > example/redis/$(am__dirstamp)
+example/redis/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) example/redis/$(DEPDIR)
+	@: > example/redis/$(DEPDIR)/$(am__dirstamp)
+example/redis/ping.$(OBJEXT): example/redis/$(am__dirstamp) \
+	example/redis/$(DEPDIR)/$(am__dirstamp)
+
+example-redis-ping$(EXEEXT): $(example_redis_ping_OBJECTS) $(example_redis_ping_DEPENDENCIES) $(EXTRA_example_redis_ping_DEPENDENCIES) 
+	@rm -f example-redis-ping$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_redis_ping_OBJECTS) $(example_redis_ping_LDADD) $(LIBS)
 example/string/$(am__dirstamp):
 	@$(MKDIR_P) example/string
 	@: > example/string/$(am__dirstamp)
@@ -879,6 +899,7 @@ mostlyclean-compile:
 	-rm -f example/*.$(OBJEXT)
 	-rm -f example/client/*.$(OBJEXT)
 	-rm -f example/console/*.$(OBJEXT)
+	-rm -f example/redis/*.$(OBJEXT)
 	-rm -f example/string/*.$(OBJEXT)
 	-rm -f x/*.$(OBJEXT)
 	-rm -f x/client/*.$(OBJEXT)
@@ -910,6 +931,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@example/client/$(DEPDIR)/pool.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/client/$(DEPDIR)/redis.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/console/$(DEPDIR)/engine.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@example/redis/$(DEPDIR)/ping.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/string/$(DEPDIR)/format.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/string/$(DEPDIR)/simple.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/array.Po@am__quote@ # am--include-marker
@@ -1151,6 +1173,8 @@ distclean-generic:
 	-rm -f example/client/$(am__dirstamp)
 	-rm -f example/console/$(DEPDIR)/$(am__dirstamp)
 	-rm -f example/console/$(am__dirstamp)
+	-rm -f example/redis/$(DEPDIR)/$(am__dirstamp)
+	-rm -f example/redis/$(am__dirstamp)
 	-rm -f example/string/$(DEPDIR)/$(am__dirstamp)
 	-rm -f example/string/$(am__dirstamp)
 	-rm -f x/$(DEPDIR)/$(am__dirstamp)
@@ -1211,6 +1235,7 @@ distclean: distclean-am
 	-rm -f example/client/$(DEPDIR)/pool.Po
 	-rm -f example/client/$(DEPDIR)/redis.Po
 	-rm -f example/console/$(DEPDIR)/engine.Po
+	-rm -f example/redis/$(DEPDIR)/ping.Po
 	-rm -f example/string/$(DEPDIR)/format.Po
 	-rm -f example/string/$(DEPDIR)/simple.Po
 	-rm -f x/$(DEPDIR)/array.Po
@@ -1316,6 +1341,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f example/client/$(DEPDIR)/pool.Po
 	-rm -f example/client/$(DEPDIR)/redis.Po
 	-rm -f example/console/$(DEPDIR)/engine.Po
+	-rm -f example/redis/$(DEPDIR)/ping.Po
 	-rm -f example/string/$(DEPDIR)/format.Po
 	-rm -f example/string/$(DEPDIR)/simple.Po
 	-rm -f x/$(DEPDIR)/array.Po

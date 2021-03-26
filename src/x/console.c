@@ -245,3 +245,14 @@ extern xuint32 xconsolestatus_get(void)
 {
     return singleton.status;
 }
+
+extern void xconsoleflush(void)
+{
+    if(singleton.out.stream)
+    {
+        while(xstreamlen(singleton.out.stream) > 0)
+        {
+            xdescriptorstreamwrite((xdescriptor *) xaddressof(singleton.out), singleton.out.stream);
+        }
+    }
+}

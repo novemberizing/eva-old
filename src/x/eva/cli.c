@@ -33,6 +33,7 @@ static xint32 xevacommand_quit(void)
 {
     xconsoleout("bye\n\n");
     xeventengine_cancel(__engine, xeventenginecancelcb);
+    __engine = xnil;
     return xsuccess;
 }
 
@@ -105,8 +106,14 @@ extern xint64 xevacli(xconsole * console, xconsoledescriptor * descriptor, xuint
                 result = xsuccess;
 
                 xconsolestatus_set(xconsolestatus_void);
-
-                xconsoleout("eva> ");
+                if(__engine)
+                {
+                    xconsoleout("eva> ");
+                }
+                else
+                {
+                    xconsoleflush();
+                }
                 // TODO: COMMAND PARSING
             }
             else

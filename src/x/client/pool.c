@@ -84,8 +84,6 @@ extern void xclientpooladd(xclientpool * pool, xclient * client)
         pool->size = pool->size + 1;
         client->pool = pool;
 
-        printf("= 2 =\n");
-
         if(client->on == xnil)
         {
             client->on = xclienton;

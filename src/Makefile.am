@@ -71,7 +71,8 @@ noinst_PROGRAMS = example-helloworld                                         \
                   example-client-pool                                        \
                   example-string-simple                                      \
                   example-string-format                                      \
-                  example-console-engine
+                  example-console-engine                                     \
+                  example-redis-ping
 
 example_helloworld_SOURCES     = example/helloworld.c
 example_helloworld_LDADD       = $(LIBS)
@@ -91,6 +92,8 @@ example_string_simple_LDADD    = $(LIBS)
 example_console_engine_SOURCES = example/console/engine.c
 example_console_engine_LDADD   = $(LIBS)
 
+example_redis_ping_SOURCES     = example/redis/ping.c
+example_redis_ping_LDADD       = $(LIBS)
 
 nobase_include_HEADERS = x/std.h                \
                          x/thread.h             \
