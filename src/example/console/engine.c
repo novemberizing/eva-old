@@ -9,6 +9,7 @@
 #include <x/client/pool.h>
 #include <x/event/engine.h>
 #include <x/eva/cli.h>
+#include <x/console.h>
 
 xtime start = { 0, 0 };
 xtime end = { 0, 0 };
@@ -42,13 +43,18 @@ int main(int argc, char ** argv)
         xclientpooladd(pool, xclientnew(AF_INET, SOCK_STREAM, IPPROTO_TCP, xaddressof(addr), sizeof(struct sockaddr_in), xnil, sizeof(xclientpool)));
     }
 
+    xeventengine_cli(engine, xevacli);
+
     xeventengine_clientpool_add(engine, pool);
 
-    xeventengine_cli(engine, xevacli);
-    
     xeventengine_run(engine);
 
-    xclientpoolrem(pool);
+//    xclientpoollist_del
+
+    xclientpoolrem(pool, xclientrem);
+
+    xconsoleterm();
+    xlogterm();
 
     return 0;
 }

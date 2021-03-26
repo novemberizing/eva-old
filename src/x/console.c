@@ -9,6 +9,7 @@
 #include "console/descriptor/event/processor/in.h"
 #include "console/descriptor/event/processor/out.h"
 #include "event/engine.h"
+#include "descriptor/event/generator/subscription/list.h"
 
 struct xconsole
 {
@@ -74,6 +75,57 @@ static xconsole singleton = {
 extern void xconsoleobserver_set(xconsoleobserver on)
 {
     singleton.on = on;
+}
+
+extern void xconsoleterm(void)
+{
+    if(singleton.on)
+    {
+        singleton.in.on(xaddressof(singleton.in), xdescriptoreventtype_rem, xdescriptorparamgen(xnil), xsuccess);
+        singleton.out.on(xaddressof(singleton.out), xdescriptoreventtype_rem, xdescriptorparamgen(xnil), xsuccess);
+
+        if(singleton.in.subscription)
+        {
+            if(singleton.in.subscription->generatornode.list)
+            {
+                xdescriptoreventgeneratorsubscriptionlist_del((xdescriptoreventsubscription *) singleton.in.subscription);
+            }
+            
+            singleton.in.subscription = xobjectrem(singleton.in.subscription);
+        }
+
+        if(singleton.out.subscription)
+        {
+            if(singleton.out.subscription->generatornode.list)
+            {
+                xdescriptoreventgeneratorsubscriptionlist_del((xdescriptoreventsubscription *) singleton.out.subscription);
+            }
+            
+            singleton.out.subscription = xobjectrem(singleton.out.subscription);
+        }
+
+        singleton.in.handle.f          = xinvalid;
+        singleton.in.status            = xdescriptorstatus_void;
+        singleton.in.event.descriptor  = xnil;
+        singleton.in.console           = xnil;
+
+        singleton.out.handle.f         = xinvalid;
+        singleton.out.status           = xdescriptorstatus_void;
+        singleton.out.event.descriptor = xnil;
+        singleton.out.console          = xnil;
+
+        singleton.on                   = xnil;
+
+        if(singleton.in.stream)
+        {
+            singleton.in.stream = xstreamrem(singleton.in.stream);
+        }
+
+        if(singleton.out.stream)
+        {
+            singleton.out.stream = xstreamrem(singleton.out.stream);
+        }
+    }
 }
 
 extern void xconsoleinit(xconsoleobserver on)

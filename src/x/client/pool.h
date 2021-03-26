@@ -23,7 +23,7 @@ struct xclientpool
 };
 
 extern xclientpool * xclientpoolnew(xclientpoolobserver on, xuint64 size);
-extern xclientpool * xclientpoolrem(xclientpool * pool);
+extern xclientpool * xclientpoolrem(xclientpool * pool, xclientmemberfunc callback);
 
 extern void xclientpooldel(xclient * client);
 extern void xclientpooladd(xclientpool * pool, xclient * client);

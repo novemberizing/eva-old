@@ -42,10 +42,7 @@ extern xdescriptoreventgenerator * xdescriptoreventgenerator_rem(xdescriptoreven
 
     if(generator)
     {
-        xdescriptoreventgeneratorsubscriptionlist_clear(generator->alive);
         generator->alive  = xdescriptoreventgeneratorsubscriptionlist_rem(generator->alive);
-
-        xdescriptoreventgeneratorsubscriptionlist_clear(generator->queue);
         generator->queue  = xdescriptoreventgeneratorsubscriptionlist_rem(generator->queue);
 
         generator->events = xobjectrem(generator->events);
@@ -53,6 +50,8 @@ extern xdescriptoreventgenerator * xdescriptoreventgenerator_rem(xdescriptoreven
         xdescriptoreventgenerator_epoll_close(generator);
 
         generator->sync = xsyncrem(generator->sync);
+
+        free(generator);
     }
     return xnil;
 }
@@ -315,29 +314,47 @@ extern void xdescriptoreventgenerator_sync(xdescriptoreventgenerator * o, xint32
     else
     {
         o->sync = xsyncrem(o->sync);
-        o->alive->sync = xsyncrem(o->alive->sync);
-        o->queue->sync = xsyncrem(o->queue->sync);
+        if(o->alive)
+        {
+            o->alive->sync = xsyncrem(o->alive->sync);
+        }
+        if(o->queue)
+        {
+            o->queue->sync = xsyncrem(o->queue->sync);
+        }
     }
 }
 
-extern void xdescriptoreventgenerator_alive_clear(xdescriptoreventgenerator * o)
-{
-    xdescriptoreventgeneratorsubscriptionlist_clear(o->alive);
-}
+// extern void xdescriptoreventgenerator_alive_clear(xdescriptoreventgenerator * o)
+// {
+//     xdescriptoreventgeneratorsubscriptionlist_clear(o->alive);
+// }
 
-extern void xdescriptoreventgenerator_queue_clear(xdescriptoreventgenerator * o)
-{
-    xdescriptoreventgeneratorsubscriptionlist_clear(o->queue);
-}
+// extern void xdescriptoreventgenerator_queue_clear(xdescriptoreventgenerator * o)
+// {
+//     xdescriptoreventgeneratorsubscriptionlist_clear(o->queue);
+// }
 
 extern void xdescriptoreventgenerator_on(xdescriptoreventgenerator * o)
 {
     xdescriptoreventgenerator_epoll_open((xdescriptoreventgenerator_epoll *) o);
 }
 
-extern void xdescriptoreventgenerator_off(xdescriptoreventgenerator * o)
+extern xdescriptoreventgenerator * xdescriptoreventgenerator_off(xdescriptoreventgenerator * o)
 {
-    xdescriptoreventgenerator_epoll_close((xdescriptoreventgenerator_epoll *) o);
+    xdescriptoreventgenerator_epoll * generator = (xdescriptoreventgenerator_epoll *) o;
+
+    xdescriptoreventgenerator_epoll_close(generator);
+
+    generator->clientpoollist = xdescriptoreventgenerator_clientpoollist_rem(generator->clientpoollist);
+    generator->alive = xdescriptoreventgeneratorsubscriptionlist_rem(generator->alive);
+    generator->queue = xdescriptoreventgeneratorsubscriptionlist_rem(generator->queue);
+    generator->events = xobjectrem(generator->events);
+    generator->engine = xnil;
+    generator->sync = xsyncrem(generator->sync);
+
+
+    return xnil;
 }
 
 static xint32 xdescriptoreventgenerator_epoll_open(xdescriptoreventgenerator_epoll * generator)

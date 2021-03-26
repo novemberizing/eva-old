@@ -24,6 +24,7 @@ extern void xdescriptoreventgenerator_queue_once(xdescriptoreventgenerator * o);
 
 extern void xdescriptoreventgenerator_clientpool_add(xdescriptoreventgenerator * o, xclientpool * pool);
 extern void xdescriptoreventgenerator_clientpool_del(xdescriptoreventgenerator * o, xclientpool * pool);
+extern xclientpoollist * xdescriptoreventgenerator_clientpoollist_rem(xclientpoollist * list);
 
 extern xint64 xdescriptoreventgenerator_descriptor_register(xdescriptoreventgenerator * o, xdescriptor * descriptor);
 extern xint64 xdescriptoreventgenerator_descriptor_update(xdescriptoreventgenerator * o, xdescriptor * descriptor);
@@ -37,7 +38,7 @@ extern void xdescriptoreventgenerator_unregister(xdescriptoreventgenerator * o, 
 extern void xdescriptoreventgenerator_sync(xdescriptoreventgenerator * o, xint32 on);
 
 extern void xdescriptoreventgenerator_on(xdescriptoreventgenerator * o);
-extern void xdescriptoreventgenerator_off(xdescriptoreventgenerator * o);
+extern xdescriptoreventgenerator * xdescriptoreventgenerator_off(xdescriptoreventgenerator * o);
 
 extern void xdescriptoreventgenerator_alive_clear(xdescriptoreventgenerator * o);
 extern void xdescriptoreventgenerator_queue_clear(xdescriptoreventgenerator * o);

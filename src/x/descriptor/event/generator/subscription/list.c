@@ -8,6 +8,8 @@
 
 #include "../../../../thread.h"
 
+#include "../../../../event/engine.h"
+
 /**
  * @fn          extern xdescriptoreventgeneratorsubscriptionlist * xdescriptoreventgeneratorsubscriptionlist_new(void)
  * @brief       디스크립터 이벤트 제네레이터 서브스크립션 리스트를 생성합니다.
@@ -33,10 +35,21 @@ extern xdescriptoreventgeneratorsubscriptionlist * xdescriptoreventgeneratorsubs
 {
     xlogfunction_start("%s(%p)", __func__, list);
 
-    xassertion(list == xnil || list->size > 0, "");
+    if(list)
+    {
+        while(list->size > 0)
+        {
+            xdescriptoreventsubscription * subscription = xdescriptoreventgeneratorsubscriptionlist_pop(list);
+            subscription->generatornode.generator = xnil;
+            xeventengine_descriptor_unregister(subscription->enginenode.engine, subscription->descriptor);
+        }
 
-    list->sync = xsyncrem(list->sync);
-    free(list);
+        xassertion(list == xnil || list->size > 0, "");
+
+        list->sync = xsyncrem(list->sync);
+        free(list);
+    }
+    
     
     xlogfunction_end("%s(...) => %p", __func__, xnil);
     return xnil;
@@ -134,17 +147,20 @@ extern void xdescriptoreventgeneratorsubscriptionlist_clear(xdescriptoreventgene
     xlogfunction_start("%s(%p)", __func__, list);
 
     xassertion(list == xnil, "");
-
-    for(xuint64 i = 0; i < list->size; i++)
+    if(list)
     {
-        xdescriptoreventsubscription * subscription = xdescriptoreventgeneratorsubscriptionlist_pop(list);
-        if(subscription)
+        for(xuint64 i = 0; i < list->size; i++)
         {
-            xdescriptoreventgenerator_unregister(subscription->generatornode.generator, subscription);
-            continue;
+            xdescriptoreventsubscription * subscription = xdescriptoreventgeneratorsubscriptionlist_pop(list);
+            if(subscription)
+            {
+                xdescriptoreventgenerator_unregister(subscription->generatornode.generator, subscription);
+                continue;
+            }
+            break;
         }
-        break;
     }
+    
 
     xlogfunction_end("%s(...) => %p", __func__);
 }

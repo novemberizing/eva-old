@@ -31,10 +31,34 @@ extern xclientpool * xclientpoolnew(xclientpoolobserver on, xuint64 size)
     return pool;
 }
 
-extern xclientpool * xclientpoolrem(xclientpool * pool)
+extern xclientpool * xclientpoolrem(xclientpool * pool, xclientmemberfunc callback)
 {
-    if(pool == xnil)
+    if(pool)
     {
+        while(pool->size > 0)
+        {
+            xclient * client = pool->head;
+
+            xassertion(client == xnil || client->prev, "");
+
+            pool->head = client->next;
+            if(pool->head)
+            {
+                pool->head->prev = xnil;
+                client->next = xnil;
+            }
+            else
+            {
+                pool->tail = xnil;
+            }
+            client->pool = xnil;
+            if(callback)
+            {
+                callback(client);
+            }
+            pool->size = pool->size - 1;
+
+        }
         free(pool);
     }
     return xnil;
@@ -59,6 +83,8 @@ extern void xclientpooladd(xclientpool * pool, xclient * client)
         pool->tail = client;
         pool->size = pool->size + 1;
         client->pool = pool;
+
+        printf("= 2 =\n");
 
         if(client->on == xnil)
         {

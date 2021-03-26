@@ -45,3 +45,31 @@ extern void xdescriptoreventgenerator_clientpool_del(xdescriptoreventgenerator *
         }
     }
 }
+
+extern xclientpoollist * xdescriptoreventgenerator_clientpoollist_rem(xclientpoollist * list)
+{
+
+    if(list)
+    {
+        while(list->size > 0)
+        {
+            xclientpool * pool = list->head;
+
+            list->head = pool->next;
+            if(list->head)
+            {
+                list->head->prev = xnil;
+                pool->next = xnil;
+            }
+            else
+            {
+                list->tail = xnil;
+            }
+            pool->cntr = xnil;
+            list->size = list->size - 1;
+        }
+        free(list);
+    }
+
+    return xnil;
+}

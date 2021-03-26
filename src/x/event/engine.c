@@ -279,34 +279,39 @@ extern xeventsubscription * xeventengine_descriptor_unregister(xeventengine * en
 
     if(subscription->enginenode.engine == engine)
     {
-        xdescriptoreventgenerator_unregister(engine->generators.descriptor, subscription);
-
-        xeventsubscription * prev = subscription->enginenode.prev;
-        xeventsubscription * next = subscription->enginenode.next;
-
-        if(prev)
+        if(subscription->generatornode.generator)
         {
-            prev->enginenode.next = next;
-            subscription->enginenode.prev = xnil;
-        }
-        else
-        {
-            engine->subscriptions.head = next;
-        }
+            xassertion(subscription->generatornode.generator != engine->generators.descriptor, "");
+            
+            xdescriptoreventgenerator_unregister(engine->generators.descriptor, subscription);
 
-        if(next)
-        {
-            next->enginenode.prev = prev;
-            subscription->enginenode.next = xnil;
-        }
-        else
-        {
-            engine->subscriptions.tail = prev;
-        }
+            xeventsubscription * prev = subscription->enginenode.prev;
+            xeventsubscription * next = subscription->enginenode.next;
 
-        engine->subscriptions.size = engine->subscriptions.size - 1;
+            if(prev)
+            {
+                prev->enginenode.next = next;
+                subscription->enginenode.prev = xnil;
+            }
+            else
+            {
+                engine->subscriptions.head = next;
+            }
 
-        subscription->enginenode.engine = xnil;
+            if(next)
+            {
+                next->enginenode.prev = prev;
+                subscription->enginenode.next = xnil;
+            }
+            else
+            {
+                engine->subscriptions.tail = prev;
+            }
+
+            engine->subscriptions.size = engine->subscriptions.size - 1;
+
+            subscription->enginenode.engine = xnil;
+        }
     }
     else
     {

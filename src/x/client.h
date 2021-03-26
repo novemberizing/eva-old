@@ -10,6 +10,7 @@ struct xclient;
 
 typedef struct xclient xclient;
 
+typedef xclient * (*xclientmemberfunc)(xclient *);
 typedef xint64 (*xclientobserver)(xclient *, xuint32, xdescriptorparam, xint64);
 
 typedef xclient * (*xclientfactory)(xclientpool *);

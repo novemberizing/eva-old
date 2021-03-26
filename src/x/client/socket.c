@@ -50,8 +50,11 @@ extern xclientsocket * xclientsocket_rem(xclientsocket * o)
 {
     if(o)
     {
-        xassertion(xclientsocketeventavail_rem(o) == xfalse, "");
-
+        if(o->subscription && o->subscription->generatornode.generator)
+        {
+            xeventengine_descriptor_unregister(o->subscription->enginenode.engine, (xdescriptor *) o->subscription->descriptor);
+        }
+        
         o->subscription = xobjectrem(o->subscription);
         o->handle.f = xsockethandle_shutdown(o->handle.f);
         o->stream.in = xstreamrem(o->stream.in);
@@ -90,7 +93,7 @@ extern xint64 xclientsocketconnect(xclientsocket * o, void * addr, xuint32 addrl
             {
                 o->stream.out = xstreamnew(xstreamtype_buffer);
             }
-            
+
             if((o->status & xdescriptorstatus_connect) == xdescriptorstatus_void)
             {
                 xdescriptoreventsubscription * subscription = (xdescriptoreventsubscription *) o->subscription;

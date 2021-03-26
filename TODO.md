@@ -1,3 +1,346 @@
+eva> ==91790== 
+==91790== HEAP SUMMARY:
+==91790==     in use at exit: 293,520 bytes in 265 blocks
+==91790==   total heap usage: 310 allocs, 45 frees, 339,382 bytes allocated
+==91790== 
+==91790== 32 bytes in 1 blocks are still reachable in loss record 1 of 17
+==91790==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==91790==    by 0x111BD1: xclientpoollist_new (list.c:10)
+==91790==    by 0x10E0C9: xdescriptoreventgenerator_clientpool_add (generator.c:16)
+==91790==    by 0x10C653: xeventengine_clientpool_add (engine.c:389)
+==91790==    by 0x10A8AA: main (engine.c:45)
+==91790== 
+==91790== 48 bytes in 1 blocks are still reachable in loss record 2 of 17
+==91790==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==91790==    by 0x116669: xstreambuffer_new (buffer.c:30)
+==91790==    by 0x115502: xstreamnew (stream.c:39)
+==91790==    by 0x10FF6B: xconsoleinit (console.c:102)
+==91790==    by 0x10B384: xeventengine_run (engine.c:68)
+==91790==    by 0x10A8CC: main (engine.c:49)
+==91790== 
+==91790== 48 bytes in 1 blocks are still reachable in loss record 3 of 17
+==91790==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==91790==    by 0x116669: xstreambuffer_new (buffer.c:30)
+==91790==    by 0x115502: xstreamnew (stream.c:39)
+==91790==    by 0x10FF88: xconsoleinit (console.c:107)
+==91790==    by 0x10B384: xeventengine_run (engine.c:68)
+==91790==    by 0x10A8CC: main (engine.c:49)
+==91790== 
+==91790== 64 bytes in 1 blocks are still reachable in loss record 4 of 17
+==91790==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==91790==    by 0x10E295: xdescriptoreventgenerator_new (epoll.c:24)
+==91790==    by 0x10B1AD: xeventengine_new (engine.c:34)
+==91790==    by 0x10A828: main (engine.c:36)
+==91790== 
+==91790== 64 bytes in 1 blocks are still reachable in loss record 5 of 17
+==91790==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==91790==    by 0x1116B6: xclientpoolnew (pool.c:22)
+==91790==    by 0x10A83D: main (engine.c:38)
+==91790== 
+==91790== 64 bytes in 1 blocks are still reachable in loss record 6 of 17
+==91790==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==91790==    by 0x1180C1: xeventsubscription_new (subscription.c:17)
+==91790==    by 0x10BF36: xeventengine_descriptor_register (engine.c:264)
+==91790==    by 0x10B3D7: xeventengine_run (engine.c:78)
+==91790==    by 0x10A8CC: main (engine.c:49)
+==91790== 
+==91790== 64 bytes in 1 blocks are still reachable in loss record 7 of 17
+==91790==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==91790==    by 0x1180C1: xeventsubscription_new (subscription.c:17)
+==91790==    by 0x10BF36: xeventengine_descriptor_register (engine.c:264)
+==91790==    by 0x10B3EA: xeventengine_run (engine.c:79)
+==91790==    by 0x10A8CC: main (engine.c:49)
+==91790== 
+==91790== 512 bytes in 32 blocks are still reachable in loss record 8 of 17
+==91790==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==91790==    by 0x114221: xobjectdup (object.c:81)
+==91790==    by 0x111EDA: xclientsocket_new (socket.c:40)
+==91790==    by 0x111209: xclientnew (client.c:27)
+==91790==    by 0x10A877: main (engine.c:42)
+==91790== 
+==91790== 512 bytes in 32 blocks are still reachable in loss record 9 of 17
+==91790==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==91790==    by 0x1166A3: xstreambuffer_new (buffer.c:35)
+==91790==    by 0x115502: xstreamnew (stream.c:39)
+==91790==    by 0x112142: xclientsocketconnect (socket.c:91)
+==91790==    by 0x112801: xclientsocketprocess_open (tcp.c:119)
+==91790==    by 0x112657: xclientsocketprocess_tcp (tcp.c:63)
+==91790==    by 0x10E7A2: xdescriptoreventgenerator_queue_once (epoll.c:137)
+==91790==    by 0x10E438: xdescriptoreventgenerator_once (epoll.c:66)
+==91790==    by 0x10CF71: xeventgeneratorset_once (set.c:46)
+==91790==    by 0x10B435: xeventengine_run (engine.c:90)
+==91790==    by 0x10A8CC: main (engine.c:49)
+==91790== 
+==91790== 1,536 bytes in 32 blocks are still reachable in loss record 10 of 17
+==91790==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==91790==    by 0x116669: xstreambuffer_new (buffer.c:30)
+==91790==    by 0x115502: xstreamnew (stream.c:39)
+==91790==    by 0x11211D: xclientsocketconnect (socket.c:86)
+==91790==    by 0x112801: xclientsocketprocess_open (tcp.c:119)
+==91790==    by 0x112657: xclientsocketprocess_tcp (tcp.c:63)
+==91790==    by 0x10E7A2: xdescriptoreventgenerator_queue_once (epoll.c:137)
+==91790==    by 0x10E438: xdescriptoreventgenerator_once (epoll.c:66)
+==91790==    by 0x10CF71: xeventgeneratorset_once (set.c:46)
+==91790==    by 0x10B435: xeventengine_run (engine.c:90)
+==91790==    by 0x10A8CC: main (engine.c:49)
+==91790== 
+==91790== 1,536 bytes in 32 blocks are still reachable in loss record 11 of 17
+==91790==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==91790==    by 0x116669: xstreambuffer_new (buffer.c:30)
+==91790==    by 0x115502: xstreamnew (stream.c:39)
+==91790==    by 0x112142: xclientsocketconnect (socket.c:91)
+==91790==    by 0x112801: xclientsocketprocess_open (tcp.c:119)
+==91790==    by 0x112657: xclientsocketprocess_tcp (tcp.c:63)
+==91790==    by 0x10E7A2: xdescriptoreventgenerator_queue_once (epoll.c:137)
+==91790==    by 0x10E438: xdescriptoreventgenerator_once (epoll.c:66)
+==91790==    by 0x10CF71: xeventgeneratorset_once (set.c:46)
+==91790==    by 0x10B435: xeventengine_run (engine.c:90)
+==91790==    by 0x10A8CC: main (engine.c:49)
+==91790== 
+==91790== 2,048 bytes in 32 blocks are still reachable in loss record 12 of 17
+==91790==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==91790==    by 0x1111E2: xclientnew (client.c:25)
+==91790==    by 0x10A877: main (engine.c:42)
+==91790== 
+==91790== 2,048 bytes in 32 blocks are still reachable in loss record 13 of 17
+==91790==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==91790==    by 0x1180C1: xeventsubscription_new (subscription.c:17)
+==91790==    by 0x10BB37: xeventengine_client_register (engine.c:209)
+==91790==    by 0x10E117: xdescriptoreventgenerator_clientpool_add (generator.c:23)
+==91790==    by 0x10C653: xeventengine_clientpool_add (engine.c:389)
+==91790==    by 0x10A8AA: main (engine.c:45)
+==91790== 
+==91790== 5,888 bytes in 32 blocks are still reachable in loss record 14 of 17
+==91790==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==91790==    by 0x111E40: xclientsocket_new (socket.c:24)
+==91790==    by 0x111209: xclientnew (client.c:27)
+==91790==    by 0x10A877: main (engine.c:42)
+==91790== 
+==91790== 8,192 bytes in 1 blocks are still reachable in loss record 15 of 17
+==91790==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==91790==    by 0x116F88: xstreambuffer_adjust (buffer.c:344)
+==91790==    by 0x11622A: xstreamadjust (stream.c:416)
+==91790==    by 0x10D7A9: xdescriptorstreamread (descriptor.c:279)
+==91790==    by 0x110556: xconsoledescriptoreventprocessorin_in (in.c:124)
+==91790==    by 0x110483: xconsoledescriptoreventprocessorin_void (in.c:89)
+==91790==    by 0x1103D7: xconsoledescriptoreventprocessorin (in.c:67)
+==91790==    by 0x1187FE: xdescriptoreventdispatch_void (dispatch.c:40)
+==91790==    by 0x10E5D6: xdescriptoreventgenerator_once (epoll.c:98)
+==91790==    by 0x10CF71: xeventgeneratorset_once (set.c:46)
+==91790==    by 0x10B435: xeventengine_run (engine.c:90)
+==91790==    by 0x10A8CC: main (engine.c:49)
+==91790== 
+==91790== 8,208 bytes in 1 blocks are still reachable in loss record 16 of 17
+==91790==    at 0x483DFAF: realloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==91790==    by 0x116B7C: xstreambuffercapacity_set (buffer.c:184)
+==91790==    by 0x115B51: xstreamcapacity_set (stream.c:228)
+==91790==    by 0x110E4F: xconsoledescriptoreventprocessorout_flush (out.c:186)
+==91790==    by 0x110B45: xconsoledescriptoreventprocessorout_void (out.c:87)
+==91790==    by 0x110AA2: xconsoledescriptoreventprocessorout (out.c:67)
+==91790==    by 0x1102CE: xconsoleout (console.c:167)
+==91790==    by 0x112F52: xevacli (cli.c:109)
+==91790==    by 0x1101A7: xconsoledescriptoron (console.c:147)
+==91790==    by 0x10CFD8: xdescriptoron (descriptor.c:26)
+==91790==    by 0x10D87A: xdescriptorstreamread (descriptor.c:293)
+==91790==    by 0x110556: xconsoledescriptoreventprocessorin_in (in.c:124)
+==91790== 
+==91790== 262,656 bytes in 32 blocks are still reachable in loss record 17 of 17
+==91790==    at 0x483DFAF: realloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==91790==    by 0x116B7C: xstreambuffercapacity_set (buffer.c:184)
+==91790==    by 0x115B51: xstreamcapacity_set (stream.c:228)
+==91790==    by 0x10D7F0: xdescriptorstreamread (descriptor.c:282)
+==91790==    by 0x112860: xclientsocketprocess_in (tcp.c:127)
+==91790==    by 0x112701: xclientsocketprocess_void (tcp.c:85)
+==91790==    by 0x112657: xclientsocketprocess_tcp (tcp.c:63)
+==91790==    by 0x1187FE: xdescriptoreventdispatch_void (dispatch.c:40)
+==91790==    by 0x10E7AE: xdescriptoreventgenerator_queue_once (epoll.c:138)
+==91790==    by 0x10E438: xdescriptoreventgenerator_once (epoll.c:66)
+==91790==    by 0x10CF71: xeventgeneratorset_once (set.c:46)
+==91790==    by 0x10B435: xeventengine_run (engine.c:90)
+==91790== 
+==91790== LEAK SUMMARY:
+==91790==    definitely lost: 0 bytes in 0 blocks
+==91790==    indirectly lost: 0 bytes in 0 blocks
+==91790==      possibly lost: 0 bytes in 0 blocks
+==91790==    still reachable: 293,520 bytes in 265 blocks
+==91790==         suppressed: 0 bytes in 0 blocks
+==91790== 
+==91790== For lists of detected and suppressed errors, rerun with: -s
+==91790== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+hyunsik@hyunsik-aspire:~/Workspace/novemberizing/eva$ 
+
+
+eva> ==89879== 
+==89879== HEAP SUMMARY:
+==89879==     in use at exit: 293,520 bytes in 265 blocks
+==89879==   total heap usage: 310 allocs, 45 frees, 339,382 bytes allocated
+==89879== 
+==89879== 32 bytes in 1 blocks are still reachable in loss record 1 of 17
+==89879==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==89879==    by 0x111ADB: xclientpoollist_new (list.c:10)
+==89879==    by 0x10E0BF: xdescriptoreventgenerator_clientpool_add (generator.c:16)
+==89879==    by 0x10C649: xeventengine_clientpool_add (engine.c:389)
+==89879==    by 0x10A8AA: main (engine.c:45)
+==89879== 
+==89879== 48 bytes in 1 blocks are still reachable in loss record 2 of 17
+==89879==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==89879==    by 0x116573: xstreambuffer_new (buffer.c:30)
+==89879==    by 0x11540C: xstreamnew (stream.c:39)
+==89879==    by 0x10FF61: xconsoleinit (console.c:102)
+==89879==    by 0x10B37A: xeventengine_run (engine.c:68)
+==89879==    by 0x10A8CC: main (engine.c:49)
+==89879== 
+==89879== 48 bytes in 1 blocks are still reachable in loss record 3 of 17
+==89879==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==89879==    by 0x116573: xstreambuffer_new (buffer.c:30)
+==89879==    by 0x11540C: xstreamnew (stream.c:39)
+==89879==    by 0x10FF7E: xconsoleinit (console.c:107)
+==89879==    by 0x10B37A: xeventengine_run (engine.c:68)
+==89879==    by 0x10A8CC: main (engine.c:49)
+==89879== 
+==89879== 64 bytes in 1 blocks are still reachable in loss record 4 of 17
+==89879==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==89879==    by 0x10E28B: xdescriptoreventgenerator_new (epoll.c:24)
+==89879==    by 0x10B1A3: xeventengine_new (engine.c:34)
+==89879==    by 0x10A828: main (engine.c:36)
+==89879== 
+==89879== 64 bytes in 1 blocks are still reachable in loss record 5 of 17
+==89879==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==89879==    by 0x1116AC: xclientpoolnew (pool.c:22)
+==89879==    by 0x10A83D: main (engine.c:38)
+==89879== 
+==89879== 64 bytes in 1 blocks are still reachable in loss record 6 of 17
+==89879==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==89879==    by 0x117FCB: xeventsubscription_new (subscription.c:17)
+==89879==    by 0x10BF2C: xeventengine_descriptor_register (engine.c:264)
+==89879==    by 0x10B3CD: xeventengine_run (engine.c:78)
+==89879==    by 0x10A8CC: main (engine.c:49)
+==89879== 
+==89879== 64 bytes in 1 blocks are still reachable in loss record 7 of 17
+==89879==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==89879==    by 0x117FCB: xeventsubscription_new (subscription.c:17)
+==89879==    by 0x10BF2C: xeventengine_descriptor_register (engine.c:264)
+==89879==    by 0x10B3E0: xeventengine_run (engine.c:79)
+==89879==    by 0x10A8CC: main (engine.c:49)
+==89879== 
+==89879== 512 bytes in 32 blocks are still reachable in loss record 8 of 17
+==89879==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==89879==    by 0x11412B: xobjectdup (object.c:81)
+==89879==    by 0x111DE4: xclientsocket_new (socket.c:40)
+==89879==    by 0x1111FF: xclientnew (client.c:27)
+==89879==    by 0x10A877: main (engine.c:42)
+==89879== 
+==89879== 512 bytes in 32 blocks are still reachable in loss record 9 of 17
+==89879==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==89879==    by 0x1165AD: xstreambuffer_new (buffer.c:35)
+==89879==    by 0x11540C: xstreamnew (stream.c:39)
+==89879==    by 0x11204C: xclientsocketconnect (socket.c:91)
+==89879==    by 0x11270B: xclientsocketprocess_open (tcp.c:119)
+==89879==    by 0x112561: xclientsocketprocess_tcp (tcp.c:63)
+==89879==    by 0x10E798: xdescriptoreventgenerator_queue_once (epoll.c:137)
+==89879==    by 0x10E42E: xdescriptoreventgenerator_once (epoll.c:66)
+==89879==    by 0x10CF67: xeventgeneratorset_once (set.c:46)
+==89879==    by 0x10B42B: xeventengine_run (engine.c:90)
+==89879==    by 0x10A8CC: main (engine.c:49)
+==89879== 
+==89879== 1,536 bytes in 32 blocks are still reachable in loss record 10 of 17
+==89879==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==89879==    by 0x116573: xstreambuffer_new (buffer.c:30)
+==89879==    by 0x11540C: xstreamnew (stream.c:39)
+==89879==    by 0x112027: xclientsocketconnect (socket.c:86)
+==89879==    by 0x11270B: xclientsocketprocess_open (tcp.c:119)
+==89879==    by 0x112561: xclientsocketprocess_tcp (tcp.c:63)
+==89879==    by 0x10E798: xdescriptoreventgenerator_queue_once (epoll.c:137)
+==89879==    by 0x10E42E: xdescriptoreventgenerator_once (epoll.c:66)
+==89879==    by 0x10CF67: xeventgeneratorset_once (set.c:46)
+==89879==    by 0x10B42B: xeventengine_run (engine.c:90)
+==89879==    by 0x10A8CC: main (engine.c:49)
+==89879== 
+==89879== 1,536 bytes in 32 blocks are still reachable in loss record 11 of 17
+==89879==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==89879==    by 0x116573: xstreambuffer_new (buffer.c:30)
+==89879==    by 0x11540C: xstreamnew (stream.c:39)
+==89879==    by 0x11204C: xclientsocketconnect (socket.c:91)
+==89879==    by 0x11270B: xclientsocketprocess_open (tcp.c:119)
+==89879==    by 0x112561: xclientsocketprocess_tcp (tcp.c:63)
+==89879==    by 0x10E798: xdescriptoreventgenerator_queue_once (epoll.c:137)
+==89879==    by 0x10E42E: xdescriptoreventgenerator_once (epoll.c:66)
+==89879==    by 0x10CF67: xeventgeneratorset_once (set.c:46)
+==89879==    by 0x10B42B: xeventengine_run (engine.c:90)
+==89879==    by 0x10A8CC: main (engine.c:49)
+==89879== 
+==89879== 2,048 bytes in 32 blocks are still reachable in loss record 12 of 17
+==89879==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==89879==    by 0x1111D8: xclientnew (client.c:25)
+==89879==    by 0x10A877: main (engine.c:42)
+==89879== 
+==89879== 2,048 bytes in 32 blocks are still reachable in loss record 13 of 17
+==89879==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==89879==    by 0x117FCB: xeventsubscription_new (subscription.c:17)
+==89879==    by 0x10BB2D: xeventengine_client_register (engine.c:209)
+==89879==    by 0x10E10D: xdescriptoreventgenerator_clientpool_add (generator.c:23)
+==89879==    by 0x10C649: xeventengine_clientpool_add (engine.c:389)
+==89879==    by 0x10A8AA: main (engine.c:45)
+==89879== 
+==89879== 5,888 bytes in 32 blocks are still reachable in loss record 14 of 17
+==89879==    at 0x483DD99: calloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==89879==    by 0x111D4A: xclientsocket_new (socket.c:24)
+==89879==    by 0x1111FF: xclientnew (client.c:27)
+==89879==    by 0x10A877: main (engine.c:42)
+==89879== 
+==89879== 8,192 bytes in 1 blocks are still reachable in loss record 15 of 17
+==89879==    at 0x483B7F3: malloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==89879==    by 0x116E92: xstreambuffer_adjust (buffer.c:344)
+==89879==    by 0x116134: xstreamadjust (stream.c:416)
+==89879==    by 0x10D79F: xdescriptorstreamread (descriptor.c:279)
+==89879==    by 0x11054C: xconsoledescriptoreventprocessorin_in (in.c:124)
+==89879==    by 0x110479: xconsoledescriptoreventprocessorin_void (in.c:89)
+==89879==    by 0x1103CD: xconsoledescriptoreventprocessorin (in.c:67)
+==89879==    by 0x118708: xdescriptoreventdispatch_void (dispatch.c:40)
+==89879==    by 0x10E5CC: xdescriptoreventgenerator_once (epoll.c:98)
+==89879==    by 0x10CF67: xeventgeneratorset_once (set.c:46)
+==89879==    by 0x10B42B: xeventengine_run (engine.c:90)
+==89879==    by 0x10A8CC: main (engine.c:49)
+==89879== 
+==89879== 8,208 bytes in 1 blocks are still reachable in loss record 16 of 17
+==89879==    at 0x483DFAF: realloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==89879==    by 0x116A86: xstreambuffercapacity_set (buffer.c:184)
+==89879==    by 0x115A5B: xstreamcapacity_set (stream.c:228)
+==89879==    by 0x110E45: xconsoledescriptoreventprocessorout_flush (out.c:186)
+==89879==    by 0x110B3B: xconsoledescriptoreventprocessorout_void (out.c:87)
+==89879==    by 0x110A98: xconsoledescriptoreventprocessorout (out.c:67)
+==89879==    by 0x1102C4: xconsoleout (console.c:167)
+==89879==    by 0x112E5C: xevacli (cli.c:109)
+==89879==    by 0x11019D: xconsoledescriptoron (console.c:147)
+==89879==    by 0x10CFCE: xdescriptoron (descriptor.c:26)
+==89879==    by 0x10D870: xdescriptorstreamread (descriptor.c:293)
+==89879==    by 0x11054C: xconsoledescriptoreventprocessorin_in (in.c:124)
+==89879== 
+==89879== 262,656 bytes in 32 blocks are still reachable in loss record 17 of 17
+==89879==    at 0x483DFAF: realloc (in /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so)
+==89879==    by 0x116A86: xstreambuffercapacity_set (buffer.c:184)
+==89879==    by 0x115A5B: xstreamcapacity_set (stream.c:228)
+==89879==    by 0x10D7E6: xdescriptorstreamread (descriptor.c:282)
+==89879==    by 0x11276A: xclientsocketprocess_in (tcp.c:127)
+==89879==    by 0x11260B: xclientsocketprocess_void (tcp.c:85)
+==89879==    by 0x112561: xclientsocketprocess_tcp (tcp.c:63)
+==89879==    by 0x118708: xdescriptoreventdispatch_void (dispatch.c:40)
+==89879==    by 0x10E7A4: xdescriptoreventgenerator_queue_once (epoll.c:138)
+==89879==    by 0x10E42E: xdescriptoreventgenerator_once (epoll.c:66)
+==89879==    by 0x10CF67: xeventgeneratorset_once (set.c:46)
+==89879==    by 0x10B42B: xeventengine_run (engine.c:90)
+==89879== 
+==89879== LEAK SUMMARY:
+==89879==    definitely lost: 0 bytes in 0 blocks
+==89879==    indirectly lost: 0 bytes in 0 blocks
+==89879==      possibly lost: 0 bytes in 0 blocks
+==89879==    still reachable: 293,520 bytes in 265 blocks
+==89879==         suppressed: 0 bytes in 0 blocks
+==89879== 
+==89879== For lists of detected and suppressed errors, rerun with: -s
+==89879== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+
+
 ----
 
 - [ ] 콘솔 디스크립터 아웃은 커맨드 입력 모드에서는 동작하지 않도록 한다.

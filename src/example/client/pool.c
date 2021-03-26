@@ -105,7 +105,7 @@ int main(int argc, char ** argv)
     
     xeventengine_run(engine);
 
-    xclientpoolrem(pool);
+    xclientpoolrem(pool, xclientrem);
 
     return 0;
 }
