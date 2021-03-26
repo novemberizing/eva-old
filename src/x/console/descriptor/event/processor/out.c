@@ -82,24 +82,29 @@ static xint64 xconsoledescriptoreventprocessorout_void(xconsoledescriptor * o)
 
     xassertion(console == xnil, "");
 
-    xconsoledescriptoreventprocessorout_flush(o);
+    if((xconsolestatus_get() & xconsolestatus_wait) == xconsolestatus_void)
+    {
+        xconsoledescriptoreventprocessorout_flush(o);
 
-    if((o->status & xdescriptorstatus_out) == xdescriptorstatus_void)
-    {
-        xconsoledescriptoreventprocessorout_register(o);
-    }
-    else
-    {
-        if(o->event.queue == xnil && xstreamlen(o->stream) > 0)
+        if((o->status & xdescriptorstatus_out) == xdescriptorstatus_void)
         {
-            xconsoledescriptoreventsubscription * subscription = o->subscription;
-            xeventengine * engine = subscription ? subscription->enginenode.engine : xnil;
-            if(engine)
+            xconsoledescriptoreventprocessorout_register(o);
+        }
+        else
+        {
+            if(o->event.queue == xnil && xstreamlen(o->stream) > 0)
             {
-                xeventengine_queue_push(engine, (xevent *) xaddressof(o->event));
+                xconsoledescriptoreventsubscription * subscription = o->subscription;
+                xeventengine * engine = subscription ? subscription->enginenode.engine : xnil;
+                if(engine)
+                {
+                    xeventengine_queue_push(engine, (xevent *) xaddressof(o->event));
+                }
             }
         }
     }
+
+
 
     return xsuccess;
 }
@@ -119,22 +124,12 @@ static xint64 xconsoledescriptoreventprocessorout_in(xconsoledescriptor * o)
 
 static xint64 xconsoledescriptoreventprocessorout_out(xconsoledescriptor * o)
 {
-    xint64 ret = xdescriptorwrite((xdescriptor *) o, xstreamfront(o->stream), xstreamlen(o->stream));
-
-    if(ret > 0)
+    if((xconsolestatus_get() & xconsolestatus_wait) == xconsolestatus_void)
     {
-        xstreampos_set(o->stream, xstreampos_get(o->stream) + ret);
-        xstreamadjust(o->stream, xfalse);
+        return xdescriptorstreamwrite((xdescriptor *) o, o->stream);
     }
 
-    return ret;
-    // xstreamadjust(o->stream, xfalse);
-    // if(xstreamremain(o->stream) < streambuffersize)
-    // {
-    //     xstreamcapacity_set(o->stream, streambuffersize - xstreamremain(o->stream));
-    // }
-
-    // return xdescriptorread((xdescriptor *) o, xstreamback(o->stream), xstreamremain(o->stream));
+    return xsuccess;
 }
 
 static xint64 xconsoledescriptoreventprocessorout_close(xconsoledescriptor * o)
@@ -182,7 +177,7 @@ static xint64 xconsoledescriptoreventprocessorout_flush(xconsoledescriptor * o)
 {
     for(xint32 i = 0; i < maxretrycount && xstreamlen(o->stream) > 0; i++)
     {
-        xdescriptorwrite((xdescriptor *) o, xstreamfront(o->stream), xstreamlen(o->stream));
+        xdescriptorstreamwrite((xdescriptor *) o, o->stream);
     }
 
     if(xstreamlen(o->stream) == 0)

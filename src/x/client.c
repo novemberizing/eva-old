@@ -16,6 +16,8 @@
 #include "client/socket.h"
 #include "client/socket/status.h"
 
+static const xuint64 streambuffersize = 8192;
+
 extern xclient * xclientnew(xint32 domain, xint32 type, xint32 protocol, const void * addr, xuint32 addrlen, xclientobserver on, xuint64 size)
 {
     xassertion(size < sizeof(xclient), "");
@@ -66,22 +68,12 @@ extern xint64 xclientconnect(xclient * client)
 
 extern xint64 xclientread(xclient * client)
 {
-    if(client->descriptor->stream.in == xnil)
-    {
-        client->descriptor->stream.in = xstreamnew(xstreamtype_buffer);
-    }
-
-    return xdescriptorread((xdescriptor *) client->descriptor, xstreamback(client->descriptor->stream.in), xstreamremain(client->descriptor->stream.in));
+    return xdescriptorstreamread((xdescriptor *) client->descriptor, client->descriptor->stream.in, streambuffersize);
 }
 
 extern xint64 xclientwrite(xclient * client)
 {
-    if(client->descriptor->stream.out == xnil)
-    {
-        client->descriptor->stream.out = xstreamnew(xstreamtype_buffer);
-    }
-
-    return xdescriptorwrite((xdescriptor *) client->descriptor, xstreamfront(client->descriptor->stream.out), xstreamlen(client->descriptor->stream.out));
+    return xdescriptorstreamwrite((xdescriptor *) client->descriptor, client->descriptor->stream.out);
 }
 
 extern xint64 xclientclose(xclient * client)
@@ -91,24 +83,10 @@ extern xint64 xclientclose(xclient * client)
 
 extern xint64 xclientsend(xclient * client, const char * data, xuint64 len)
 {
-    if(client->descriptor->stream.out)
+    if(xdescriptorstatuscheck_open((xdescriptor *) client->descriptor))
     {
-        if(xdescriptorstatuscheck_open((xdescriptor *) client->descriptor))
-        {
-            xstreampush(client->descriptor->stream.out, data, len);
-
-            xint64 ret = xdescriptorwrite((xdescriptor *) client->descriptor, xstreamfront(client->descriptor->stream.out), xstreamlen(client->descriptor->stream.out));
-            if(ret > 0)
-            {
-                xstreampos_set(client->descriptor->stream.out, xstreampos_get(client->descriptor->stream.out) + ret);
-                xstreamadjust(client->descriptor->stream.out, xfalse);
-            }
-            return ret;
-        }
-    }
-    else
-    {
-        return xdescriptorwrite((xdescriptor *) client->descriptor, data, len);
+        xstreampush(client->descriptor->stream.out, data, len);
+        return xdescriptorstreamwrite((xdescriptor *) client->descriptor, client->descriptor->stream.out);
     }
 
     return xfail;
@@ -116,42 +94,12 @@ extern xint64 xclientsend(xclient * client, const char * data, xuint64 len)
 
 extern xint64 xclientrecv(xclient * client, char * buffer, xuint64 size)
 {
-    xint64 ret = xfail;
-
-    xclientsocket * o = client->descriptor;
-
-    if(o->stream.in)
+    if(xdescriptorstatuscheck_open((xdescriptor *) client->descriptor))
     {
-        if(size <= xstreamlen(o->stream.in))
-        {
-            memcpy(buffer, xstreamfront(o->stream.in), size);
-            xstreampos_set(o->stream.in, xstreampos_get(o->stream.in) + size);
-            return size;
-        }
-        else
-        {
-            xint64 ret = xdescriptorread((xdescriptor *) o, xstreamback(o->stream.in), size - xstreamlen(o->stream.in));
-            if(ret > 0)
-            {
-                xstreamsize_set(o->stream.in, xstreamsize_get(o->stream.in) + ret);
-
-                if(size <= xstreamlen(o->stream.in))
-                {
-                    memcpy(buffer, xstreamfront(o->stream.in), size);
-                    xstreampos_set(o->stream.in, xstreampos_get(o->stream.in) + size);
-                    return size;
-                }
-                return xsuccess;
-            }
-            return ret;
-        }
-    }
-    else
-    {
-        return xdescriptorread((xdescriptor *) o, buffer, size);
+        return xdescriptorstreamread((xdescriptor *) client->descriptor, client->descriptor->stream.in, streambuffersize);
     }
 
-    return ret;
+    return xfail;
 }
 
 extern xint64 xclientsendf(xclient * client, xstringserializer serialize, const char * format, ...)
@@ -161,25 +109,15 @@ extern xint64 xclientsendf(xclient * client, xstringserializer serialize, const 
     xclientsocket * o = client->descriptor;
     if(xdescriptoreventavail_in((xdescriptor *) o))
     {
-        if(o->stream.out == xnil)
-        {
-            o->stream.out = xstreamnew(xstreamtype_buffer);
-        }
-
         va_list ap;
         va_start(ap, format);
         xstreamformatv(o->stream.out, serialize, format, ap);
         va_end(ap);
 
-        xint64 ret = xdescriptorwrite((xdescriptor *) o, xstreamfront(o->stream.out), xstreamlen(o->stream.out));
-
-        if(ret > 0)
-        {
-            xstreampos_set(client->descriptor->stream.out, xstreampos_get(client->descriptor->stream.out) + ret);
-            xstreamadjust(client->descriptor->stream.out, xfalse);
-        }
-        return ret;
+        return xdescriptorstreamwrite((xdescriptor *) o, o->stream.out);
+        
     }
+    
     return xdescriptorstatuscheck_close((xdescriptor *) o) ? xfail : xsuccess;
     
 }

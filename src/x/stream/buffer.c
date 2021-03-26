@@ -306,7 +306,7 @@ extern xuint64 xstreambufferpos_get(xstreambuffer * o)
  * @version     0.0.1
  * @date        2021. 02. 24.
  */
-extern xuint64 xstreambuffer_adjust(xstreambuffer * o, xint32 force)
+extern xuint64 xstreambuffer_adjust(xstreambuffer * o, xuint64 capacity, xint32 force)
 {
     xlogfunction_start("%s(%p, %d)", __func__, o, force);
 
@@ -332,6 +332,17 @@ extern xuint64 xstreambuffer_adjust(xstreambuffer * o, xint32 force)
         {
             o->position = 0;
             o->size = 0;
+            if(o->capacity != capacity)
+            {
+                o->capacity = capacity;
+
+                if(o->buffer)
+                {
+                    free(o->buffer);
+                }
+
+                o->buffer = malloc(o->capacity);
+            }
         }
     }
 
@@ -344,15 +355,7 @@ extern xuint64 xstreambuffer_adjust(xstreambuffer * o, xint32 force)
 extern xuint64 xstreambuffer_push(xstreambuffer * o, const xbyte * data, xuint64 len)
 {
     xlogfunction_start("%s(%p, %p, %lu)", __func__, o, data, len);
-    // TODO: 최적화를 수행하가면서 데이터를 삽입하도록 한다.
-    if(len < o->position + (o->capacity - o->size))
-    {
-        xstreambuffer_adjust(o, xtrue);
-    }
-    else
-    {
-        xstreambuffercapacity_set(o, xstreambuffercapacity_get(o) + len);
-    }
+    xstreambuffercapacity_set(o, xstreambuffercapacity_get(o) + len);
     memcpy(xaddressof(o->buffer[o->size]), data, len);
     o->size = o->size + len;
 

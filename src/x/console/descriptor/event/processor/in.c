@@ -121,33 +121,7 @@ static xint64 xconsoledescriptoreventprocessorin_open(xconsoledescriptor * o)
 
 static xint64 xconsoledescriptoreventprocessorin_in(xconsoledescriptor * o)
 {
-    xstreamadjust(o->stream, xfalse);
-    if(xstreamremain(o->stream) < streambuffersize)
-    {
-        xstreamcapacity_set(o->stream, xstreamcapacity_get(o->stream) + streambuffersize - xstreamremain(o->stream));
-    }
-
-    xint64 ret = xdescriptorread((xdescriptor *) o, xstreamback(o->stream), xstreamremain(o->stream));
-
-    if(ret > 0)
-    {
-        xstreamsize_set(o->stream, xstreamsize_get(o->stream) + ret);
-    }
-
-    return ret;
-
-    //             if(ret > 0)
-    // {
-    //     xstreamsize_set(o->stream.in, xstreamsize_get(o->stream.in) + ret);
-
-    //     if(size <= xstreamlen(o->stream.in))
-    //     {
-    //         memcpy(buffer, xstreamfront(o->stream.in), size);
-    //         xstreampos_set(o->stream.in, xstreampos_get(o->stream.in) + size);
-    //         return size;
-    //     }
-    //     return xsuccess;
-    // }
+    return xdescriptorstreamread((xdescriptor *) o, o->stream, streambuffersize);
 }
 
 static xint64 xconsoledescriptoreventprocessorin_out(xconsoledescriptor * o)

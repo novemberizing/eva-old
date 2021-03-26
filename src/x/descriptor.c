@@ -13,6 +13,8 @@
 #include "descriptor/event/avail.h"
 #include "descriptor/event/dispatch.h"
 
+static xuint64 streambuffersize = 8192;
+
 extern xint64 xdescriptoron(xdescriptor * descriptor, xuint32 event, xdescriptorparam param, xint64 result)
 {
     if(event == xdescriptoreventtype_exception)
@@ -48,7 +50,6 @@ extern xint64 xdescriptorread(xdescriptor * descriptor, void * buffer, xuint64 s
                 {
                     descriptor->status &= (~xdescriptorstatus_readend);
                     descriptor->status |= xdescriptorstatus_in;
-                    ret = xdescriptoron(descriptor, xdescriptoreventtype_in, xdescriptorparamgen(buffer), ret);
                 }
                 else if(ret == 0)
                 {
@@ -95,32 +96,31 @@ extern xint64 xdescriptorwrite(xdescriptor * descriptor, const void * data, xuin
         {
             if(data && len)
             {
-            ret = write(descriptor->handle.f, data, len);
-            if(ret > 0) 
-            {
-                descriptor->status &= (~xdescriptorstatus_writeend);
-                descriptor->status |= xdescriptorstatus_out;
-                ret = xdescriptoron(descriptor, xdescriptoreventtype_out, xdescriptorparamgen_const(data), ret);
-            }
-            else if(ret == 0)
-            {
-                descriptor->status &= (~xdescriptorstatus_out);
-                descriptor->status |= xdescriptorstatus_writeend;
-                ret = xsuccess;
-            }
-            else
-            {
-                if(errno == EAGAIN)
+                ret = write(descriptor->handle.f, data, len);
+                if(ret > 0) 
                 {
-                    descriptor->status &= (~(xdescriptorstatus_out | xdescriptorstatus_writeend));
+                    descriptor->status &= (~xdescriptorstatus_writeend);
+                    descriptor->status |= xdescriptorstatus_out;
+                }
+                else if(ret == 0)
+                {
+                    descriptor->status &= (~xdescriptorstatus_out);
+                    descriptor->status |= xdescriptorstatus_writeend;
                     ret = xsuccess;
                 }
                 else
                 {
-                    xdescriptorexception(descriptor, write, errno, xexceptiontype_sys, "");
-                    ret = xfail;
+                    if(errno == EAGAIN)
+                    {
+                        descriptor->status &= (~(xdescriptorstatus_out | xdescriptorstatus_writeend));
+                        ret = xsuccess;
+                    }
+                    else
+                    {
+                        xdescriptorexception(descriptor, write, errno, xexceptiontype_sys, "");
+                        ret = xfail;
+                    }
                 }
-            }
             }
             else
             {
@@ -272,4 +272,53 @@ extern xint64 xdescriptorunregister(xdescriptor * descriptor)
     }
 
     return xfail;
+}
+
+extern xint64 xdescriptorstreamread(xdescriptor * descriptor, xstream * stream, xuint64 capacity)
+{
+    xstreamadjust(stream, capacity, xfalse);
+    if(xstreamremain(stream) < capacity)
+    {
+        xstreamcapacity_set(stream, xstreamcapacity_get(stream) + capacity - xstreamremain(stream));
+    }
+
+    xbyte * back = xstreamback(stream);
+
+    xint64 ret = xdescriptorread(descriptor, xstreamback(stream), xstreamremain(stream));
+    
+    if(ret > 0)
+    {
+        xstreamsize_set(stream, xstreamsize_get(stream) + ret);
+
+        ret = xdescriptoron(descriptor, xdescriptoreventtype_in, xdescriptorparamgen(back), ret);
+
+        if(ret > 0)
+        {
+            xstreampos_set(stream, xstreampos_get(stream) + ret);
+            xstreamadjust(stream, capacity, xfalse);
+        }
+    }
+
+    return ret;
+}
+
+extern xint64 xdescriptorstreamwrite(xdescriptor * descriptor, xstream * stream)
+{
+    if(xstreamlen(stream) > 0)
+    {
+        xbyte * front = xstreamfront(stream);
+        xint64 ret = xdescriptorwrite(descriptor, front, xstreamlen(stream));
+
+        if(ret > 0)
+        {
+            xstreampos_set(stream, xstreampos_get(stream) + ret);
+
+            ret = xdescriptoron(descriptor, xdescriptoreventtype_out, xdescriptorparamgen(front), ret);
+
+            xstreamadjust(stream, streambuffersize, xfalse);  // capacity reset ... 
+        }
+
+        return ret;
+    }
+    return xdescriptorstatuscheck_close(descriptor) ? xfail : xsuccess;
 }

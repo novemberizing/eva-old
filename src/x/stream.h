@@ -40,7 +40,7 @@ extern xbyte * xstreamfront(xstream * o);
 extern xuint64 xstreamremain(xstream * o);
 extern xuint64 xstreamlen(xstream * o);
 
-extern xuint64 xstreamadjust(xstream * o, xint32 force);
+extern xuint64 xstreamadjust(xstream * o, xuint64 capacity, xint32 force);
 
 extern xuint64 xstreamcapacity_set(xstream * o, xuint64 v);
 extern xuint64 xstreamcapacity_get(xstream * o);

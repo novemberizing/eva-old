@@ -13,6 +13,7 @@
 
 #include <x/io.h>
 
+#include <x/stream.h>
 #include <x/exception.h>
 
 #include <x/descriptor/handle.h>
@@ -69,6 +70,10 @@ extern xint64 xdescriptoron(xdescriptor * descriptor, xuint32 event, xdescriptor
 
 extern xint64 xdescriptorread(xdescriptor * descriptor, void * buffer, xuint64 size);
 extern xint64 xdescriptorwrite(xdescriptor * descriptor, const void * data, xuint64 len);
+
+extern xint64 xdescriptorstreamread(xdescriptor * descriptor, xstream * stream, xuint64 capacity);
+extern xint64 xdescriptorstreamwrite(xdescriptor * descriptor, xstream * stream);
+
 extern xint64 xdescriptorclose(xdescriptor * descriptor);
 extern xint64 xdescriptorexception(xdescriptor * descriptor, void * func, xint32 number, xuint32 type, const char * message);
 

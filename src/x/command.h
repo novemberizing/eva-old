@@ -17,6 +17,4 @@ struct xcommand
 
 #define xcommandexec(o)    (o->exec(o))
 
-// extern xcommand * xcommandfrom_line(const char * line);
-
 #endif // __NOVEMBERIZING_X__COMMAND__H__

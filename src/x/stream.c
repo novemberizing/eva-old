@@ -404,7 +404,7 @@ extern xuint64 xstreampos_get(xstream * o)
  * @version     0.0.1
  * @date        2021. 02. 24.
  */
-extern xuint64 xstreamadjust(xstream * o, xint32 force)
+extern xuint64 xstreamadjust(xstream * o, xuint64 capacity, xint32 force)
 {
     xlogfunction_start("%s(%p, %d)", __func__, o, force);
 
@@ -413,8 +413,8 @@ extern xuint64 xstreamadjust(xstream * o, xint32 force)
     xuint64 ret = 0;
     switch(o->type)
     {
-        case xstreamtype_buffer: ret = xstreambuffer_adjust((xstreambuffer *) o, force);    break;
-        default:                 xassertion(xtrue, "");                                     break;
+        case xstreamtype_buffer: ret = xstreambuffer_adjust((xstreambuffer *) o, capacity, force);  break;
+        default:                 xassertion(xtrue, "");                                             break;
     }
 
     xlogfunction_end("%s(...) => %lu", __func__, ret);

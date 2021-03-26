@@ -36,7 +36,7 @@ static xint64 on(xclientpool * pool, xclient * client, xuint64 event, xdescripto
             xclientsendf(client, xstringformatserialize ,"PING\r\n");
             if(total % 10000 == 0)
             {
-                printf("event on => %s / [%ld.%09ld / %ld]\n", xdescriptoreventtype_str(event), diff.second, diff.nanosecond, total);
+                // printf("event on => %s / [%ld.%09ld / %ld]\n", xdescriptoreventtype_str(event), diff.second, diff.nanosecond, total);
             }
             
 

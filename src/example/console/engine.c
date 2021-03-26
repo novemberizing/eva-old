@@ -18,7 +18,7 @@ xuint64 total = 0;
 
 static xint64 on(xclientpool * pool, xclient * client, xuint64 event, xdescriptorparam param, xint64 result)
 {
-    printf("event on => %s\n", xdescriptoreventtype_str(event));
+    // printf("event on => %s\n", xdescriptoreventtype_str(event));
     return result;
 }
 
@@ -45,8 +45,6 @@ int main(int argc, char ** argv)
     xeventengine_clientpool_add(engine, pool);
 
     xeventengine_cli(engine, xevacli);
-
-    // xeventengine_cli_set(evacli);
     
     xeventengine_run(engine);
 

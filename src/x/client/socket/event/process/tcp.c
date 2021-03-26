@@ -119,27 +119,12 @@ static xint64 xclientsocketprocess_open(xclientsocket * o)
 
 static xint64 xclientsocketprocess_in(xclientsocket * o)
 {
-    // TODO: 버퍼를 컨트롤 할 수 있는 최적의 방법을 찾자.
-    xstreamadjust(o->stream.in, xfalse);
-
-    if(xstreamremain(o->stream.in) < socketbuffersize)
-    {
-        xstreamcapacity_set(o->stream.in, socketbuffersize - xstreamremain(o->stream.in));
-    }
-
-    return xdescriptorread((xdescriptor *) o, xstreamback(o->stream.in), xstreamremain(o->stream.in));
+    return xdescriptorstreamread((xdescriptor *) o, o->stream.in, socketbuffersize);
 }
 
 static xint64 xclientsocketprocess_out(xclientsocket * o)
 {
-    xint64 ret = xdescriptorwrite((xdescriptor *) o, xstreamfront(o->stream.out), xstreamlen(o->stream.out));
-    if(ret > 0)
-    {
-        xstreampos_set(o->stream.out, xstreampos_get(o->stream.out) + ret);
-        xstreamadjust(o->stream.out, xtrue);
-    }
-
-    return ret;
+    return xdescriptorstreamwrite((xdescriptor *) o, o->stream.out);
 }
 
 static xint64 xclientsocketprocess_close(xclientsocket * o)
