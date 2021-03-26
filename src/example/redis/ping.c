@@ -91,7 +91,13 @@ int main(int argc, char ** argv)
 
     xclientpool * pool = xclientpoolnew(on, sizeof(xclientpool));
 
-    for(xint32 i = 0; i < 50; i++)
+    for(xint32 i = 0; i < 25; i++)
+    {
+        xclientpooladd(pool, xclientnew(AF_INET, SOCK_STREAM, IPPROTO_TCP, xaddressof(addr), sizeof(struct sockaddr_in), xnil, sizeof(xclientpool)));
+    }
+
+    addr.sin_addr.s_addr = inet_addr("192.168.0.128");
+    for(xint32 i = 0; i < 25; i++)
     {
         xclientpooladd(pool, xclientnew(AF_INET, SOCK_STREAM, IPPROTO_TCP, xaddressof(addr), sizeof(struct sockaddr_in), xnil, sizeof(xclientpool)));
     }
