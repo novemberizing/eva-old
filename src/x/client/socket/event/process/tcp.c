@@ -97,6 +97,11 @@ static xint64 xclientsocketprocess_void(xclientsocket * o)
 
     if(xdescriptorstatuscheck_close((xdescriptor *) o) == xfalse)
     {
+        if(xstreamlen(o->stream.out) == 0)
+        {
+            o->status |= xdescriptorstatus_out;
+        }
+
         xdescriptorregister((xdescriptor *) o);
     }
 

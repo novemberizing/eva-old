@@ -186,7 +186,7 @@ extern void xeventprocessorpool_sync(xeventprocessorpool * pool, xint32 on)
     xlogfunction_start("%s(%p, %d)", __func__, pool, on);
     if(on)
     {
-        xassertion(pool == xnil, "");
+        // xassertion(pool == xnil, "");
     }
     else
     {

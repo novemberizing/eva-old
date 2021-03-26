@@ -36,7 +36,7 @@ static xint64 on(xclientpool * pool, xclient * client, xuint64 event, xdescripto
             xclientsendf(client, xstringformatserialize ,"PING\r\n");
             if(total % 10000 == 0)
             {
-                // printf("event on => %s / [%ld.%09ld / %ld]\n", xdescriptoreventtype_str(event), diff.second, diff.nanosecond, total);
+                printf("event on => %s / [%ld.%09ld / %ld]\n", xdescriptoreventtype_str(event), diff.second, diff.nanosecond, total);
             }
             
 
@@ -48,10 +48,6 @@ static xint64 on(xclientpool * pool, xclient * client, xuint64 event, xdescripto
     }
     else if(event == xdescriptoreventtype_out)
     {
-        if(result > 0)
-        {
-            // printf("event on => %s / %s", xdescriptoreventtype_str(event), (const char *) param.c);
-        }
     }
     else if(event == xdescriptoreventtype_exception)
     {
@@ -71,6 +67,10 @@ static xint64 on(xclientpool * pool, xclient * client, xuint64 event, xdescripto
         // {
         //     xclientsendf(client, xstringformatserialize ,"PING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\nPING\r\n");
         // }
+    }
+    else if(event == xdescriptoreventtype_register)
+    {
+        // printf("%s:%d event on => %s\n", __FILE__, __LINE__, xdescriptoreventtype_str(event));
     }
     else
     {

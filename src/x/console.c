@@ -94,6 +94,9 @@ extern void xconsoleinit(xconsoleobserver on)
 
         singleton.on                   = on;
 
+        singleton.in.on(xaddressof(singleton.in), xdescriptoreventtype_create, xdescriptorparamgen(xnil), xsuccess);
+        singleton.out.on(xaddressof(singleton.out), xdescriptoreventtype_create, xdescriptorparamgen(xnil), xsuccess);
+
         if(singleton.in.stream == xnil)
         {
             singleton.in.stream = xstreamnew(xstreamtype_buffer);
@@ -104,8 +107,8 @@ extern void xconsoleinit(xconsoleobserver on)
             singleton.out.stream = xstreamnew(xstreamtype_buffer);
         }
 
-        singleton.in.on(xaddressof(singleton.in), xdescriptorstatus_open, xdescriptorparamgen(xnil), xsuccess);
-        singleton.out.on(xaddressof(singleton.out), xdescriptorstatus_open, xdescriptorparamgen(xnil), xsuccess);
+        singleton.in.on(xaddressof(singleton.in), xdescriptoreventtype_open, xdescriptorparamgen(xnil), xsuccess);
+        singleton.out.on(xaddressof(singleton.out), xdescriptoreventtype_open, xdescriptorparamgen(xnil), xsuccess);
     }
 }
 

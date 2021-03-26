@@ -11,7 +11,7 @@
 
 extern xint64 xevacli(xconsole * console, xconsoledescriptor * descriptor, xuint32 event, xdescriptorparam param, xint64 result)
 {
-    // printf("console event => %s\n", xdescriptoreventtype_str(event));
+    printf("console event => %s => %ld\n", xdescriptoreventtype_str(event), result);
 
     if(event == xdescriptoreventtype_in)
     {
@@ -31,9 +31,9 @@ extern xint64 xevacli(xconsole * console, xconsoledescriptor * descriptor, xuint
     }
     else if(event == xdescriptoreventtype_out)
     {
-        if(result >= 0)
+        if(result > 0)
         {
-            if(xstreamlen(descriptor->stream) == result)
+            if(xstreamlen(descriptor->stream) == 0)
             {
                 xconsolestatus_set(xconsolestatus_wait);
             }

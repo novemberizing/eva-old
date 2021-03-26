@@ -46,7 +46,4 @@ extern xint32 xsocketerror(xsocket * o);
 // extern xint64 xsocketlisten(xsocket * o, xint32 backlog);   // MOVE TO SERVER SOCKET
 // extern xint64 xsocketconnect(xsocket * o, void * addr, xuint32 addrlen);    // MOVE TO CLIENT SOCKTE
 
-
-extern xint64 xsocketconnecting(xsocket * o);       // REMOVE
-
 #endif // __NOVEMBERIZING_X__SOCKET__H__

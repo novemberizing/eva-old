@@ -81,6 +81,16 @@ extern xint64 xclientsocketconnect(xclientsocket * o, void * addr, xuint32 addrl
     {
         if(o->handle.f >= 0 && (o->status & xsocketstatus_create))
         {
+            if(o->stream.in == xnil)
+            {
+                o->stream.in = xstreamnew(xstreamtype_buffer);
+            }
+
+            if(o->stream.out == xnil)
+            {
+                o->stream.out = xstreamnew(xstreamtype_buffer);
+            }
+            
             if((o->status & xdescriptorstatus_connect) == xdescriptorstatus_void)
             {
                 xdescriptoreventsubscription * subscription = (xdescriptoreventsubscription *) o->subscription;
