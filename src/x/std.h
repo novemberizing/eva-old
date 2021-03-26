@@ -11,6 +11,8 @@
 #ifndef   __NOVEMBERIZING_X__STD__H__
 #define   __NOVEMBERIZING_X__STD__H__
 
+#include <stdarg.h>
+
 #include <x/log.h>
 
 #define xinvalid            (-1)                /**!< 유효하지 않은 값을 나타냅니다. 특히 디스크립터가 유요하지 않음을 나타냅니다. */

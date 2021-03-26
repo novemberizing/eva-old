@@ -18,6 +18,8 @@
 #include "./processor/pool.h"
 #include "../descriptor/event/subscription.h"
 
+#include "../eva/cli.h" // 삭제할 것
+
 
 static void xeventenginecallback_internal(xeventengine * engine, xuint32 status);
 
@@ -37,6 +39,8 @@ extern xeventengine * xeventengine_new(void)
 
 extern void xeventengine_cancel(xeventengine * engine, xeventenginefunc callback)
 {
+    xassertion(engine == xnil, "");
+
     if(engine)
     {
         engine->cancel = callback;
@@ -62,6 +66,8 @@ extern xint32 xeventengine_run(xeventengine * engine)
         if(engine->cli)
         {
             xconsoleinit(engine->cli);
+
+            xevacli_init(engine);
 
             xdescriptor * in = (xdescriptor *) xconsoledescriptorin_get();
             xdescriptor * out = (xdescriptor *) xconsoledescriptorout_get();

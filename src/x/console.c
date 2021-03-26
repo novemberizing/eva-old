@@ -167,6 +167,13 @@ extern void xconsoleout(const char * format, ...)
     singleton.out.process(xaddressof(singleton.out), xdescriptoreventtype_void);
 }
 
+extern void xconsoleoutv(const char * format, va_list ap)
+{
+    xstreamformatv(singleton.out.stream, xstringformatserialize, format, ap);
+
+    singleton.out.process(xaddressof(singleton.out), xdescriptoreventtype_void);
+}
+
 extern void xconsolestatus_set(xuint32 value)
 {
     singleton.status = value;

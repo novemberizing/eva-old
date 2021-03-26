@@ -41,3 +41,104 @@ extern char * xstringncpy(char * o, xuint64 * index, xuint64 * capacity, const c
 
     return o;
 }
+
+extern char * xstringline_next(char * o, xuint64 * index, xuint64 limit)
+{
+    return xstringchr_next(o, index, limit, '\n');
+}
+
+extern char * xstringstr_next(char * o, xuint64 * index, xuint64 limit, const char * s)
+{
+    xassertion(s == xnil, "");
+    xuint64 len = (s ? strlen(s) : 0);
+    if(len > 0)
+    {
+        for(xuint64 i = 0; i + len <= limit; i++)
+        {
+            if(strncmp(xaddressof(o[i]), s, len) == 0)
+            {
+                if(index)
+                {
+                    *index = i + len;
+                }
+
+                return xaddressof(o[i + len]);
+            }
+        }
+    }
+    
+
+    if(index)
+    {
+        *index = limit;
+    }
+    return xnil;
+}
+
+extern char * xstringchr_next(char * o, xuint64 * index, xuint64 limit, int c)
+{
+    for(xuint64 i = 0; i < limit; i++)
+    {
+        if(o[i] == c)
+        {
+            if(index)
+            {
+                *index = i;
+            }
+
+            return xaddressof(o[i]);
+        }
+    }
+
+    if(index)
+    {
+        *index = limit;
+    }
+    return xnil;
+}
+
+extern xuint64 xstringwhitespace_split(char ** strings, const char * s, xuint64 limit)
+{
+    if(*strings == xnil)
+    {
+        *strings = malloc(limit + 1);
+    }
+
+    xuint64 count = 0;
+    xuint64 index = 0;
+    xuint64 prev = 0;
+    
+    for(xuint64 i = 0; i < limit; i++)
+    {
+        if(strchr("\r\t \n\v", s[i]))
+        {
+            (*strings)[index] = 0;
+            if(index != prev)
+            {
+                prev = index;
+                count = count + 1;
+            }
+            for(i = i + 1; i < limit; i++)
+            {
+                if(strchr("\r\t \n\v", s[i]))
+                {
+                    continue;
+                }
+                index = index + 1;
+                (*strings)[index] = s[i];
+                index = index + 1;
+                break;
+            }
+            continue;
+        }
+        (*strings)[index] = s[i];
+        index = index + 1;
+    }
+    (*strings)[index] = 0;
+    if(index != prev)
+    {
+        count = count + 1;
+    }
+
+    return count;
+}

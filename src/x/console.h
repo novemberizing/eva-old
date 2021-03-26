@@ -28,6 +28,7 @@ extern void xconsoleinit(xconsoleobserver on);
 extern void xconsoleterm(void);
 
 extern void xconsoleout(const char * format, ...);
+extern void xconsoleoutv(const char * format, va_list ap);
 
 extern void xconsolestatus_set(xuint32 value);
 extern void xconsolestatus_add(xuint32 status);
