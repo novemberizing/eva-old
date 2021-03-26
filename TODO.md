@@ -1,3 +1,16 @@
+----
+
+- [ ] 멀티 엔진 클라이언트 
+- [ ] session socket close 시에 REMOVE 를 설정할 수 있도록 하자. 과연 어디에서 해야할까?
+
+----
+
+READ/WRITE 시에
+
+WRITE ALL > READ ONCE > WRITE ALL - 그리고 in 상태이면 큐에 넣고, 아니면 등록을 하자.
+
+----
+
 eva> ==91790== 
 ==91790== HEAP SUMMARY:
 ==91790==     in use at exit: 293,520 bytes in 265 blocks

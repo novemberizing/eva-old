@@ -4,6 +4,8 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <arpa/inet.h>
+#include <netinet/tcp.h>
 
 #include "thread.h"
 #include "socket.h"
@@ -182,6 +184,21 @@ extern xint32 xsocketresuseaddr(xsocket * o, xint32 on)
     if(o->handle.f >= 0)
     {
         if((ret = setsockopt(o->handle.f, SOL_SOCKET, SO_REUSEADDR, xaddressof(on), sizeof(int))) != xsuccess)
+        {
+            xdescriptorexception((xdescriptor *) o, setsockopt, errno, xexceptiontype_sys, "");
+        }
+    }
+
+    return ret;
+}
+
+extern xint32 xsocketnodelay(xsocket * o, xint32 on)
+{
+    xint32 ret = xfail;
+
+    if(o->handle.f >= 0)
+    {
+        if((ret = setsockopt(o->handle.f, IPPROTO_TCP, TCP_NODELAY, xaddressof(on), sizeof(int))) != xsuccess)
         {
             xdescriptorexception((xdescriptor *) o, setsockopt, errno, xexceptiontype_sys, "");
         }

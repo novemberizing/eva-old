@@ -79,30 +79,23 @@ static xint64 xclientsocketprocess_void(xclientsocket * o)
         xclientsocketprocess_open(o);
     }
 
-    for(xint32 i = 0; i < maxretrycount; i++)
-    {
-        xclientsocketprocess_out(o);
-        xclientsocketprocess_in(o);
-        xclientsocketprocess_out(o);
-
-        if(xdescriptorstatuscheck_close((xdescriptor * ) o))
-        {
-            break;
-        }
-        else if((o->status & xdescriptorstatus_in) == xdescriptorstatus_void && xstreamlen(o->stream.out) == 0)
-        {
-            break;
-        }
-    }
+    xclientsocketprocess_flush(o);
+    xclientsocketprocess_in(o);
+    xclientsocketprocess_flush(o);
 
     if(xdescriptorstatuscheck_close((xdescriptor *) o) == xfalse)
     {
-        if(xstreamlen(o->stream.out) == 0)
+        if(o->status & xsocketstatus_in)
         {
-            o->status |= xdescriptorstatus_out;
+            if(o->subscription && o->subscription->enginenode.engine)
+            {
+                xeventengine_queue_push(o->subscription->enginenode.engine, (xevent *) xaddressof(o->event));
+            }
         }
-
-        xdescriptorregister((xdescriptor *) o);
+        else
+        {
+            xdescriptorregister((xdescriptor *) o);
+        }
     }
 
     if(xdescriptorstatuscheck_close((xdescriptor *) o))
@@ -163,7 +156,10 @@ static xint64 xclientsocketprocess_register(xclientsocket * o)
 
 static xint64 xclientsocketprocess_flush(xclientsocket * o)
 {
-    xassertion(xtrue, "");
+    do {
+        xdescriptorstreamwrite((xdescriptor *) o, o->stream.out);
+    } while(xdescriptorstatuscheck_close((xdescriptor *) o) == xfalse && xstreamlen(o->stream.out) > 0 && (o->status & xsocketstatus_out) == xsocketstatus_void);
+
     return xsuccess;
 }
 static xint64 xclientsocketprocess_readoff(xclientsocket * o)

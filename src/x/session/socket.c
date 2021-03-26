@@ -10,12 +10,13 @@
 
 #include "../descriptor/status.h"
 
-#include "../socket/processor/tcp/session.h"
+#include "socket/event/process/tcp.h"
 
 #include "../server.h"
 #include "socket.h"
 
-static xsessionsocketprocessor xserversocketprocessor_get(xint32 domain, xint32 type, xint32 protocol);
+static xsessionsocketprocessor xsessionsocketprocessor_get(xint32 domain, xint32 type, xint32 protocol);
+
 static xint64 xsessionsocketobserve(xsessionsocket * o, xuint32 event, xdescriptorparam param, xint64 result);
 static void xsessionsocketeventon(xsessionsocketevent * event);
 
@@ -29,7 +30,7 @@ extern xsessionsocket * xsessionsocket_new(xint32 domain, xint32 type, xint32 pr
     o->mask = xdescriptormask_void;
     o->status = xdescriptorstatus_void;
     o->handle.f = xinvalid;
-    o->process = xserversocketprocessor_get(domain, type, protocol);
+    o->process = xsessionsocketprocessor_get(domain, type, protocol);
     o->check = xnil;
     o->on = xsessionsocketobserve;
     o->event.descriptor = o;
@@ -54,6 +55,16 @@ extern xsessionsocket * xsessionsocket_rem(xsessionsocket * descriptor)
     return xnil;
 }
 
+extern xint64 xsessionsocketclear(xsessionsocket * o)
+{
+    xassertion(xdescriptorstatuscheck_close((xdescriptor *) o) == xfalse, "");
+
+    o->stream.in = xstreamrem(o->stream.in);
+    o->stream.out = xstreamrem(o->stream.out);
+
+    return xsuccess;
+}
+
 static xint64 xsessionsocketobserve(xsessionsocket * o, xuint32 event, xdescriptorparam param, xint64 result)
 {
     xsession * session = o->session;
@@ -66,7 +77,7 @@ static void xsessionsocketeventon(xsessionsocketevent * event)
     event->descriptor->process(event->descriptor, xdescriptoreventtype_void);
 }
 
-static xsessionsocketprocessor xserversocketprocessor_get(xint32 domain, xint32 type, xint32 protocol)
+static xsessionsocketprocessor xsessionsocketprocessor_get(xint32 domain, xint32 type, xint32 protocol)
 {
     if(domain == AF_INET)
     {
@@ -74,8 +85,10 @@ static xsessionsocketprocessor xserversocketprocessor_get(xint32 domain, xint32 
         {
             if(protocol == IPPROTO_TCP)
             {
-                return xsocketprocessortcp_session;
+                return xsessionsocketprocess_tcp;
             }
         }
     }
+    xassertion(xtrue, "");
+    return xnil;
 }

@@ -50,8 +50,12 @@ libnovemberizing_a_SOURCES = x/std.c                                          \
                              x/socket/handle.c                                \
                              x/server.c                                       \
                              x/server/socket.c                                \
+                             x/server/socket/event/avail.c                    \
+                             x/server/socket/event/process/tcp.c              \
                              x/session.c                                      \
                              x/session/socket.c                               \
+                             x/session/socket/event/avail.c                   \
+                             x/session/socket/event/process/tcp.c             \
                              x/client.c                                       \
                              x/client/pool.c                                  \
                              x/client/pool/list.c                             \
@@ -72,7 +76,8 @@ noinst_PROGRAMS = example-helloworld                                         \
                   example-string-simple                                      \
                   example-string-format                                      \
                   example-console-engine                                     \
-                  example-redis-ping
+                  example-redis-ping                                         \
+                  example-server-simple
 
 example_helloworld_SOURCES     = example/helloworld.c
 example_helloworld_LDADD       = $(LIBS)
@@ -94,6 +99,9 @@ example_console_engine_LDADD   = $(LIBS)
 
 example_redis_ping_SOURCES     = example/redis/ping.c
 example_redis_ping_LDADD       = $(LIBS)
+
+example_server_simple_SOURCES  = example/server/simple.c
+example_server_simple_LDADD    = $(LIBS)
 
 nobase_include_HEADERS = x/std.h                \
                          x/thread.h             \

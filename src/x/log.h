@@ -17,6 +17,7 @@
 
 #define xlogtype_all            (0xFFFFFFFFu)
 
+extern void xloginit(const char * path, unsigned int types, int console);
 extern void xlogterm(void);
 
 extern void xlogconsole_set(int enable);

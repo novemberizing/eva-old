@@ -10,6 +10,7 @@
 #include <x/event/engine.h>
 #include <x/eva/cli.h>
 #include <x/console.h>
+#include <x/socket.h>
 
 xtime start = { 0, 0 };
 xtime end = { 0, 0 };
@@ -19,7 +20,12 @@ xuint64 total = 0;
 
 static xint64 on(xclientpool * pool, xclient * client, xuint64 event, xdescriptorparam param, xint64 result)
 {
-    if(event == xdescriptoreventtype_in)
+
+    if(event == xdescriptoreventtype_create)
+    {
+        xsocketnodelay((xsocket *) client->descriptor, xtrue);
+    }
+    else if(event == xdescriptoreventtype_in)
     {
         if(result > 0)
         {

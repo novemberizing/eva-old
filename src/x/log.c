@@ -76,6 +76,34 @@ static int __console = 0;
 static char * __path = (char *) 0;
 static unsigned int __mask = 0;
 static pthread_key_t * key = (pthread_key_t *)(0);
+
+extern void xloginit(const char * path, unsigned int types, int console)
+{
+    if(path)
+    {
+        if(__path)
+        {
+            free(__path);
+        }
+
+        size_t n = strlen(path) + 1;
+
+        __path = malloc(n);
+        memcpy(__path, path, n);
+        __path[n] = 0;
+    }
+    else
+    {
+        if(__path)
+        {
+            free(__path);
+            __path = (void *)(0);
+        }
+    }
+    __mask    = types;
+    __console = console;
+}
+
 static void xlogthreaddatarem(void * o);
 
 extern void xlogconsole_set(int enable)

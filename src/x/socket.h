@@ -41,6 +41,7 @@ extern xint64 xsocketbind(xsocket * o, void * addr, xuint32 addrlen);
 extern xint64 xsocketshutdown(xsocket * o, xuint32 how);
 
 extern xint32 xsocketresuseaddr(xsocket * o, xint32 on);
+extern xint32 xsocketnodelay(xsocket * o, xint32 on);
 extern xint32 xsocketerror(xsocket * o);
 
 // extern xint64 xsocketlisten(xsocket * o, xint32 backlog);   // MOVE TO SERVER SOCKET

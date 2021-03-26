@@ -9,7 +9,7 @@
 #include "../thread.h"
 
 #include "../socket.h"
-#include "../socket/processor/tcp/server.h"
+#include "socket/event/process/tcp.h"
 
 #include "../session/socket.h"
 #include "socket.h"
@@ -118,7 +118,7 @@ static xserversocketprocessor xserversocketprocessor_get(xint32 domain, xint32 t
         {
             if(protocol == IPPROTO_TCP)
             {
-                return xsocketprocessortcp_server;
+                return xserversocketprocess_tcp;
             }
         }
     }
