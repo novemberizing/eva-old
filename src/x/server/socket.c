@@ -109,7 +109,6 @@ extern xint64 xserversocketlisten(xserversocket * o, xint32 backlog)
     return ret;
 }
 
-
 static xserversocketprocessor xserversocketprocessor_get(xint32 domain, xint32 type, xint32 protocol)
 {
     if(domain == AF_INET)

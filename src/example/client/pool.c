@@ -37,7 +37,6 @@ static xint64 on(xclientpool * pool, xclient * client, xuint64 event, xdescripto
             {
                 printf("event on => %s / [%ld.%09ld / %ld]\n", xdescriptoreventtype_str(event), diff.second, diff.nanosecond, total);
             }
-            
 
             // for(xuint64 i = 0; i < 64; i++)
             // {
