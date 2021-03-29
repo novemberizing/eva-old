@@ -123,10 +123,13 @@ extern void xdescriptoreventgenerator_queue_once(xdescriptoreventgenerator * o)
             __xsyncunlock(o->queue->sync);
             if(subscription->descriptor->status & xdescriptorstatus_rem)
             {
-                xassertion(xdescriptoreventavail_rem(subscription->descriptor) == xfalse, "");
+                // xassertion(xdescriptoreventavail_rem(subscription->descriptor) == xfalse, "");
 
                 xdescriptor * descriptor = subscription->descriptor;
                 descriptor->process(descriptor, xdescriptoreventtype_rem);
+
+                // 일단 수행하지만, 만약에 REM 불가능하면 REM 상태가 되어서 다시 REM 을 수행하도록 한다.
+                // 특히 서버에 대해서 그렇게 구현하도록 해야 한다.
             }
             else
             {

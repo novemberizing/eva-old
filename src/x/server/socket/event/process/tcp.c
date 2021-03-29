@@ -138,8 +138,6 @@ static xint64 xserversocketprocess_rem(xserversocket * o)
     /**
      * 서버 소켓이 없으면 세션들의 비즈니스 로직은 동작하지 않는다.
      * 그렇기 때문에 서버 소켓은 모든 세션들까지 종료해야 한다.
-     * 
-     * 
      */
 
     xserver * server = o->server;
