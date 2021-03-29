@@ -13,6 +13,7 @@ static xint64 xclienton(xclient * client, xuint32 event, xdescriptorparam param,
     {
         result = client->pool->on(client->pool, client, event, param, result);
     }
+
     return result;
 }
 
