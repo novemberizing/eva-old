@@ -70,7 +70,7 @@ static xint64 xsessionsocketprocess_void(xsessionsocket * o)
 {
     if(xdescriptorstatuscheck_close((xdescriptor *) o))
     {
-        xdescriptorclose((xdescriptor *) o);
+        xsessionsocketclose(o);
         return xsuccess;
     }
 
@@ -95,7 +95,7 @@ static xint64 xsessionsocketprocess_void(xsessionsocket * o)
 
     if(xdescriptorstatuscheck_close((xdescriptor *) o))
     {
-        xdescriptorclose((xdescriptor *) o);
+        xsessionsocketclose(o);
     }
 
     return xsuccess;
@@ -120,7 +120,7 @@ static xint64 xsessionsocketprocess_out(xsessionsocket * o)
 
 static xint64 xsessionsocketprocess_close(xsessionsocket * o)
 {
-    return xdescriptorclose((xdescriptor *) o);
+    return xsessionsocketclose(o);
 }
 
 static xint64 xsessionsocketprocess_exception(xsessionsocket * o)
@@ -221,4 +221,3 @@ static xint64 xsessionsocketprocess_unregister(xsessionsocket * o)
 {
     return xdescriptorunregister((xdescriptor *) o);
 }
-

@@ -69,6 +69,7 @@ static xint64 xsessionsocketobserve(xsessionsocket * o, xuint32 event, xdescript
 {
     xsession * session = o->session;
     xserver * server = session->server;
+
     return server->session.on(session, event, param, result);
 }
 
@@ -91,4 +92,13 @@ static xsessionsocketprocessor xsessionsocketprocessor_get(xint32 domain, xint32
     }
     xassertion(xtrue, "");
     return xnil;
+}
+
+extern xint64 xsessionsocketclose(xsessionsocket * o)
+{
+    xint64 ret = xdescriptorclose((xdescriptor *) o);
+
+    o->status |= xsocketstatus_rem;
+
+    return ret;
 }

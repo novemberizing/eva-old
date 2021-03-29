@@ -69,7 +69,7 @@ extern xserversocket * xserversocket_rem(xserversocket * o)
     return xnil;
 }
 
-extern xint64 xserversocket_listen(xserversocket * o, xint32 backlog)
+extern xint64 xserversocketlisten(xserversocket * o, xint32 backlog)
 {
     xint64 ret = xfail;
 

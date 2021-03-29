@@ -49,7 +49,7 @@ struct xserversocket
 extern xserversocket * xserversocket_new(xserver * server, xint32 domain, xint32 type, xint32 protocol, const void * addr, xuint32 addrlen);
 extern xserversocket * xserversocket_rem(xserversocket * descriptor);
 
-extern xint64 xserversocket_listen(xserversocket * o, xint32 backlog);
+extern xint64 xserversocketlisten(xserversocket * o, xint32 backlog);
 
 
 // extern xint32 xserversocketcheck_open(xserversocket * descriptor);

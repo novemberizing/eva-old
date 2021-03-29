@@ -42,5 +42,6 @@ struct xsessionsocket
 extern xsessionsocket * xsessionsocket_new(xint32 domain, xint32 type, xint32 protocol);
 extern xsessionsocket * xsessionsocket_rem(xsessionsocket * descriptor);
 extern xint64 xsessionsocketclear(xsessionsocket * o);
+extern xint64 xsessionsocketclose(xsessionsocket * o);
 
 #endif // __NOVEMBERIZING_X__SESSION__SOCKET__H__
