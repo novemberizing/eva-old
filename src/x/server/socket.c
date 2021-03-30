@@ -109,6 +109,74 @@ extern xint64 xserversocketlisten(xserversocket * o, xint32 backlog)
     return ret;
 }
 
+extern xint32 xserveraccept(xserversocket * o)
+{
+    if(xdescriptorstatuscheck_close((xdescriptor *) o) == xfalse)
+    {
+        int f = accept(o->handle.f, xnil, xnil);
+        if(f >= 0)
+        {
+            xserver * server = o->server;
+            xserversocketeventsubscription * subscription = o->subscription;
+            xeventengine * engine = subscription->enginenode.engine;
+
+            xsession * session = server->session.create(server, o->domain, o->type, o->protocol);
+
+            session->descriptor->handle.f = f;
+            session->descriptor->status |= xdescriptorstatus_create;
+
+            xint64 ret = xdescriptoron((xdescriptor *) session->descriptor, xdescriptoreventtype_create, xdescriptorparamgen(xnil), xsuccess);
+
+            if(ret == xsuccess)
+            {
+                if(session->descriptor->stream.in)
+                {
+                    session->descriptor->stream.in = xstreamnew(xstreamtype_buffer);
+                }
+                if(session->descriptor->stream.out)
+                {
+                    session->descriptor->stream.out = xstreamnew(xstreamtype_buffer);
+                }
+
+                session->descriptor->status |= (xdescriptorstatus_open | xdescriptorstatus_out);
+
+                ret = xdescriptoron((xdescriptor *) session->descriptor, xdescriptoreventtype_create, xdescriptorparamgen(xnil), xsuccess);
+
+                if(ret == xsuccess)
+                {
+                    xeventengine_session_register(engine, session);
+                }
+            }
+
+            return ret;
+        }
+        else
+        {
+            if(errno == EAGAIN)
+            {
+                return xsuccess;
+            }
+            else
+            {
+                if(errno == EBADF || errno == EINVAL || errno == ENOTSOCK || errno == EOPNOTSUPP)
+                {
+                    xdescriptorexception((xdescriptor *) o, accept, errno, xexceptiontype_sys, "");
+
+                    return xfail;
+                }
+                else
+                {
+                    xassertion(xtrue, "accept => %d", errno);
+
+                    return xsuccess;
+                }
+            }
+        }
+    }
+
+    return xfail;
+}
+
 static xserversocketprocessor xserversocketprocessor_get(xint32 domain, xint32 type, xint32 protocol)
 {
     if(domain == AF_INET)
@@ -136,3 +204,5 @@ static xint64 xserversocketon(xserversocket * o, xuint32 event, xdescriptorparam
 {
     return result;
 }
+
+

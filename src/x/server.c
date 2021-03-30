@@ -53,6 +53,7 @@ extern xsession * xsessionsimple_factory(xserver * server, xint32 domain, xint32
     xsession * session = calloc(sizeof(xsession), 1);
     session->descriptor = xsessionsocket_new(domain, type, protocol);
 
+    session->descriptor->session = session;
     session->server = server;
     session->cntr = xaddressof(server->session.alive);
 

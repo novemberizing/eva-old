@@ -54,6 +54,16 @@ static xserversocketprocess processes[xsocketeventtype_max] = {
 
 extern xint64 xserversocketprocess_tcp(xserversocket * o, xuint32 event)
 {
+    if(event < xsocketeventtype_max)
+    {
+        return processes[event](o);
+    }
+    xassertion(xtrue, "");
+    return xfail;
+}
+
+extern xint64 xserversocketprocess_void(xserversocket * o)
+{
     xassertion(xtrue, "implement this");
     if(xdescriptorstatuscheck_close((xdescriptor *) o))
     {
@@ -107,12 +117,16 @@ static xint64 xserversocketprocess_open(xserversocket * o)
 
     xsocketcreate((xsocket *) o);
     xsocketbind((xsocket *) o, o->addr, o->addrlen);
-    xserversocket_listen(o, o->backlog);
+    xserversocketlisten(o, o->backlog);
 
     return xdescriptorstatuscheck_close((xdescriptor *) o) ? xfail : xsuccess;
 }
 
-static xint64 xserversocketprocess_in(xserversocket * o);
+static xint64 xserversocketprocess_in(xserversocket * o)
+{
+    xserveraccept(o);
+    return xsuccess;
+}
 
 static xint64 xserversocketprocess_out(xserversocket * o)
 {
@@ -135,30 +149,75 @@ static xint64 xserversocketprocess_rem(xserversocket * o)
 {
     xassertion(xtrue, "implement this");
 
-    /**
-     * 서버 소켓이 없으면 세션들의 비즈니스 로직은 동작하지 않는다.
-     * 그렇기 때문에 서버 소켓은 모든 세션들까지 종료해야 한다.
-     */
-
-    xserver * server = o->server;
-
-    if(server->session.alive.size > 0)
-    {
-    }
-
     return xsuccess;
 }
 
-static xint64 xserversocketprocess_register(xserversocket * o);
-static xint64 xserversocketprocess_flush(xserversocket * o);
-static xint64 xserversocketprocess_readoff(xserversocket * o);
-static xint64 xserversocketprocess_writeoff(xserversocket * o);
-static xint64 xserversocketprocess_opening(xserversocket * o);
-static xint64 xserversocketprocess_create(xserversocket * o);
-static xint64 xserversocketprocess_bind(xserversocket * o);
-static xint64 xserversocketprocess_clear(xserversocket * o);
-static xint64 xserversocketprocess_alloff(xserversocket * o);
-static xint64 xserversocketprocess_connect(xserversocket * o);
-static xint64 xserversocketprocess_listen(xserversocket * o);
-static xint64 xserversocketprocess_connecting(xserversocket * o);
-static xint64 xserversocketprocess_unregister(xserversocket * o);
+static xint64 xserversocketprocess_register(xserversocket * o)
+{
+    return xdescriptorregister((xdescriptor *) o);
+}
+
+static xint64 xserversocketprocess_flush(xserversocket * o)
+{
+    while((o->status & xdescriptorstatus_in) && xdescriptorstatuscheck_close((xdescriptor *) o) == xfalse)
+    {
+        xserversocketprocess_in(o);
+    }
+}
+static xint64 xserversocketprocess_readoff(xserversocket * o)
+{
+    return xsocketshutdown((xsocket *) o, xdescriptoreventtype_readoff);
+}
+
+static xint64 xserversocketprocess_writeoff(xserversocket * o)
+{
+    return xsocketshutdown((xsocket *) o, xdescriptoreventtype_writeoff);
+}
+
+static xint64 xserversocketprocess_opening(xserversocket * o)
+{
+    return xsuccess;
+}
+
+static xint64 xserversocketprocess_create(xserversocket * o)
+{
+    return xsocketcreate((xsocket *) o);
+}
+
+static xint64 xserversocketprocess_bind(xserversocket * o)
+{
+    return xsocketbind((xsocket *) o, o->addr, o->addrlen);
+}
+
+static xint64 xserversocketprocess_clear(xserversocket * o)
+{
+    xassertion(xtrue, "implement this");
+    return xsuccess;
+}
+
+static xint64 xserversocketprocess_alloff(xserversocket * o)
+{
+    return xsocketshutdown((xsocket *) o, xdescriptoreventtype_alloff);
+}
+
+static xint64 xserversocketprocess_connect(xserversocket * o)
+{
+    xassertion(xtrue, "");
+    return xfail;
+}
+
+static xint64 xserversocketprocess_listen(xserversocket * o)
+{
+    return xserversocketlisten(o, o->backlog);
+}
+
+static xint64 xserversocketprocess_connecting(xserversocket * o)
+{
+    xassertion(xtrue, "");
+    return xfail;
+}
+
+static xint64 xserversocketprocess_unregister(xserversocket * o)
+{
+    return xdescriptorunregister((xdescriptor *) o);
+}
