@@ -328,16 +328,6 @@ extern void xdescriptoreventgenerator_sync(xdescriptoreventgenerator * o, xint32
     }
 }
 
-// extern void xdescriptoreventgenerator_alive_clear(xdescriptoreventgenerator * o)
-// {
-//     xdescriptoreventgeneratorsubscriptionlist_clear(o->alive);
-// }
-
-// extern void xdescriptoreventgenerator_queue_clear(xdescriptoreventgenerator * o)
-// {
-//     xdescriptoreventgeneratorsubscriptionlist_clear(o->queue);
-// }
-
 extern void xdescriptoreventgenerator_on(xdescriptoreventgenerator * o)
 {
     xdescriptoreventgenerator_epoll_open((xdescriptoreventgenerator_epoll *) o);
