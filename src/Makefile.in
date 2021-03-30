@@ -96,7 +96,8 @@ noinst_PROGRAMS = example-helloworld$(EXEEXT) \
 	example-client-redis$(EXEEXT) example-client-pool$(EXEEXT) \
 	example-string-simple$(EXEEXT) example-string-format$(EXEEXT) \
 	example-console-engine$(EXEEXT) example-redis-ping$(EXEEXT) \
-	example-server-simple$(EXEEXT)
+	example-server-simple$(EXEEXT) benchmark-server$(EXEEXT) \
+	benchmark-client$(EXEEXT)
 subdir = src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -187,14 +188,20 @@ am_libnovemberizing_a_OBJECTS = x/std.$(OBJEXT) x/log.$(OBJEXT) \
 	x/client/socket/event/process/tcp.$(OBJEXT) x/eva.$(OBJEXT) \
 	x/eva/cli.$(OBJEXT)
 libnovemberizing_a_OBJECTS = $(am_libnovemberizing_a_OBJECTS)
-am_example_client_pool_OBJECTS = example/client/pool.$(OBJEXT)
-example_client_pool_OBJECTS = $(am_example_client_pool_OBJECTS)
+am_benchmark_client_OBJECTS = example/benchmark/client.$(OBJEXT)
+benchmark_client_OBJECTS = $(am_benchmark_client_OBJECTS)
 am__DEPENDENCIES_1 = libnovemberizing.a
-example_client_pool_DEPENDENCIES = $(am__DEPENDENCIES_1)
+benchmark_client_DEPENDENCIES = $(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+am_benchmark_server_OBJECTS = example/benchmark/server.$(OBJEXT)
+benchmark_server_OBJECTS = $(am_benchmark_server_OBJECTS)
+benchmark_server_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_example_client_pool_OBJECTS = example/client/pool.$(OBJEXT)
+example_client_pool_OBJECTS = $(am_example_client_pool_OBJECTS)
+example_client_pool_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_example_client_redis_OBJECTS = example/client/redis.$(OBJEXT)
 example_client_redis_OBJECTS = $(am_example_client_redis_OBJECTS)
 example_client_redis_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -232,6 +239,8 @@ DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = example/$(DEPDIR)/helloworld.Po \
+	example/benchmark/$(DEPDIR)/client.Po \
+	example/benchmark/$(DEPDIR)/server.Po \
 	example/client/$(DEPDIR)/pool.Po \
 	example/client/$(DEPDIR)/redis.Po \
 	example/console/$(DEPDIR)/engine.Po \
@@ -298,7 +307,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(libnovemberizing_a_SOURCES) $(example_client_pool_SOURCES) \
+SOURCES = $(libnovemberizing_a_SOURCES) $(benchmark_client_SOURCES) \
+	$(benchmark_server_SOURCES) $(example_client_pool_SOURCES) \
 	$(example_client_redis_SOURCES) \
 	$(example_console_engine_SOURCES) \
 	$(example_helloworld_SOURCES) $(example_redis_ping_SOURCES) \
@@ -306,6 +316,7 @@ SOURCES = $(libnovemberizing_a_SOURCES) $(example_client_pool_SOURCES) \
 	$(example_string_format_SOURCES) \
 	$(example_string_simple_SOURCES)
 DIST_SOURCES = $(libnovemberizing_a_SOURCES) \
+	$(benchmark_client_SOURCES) $(benchmark_server_SOURCES) \
 	$(example_client_pool_SOURCES) $(example_client_redis_SOURCES) \
 	$(example_console_engine_SOURCES) \
 	$(example_helloworld_SOURCES) $(example_redis_ping_SOURCES) \
@@ -522,6 +533,10 @@ libnovemberizing_a_SOURCES = x/std.c                                          \
                              x/eva.c                                          \
                              x/eva/cli.c
 
+benchmark_server_SOURCES = example/benchmark/server.c
+benchmark_server_LDADD = $(LIBS)
+benchmark_client_SOURCES = example/benchmark/client.c
+benchmark_client_LDADD = $(LIBS)
 example_helloworld_SOURCES = example/helloworld.c
 example_helloworld_LDADD = $(LIBS)
 example_client_redis_SOURCES = example/client/redis.c
@@ -890,6 +905,24 @@ libnovemberizing.a: $(libnovemberizing_a_OBJECTS) $(libnovemberizing_a_DEPENDENC
 	$(AM_V_at)-rm -f libnovemberizing.a
 	$(AM_V_AR)$(libnovemberizing_a_AR) libnovemberizing.a $(libnovemberizing_a_OBJECTS) $(libnovemberizing_a_LIBADD)
 	$(AM_V_at)$(RANLIB) libnovemberizing.a
+example/benchmark/$(am__dirstamp):
+	@$(MKDIR_P) example/benchmark
+	@: > example/benchmark/$(am__dirstamp)
+example/benchmark/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) example/benchmark/$(DEPDIR)
+	@: > example/benchmark/$(DEPDIR)/$(am__dirstamp)
+example/benchmark/client.$(OBJEXT): example/benchmark/$(am__dirstamp) \
+	example/benchmark/$(DEPDIR)/$(am__dirstamp)
+
+benchmark-client$(EXEEXT): $(benchmark_client_OBJECTS) $(benchmark_client_DEPENDENCIES) $(EXTRA_benchmark_client_DEPENDENCIES) 
+	@rm -f benchmark-client$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(benchmark_client_OBJECTS) $(benchmark_client_LDADD) $(LIBS)
+example/benchmark/server.$(OBJEXT): example/benchmark/$(am__dirstamp) \
+	example/benchmark/$(DEPDIR)/$(am__dirstamp)
+
+benchmark-server$(EXEEXT): $(benchmark_server_OBJECTS) $(benchmark_server_DEPENDENCIES) $(EXTRA_benchmark_server_DEPENDENCIES) 
+	@rm -f benchmark-server$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(benchmark_server_OBJECTS) $(benchmark_server_LDADD) $(LIBS)
 example/client/$(am__dirstamp):
 	@$(MKDIR_P) example/client
 	@: > example/client/$(am__dirstamp)
@@ -978,6 +1011,7 @@ example-string-simple$(EXEEXT): $(example_string_simple_OBJECTS) $(example_strin
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 	-rm -f example/*.$(OBJEXT)
+	-rm -f example/benchmark/*.$(OBJEXT)
 	-rm -f example/client/*.$(OBJEXT)
 	-rm -f example/console/*.$(OBJEXT)
 	-rm -f example/redis/*.$(OBJEXT)
@@ -1015,6 +1049,8 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@example/$(DEPDIR)/helloworld.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@example/benchmark/$(DEPDIR)/client.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@example/benchmark/$(DEPDIR)/server.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/client/$(DEPDIR)/pool.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/client/$(DEPDIR)/redis.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/console/$(DEPDIR)/engine.Po@am__quote@ # am--include-marker
@@ -1262,6 +1298,8 @@ distclean-generic:
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
 	-rm -f example/$(DEPDIR)/$(am__dirstamp)
 	-rm -f example/$(am__dirstamp)
+	-rm -f example/benchmark/$(DEPDIR)/$(am__dirstamp)
+	-rm -f example/benchmark/$(am__dirstamp)
 	-rm -f example/client/$(DEPDIR)/$(am__dirstamp)
 	-rm -f example/client/$(am__dirstamp)
 	-rm -f example/console/$(DEPDIR)/$(am__dirstamp)
@@ -1337,6 +1375,8 @@ clean-am: clean-generic clean-libLIBRARIES clean-libtool \
 
 distclean: distclean-am
 		-rm -f example/$(DEPDIR)/helloworld.Po
+	-rm -f example/benchmark/$(DEPDIR)/client.Po
+	-rm -f example/benchmark/$(DEPDIR)/server.Po
 	-rm -f example/client/$(DEPDIR)/pool.Po
 	-rm -f example/client/$(DEPDIR)/redis.Po
 	-rm -f example/console/$(DEPDIR)/engine.Po
@@ -1449,6 +1489,8 @@ installcheck-am:
 
 maintainer-clean: maintainer-clean-am
 		-rm -f example/$(DEPDIR)/helloworld.Po
+	-rm -f example/benchmark/$(DEPDIR)/client.Po
+	-rm -f example/benchmark/$(DEPDIR)/server.Po
 	-rm -f example/client/$(DEPDIR)/pool.Po
 	-rm -f example/client/$(DEPDIR)/redis.Po
 	-rm -f example/console/$(DEPDIR)/engine.Po

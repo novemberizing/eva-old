@@ -478,20 +478,26 @@ static xint32 xdescriptoreventgenerator_epoll_mod(xdescriptoreventgenerator_epol
         {
             struct epoll_event event;
             event.events = (EPOLLRDHUP | EPOLLERR | EPOLLHUP | EPOLLPRI | EPOLLET | EPOLLONESHOT);
+
             event.data.ptr = subscription;
+
             if(descriptor->status & xdescriptorstatus_connecting)
             {
                 event.events |= EPOLLOUT;
             }
+
             if((descriptor->status & xdescriptorstatus_out) == xdescriptorstatus_void)
             {
                 event.events |= EPOLLOUT;
             }
+
             if((descriptor->status & xdescriptorstatus_in) == xdescriptorstatus_void)
             {
                 event.events |= EPOLLIN;
             }
+
             ret = epoll_ctl(generator->f, EPOLL_CTL_MOD, descriptor->handle.f, &event);
+            
             if(ret == xsuccess)
             {
                 descriptor->status |= xdescriptorstatus_register;

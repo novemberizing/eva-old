@@ -26,6 +26,4 @@ struct xdescriptoreventgenerator_epoll
     struct epoll_event *                        events;
 };
 
-
-
 #endif // __NOVEMBERIZING_X__DESCRIPTOR__EVENT_GENERATOR_EPOLL__H__

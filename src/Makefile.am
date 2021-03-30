@@ -78,7 +78,15 @@ noinst_PROGRAMS = example-helloworld                                         \
                   example-string-format                                      \
                   example-console-engine                                     \
                   example-redis-ping                                         \
-                  example-server-simple
+                  example-server-simple                                      \
+                  benchmark-server                                           \
+                  benchmark-client
+
+benchmark_server_SOURCES       = example/benchmark/server.c
+benchmark_server_LDADD         = $(LIBS)
+
+benchmark_client_SOURCES       = example/benchmark/client.c
+benchmark_client_LDADD         = $(LIBS)
 
 example_helloworld_SOURCES     = example/helloworld.c
 example_helloworld_LDADD       = $(LIBS)

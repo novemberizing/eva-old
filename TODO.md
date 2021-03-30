@@ -1,5 +1,9 @@
 ----
 
+- [ ]
+
+----
+
 - [ ] 멀티 엔진 클라이언트 
 - [ ] session socket close 시에 REMOVE 를 설정할 수 있도록 하자. 과연 어디에서 해야할까?
 
@@ -11,7 +15,9 @@ WRITE ALL > READ ONCE > WRITE ALL - 그리고 in 상태이면 큐에 넣고, 아
 
 ----
 
-eva> ==91790== 
+eva> 
+
+==91790== 
 ==91790== HEAP SUMMARY:
 ==91790==     in use at exit: 293,520 bytes in 265 blocks
 ==91790==   total heap usage: 310 allocs, 45 frees, 339,382 bytes allocated

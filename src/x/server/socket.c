@@ -125,6 +125,8 @@ extern xint32 xserveraccept(xserversocket * o)
             xsession * session = server->session.create(server, o->domain, o->type, o->protocol);
 
             session->descriptor->handle.f = f;
+            // xsocketnodelay((xsocket *) session->descriptor, xtrue);
+            xdescriptornonblock((xdescriptor *) session->descriptor, xtrue);
             session->descriptor->status |= xdescriptorstatus_create;
 
             xint64 ret = xdescriptoron((xdescriptor *) session->descriptor, xdescriptoreventtype_create, xdescriptorparamgen(xnil), xsuccess);
