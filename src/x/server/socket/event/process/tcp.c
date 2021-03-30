@@ -3,6 +3,7 @@
 
 #include "../../../../thread.h"
 #include "tcp.h"
+#include "../avail.h"
 
 static const xint32 maxretrycount = 32;
 
@@ -64,11 +65,15 @@ extern xint64 xserversocketprocess_tcp(xserversocket * o, xuint32 event)
 
 extern xint64 xserversocketprocess_void(xserversocket * o)
 {
-    xassertion(xtrue, "implement this");
     if(xdescriptorstatuscheck_close((xdescriptor *) o))
     {
         xdescriptorclose((xdescriptor *) o);
         return xsuccess;
+    }
+
+    if(xserversocketeventavail_open(o))
+    {
+        xserversocketprocess_open(o);
     }
 
     for(xint32 i = 0; i < maxretrycount; i++)

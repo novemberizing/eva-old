@@ -80,13 +80,16 @@ extern xint64 xserversocketlisten(xserversocket * o, xint32 backlog)
             xassertion((o->status & xdescriptorstatus_create) == xdescriptorstatus_void, "");
             if((o->status & (xdescriptorstatus_create | xdescriptorstatus_bind)) == (xdescriptorstatus_create | xdescriptorstatus_bind))
             {
+                printf("= 1 =\n");
                 if((o->status & xdescriptorstatus_listen) == xdescriptorstatus_void)
                 {
+                    printf("= 2 =\n");
                     if((ret = listen(o->handle.f, backlog)) == xsuccess)
                     {
-                        o->status |= xdescriptorstatus_listen;
+                        printf("= 3 =\n");
+                        o->status |= (xdescriptorstatus_listen | xdescriptorstatus_open | xdescriptorstatus_out);
 
-                        ret = xdescriptoron((xdescriptor *) o, xdescriptorstatus_listen, xdescriptorparamgen(xnil), xsuccess);
+                        ret = xdescriptoron((xdescriptor *) o, xdescriptoreventtype_open, xdescriptorparamgen(xnil), xsuccess);
 
                         if((o->subscription && o->subscription->enginenode.engine) || (o->mask & xdescriptormask_nonblock))
                         {
@@ -129,18 +132,18 @@ extern xint32 xserveraccept(xserversocket * o)
 
             if(ret == xsuccess)
             {
-                if(session->descriptor->stream.in)
+                if(session->descriptor->stream.in == xnil)
                 {
                     session->descriptor->stream.in = xstreamnew(xstreamtype_buffer);
                 }
-                if(session->descriptor->stream.out)
+                if(session->descriptor->stream.out == xnil)
                 {
                     session->descriptor->stream.out = xstreamnew(xstreamtype_buffer);
                 }
 
                 session->descriptor->status |= (xdescriptorstatus_open | xdescriptorstatus_out);
 
-                ret = xdescriptoron((xdescriptor *) session->descriptor, xdescriptoreventtype_create, xdescriptorparamgen(xnil), xsuccess);
+                ret = xdescriptoron((xdescriptor *) session->descriptor, xdescriptoreventtype_open, xdescriptorparamgen(xnil), xsuccess);
 
                 if(ret == xsuccess)
                 {
@@ -202,6 +205,7 @@ static void xserversocketeventon(xserversocketevent * event)
 
 static xint64 xserversocketon(xserversocket * o, xuint32 event, xdescriptorparam param, xint64 result)
 {
+    printf("event => %s\n", xdescriptoreventtype_str(event));
     return result;
 }
 

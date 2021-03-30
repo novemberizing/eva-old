@@ -34,4 +34,7 @@ struct xsession
     xsessionlist * cntr;
 };
 
+extern xstream * xsessionstreamin_get(xsession * session);
+extern xstream * xsessionstreamout_get(xsession * session);
+
 #endif // __NOVEMBERIZING_X__SESSION__H__

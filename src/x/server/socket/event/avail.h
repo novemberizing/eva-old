@@ -3,6 +3,7 @@
 
 #include <x/server/socket.h>
 
+extern xint32 xserversocketeventavail_open(xserversocket * o);
 extern xint32 xserversocketeventavail_rem(xserversocket * o);
 
 #endif // __NOVEMBERIZING_X__SERVER__SOCKET_EVENT_AVAIL__H__
