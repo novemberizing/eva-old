@@ -52,6 +52,7 @@ libnovemberizing_a_SOURCES = x/std.c                                          \
                              x/server/socket.c                                \
                              x/server/socket/event/avail.c                    \
                              x/server/socket/event/process/tcp.c              \
+                             x/server/extension/echo.c                        \
                              x/session.c                                      \
                              x/session/socket.c                               \
                              x/session/socket/event/avail.c                   \

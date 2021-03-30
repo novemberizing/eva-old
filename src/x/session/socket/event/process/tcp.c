@@ -6,6 +6,7 @@
 #include "tcp.h"
 
 #include "../avail.h"
+#include "../../../../server.h"
 
 static const xuint64 socketbuffersize = 8192;
 static const xint32 maxretrycount = 32;
@@ -138,7 +139,10 @@ static xint64 xsessionsocketprocess_rem(xsessionsocket * o)
         return xfail;
     }
 
-    o = o->rem(o);
+    xsession * session = o->session;
+    xserver * server = session->server;
+
+    server->session.release(session);
 
     return xsuccess;
 }

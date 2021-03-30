@@ -229,7 +229,7 @@ extern xint64 xdescriptoreventgenerator_descriptor_dispatch(xdescriptoreventgene
 
     xdescriptoreventgenerator_epoll * generator = (xdescriptoreventgenerator_epoll *) o;
 
-    xassertion(xdescriptoreventavail_open(descriptor)==xfalse && xdescriptoreventavail_rem(descriptor) == xfalse, "");
+    xassertion(xdescriptoreventavail_open(descriptor)==xfalse && xdescriptoreventavail_rem(descriptor) == xfalse, "%d:%d", xdescriptoreventavail_open(descriptor), xdescriptoreventavail_rem(descriptor));
     
     if(xdescriptoreventavail_open(descriptor) || xdescriptoreventavail_rem(descriptor))
     {

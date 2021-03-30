@@ -50,7 +50,26 @@ extern xsessionsocket * xsessionsocket_rem(xsessionsocket * descriptor)
 {
     if(descriptor)
     {
-        xassertion(xtrue, "implement this");
+        xsessionsocketeventsubscription * subscription = descriptor->subscription;
+        if(subscription)
+        {
+            xeventengine * engine = subscription->enginenode.engine;
+            if(engine)
+            {
+                xeventengine_session_unregister(engine, descriptor->session);
+            }
+            free(subscription);
+        }
+
+        descriptor->sync = xsyncrem(descriptor->sync);
+        if(descriptor->handle.f >= 0)
+        {
+            close(descriptor->handle.f);
+        }
+        descriptor->stream.in = xstreamrem(descriptor->stream.in);
+        descriptor->stream.out = xstreamrem(descriptor->stream.out);
+
+        free(descriptor);
     }
     return xnil;
 }
@@ -96,9 +115,9 @@ static xsessionsocketprocessor xsessionsocketprocessor_get(xint32 domain, xint32
 
 extern xint64 xsessionsocketclose(xsessionsocket * o)
 {
-    xint64 ret = xdescriptorclose((xdescriptor *) o);
+    o->status |= xdescriptorstatus_rem;
 
-    o->status |= xsocketstatus_rem;
+    xint64 ret = xdescriptorclose((xdescriptor *) o);
 
     return ret;
 }

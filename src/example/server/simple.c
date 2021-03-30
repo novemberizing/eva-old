@@ -8,10 +8,11 @@
 #include <x/log.h>
 #include <x/server.h>
 #include <x/event/engine.h>
+#include <x/eva/cli.h>
 
 static xint64 on(xsession * session, xuint32 event, xdescriptorparam param, xint64 result)
 {
-    printf("event => %s\n", xdescriptoreventtype_str(event));
+    // printf("event => %s\n", xdescriptoreventtype_str(event));
 
     if(event == xdescriptoreventtype_in)
     {
@@ -20,9 +21,7 @@ static xint64 on(xsession * session, xuint32 event, xdescriptorparam param, xint
             xstream * in = xsessionstreamin_get(session);
             xstream * out = xsessionstreamout_get(session);
 
-            printf("len => %ld\n", xstreamlen(in));
             xstreampush(out, xstreamfront(in), xstreamlen(in));
-            // printf("%s\n", xstreamfront(session->descriptor->))
         }
     }
     
@@ -42,9 +41,15 @@ int main(int argc, char ** argv)
 
     xserver * server = xservernew(AF_INET, SOCK_STREAM, IPPROTO_TCP, xaddressof(addr), sizeof(struct sockaddr_in), on, sizeof(xserver));
 
+    xeventengine_cli(engine, xevacli);
     xeventengine_server_register(engine, server);
 
     xint32 ret = xeventengine_run(engine);
+
+    server = xserverrem(server);
+
+    xconsoleterm();
+    xlogterm();
 
     return 0;
 }

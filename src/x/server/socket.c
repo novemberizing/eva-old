@@ -64,6 +64,8 @@ extern xserversocket * xserversocket_rem(xserversocket * o)
             }
         }
         o->addr = xobjectrem(o->addr);
+
+        free(o);
     }
 
     return xnil;
@@ -80,13 +82,10 @@ extern xint64 xserversocketlisten(xserversocket * o, xint32 backlog)
             xassertion((o->status & xdescriptorstatus_create) == xdescriptorstatus_void, "");
             if((o->status & (xdescriptorstatus_create | xdescriptorstatus_bind)) == (xdescriptorstatus_create | xdescriptorstatus_bind))
             {
-                printf("= 1 =\n");
                 if((o->status & xdescriptorstatus_listen) == xdescriptorstatus_void)
                 {
-                    printf("= 2 =\n");
                     if((ret = listen(o->handle.f, backlog)) == xsuccess)
                     {
-                        printf("= 3 =\n");
                         o->status |= (xdescriptorstatus_listen | xdescriptorstatus_open | xdescriptorstatus_out);
 
                         ret = xdescriptoron((xdescriptor *) o, xdescriptoreventtype_open, xdescriptorparamgen(xnil), xsuccess);
@@ -157,6 +156,7 @@ extern xint32 xserveraccept(xserversocket * o)
         {
             if(errno == EAGAIN)
             {
+                o->status &= (~xdescriptorstatus_in);
                 return xsuccess;
             }
             else
@@ -205,7 +205,7 @@ static void xserversocketeventon(xserversocketevent * event)
 
 static xint64 xserversocketon(xserversocket * o, xuint32 event, xdescriptorparam param, xint64 result)
 {
-    printf("event => %s\n", xdescriptoreventtype_str(event));
+    // printf("event => %s\n", xdescriptoreventtype_str(event));
     return result;
 }
 

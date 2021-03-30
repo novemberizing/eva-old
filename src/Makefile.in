@@ -177,7 +177,8 @@ am_libnovemberizing_a_OBJECTS = x/std.$(OBJEXT) x/log.$(OBJEXT) \
 	x/server.$(OBJEXT) x/server/socket.$(OBJEXT) \
 	x/server/socket/event/avail.$(OBJEXT) \
 	x/server/socket/event/process/tcp.$(OBJEXT) \
-	x/session.$(OBJEXT) x/session/socket.$(OBJEXT) \
+	x/server/extension/echo.$(OBJEXT) x/session.$(OBJEXT) \
+	x/session/socket.$(OBJEXT) \
 	x/session/socket/event/avail.$(OBJEXT) \
 	x/session/socket/event/process/tcp.$(OBJEXT) \
 	x/client.$(OBJEXT) x/client/pool.$(OBJEXT) \
@@ -269,6 +270,7 @@ am__depfiles_remade = example/$(DEPDIR)/helloworld.Po \
 	x/event/processor/$(DEPDIR)/event.Po \
 	x/event/processor/$(DEPDIR)/pool.Po \
 	x/server/$(DEPDIR)/socket.Po \
+	x/server/extension/$(DEPDIR)/echo.Po \
 	x/server/socket/event/$(DEPDIR)/avail.Po \
 	x/server/socket/event/process/$(DEPDIR)/tcp.Po \
 	x/session/$(DEPDIR)/socket.Po \
@@ -506,6 +508,7 @@ libnovemberizing_a_SOURCES = x/std.c                                          \
                              x/server/socket.c                                \
                              x/server/socket/event/avail.c                    \
                              x/server/socket/event/process/tcp.c              \
+                             x/server/extension/echo.c                        \
                              x/session.c                                      \
                              x/session/socket.c                               \
                              x/session/socket/event/avail.c                   \
@@ -801,6 +804,14 @@ x/server/socket/event/process/$(DEPDIR)/$(am__dirstamp):
 x/server/socket/event/process/tcp.$(OBJEXT):  \
 	x/server/socket/event/process/$(am__dirstamp) \
 	x/server/socket/event/process/$(DEPDIR)/$(am__dirstamp)
+x/server/extension/$(am__dirstamp):
+	@$(MKDIR_P) x/server/extension
+	@: > x/server/extension/$(am__dirstamp)
+x/server/extension/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) x/server/extension/$(DEPDIR)
+	@: > x/server/extension/$(DEPDIR)/$(am__dirstamp)
+x/server/extension/echo.$(OBJEXT): x/server/extension/$(am__dirstamp) \
+	x/server/extension/$(DEPDIR)/$(am__dirstamp)
 x/session.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
 x/session/$(am__dirstamp):
 	@$(MKDIR_P) x/session
@@ -988,6 +999,7 @@ mostlyclean-compile:
 	-rm -f x/event/generator/*.$(OBJEXT)
 	-rm -f x/event/processor/*.$(OBJEXT)
 	-rm -f x/server/*.$(OBJEXT)
+	-rm -f x/server/extension/*.$(OBJEXT)
 	-rm -f x/server/socket/event/*.$(OBJEXT)
 	-rm -f x/server/socket/event/process/*.$(OBJEXT)
 	-rm -f x/session/*.$(OBJEXT)
@@ -1058,6 +1070,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@x/event/processor/$(DEPDIR)/event.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/event/processor/$(DEPDIR)/pool.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/server/$(DEPDIR)/socket.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/server/extension/$(DEPDIR)/echo.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/server/socket/event/$(DEPDIR)/avail.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/server/socket/event/process/$(DEPDIR)/tcp.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/session/$(DEPDIR)/socket.Po@am__quote@ # am--include-marker
@@ -1291,6 +1304,8 @@ distclean-generic:
 	-rm -f x/event/processor/$(am__dirstamp)
 	-rm -f x/server/$(DEPDIR)/$(am__dirstamp)
 	-rm -f x/server/$(am__dirstamp)
+	-rm -f x/server/extension/$(DEPDIR)/$(am__dirstamp)
+	-rm -f x/server/extension/$(am__dirstamp)
 	-rm -f x/server/socket/event/$(DEPDIR)/$(am__dirstamp)
 	-rm -f x/server/socket/event/$(am__dirstamp)
 	-rm -f x/server/socket/event/process/$(DEPDIR)/$(am__dirstamp)
@@ -1377,6 +1392,7 @@ distclean: distclean-am
 	-rm -f x/event/processor/$(DEPDIR)/event.Po
 	-rm -f x/event/processor/$(DEPDIR)/pool.Po
 	-rm -f x/server/$(DEPDIR)/socket.Po
+	-rm -f x/server/extension/$(DEPDIR)/echo.Po
 	-rm -f x/server/socket/event/$(DEPDIR)/avail.Po
 	-rm -f x/server/socket/event/process/$(DEPDIR)/tcp.Po
 	-rm -f x/session/$(DEPDIR)/socket.Po
@@ -1488,6 +1504,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f x/event/processor/$(DEPDIR)/event.Po
 	-rm -f x/event/processor/$(DEPDIR)/pool.Po
 	-rm -f x/server/$(DEPDIR)/socket.Po
+	-rm -f x/server/extension/$(DEPDIR)/echo.Po
 	-rm -f x/server/socket/event/$(DEPDIR)/avail.Po
 	-rm -f x/server/socket/event/process/$(DEPDIR)/tcp.Po
 	-rm -f x/session/$(DEPDIR)/socket.Po

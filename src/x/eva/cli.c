@@ -71,8 +71,6 @@ static xint32 xevacommand_exec(char * strings, xuint64 count)
 
 extern xint64 xevacli(xconsole * console, xconsoledescriptor * descriptor, xuint32 event, xdescriptorparam param, xint64 result)
 {
-    // printf("console event => %s => %ld\n", xdescriptoreventtype_str(event), result);
-
     if(event == xdescriptoreventtype_in)
     {
         if(result > 0)

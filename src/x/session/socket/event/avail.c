@@ -6,5 +6,9 @@ extern xint32 xsessionsocketeventavail_rem(xsessionsocket * o)
     {
         return xtrue;
     }
+    if(o->status == xdescriptorstatus_rem)
+    {
+        return xtrue;
+    }
     return xfalse;
 }
