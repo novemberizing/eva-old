@@ -2,7 +2,7 @@
 
 <img src="https://img.shields.io/badge/C-A8B9CC?style=flat-square&logo=C&logoColor=white" />
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+<!--<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>-->
 
 에바(EVA)는 C 로 구현된 고성능의 네트워크 라이브러리입니다. 
 
@@ -26,6 +26,9 @@ CPU 는 Intel(R) Core(TM) i5-6200U CPU @ 2.30GHz 4 코어입니다. 싱글스레
 | 18.346731777 | 2000000 |
 
 
+![2021/03/31 BENCHMARK RESULT](docs/img/2021-03-31-benchmark-result.png)
+
+<!--
 <canvas id="performance-chart"></canvas>
 
 <script>
@@ -83,6 +86,7 @@ const chart = new Chart(document.getElementById("performance-chart"), {
 })
 
 </script>
+-->
 
 ## 로드맵
 
