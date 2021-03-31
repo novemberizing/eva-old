@@ -1,0 +1,8 @@
+VERSION 0.0.1
+
+https://github.com/novemberizing/eva/releases/tag/0.0.1
+
+1. 싱글스레드
+2. TCP 서버
+3. TCP 다중 클라이언트
+4. 간단한 비즈니스 로직의 경우 초당 10만 트랜잭션에 대한 처리 가능
