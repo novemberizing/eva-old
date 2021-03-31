@@ -18,8 +18,6 @@ xuint64 count = 0;
 
 static xint64 on(xsession * session, xuint32 event, xdescriptorparam param, xint64 result)
 {
-    // printf("event => %s\n", xdescriptoreventtype_str(event));
-
     if(event == xdescriptoreventtype_in)
     {
         if(result > 0)
@@ -29,11 +27,12 @@ static xint64 on(xsession * session, xuint32 event, xdescriptorparam param, xint
                 start = xtimeget();
             }
             count++;
-            if(count % 10000 == 0)
+            if(count % 100000 == 0)
             {
                 end = xtimeget();
                 xtime diff = xtimediff(xaddressof(end), xaddressof(start));
-                xconsoleout("event on => %s / [%ld.%09ld / %ld]\n", xdescriptoreventtype_str(event), diff.second, diff.nanosecond, count);
+                xconsoleout("event on => %s / [ %ld.%09ld , %ld ]\n", xdescriptoreventtype_str(event), diff.second, diff.nanosecond, count);
+                xconsoleout("event on => %s / | %ld.%09ld | %ld |\n", xdescriptoreventtype_str(event), diff.second, diff.nanosecond, count);
             }
             
             xstream * in = xsessionstreamin_get(session);
