@@ -81,6 +81,7 @@ LIBS = libnovemberizing.a                                                    \
 noinst_PROGRAMS = example-helloworld                                         \
                   example-client-redis                                       \
                   example-client-pool                                        \
+                  example-client-single                                      \
                   example-string-simple                                      \
                   example-string-format                                      \
                   example-console-engine                                     \
@@ -105,6 +106,9 @@ example_client_redis_LDADD     = $(LIBS)
 
 example_client_pool_SOURCES    = example/client/pool.c
 example_client_pool_LDADD      = $(LIBS)
+
+example_client_single_SOURCES  = example/client/single.c
+example_client_single_LDADD    = $(LIBS)
 
 example_string_format_SOURCES  = example/string/format.c
 example_string_format_LDADD    = $(LIBS)

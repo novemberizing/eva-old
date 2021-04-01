@@ -105,7 +105,6 @@ int main(int argc, char ** argv)
         xclientpooladd(pool, xclientnew(AF_INET, SOCK_STREAM, IPPROTO_TCP, xaddressof(addr), sizeof(struct sockaddr_in), xnil, sizeof(xclientpool)));
     }
 
-
     xeventengine_cli(engine, xevacli);
 
     xeventengine_clientpool_add(engine, pool);
