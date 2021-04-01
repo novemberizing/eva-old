@@ -104,6 +104,10 @@ static xint64 xconsoledescriptoreventprocessorin_void(xconsoledescriptor * o)
                 xeventengine_queue_push(engine, (xevent *) xaddressof(o->event));
             }
         }
+        else
+        {
+            xassertion(xtrue, "");
+        }
     }
 
     return xsuccess;

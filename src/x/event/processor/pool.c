@@ -166,6 +166,8 @@ extern xuint64 xeventprocessorpool_size(xeventprocessorpool * pool)
     xdebugonly(xlogfunction_start("%s(%p)", __func__, pool));
     xuint64 ret = (pool ? pool->size : 0);
     xdebugonly(xlogfunction_end("%s(...) => %lu", ret));
+
+    return ret;
 }
 
 extern void xeventprocessorpool_on(xeventprocessorpool * pool)

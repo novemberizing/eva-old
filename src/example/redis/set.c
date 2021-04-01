@@ -19,6 +19,27 @@ xtime end = { 0, 0 };
 
 xuint64 n = 0;
 xuint64 total = 0;
+xuint64 count = 0;
+
+char packet[2048];
+
+static void redisbenchmark_packet_init(void)
+{
+    xrandominit();
+
+    for(xuint64 i = 0; i < 1024; i++)
+    {
+        packet[i] = (char) (xrandomget() % 26) + 97;
+    }
+    packet[1024] = 0;
+}
+
+static void redisbenchmark_packet_send(xclient * client, xuint64 i)
+{
+    char key[256];
+    snprintf(key, 256, "key-%lu", i);
+    xredisclientsenddata_set(client, key, packet, 1024);
+}
 
 static xint64 on(xclientpool * pool, xclient * client, xuint64 event, xdescriptorparam param, xint64 result)
 {
@@ -44,7 +65,8 @@ static xint64 on(xclientpool * pool, xclient * client, xuint64 event, xdescripto
                     xconsoleout("event on => %s / [%ld.%09ld , %ld]\n", xdescriptoreventtype_str(event), diff.second, diff.nanosecond, total);
                     xconsoleout("event on => %s / | %ld.%09ld | %ld |\n", xdescriptoreventtype_str(event), diff.second, diff.nanosecond, total);
                 }
-                xredisclientsend_set(client, "foo", "bar");
+
+                redisbenchmark_packet_send(client, count++);
                 return result;
             }
         }
@@ -53,7 +75,9 @@ static xint64 on(xclientpool * pool, xclient * client, xuint64 event, xdescripto
     {
         start = xtimeget();
 
-        xredisclientsend_set(client, "foo", "bar");
+        redisbenchmark_packet_send(client, count++);
+
+        // xredisclientsenddata_set(client, "foo", packet, 1024);
     }
 
     return result;
@@ -61,6 +85,8 @@ static xint64 on(xclientpool * pool, xclient * client, xuint64 event, xdescripto
 
 int main(int argc, char ** argv)
 {
+    redisbenchmark_packet_init();
+
     xlogconsole_set(xtrue);
     xlogmask_set(xlogtype_assertion);
 

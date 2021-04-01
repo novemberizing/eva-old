@@ -238,6 +238,10 @@ extern xint64 xdescriptorregister(xdescriptor * descriptor)
                     {
                         xeventengine_queue_push(subscription->enginenode.engine, (xevent *) xaddressof(descriptor->event));
                     }
+                    else
+                    {
+                        xassertion(xtrue, "");
+                    }
                 }
             }
 

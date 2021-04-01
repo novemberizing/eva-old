@@ -93,6 +93,10 @@ static xint64 xclientsocketprocess_void(xclientsocket * o)
                 {
                     xeventengine_queue_push(o->subscription->enginenode.engine, (xevent *) xaddressof(o->event));
                 }
+                else
+                {
+                    xassertion(xtrue, "");
+                }
             }
         }
         else

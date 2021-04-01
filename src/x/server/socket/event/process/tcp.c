@@ -101,6 +101,10 @@ extern xint64 xserversocketprocess_void(xserversocket * o)
                 {
                     xeventengine_queue_push(o->subscription->enginenode.engine, (xevent *) xaddressof(o->event));
                 }
+                else
+                {
+                    xassertion(xtrue, "");
+                }
             }
         }
         else
