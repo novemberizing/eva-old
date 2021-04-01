@@ -3,6 +3,7 @@
 
 #include <x/std.h>
 
+extern char * xstringdup(const char * source, xuint64 len);
 extern char * xstringcpy(char * o, xuint64 * index, xuint64 * capacity, const char * source);
 extern char * xstringncpy(char * o, xuint64 * index, xuint64 * capacity, const char * source, xuint64 n);
 

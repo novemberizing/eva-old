@@ -6,6 +6,33 @@
 
 static xuint64 page = 16;
 
+extern char * xstringdup(const char * source, xuint64 len)
+{
+    char * o = xnil;
+
+    if(source && len)
+    {
+        if(len == -1)
+        {
+            o = malloc(1);
+            o[0] = 0;            
+        }
+        else
+        {
+            o = malloc(len + 1);
+            memcpy(o, source, len);
+            o[len] = 0;
+        }
+    }
+    else
+    {
+        o = malloc(1);
+        o[0] = 0;
+    }
+
+    return o;
+}
+
 extern char * xstringcpy(char * o, xuint64 * index, xuint64 * capacity, const char * source)
 {
     return xstringncpy(o, index, capacity, source, source ? strlen(source) : 0);
