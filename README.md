@@ -2,7 +2,7 @@
 
 <img src="https://img.shields.io/badge/C-A8B9CC?style=flat-square&logo=C&logoColor=white" />
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script> -->
 
 에바(EVA)는 C 로 구현된 고성능의 네트워크 라이브러리입니다. 
 
@@ -34,35 +34,9 @@ CPU 는 Intel(R) Core(TM) i5-6200U CPU @ 2.30GHz 4 코어입니다. 싱글스레
 | 36.023972398 | 3800000 |
 | 37.847823001 | 4000000 |
 
-| SECOND       | TOTAL   |
-| ------------ | ------- |
-|  1.231072571 |  100000 |
-|  2.797254843 |  200000 |
-|  4.043301667 |  300000 |
-|  5.141582957 |  400000 |
-|  6.300077801 |  500000 |
-|  7.574792263 |  600000 |
-|  9.496020241 |  700000 |
-| 10.520750648 |  800000 |
-| 12.018467291 |  900000 |
-| 13.136485551 | 1000000 |
-| 14.136675818 | 1100000 |
-| 15.347321352 | 1200000 |
-| 16.595616134 | 1300000 |
-| 17.716966548 | 1400000 |
-| 18.971059578 | 1500000 |
-| 20.075557406 | 1600000 |
-| 21.533724023 | 1700000 |
-| 22.626812741 | 1800000 |
-| 24.406318757 | 1900000 |
-| 25.430707710 | 2000000 |
-
-
-
-<!--
 ![2021/03/31 BENCHMARK RESULT](docs/img/2021-03-31-benchmark-result.png)
--->
 
+<!-- 
 <canvas id="performance-chart"></canvas>
 
 <script>
@@ -142,7 +116,7 @@ const chart = new Chart(document.getElementById("performance-chart"), {
     }
 })
 
-</script>
+</script> -->
 
 
 ## 로드맵
@@ -158,23 +132,4 @@ EVA 는 쉽게 고성능의 서버나 혹은 다중 클라이언트 어플리케
 $ ./configure
 $ make
 $ sudo make install
-```
-
-## 레디스 벤치 마킹 결과
-
-```
-$ redis-benchmark -t set -n 4000000
-====== SET ======
-  4000000 requests completed in 49.51 seconds
-  50 parallel clients
-  3 bytes payload
-  keep alive: 1
-
-99.45% <= 1 milliseconds
-99.98% <= 2 milliseconds
-99.99% <= 3 milliseconds
-100.00% <= 4 milliseconds
-100.00% <= 5 milliseconds
-100.00% <= 5 milliseconds
-80793.39 requests per second
 ```
