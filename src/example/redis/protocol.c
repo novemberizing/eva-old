@@ -1,79 +1,89 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include <x/extension/redis.h>
 
 int main(int argc, char ** argv)
 {
+    xloginit(xnil, xlogtype_assertion, xtrue);
+
+    char * s = xnil;
+    xuint64 index = 0;
+    xuint64 capacity = 0;
+
     xredisstring * string = xredisstring_new("hello world");
-
-    printf("%c%s\\r\\n\n", string->type, string->value);
-
+    printf("%s", s = xredisobject_serialize(s, xaddressof(index), xaddressof(capacity), (xredisobject *) string));
     string = xredisstring_rem(string);
 
     string = xredisstring_new("OK");
-
-    printf("%c%s\\r\\n\n", string->type, string->value);
-
+    index = 0;
+    printf("%s", s = xredisobject_serialize(s, xaddressof(index), xaddressof(capacity), (xredisobject *) string));
     string = xredisstring_rem(string);
 
     xrediserror * error = xrediserror_new("Error message");
-
-    printf("%c%s\\r\\n\n", error->type, error->value);
-
+    index = 0;
+    printf("%s", s = xredisobject_serialize(s, xaddressof(index), xaddressof(capacity), (xredisobject *) error));
     error = xrediserror_rem(error);
 
     error = xrediserror_new("ERR unknown command 'foobar'");
-
-    printf("%c%s\\r\\n\n", error->type, error->value);
-
+    index = 0;
+    printf("%s", s = xredisobject_serialize(s, xaddressof(index), xaddressof(capacity), (xredisobject *) error));
     error = xrediserror_rem(error);
 
     error = xrediserror_new("WRONGTYPE Operation against a key holding the wrong kind of value");
-
-    printf("%c%s\\r\\n\n", error->type, error->value);
-
+    index = 0;
+    printf("%s", s = xredisobject_serialize(s, xaddressof(index), xaddressof(capacity), (xredisobject *) error));
     error = xrediserror_rem(error);
 
     xredisinteger * integer = xredisinteger_new(1024);
-
-    printf("%c%ld\\r\\n\n", integer->type, integer->value);
-
+    index = 0;
+    printf("%s", s = xredisobject_serialize(s, xaddressof(index), xaddressof(capacity), (xredisobject *) integer));
     xredisinteger_rem(integer);
 
     xredisbulk * bulk = xredisbulk_new("foobar", 6);
-
-    printf("%c%d\\r\\n%s\\r\\n\n", bulk->type, bulk->size, bulk->value);
-
+    index = 0;
+    printf("%s", s = xredisobject_serialize(s, xaddressof(index), xaddressof(capacity), (xredisobject *) bulk));
     bulk = xredisbulk_rem(bulk);
 
     bulk = xredisbulk_new("", 0);
-    printf("%c%d\\r\\n%s\\r\\n\n", bulk->type, bulk->size, bulk->value);
-
+    index = 0;
+    printf("%s", s = xredisobject_serialize(s, xaddressof(index), xaddressof(capacity), (xredisobject *) bulk));
     bulk = xredisbulk_rem(bulk);
 
     bulk = xredisbulk_new(xnil, -1);
-    printf("%c%d\\r\\n%s\\r\\n\n", bulk->type, bulk->size, bulk->value);
-
+    index = 0;
+    printf("%s", s = xredisobject_serialize(s, xaddressof(index), xaddressof(capacity), (xredisobject *) bulk));
     bulk = xredisbulk_rem(bulk);
 
     xredisarray * array = xredisarray_new();
 
-    xredisarray_push(array, (xredisobject *) xredisstring_new("get"));
-    xredisarray_push(array, (xredisobject *) xredisstring_new("foo"));
+    index = 0;
+    printf("%s", s = xredisobject_serialize(s, xaddressof(index), xaddressof(capacity), (xredisobject *) array));
 
-    printf("%c%ld\\r\\n", array->type, xredisarray_size(array));
-    char buffer[1024] = { 0, };
-    for(xlistnode * node = xredisarray_front(array); node != xnil; node = xredisarray_next(node))
-    {
-        
-        // xredisobject
-    }
-    printf("\n");
+    xredisarray_push(array, (xredisobject *) xredisbulk_new("get", 3));
+    xredisarray_push(array, (xredisobject *) xredisbulk_new("foo", 3));
 
-    snprintf(buffer, 256, "%.*s\n", 5, "he\0llo world");
-    printf("%c\n", buffer[4]);
+
+    index = 0;
+    printf("%s", s = xredisobject_serialize(s, xaddressof(index), xaddressof(capacity), (xredisobject *) array));
 
     array = xredisarray_rem(array);
+
+    
+
+    //
+    char reply[256];
+    snprintf(reply, 256, "+OK\r\n");
+    index = 0;
+
+    string = xredisstring_deserialize(reply, xaddressof(index), strlen("+OK\r\n"));
+
+    index = 0;
+    printf("%s", s = xredisobject_serialize(s, xaddressof(index), xaddressof(capacity), (xredisobject *) string));
+    string = xredisstring_rem(string);
+
+    free(s);
 
     return 0;
 }

@@ -22,4 +22,9 @@ struct xrediserror
 extern xrediserror * xrediserror_new(const char * s);
 extern xrediserror * xrediserror_rem(xrediserror * o);
 
+extern char * xrediserror_serialize(char * s, xuint64 * index, xuint64 * capacity, xrediserror * o);
+
+extern xrediserror * xrediserror_deserialize(char * s, xuint64 * index, xuint64 limit);
+
+
 #endif // __NOVEMBERIZING_X__EXTENSION__REDIS_OBJECT_ERROR__H__

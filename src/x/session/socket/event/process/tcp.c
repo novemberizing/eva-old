@@ -85,7 +85,10 @@ static xint64 xsessionsocketprocess_void(xsessionsocket * o)
         {
             if(o->subscription && o->subscription->enginenode.engine)
             {
-                xeventengine_queue_push(o->subscription->enginenode.engine, (xevent *) xaddressof(o->event));
+                if(o->event.queue)
+                {
+                    xeventengine_queue_push(o->subscription->enginenode.engine, (xevent *) xaddressof(o->event));
+                }
             }
         }
         else

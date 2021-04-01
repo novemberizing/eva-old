@@ -87,7 +87,7 @@ extern void xeventqueue_push(xeventqueue * queue, xevent * event)
 {
     xassertion(queue == xnil || event == xnil, "");
 
-    xassertion(event->queue || event->prev || event->next, "");
+    xassertion(event->queue || event->prev || event->next, "%p, %p, %p", event->queue, event->prev, event->next);
 
     if(event->queue == xnil)
     {
@@ -141,6 +141,7 @@ extern xevent * xeventqueue_pop(xeventqueue * queue)
         }
         queue->size = queue->size - 1;
 
+        event->prev = xnil;
         event->next  = xnil;
         event->queue = xnil;
     }

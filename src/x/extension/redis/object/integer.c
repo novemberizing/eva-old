@@ -24,3 +24,31 @@ extern xredisinteger * xredisinteger_rem(xredisinteger * o)
     }
     return xnil;
 }
+
+
+extern char * xredisinteger_serialize(char * s, xuint64 * index, xuint64 * capacity, xredisinteger * o)
+{
+    xassertion(index == xnil || capacity == xnil, "");
+    xassertion(*capacity < *index, "");
+
+    char str[256];
+    xint32 n = snprintf(str, 256, "%ld", o->value);
+    str[n] = 0;
+
+    s = xstringcapacity_set(s, index, capacity, 6 + n);
+
+    s[(*index)++] = o->type;
+    memcpy(xaddressof(s[*index]), str, n);
+    *index = *index + n;
+    *((xuint32 *) xaddressof(s[*index])) = xredisprotocolend;
+    *index = *index + 2;
+
+    return s;
+}
+
+extern xredisinteger * xredisinteger_deserialize(char * s, xuint64 * index, xuint64 limit)
+{
+    xassertion(xtrue, "");
+
+    return xnil;
+}

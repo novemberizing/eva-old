@@ -9,32 +9,6 @@ static xuint64 page = 16;
 
 const char * specifiers = "diouxXeEfFgGaAcspnm% ";
 
-static char * xstringcapacity_set(char * s, xuint64 * index, xuint64 * capacity, xuint32 n)
-{
-    xassertion(index == xnil || capacity == xnil, "");
-    xassertion(s == xnil && (*index > 0 || *capacity > 0), "");
-
-    if(n > 0)
-    {
-        xuint64 reserved = ((*index  + n) / page + 1) * page;
-        if(*capacity < reserved)
-        {
-            *capacity = reserved;
-
-            if(s)
-            {
-                s = realloc(s, *capacity);
-            }
-            else
-            {
-                s = malloc(*capacity);
-            }
-        }
-    }
-
-    return s;
-}
-
 static char * xstringserialize_str(char * s, xuint64 * index, xuint64 * capacity, const char * format, va_list ap)
 {
     char * str = va_arg(ap, char *);

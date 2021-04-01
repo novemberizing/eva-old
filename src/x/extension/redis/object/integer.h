@@ -21,4 +21,9 @@ struct xredisinteger
 extern xredisinteger * xredisinteger_new(xint64 value);
 extern xredisinteger * xredisinteger_rem(xredisinteger * o);
 
+extern char * xredisinteger_serialize(char * s, xuint64 * index, xuint64 * capacity, xredisinteger * o);
+
+extern xredisinteger * xredisinteger_deserialize(char * s, xuint64 * index, xuint64 limit);
+
+
 #endif // __NOVEMBERIZING_X__EXTENSION__REDIS_OBJECT_INTEGER__H__

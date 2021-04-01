@@ -121,3 +121,13 @@ extern xint64 xclientsendf(xclient * client, xstringserializer serialize, const 
     return xdescriptorstatuscheck_close((xdescriptor *) o) ? xfail : xsuccess;
     
 }
+
+extern xstream * xclientstreamin_get(xclient * client)
+{
+    return client->descriptor->stream.in;
+}
+
+extern xstream * xclientstreamout_get(xclient * client)
+{
+    return client->descriptor->stream.out;
+}

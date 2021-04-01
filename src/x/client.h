@@ -40,4 +40,7 @@ extern xint64 xclientrecv(xclient * client, char * buffer, xuint64 size);
 
 extern xint64 xclientsendf(xclient * client, xstringserializer serialize, const char * format, ...);
 
+extern xstream * xclientstreamin_get(xclient * client);
+extern xstream * xclientstreamout_get(xclient * client);
+
 #endif // __NOVEMBERIZING_X__CLIENT__H__

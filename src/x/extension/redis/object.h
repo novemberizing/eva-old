@@ -9,6 +9,8 @@
 #define xredisobjecttype_bulk           '$'
 #define xredisobjecttype_array          '*'
 
+#define xredisprotocolend               0x00000A0Du
+
 struct xredisobject;
 
 typedef struct xredisobject xredisobject;
@@ -22,5 +24,8 @@ struct xredisobject
 };
 
 extern xredisobject * xredisobjectrem(xredisobject * o);
+
+extern char * xredisobject_serialize(char * s, xuint64 * index, xuint64 * capacity, xredisobject * o);
+extern xredisobject * xredisobject_deserialize(char * s, xuint64 * index, xuint64 limit);
 
 #endif // __NOVEMBERIZING_X__EXTENSION__REDIS_OBJECT__H__

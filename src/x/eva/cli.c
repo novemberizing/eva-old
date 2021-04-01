@@ -85,19 +85,19 @@ extern xint64 xevacli(xconsole * console, xconsoledescriptor * descriptor, xuint
                 do {
                     total = xstreamlen(descriptor->stream);
                     next  = xstringline_next((char *) xstreamfront(descriptor->stream), xaddressof(index), total);
-                    if(index < total)
+                    if(index <= total)
                     {
                         
                         // xcommandstring command = xcommandstring_init(xnil, )
                         char * strings = xnil;
-                        xuint64 count = xstringwhitespace_split(xaddressof(strings), buffer, index + 1);
+                        xuint64 count = xstringwhitespace_split(xaddressof(strings), buffer, index);
                         if(strings)
                         {
                             xevacommand_exec(strings, count);
                             free(strings);
                         }
 
-                        xstreampos_set(descriptor->stream, xstreampos_get(descriptor->stream) + index + 1);
+                        xstreampos_set(descriptor->stream, xstreampos_get(descriptor->stream) + index);
                     }
                 } while(next && index < total);
 

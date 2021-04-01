@@ -22,4 +22,7 @@ struct xredisbulk
 extern xredisbulk * xredisbulk_new(const char * s, xuint64 size);
 extern xredisbulk * xredisbulk_rem(xredisbulk * o);
 
+extern char * xredisbulk_serialize(char * s, xuint64 * index, xuint64 * capacity, xredisbulk * o);
+extern xredisbulk * xredisbulk_deserialize(char * s, xuint64 * index, xuint64 limit);
+
 #endif // __NOVEMBERIZING_X__EXTENSION__REDIS_OBJECT_BULK__H__

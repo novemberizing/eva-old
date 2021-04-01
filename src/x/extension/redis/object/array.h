@@ -26,4 +26,7 @@ extern xuint64 xredisarray_size(xredisarray * array);
 extern xlistnode * xredisarray_front(xredisarray * array);
 extern xlistnode * xredisarray_next(xlistnode * node);
 
+extern char * xredisarray_serialize(char * s, xuint64 * index, xuint64 * capacity, xredisarray * o);
+extern xredisarray * xredisarray_deserialize(char * s, xuint64 * index, xuint64 limit);
+
 #endif // __NOVEMBERIZING_X__EXTENSION__REDIS_OBJECT_ARRAY__H__
