@@ -13,10 +13,7 @@ __EVA <sup style="font-size: 0.8rem;">EVENT LIB</sup>__
 
 > ___"Eva" is a high-performance network library implemented in C.___
 
-<img alt="GitHub issues" src="https://img.shields.io/github/issues/novemberizing/eva">
-<img alt="GitHub milestones" src="https://img.shields.io/github/milestones/open/novemberizing/eva">
-<img alt="GitHub" src="https://img.shields.io/github/license/novemberizing/eva">
-<img alt="GitHub release (latest SemVer)" src="https://img.shields.io/github/v/release/novemberizing/eva">
+<img alt="GitHub issues" src="https://img.shields.io/github/issues/novemberizing/eva"> <img alt="GitHub milestones" src="https://img.shields.io/github/milestones/open/novemberizing/eva"> <img alt="GitHub" src="https://img.shields.io/github/license/novemberizing/eva"> <img alt="GitHub release (latest SemVer)" src="https://img.shields.io/github/v/release/novemberizing/eva">
 
 Eva aims to create a library that makes it easy to write high performance server on multi client applications. Version 0.0.1 allows tcp echo server anc client to be implemented by defining handlers less than 20 lines and main functions less than 20 lines.
 

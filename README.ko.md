@@ -12,10 +12,7 @@ __EVA <sup style="font-size: 0.8rem">EVENT LIB</sup>__
 
 > 에바(EVA)는 C 로 구현된 고성능의 네트워크 라이브러리입니다.
 
-<img alt="GitHub issues" src="https://img.shields.io/github/issues/novemberizing/eva">
-<img alt="GitHub milestones" src="https://img.shields.io/github/milestones/open/novemberizing/eva">
-<img alt="GitHub" src="https://img.shields.io/github/license/novemberizing/eva">
-<img alt="GitHub release (latest SemVer)" src="https://img.shields.io/github/v/release/novemberizing/eva">
+<img alt="GitHub issues" src="https://img.shields.io/github/issues/novemberizing/eva"> <img alt="GitHub milestones" src="https://img.shields.io/github/milestones/open/novemberizing/eva"> <img alt="GitHub" src="https://img.shields.io/github/license/novemberizing/eva"> <img alt="GitHub release (latest SemVer)" src="https://img.shields.io/github/v/release/novemberizing/eva">
 
 EVA 는 쉽게 고성능의 서버나 혹은 다중 클라이언트 어플리케이션을 쉽게 작성할 수 있는 라이브러리를 만드는 것이 목표입니다. 버전 0.0.1 은 TCP 에코 서버와 클라이언트를 20 줄 미만의 핸들러와 20줄 미만의 메인 함수를 정의하여 구현할 수 있습니다.
 
