@@ -193,8 +193,9 @@ am_libnovemberizing_a_OBJECTS = x/std.$(OBJEXT) x/log.$(OBJEXT) \
 	x/extension/redis/object/integer.$(OBJEXT) \
 	x/extension/redis/object/bulk.$(OBJEXT) \
 	x/extension/redis/object/array.$(OBJEXT) \
-	x/extension/redis/client.$(OBJEXT) x/eva.$(OBJEXT) \
-	x/eva/cli.$(OBJEXT)
+	x/extension/redis/client.$(OBJEXT) \
+	x/extension/echo/req.$(OBJEXT) x/extension/echo/res.$(OBJEXT) \
+	x/eva.$(OBJEXT) x/eva/cli.$(OBJEXT)
 libnovemberizing_a_OBJECTS = $(am_libnovemberizing_a_OBJECTS)
 am_benchmark_client_OBJECTS = example/benchmark/client.$(OBJEXT)
 benchmark_client_OBJECTS = $(am_benchmark_client_OBJECTS)
@@ -298,6 +299,8 @@ am__depfiles_remade = example/$(DEPDIR)/helloworld.Po \
 	x/event/generator/$(DEPDIR)/set.Po \
 	x/event/processor/$(DEPDIR)/event.Po \
 	x/event/processor/$(DEPDIR)/pool.Po \
+	x/extension/echo/$(DEPDIR)/req.Po \
+	x/extension/echo/$(DEPDIR)/res.Po \
 	x/extension/redis/$(DEPDIR)/client.Po \
 	x/extension/redis/$(DEPDIR)/object.Po \
 	x/extension/redis/object/$(DEPDIR)/array.Po \
@@ -568,6 +571,8 @@ libnovemberizing_a_SOURCES = x/std.c                                          \
                              x/extension/redis/object/bulk.c                  \
                              x/extension/redis/object/array.c                 \
                              x/extension/redis/client.c                       \
+                             x/extension/echo/req.c                           \
+                             x/extension/echo/res.c                           \
                              x/eva.c                                          \
                              x/eva/cli.c
 
@@ -966,6 +971,16 @@ x/extension/redis/object/array.$(OBJEXT):  \
 	x/extension/redis/object/$(DEPDIR)/$(am__dirstamp)
 x/extension/redis/client.$(OBJEXT): x/extension/redis/$(am__dirstamp) \
 	x/extension/redis/$(DEPDIR)/$(am__dirstamp)
+x/extension/echo/$(am__dirstamp):
+	@$(MKDIR_P) x/extension/echo
+	@: > x/extension/echo/$(am__dirstamp)
+x/extension/echo/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) x/extension/echo/$(DEPDIR)
+	@: > x/extension/echo/$(DEPDIR)/$(am__dirstamp)
+x/extension/echo/req.$(OBJEXT): x/extension/echo/$(am__dirstamp) \
+	x/extension/echo/$(DEPDIR)/$(am__dirstamp)
+x/extension/echo/res.$(OBJEXT): x/extension/echo/$(am__dirstamp) \
+	x/extension/echo/$(DEPDIR)/$(am__dirstamp)
 x/eva.$(OBJEXT): x/$(am__dirstamp) x/$(DEPDIR)/$(am__dirstamp)
 x/eva/$(am__dirstamp):
 	@$(MKDIR_P) x/eva
@@ -1125,6 +1140,7 @@ mostlyclean-compile:
 	-rm -f x/event/*.$(OBJEXT)
 	-rm -f x/event/generator/*.$(OBJEXT)
 	-rm -f x/event/processor/*.$(OBJEXT)
+	-rm -f x/extension/echo/*.$(OBJEXT)
 	-rm -f x/extension/redis/*.$(OBJEXT)
 	-rm -f x/extension/redis/object/*.$(OBJEXT)
 	-rm -f x/server/*.$(OBJEXT)
@@ -1203,6 +1219,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@x/event/generator/$(DEPDIR)/set.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/event/processor/$(DEPDIR)/event.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/event/processor/$(DEPDIR)/pool.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/extension/echo/$(DEPDIR)/req.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/extension/echo/$(DEPDIR)/res.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/extension/redis/$(DEPDIR)/client.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/extension/redis/$(DEPDIR)/object.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/extension/redis/object/$(DEPDIR)/array.Po@am__quote@ # am--include-marker
@@ -1445,6 +1463,8 @@ distclean-generic:
 	-rm -f x/event/generator/$(am__dirstamp)
 	-rm -f x/event/processor/$(DEPDIR)/$(am__dirstamp)
 	-rm -f x/event/processor/$(am__dirstamp)
+	-rm -f x/extension/echo/$(DEPDIR)/$(am__dirstamp)
+	-rm -f x/extension/echo/$(am__dirstamp)
 	-rm -f x/extension/redis/$(DEPDIR)/$(am__dirstamp)
 	-rm -f x/extension/redis/$(am__dirstamp)
 	-rm -f x/extension/redis/object/$(DEPDIR)/$(am__dirstamp)
@@ -1543,6 +1563,8 @@ distclean: distclean-am
 	-rm -f x/event/generator/$(DEPDIR)/set.Po
 	-rm -f x/event/processor/$(DEPDIR)/event.Po
 	-rm -f x/event/processor/$(DEPDIR)/pool.Po
+	-rm -f x/extension/echo/$(DEPDIR)/req.Po
+	-rm -f x/extension/echo/$(DEPDIR)/res.Po
 	-rm -f x/extension/redis/$(DEPDIR)/client.Po
 	-rm -f x/extension/redis/$(DEPDIR)/object.Po
 	-rm -f x/extension/redis/object/$(DEPDIR)/array.Po
@@ -1667,6 +1689,8 @@ maintainer-clean: maintainer-clean-am
 	-rm -f x/event/generator/$(DEPDIR)/set.Po
 	-rm -f x/event/processor/$(DEPDIR)/event.Po
 	-rm -f x/event/processor/$(DEPDIR)/pool.Po
+	-rm -f x/extension/echo/$(DEPDIR)/req.Po
+	-rm -f x/extension/echo/$(DEPDIR)/res.Po
 	-rm -f x/extension/redis/$(DEPDIR)/client.Po
 	-rm -f x/extension/redis/$(DEPDIR)/object.Po
 	-rm -f x/extension/redis/object/$(DEPDIR)/array.Po

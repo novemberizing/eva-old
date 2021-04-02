@@ -5,21 +5,12 @@
 #include <arpa/inet.h>
 
 #include <x/client.h>
+#include <x/extension/echo/req.h>
+#include <x/extension/echo/res.h>
 
 static xint64 on(xclient * client, xuint32 event, xdescriptorparam param, xint64 result)
 {
-    if(event == xsocketeventtype_in)
-    {
-        printf("in\n");
-    }
-    else if(event == xsocketeventtype_out)
-    {
-        printf("out\n");
-    }
-    else
-    {
-        printf("event => %s\n", xdescriptoreventtype_str(event));
-    }
+    // printf("event => %s\n", xdescriptoreventtype_str(event));
     return result;
 }
 
@@ -31,11 +22,21 @@ int main(int argc, char ** argv)
     addr.sin_port = htons(6379);
 
     xclient * client = xclientnew(AF_INET, SOCK_STREAM, IPPROTO_TCP, xaddressof(addr), sizeof(struct sockaddr_in), on, sizeof(xclient));
-
+    xclientmask_add(client, xdescriptormask_nonblock);
     xclientconnect(client);
-    xclientsendf(client, xstringformatserialize, "PING\r\n");
+    xclientwait(client, xdescriptorstatus_open, -1);
 
-    // xclientreq(client, xstringformatserialize, "PING\r\n");
+    for(xint32 i = 0; i < 32; i++)
+    {
+        xechores * res = (xechores *) xclientwaitres(client, xclientreq(client, (xreq *) xechoreqnew("PING\r\n")), -1);
+        if(xrescheck_complete(res))
+        {
+            xtime diff = xtimediff(xaddressof(res->end), xaddressof(res->req->start));
+            printf("%ld.%09ld\n", diff.second, diff.nanosecond);
+            // printf("%.*s\n", (int) res->size, res->data);
+        }
+        res = xechoresrem(res);
+    }
 
     xclientrem(client);
     return 0;

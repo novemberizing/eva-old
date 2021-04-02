@@ -5,6 +5,8 @@
 #include <x/io.h>
 #include <x/stream.h>
 #include <x/string/format.h>
+#include <x/req.h>
+#include <x/res.h>
 
 struct xclient;
 
@@ -40,7 +42,15 @@ extern xint64 xclientrecv(xclient * client, char * buffer, xuint64 size);
 
 extern xint64 xclientsendf(xclient * client, xstringserializer serialize, const char * format, ...);
 
+extern xres * xclientreq(xclient * client, xreq * request);
+
 extern xstream * xclientstreamin_get(xclient * client);
 extern xstream * xclientstreamout_get(xclient * client);
+
+extern void xclientmask_add(xclient * client, xuint32 mask);
+
+extern xuint32 xclientwait(xclient * client, xuint32 status, xint64 millisecond);
+
+extern xres * xclientwaitres(xclient * client, xres * res, xint64 millisecond);
 
 #endif // __NOVEMBERIZING_X__CLIENT__H__
