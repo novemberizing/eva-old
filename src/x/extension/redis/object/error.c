@@ -6,19 +6,37 @@
 #include "../../../string.h"
 #include "error.h"
 
-extern xrediserror * xrediserror_new(const char * s)
+static xint64 xrediserrorserialize(xrediserror * o, xbyte ** buffer, xuint64 * pos, xuint64 * size, xuint64 * capacity)
+{
+    xassertion(buffer == xnil || pos == xnil || size == xnil || capacity == xnil || o == xnil, "");
+
+    *buffer = xstringcapacity_set(*buffer, size, capacity, 6 + o->size);
+
+    (*buffer)[(*size)++] = o->type;
+    memcpy(xaddressof((*buffer)[*size]), o->value, o->size);
+    *size = *size + o->size;
+
+    *((xuint32 *) xaddressof((*buffer)[*size])) = xredisprotocolend;
+
+    *size = *size + 2;
+
+    return xsuccess;
+}
+
+extern xrediserror * xrediserrornew(const char * s)
 {
     xrediserror * o = (xrediserror *) calloc(sizeof(xrediserror), 1);
 
-    o->rem   = xrediserror_rem;
-    o->type  = xredisobjecttype_error;
-    o->size  = s != xnil ? strlen(s) : 0;
-    o->value = xstringdup(s, o->size);
+    o->rem       = xrediserrorrem;
+    o->serialize = xrediserrorserialize;
+    o->type      = xredisobjecttype_error;
+    o->size      = s ? strlen(s) : 0;
+    o->value     = xstringdup(s, o->size);
 
     return o;
 }
 
-extern xrediserror * xrediserror_rem(xrediserror * o)
+extern xrediserror * xrediserrorrem(xrediserror * o)
 {
     if(o)
     {
@@ -28,30 +46,5 @@ extern xrediserror * xrediserror_rem(xrediserror * o)
         }
         free(o);
     }
-
-    return xnil;
-}
-
-
-extern char * xrediserror_serialize(char * s, xuint64 * index, xuint64 * capacity, xrediserror * o)
-{
-    xassertion(index == xnil || capacity == xnil, "");
-    xassertion(*capacity < *index, "");
-
-    s = xstringcapacity_set(s, index, capacity, 6 + o->size);
-
-    s[(*index)++] = o->type;
-    memcpy(xaddressof(s[*index]), o->value, o->size);
-    *index = *index + o->size;
-    *((xuint32 *) xaddressof(s[*index])) = xredisprotocolend;
-    *index = *index + 2;
-    
-    return s;
-}
-
-extern xrediserror * xrediserror_deserialize(char * s, xuint64 * index, xuint64 limit)
-{
-    xassertion(xtrue, "");
-
     return xnil;
 }

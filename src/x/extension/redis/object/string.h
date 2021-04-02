@@ -8,22 +8,21 @@ struct xredisstring;
 typedef struct xredisstring xredisstring;
 
 typedef xredisstring * (*xredisstringdestructor)(xredisstring *);
+typedef xint64 (*xredisstringserializer)(xredisstring *, xbyte ** buffer, xuint64 * pos, xuint64 * size, xuint64 * capacity);
 
 struct xredisstring
 {
-    /** INHERITED REDIS OBJECT */
+    /** INHERITED SERIALIZABLE OBJECT */
     xredisstringdestructor rem;
-    xuint8 type;
+    xredisstringserializer serialize;
+    /** INHERITED REDIS OBJECT MEMBER */
+    xuint8                 type;
     /** REDIS STRING MEMBER */
-    xuint64 size;
-    char * value;
+    xuint64                size;
+    char *                 value;
 };
 
-extern xredisstring * xredisstring_new(const char * s);
-extern xredisstring * xredisstring_rem(xredisstring * o);
-
-extern char * xredisstring_serialize(char * s, xuint64 * index, xuint64 * capacity, xredisstring * o);
-
-extern xredisstring * xredisstring_deserialize(char * s, xuint64 * index, xuint64 limit);
+extern xredisstring * xredisstringnew(const char * s);
+extern xredisstring * xredisstringrem(xredisstring * o);
 
 #endif // __NOVEMBERIZING_X__EXTENSION__REDIS_OBJECT_STRING__H__

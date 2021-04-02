@@ -33,7 +33,7 @@ int main(int argc, char ** argv)
         {
             xtime diff = xtimediff(xaddressof(res->end), xaddressof(res->req->start));
             printf("%ld.%09ld\n", diff.second, diff.nanosecond);
-            // printf("%.*s\n", (int) res->size, res->data);
+            printf("%.*s\n", (int) res->size, res->data);
         }
         res = xechoresrem(res);
     }

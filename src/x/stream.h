@@ -11,6 +11,7 @@
 
 #include <x/std.h>
 #include <x/string/format.h>
+#include <x/serializable.h>
 
 #define xstreamtype_buffer          (1)                     /**!< 바이트 버퍼 스트림 타입 */
 
@@ -55,6 +56,7 @@ extern void xstreamformatv(xstream * o, xstringserializer serialize, const char 
 
 extern void xstreamclear(xstream * o);
 
+extern xint64 xstreampush_serializable(xstream * o, xserializable * object);
 
 extern xstream * xstreamgen_str(const char * s);
 

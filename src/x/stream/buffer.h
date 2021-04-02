@@ -2,6 +2,7 @@
 #define   __NOVEMBERIZING_X__STREAM__BUFFER__H__
 
 #include <x/stream.h>
+#include <x/serializable.h>
 
 struct xstreambuffer;
 
@@ -46,5 +47,7 @@ extern xuint64 xstreambuffer_push(xstreambuffer * o, const xbyte * data, xuint64
 extern void xstreambuffer_format(xstreambuffer * o, xstringserializer serialize, const char * format, ...);
 extern void xstreambuffer_formatv(xstreambuffer * o, xstringserializer serialize, const char * format, va_list ap);
 extern void xstreambuffer_clear(xstreambuffer * o);
+
+extern xint64 xstreambufferpush_serializable(xstreambuffer * o, xserializable * object);
 
 #endif // __NOVEMBERIZING_X__STREAM__BUFFER__H__

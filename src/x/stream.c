@@ -468,6 +468,7 @@ extern void xstreamformat(xstream * o, xstringserializer serialize, const char *
     switch(o->type)
     {
         case xstreamtype_buffer: xstreambuffer_formatv((xstreambuffer *) o, serialize, format, ap);  break;
+        default: xassertion(xtrue, ""); break;
     }
     va_end(ap);
 }
@@ -477,5 +478,15 @@ extern void xstreamformatv(xstream * o, xstringserializer serialize, const char 
     switch(o->type)
     {
         case xstreamtype_buffer: xstreambuffer_formatv((xstreambuffer *) o, serialize, format, ap);  break;
+        default: xassertion(xtrue, ""); break;
+    }
+}
+
+extern xint64 xstreampush_serializable(xstream * o, xserializable * object)
+{
+    switch(o->type)
+    {
+        case xstreamtype_buffer: xstreambufferpush_serializable((xstreambuffer *) o, object);  break;
+        default: xassertion(xtrue, ""); break;
     }
 }

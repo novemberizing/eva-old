@@ -8,82 +8,99 @@ int main(int argc, char ** argv)
 {
     xloginit(xnil, xlogtype_assertion, xtrue);
 
-    char * s = xnil;
-    xuint64 index = 0;
-    xuint64 capacity = 0;
+    xstream * stream = xstreamnew(xstreamtype_buffer);
 
-    xredisstring * string = xredisstring_new("hello world");
-    printf("%s", s = xredisobject_serialize(s, xaddressof(index), xaddressof(capacity), (xredisobject *) string));
-    string = xredisstring_rem(string);
+    xredisstring * string = xredisstringnew("hello world");
+    xredisobjectto_stream((xredisobject *) string, stream);
+    string = xredisstringrem(string);
 
-    string = xredisstring_new("OK");
-    index = 0;
-    printf("%s", s = xredisobject_serialize(s, xaddressof(index), xaddressof(capacity), (xredisobject *) string));
-    string = xredisstring_rem(string);
+    xredisinteger * integer = xredisintegernew(1024);
+    xredisobjectto_stream((xredisobject *) integer, stream);
+    integer = xredisintegerrem(integer);
 
-    xrediserror * error = xrediserror_new("Error message");
-    index = 0;
-    printf("%s", s = xredisobject_serialize(s, xaddressof(index), xaddressof(capacity), (xredisobject *) error));
-    error = xrediserror_rem(error);
+    xrediserror * error = xrediserrornew("WRONGTYPE hello world");
+    xredisobjectto_stream((xredisobject *) error, stream);
+    error = xrediserrorrem(error);
 
-    error = xrediserror_new("ERR unknown command 'foobar'");
-    index = 0;
-    printf("%s", s = xredisobject_serialize(s, xaddressof(index), xaddressof(capacity), (xredisobject *) error));
-    error = xrediserror_rem(error);
+    printf("%.*s", (int) xstreamlen(stream), xstreamfront(stream));
+    stream = xstreamrem(stream);
 
-    error = xrediserror_new("WRONGTYPE Operation against a key holding the wrong kind of value");
-    index = 0;
-    printf("%s", s = xredisobject_serialize(s, xaddressof(index), xaddressof(capacity), (xredisobject *) error));
-    error = xrediserror_rem(error);
+    // char * s = xnil;
+    // xuint64 index = 0;
+    // xuint64 capacity = 0;
 
-    xredisinteger * integer = xredisinteger_new(1024);
-    index = 0;
-    printf("%s", s = xredisobject_serialize(s, xaddressof(index), xaddressof(capacity), (xredisobject *) integer));
-    xredisinteger_rem(integer);
+    // xredisstring * string = xredisstring_new("hello world");
+    // printf("%s", s = xredisobject_serialize(s, xaddressof(index), xaddressof(capacity), (xredisobject *) string));
+    // string = xredisstring_rem(string);
 
-    xredisbulk * bulk = xredisbulk_new("foobar", 6);
-    index = 0;
-    printf("%s", s = xredisobject_serialize(s, xaddressof(index), xaddressof(capacity), (xredisobject *) bulk));
-    bulk = xredisbulk_rem(bulk);
+    // string = xredisstring_new("OK");
+    // index = 0;
+    // printf("%s", s = xredisobject_serialize(s, xaddressof(index), xaddressof(capacity), (xredisobject *) string));
+    // string = xredisstring_rem(string);
 
-    bulk = xredisbulk_new("", 0);
-    index = 0;
-    printf("%s", s = xredisobject_serialize(s, xaddressof(index), xaddressof(capacity), (xredisobject *) bulk));
-    bulk = xredisbulk_rem(bulk);
+    // xrediserror * error = xrediserror_new("Error message");
+    // index = 0;
+    // printf("%s", s = xredisobject_serialize(s, xaddressof(index), xaddressof(capacity), (xredisobject *) error));
+    // error = xrediserror_rem(error);
 
-    bulk = xredisbulk_new(xnil, -1);
-    index = 0;
-    printf("%s", s = xredisobject_serialize(s, xaddressof(index), xaddressof(capacity), (xredisobject *) bulk));
-    bulk = xredisbulk_rem(bulk);
+    // error = xrediserror_new("ERR unknown command 'foobar'");
+    // index = 0;
+    // printf("%s", s = xredisobject_serialize(s, xaddressof(index), xaddressof(capacity), (xredisobject *) error));
+    // error = xrediserror_rem(error);
 
-    xredisarray * array = xredisarray_new();
+    // error = xrediserror_new("WRONGTYPE Operation against a key holding the wrong kind of value");
+    // index = 0;
+    // printf("%s", s = xredisobject_serialize(s, xaddressof(index), xaddressof(capacity), (xredisobject *) error));
+    // error = xrediserror_rem(error);
 
-    index = 0;
-    printf("%s", s = xredisobject_serialize(s, xaddressof(index), xaddressof(capacity), (xredisobject *) array));
+    // xredisinteger * integer = xredisinteger_new(1024);
+    // index = 0;
+    // printf("%s", s = xredisobject_serialize(s, xaddressof(index), xaddressof(capacity), (xredisobject *) integer));
+    // xredisinteger_rem(integer);
 
-    xredisarray_push(array, (xredisobject *) xredisbulk_new("get", 3));
-    xredisarray_push(array, (xredisobject *) xredisbulk_new("foo", 3));
+    // xredisbulk * bulk = xredisbulk_new("foobar", 6);
+    // index = 0;
+    // printf("%s", s = xredisobject_serialize(s, xaddressof(index), xaddressof(capacity), (xredisobject *) bulk));
+    // bulk = xredisbulk_rem(bulk);
+
+    // bulk = xredisbulk_new("", 0);
+    // index = 0;
+    // printf("%s", s = xredisobject_serialize(s, xaddressof(index), xaddressof(capacity), (xredisobject *) bulk));
+    // bulk = xredisbulk_rem(bulk);
+
+    // bulk = xredisbulk_new(xnil, -1);
+    // index = 0;
+    // printf("%s", s = xredisobject_serialize(s, xaddressof(index), xaddressof(capacity), (xredisobject *) bulk));
+    // bulk = xredisbulk_rem(bulk);
+
+    // xredisarray * array = xredisarray_new();
+
+    // index = 0;
+    // printf("%s", s = xredisobject_serialize(s, xaddressof(index), xaddressof(capacity), (xredisobject *) array));
+
+    // xredisarray_push(array, (xredisobject *) xredisbulk_new("get", 3));
+    // xredisarray_push(array, (xredisobject *) xredisbulk_new("foo", 3));
 
 
-    index = 0;
-    printf("%s", s = xredisobject_serialize(s, xaddressof(index), xaddressof(capacity), (xredisobject *) array));
+    // index = 0;
+    // printf("%s", s = xredisobject_serialize(s, xaddressof(index), xaddressof(capacity), (xredisobject *) array));
 
-    array = xredisarray_rem(array);
+    // array = xredisarray_rem(array);
 
     
 
-    //
-    char reply[256];
-    snprintf(reply, 256, "+OK\r\n");
-    index = 0;
+    // //
+    // char reply[256];
+    // snprintf(reply, 256, "+OK\r\n");
+    // index = 0;
 
-    string = xredisstring_deserialize(reply, xaddressof(index), strlen("+OK\r\n"));
+    // string = xredisstring_deserialize(reply, xaddressof(index), strlen("+OK\r\n"));
 
-    index = 0;
-    printf("%s", s = xredisobject_serialize(s, xaddressof(index), xaddressof(capacity), (xredisobject *) string));
-    string = xredisstring_rem(string);
+    // index = 0;
+    // printf("%s", s = xredisobject_serialize(s, xaddressof(index), xaddressof(capacity), (xredisobject *) string));
+    // string = xredisstring_rem(string);
 
-    free(s);
+    // free(s);
 
     return 0;
 }

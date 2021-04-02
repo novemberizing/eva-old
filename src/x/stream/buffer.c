@@ -389,3 +389,10 @@ extern void xstreambuffer_formatv(xstreambuffer * o, xstringserializer serialize
 {
     o->buffer = xstringformatv(o->buffer, xaddressof(o->size), xaddressof(o->capacity), serialize, format, ap);
 }
+
+extern xint64 xstreambufferpush_serializable(xstreambuffer * o, xserializable * object)
+{
+    xassertion(object == xnil || o == xnil, "");
+
+    return object->serialize(object, xaddressof(o->buffer), xaddressof(o->position), xaddressof(o->size), xaddressof(o->capacity));
+}

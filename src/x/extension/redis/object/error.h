@@ -8,23 +8,22 @@ struct xrediserror;
 typedef struct xrediserror xrediserror;
 
 typedef xrediserror * (*xrediserrordestructor)(xrediserror *);
+typedef xint64 (*xrediserrorserializer)(xrediserror *, xbyte ** buffer, xuint64 * pos, xuint64 * size, xuint64 * capacity);
 
 struct xrediserror
 {
-    /** INHERITED REDIS OBJECT */
+    /** INHERITED SERIALIZABLE OBJECT */
     xrediserrordestructor rem;
-    xuint8 type;
-    /** REDIS STRING MEMBER */
-    xuint64 size;
-    char * value;
+    xrediserrorserializer serialize;
+    /** INHERITED REDIS OBJECT MEMBER */
+    xuint8                type;
+    /** REDIS ERROR MEMBER */
+    xuint64               size;
+    char *                value;
 };
 
-extern xrediserror * xrediserror_new(const char * s);
-extern xrediserror * xrediserror_rem(xrediserror * o);
-
-extern char * xrediserror_serialize(char * s, xuint64 * index, xuint64 * capacity, xrediserror * o);
-
-extern xrediserror * xrediserror_deserialize(char * s, xuint64 * index, xuint64 limit);
+extern xrediserror * xrediserrornew(const char * s);
+extern xrediserror * xrediserrorrem(xrediserror * o);
 
 
 #endif // __NOVEMBERIZING_X__EXTENSION__REDIS_OBJECT_ERROR__H__
