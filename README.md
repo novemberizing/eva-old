@@ -7,7 +7,7 @@
 
 </sub>
 
-__EVA <sup style="font-size: 0.8rem;">EVENT LIB</sup>__
+__EVA <sup style="font-size: 0.2rem;">EVENT LIB</sup>__
 ========================================================
 
 
