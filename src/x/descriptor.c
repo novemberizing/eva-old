@@ -175,6 +175,11 @@ extern xint64 xdescriptorexception(xdescriptor * descriptor, void * func, xint32
 
     xexceptionset(xaddressof(descriptor->exception), func, number, type, message);
 
+    if(descriptor->subscription == xnil || descriptor->subscription->enginenode.engine == xnil)
+    {
+        return xdescriptoron(descriptor, xdescriptoreventtype_exception, xdescriptorparamgen(xaddressof(descriptor->exception)), xfail);
+    }
+
     return xsuccess;
 }
 

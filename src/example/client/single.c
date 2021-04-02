@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -5,7 +6,22 @@
 
 #include <x/client.h>
 
-static xint64 on(xclient * client, xuint32 event, xdescriptorparam param, xint64 result){ return result; }
+static xint64 on(xclient * client, xuint32 event, xdescriptorparam param, xint64 result)
+{
+    if(event == xsocketeventtype_in)
+    {
+        printf("in\n");
+    }
+    else if(event == xsocketeventtype_out)
+    {
+        printf("out\n");
+    }
+    else
+    {
+        printf("event => %s\n", xdescriptoreventtype_str(event));
+    }
+    return result;
+}
 
 int main(int argc, char ** argv)
 {
@@ -18,6 +34,8 @@ int main(int argc, char ** argv)
 
     xclientconnect(client);
     xclientsendf(client, xstringformatserialize, "PING\r\n");
+
+    // xclientreq(client, xstringformatserialize, "PING\r\n");
 
     xclientrem(client);
     return 0;
