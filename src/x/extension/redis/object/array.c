@@ -160,3 +160,29 @@ extern xint64 xredisarray_complete(xbyte * buffer, xuint64 position, xuint64 siz
     }
     return 0;
 }
+
+extern xredisarray * xredisarray_deserialize(xbyte * buffer, xuint64 * position, xuint64 size)
+{
+    xuint64 index = *position;
+    char * next = xstringstr_next(xaddressof(buffer[*position]), xaddressof(index), size, "\r\n");
+
+    xassertion(next == xnil, "");
+
+    xredisarray * o = (xredisarray *) calloc(sizeof(xredisarray), 1);
+
+    o->rem = xredisarrayrem;
+    o->serialize = xredisarrayserialize;
+    o->type = xredisobjecttype_array;
+    o->objects = xlistnew();
+
+    xuint64 n = xstringtoint64(xaddressof(buffer[*position + 1]), index - *position - 3);
+
+    *position = index;
+
+    for(xint64 i = 0; i < n; i++)
+    {
+        xlistpushback(o->objects, xvalobject(xredisobject_deserialize(buffer, position, size)));
+    }
+
+    return o;
+}

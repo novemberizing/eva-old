@@ -103,3 +103,23 @@ extern xint64 xrediserror_complete(xbyte * buffer, xuint64 position, xuint64 siz
     }
     return 0;
 }
+
+extern xrediserror * xrediserror_deserialize(xbyte * buffer, xuint64 * position, xuint64 size)
+{
+    xuint64 index = *position;
+    char * next = xstringstr_next(xaddressof(buffer[*position]), xaddressof(index), size, "\r\n");
+
+    xassertion(next == xnil, "");
+
+    xrediserror * o = (xrediserror *) calloc(sizeof(xrediserror), 1);
+
+    o->rem       = xrediserrorrem;
+    o->serialize = xrediserrorserialize;
+    o->type      = xredisobjecttype_error;
+    o->size      = index - *position - 3;
+    o->value     = xstringdup(xaddressof(buffer[*position + 1]), o->size);
+
+    *position = index;
+
+    return o;
+}

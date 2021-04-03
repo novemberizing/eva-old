@@ -129,3 +129,24 @@ extern xint64 xredisbulk_complete(xbyte * buffer, xuint64 position, xuint64 size
 
     return 0;
 }
+
+extern xredisbulk * xredisbulk_deserialize(xbyte * buffer, xuint64 * position, xuint64 size)
+{
+    xuint64 index = *position;
+    char * next = xstringstr_next(xaddressof(buffer[*position]), xaddressof(index), size, "\r\n");
+
+    xassertion(next == xnil, "");
+
+    xredisbulk * o = (xredisbulk *) calloc(sizeof(xredisbulk), 1);
+
+    o->rem       = xredisbulkrem;
+    o->serialize = xredisbulkserialize;
+    o->type      = xredisobjecttype_bulk;
+    o->size      = xstringtoint64(xaddressof(buffer[*position + 1]), index - *position - 3);
+    o->value     = xstringdup(xaddressof(buffer[index]), o->size);
+
+    *position = index + o->size + 2;
+
+    return o;
+
+}

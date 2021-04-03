@@ -209,3 +209,17 @@ extern xuint64 xstringtouint64(char * s, xuint64 limit)
 
     return ret;
 }
+
+extern xint64 xstringtoint64(char * s, xuint64 limit)
+{
+    xassertion(s == xnil || limit == 0, "");
+    xint64 ret = 0;
+    for(xuint64 i = s[0] == '-' ? 1 : 0; i < limit; i++)
+    {
+        char c = s[i];
+        xassertion(c < 48 || c > 57, "");
+        ret = ret * 10 + (c - 48);
+    }
+
+    return s[0] == '-' ? -ret : ret;
+}

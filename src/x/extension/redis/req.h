@@ -18,43 +18,21 @@ typedef xredisres * (*xredisresgenerator)(xredisreq *);
 struct xredisreq
 {
     /** INHERITED SERIALIZABLE */
-    xredisreqdestructor rem;
-    xredisreqserializer serialize;
+    xredisreqdestructor     rem;
+    xredisreqserializer     serialize;
     /** INHERITED REQ MEMBER */
-    xtime               start;
-    xtime               end;
-    xredisresgenerator  gen;
+    xtime                   start;
+    xtime                   end;
+    xredisresgenerator      gen;
     /** REDIS REQ MEMBER */
-    xredisobject *      object;
+    xredisobject *          object;
+    struct { xuint64 size;
+             char * data; } packet;
 };
 
 extern xredisreq * xredisreqnew(xredisobject * object);
 extern xredisreq * xredisreqrem(xredisreq * o);
 
-// #define xreqrem(req)    (req->rem(req))
-// struct xredisreq;
-// struct xredisres;
-
-// typedef struct xredisreq xredisreq;
-// typedef struct xredisres xredisres;
-
-// typedef xredisreq * (*xredisresdestructor)(xredisreq *);
-// typedef xint64 (*xredisserializer)(xredisreq *, xstream *);
-// typedef xredisres * (*xredisresgenerator)(xredisreq *);
-
-// struct xredisreq
-// {
-//     /** INHERITED REQ */
-//     xredisresdestructor rem;
-//     xtime               start;
-//     xtime               end;
-//     xredisserializer    serialize;
-//     xredisresgenerator  gen;
-//     /** ECHO REQ MEMBER */
-//     xredisobject *      object;
-// };
-
-// extern xredisreq * xredisreqnew(xredisobject * object);
-// extern xredisreq * xredisreqrem(xredisreq * req);
+extern xredisreq * xredisreq_set(const char * key, const char * value);
 
 #endif // __NOVEMBERIZING_X__REDIS__REQ__H__

@@ -27,6 +27,7 @@ extern xrediserror * xrediserrorrem(xrediserror * o);
 
 extern xint64 xrediserror_predict(xbyte * buffer, xuint64 position, xuint64 size);
 extern xint64 xrediserror_complete(xbyte * buffer, xuint64 position, xuint64 size);
+extern xrediserror * xrediserror_deserialize(xbyte * buffer, xuint64 * position, xuint64 size);
 
 
 #endif // __NOVEMBERIZING_X__EXTENSION__REDIS_OBJECT_ERROR__H__

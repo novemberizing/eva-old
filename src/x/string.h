@@ -16,5 +16,6 @@ extern xuint64 xstringwhitespace_split(char ** strings, const char * s, xuint64 
 extern char * xstringcapacity_set(char * s, xuint64 * index, xuint64 * capacity, xuint32 n);
 
 extern xuint64 xstringtouint64(char * s, xuint64 limit);
+extern xint64 xstringtoint64(char * s, xuint64 limit);
 
 #endif // __NOVEMBERIZING_X__STRING__H__

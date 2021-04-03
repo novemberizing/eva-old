@@ -35,7 +35,7 @@ extern xint64 xredisobjectto_stream(xredisobject * o, xstream * stream);
 extern xint64 xredisobject_predict(xbyte * buffer, xuint64 position, xuint64 size);
 extern xint64 xredisobject_complete(xbyte * buffer, xuint64 position, xuint64 size);
 
-extern xredisobject * xredisresdeserialize(const xbyte * buffer, xuint64 position, xuint64 size);
+extern xredisobject * xredisobject_deserialize(xbyte * buffer, xuint64 * position, xuint64 size);
 
 // static xint64 xredisressizepredict(xredisres * res, const xbyte * buffer, xuint64 position, xuint64 size);
 // static xint64 xredisresdeserialize(xredisres * res, const xbyte * buffer, xuint64 position, xuint64 size);

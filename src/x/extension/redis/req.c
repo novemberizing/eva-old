@@ -5,6 +5,15 @@ static xint64 xredisreqserialize(xredisreq * req, xbyte ** buffer, xuint64 * pos
 {
     xassertion(req == xnil || buffer == xnil || position == xnil || size == xnil || capacity == xnil || req->object == xnil, "");
 
+    if(req->packet.size > 0)
+    {
+        *buffer = xstringcapacity_set(*buffer, size, capacity, req->packet.size);
+
+        memcpy(xaddressof((*buffer)[*size]), req->packet.data, req->packet.size);
+
+        *size = *size + req->packet.size;
+    }
+
     return req->object->serialize(req->object, buffer, position, size, capacity);
 }
 
@@ -38,51 +47,45 @@ extern xredisreq * xredisreqrem(xredisreq * o)
     return xnil;
 }
 
-// static xint64 xredisserialize(xredisreq * req, xstream * stream)
-// {
-//     xassertion(xtrue, "implement this");
+extern xredisreq * xredisreq_set(const char * key, const char * value)
+{
+    xassertion(xtrue, "implement this");
 
-//     char * front       = xnil;
-//     xuint64 * pos      = xnil;
-//     xuint64 * size     = xnil;
-//     xuint64 * capacity = xnil;
+    xuint64 keylen = key ? strlen(key) : 0;
+    xuint64 valuelen = value ? strlen(value) : 0;
 
-//     xstreambackmem_get(stream, xaddressof(front), xaddressof(pos), xaddressof(size), xaddressof(capacity));
+    xassertion(keylen == 0, "");
 
-//     front = xredisobject_serialize(front, size, capacity, req->object);
+    xredisreq * req = xredisreqnew(xnil);
+    xuint64 total = 0;
 
-//     xstreambackmembuffer_set(stream, front);
+    char keylenstr[256];
+    snprintf(keylenstr, 256, "%lu", keylen);
 
-//     return xfail;
-// }
+    char valuelenstr[256];
 
-// static xredisres * xredisresgen(xredisreq * req)
-// {
-//     xassertion(xtrue, "implement this");
-//     return xnil;
-// }
+    if(valuelen > 0)
+    {
+        snprintf(valuelenstr, 256, "%lu", valuelen);
+        req->packet.size = snprintf(req->packet.data, total, "*3\r\n$3\r\nset\r\n$%lu\r\n%s\r\n$%lu\r\n%s\r\n",
+                                                             keylenstr,
+                                                             key,
+                                                             valuelenstr,
+                                                             value);
+    }
+    else
+    {
+        if(value)
+        {
+            snprintf(valuelenstr, 256, "0");
+        }
+        else
+        {
+            snprintf(valuelenstr, 256, "-1");
+        }
+    }
+    
 
-// extern xredisreq * xredisreqnew(xredisobject * object)
-// {
-//     xredisreq * req = (xredisreq *) calloc(sizeof(xredisreq), 1);
+    // req->packet.size = keylen
 
-//     req->rem       = xredisreqrem;
-//     req->serialize = xredisserialize;
-//     req->gen       = xredisresgen;
-//     req->object    = object;
-
-//     return req;
-// }
-
-// extern xredisreq * xredisreqrem(xredisreq * req)
-// {
-//     if(req)
-//     {
-//         if(req->object)
-//         {
-//             req->object = xredisobjectrem(req->object);
-//         }
-//         free(req);
-//     }
-//     return xnil;
-// }
+}

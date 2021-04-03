@@ -114,50 +114,21 @@ extern xint64 xredisinteger_complete(xbyte * buffer, xuint64 position, xuint64 s
     return 0;
 }
 
+extern xredisinteger * xredisinteger_deserialize(xbyte * buffer, xuint64 * position, xuint64 size)
+{
+    xuint64 index = *position;
+    char * next = xstringstr_next(xaddressof(buffer[*position]), xaddressof(index), size, "\r\n");
 
-// extern xredisinteger * xredisinteger_new(xint64 value)
-// {
-//     xredisinteger * o = (xredisinteger *) calloc(sizeof(xredisinteger), 1);
+    xassertion(next == xnil, "");
 
-//     o->rem   = xredisinteger_rem;
-//     o->type  = xredisobjecttype_integer;
-//     o->value = value;
-//     return o;
-// }
+    xredisinteger * o = (xredisinteger *) calloc(sizeof(xredisinteger), 1);
 
-// extern xredisinteger * xredisinteger_rem(xredisinteger * o)
-// {
-//     if(o)
-//     {
-//         free(o);
-//     }
-//     return xnil;
-// }
+    o->rem = xredisintegerrem;
+    o->serialize = xredisintegerserialize;
+    o->type = xredisobjecttype_integer;
+    o->value = xstringtoint64(xaddressof(buffer[*position + 1]), index - *position - 3);
 
+    *position = index;
 
-// extern char * xredisinteger_serialize(char * s, xuint64 * index, xuint64 * capacity, xredisinteger * o)
-// {
-//     xassertion(index == xnil || capacity == xnil, "");
-//     xassertion(*capacity < *index, "");
-
-//     char str[256];
-//     xint32 n = snprintf(str, 256, "%ld", o->value);
-//     str[n] = 0;
-
-//     s = xstringcapacity_set(s, index, capacity, 6 + n);
-
-//     s[(*index)++] = o->type;
-//     memcpy(xaddressof(s[*index]), str, n);
-//     *index = *index + n;
-//     *((xuint32 *) xaddressof(s[*index])) = xredisprotocolend;
-//     *index = *index + 2;
-
-//     return s;
-// }
-
-// extern xredisinteger * xredisinteger_deserialize(char * s, xuint64 * index, xuint64 limit)
-// {
-//     xassertion(xtrue, "");
-
-//     return xnil;
-// }
+    return o;
+}

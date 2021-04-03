@@ -62,7 +62,20 @@ extern xint64 xredisobject_complete(xbyte * buffer, xuint64 position, xuint64 si
     return 0;   // 비정상이다.
 }
 
-extern xredisobject * xredisresdeserialize(const xbyte * buffer, xuint64 position, xuint64 size)
+/**
+ * 이 함수의 호출은 이미 데이터를 다 받았음을 의미한다.
+ * 그래서 if(xredisobject_complete(buffer, position, size) != 0) 함수는 호출되면 안된다.
+ */
+extern xredisobject * xredisobject_deserialize(xbyte * buffer, xuint64 * position, xuint64 size)
 {
-    xassertion(xtrue, "implement this");
+    switch(buffer[*position])
+    {
+        case xredisobjecttype_string:       return (xredisobject *) xredisstring_deserialize(buffer, position, size);
+        case xredisobjecttype_error:        return (xredisobject *) xrediserror_deserialize(buffer, position, size);
+        case xredisobjecttype_integer:      return (xredisobject *) xredisinteger_deserialize(buffer, position, size);
+        case xredisobjecttype_bulk:         return (xredisobject *) xredisbulk_deserialize(buffer, position, size);
+        case xredisobjecttype_array:        return (xredisobject *) xredisarray_deserialize(buffer, position, size);
+        default: xassertion(xtrue, "");     return xnil;
+    }
+//    xassertion(xtrue, "implement this");
 }

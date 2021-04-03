@@ -17,7 +17,25 @@ static xint64 xredisressizepredict(xredisres * res, const xbyte * buffer, xuint6
     return n;
 }
 
-static xint64 xredisresdeserialize(xredisres * res, const xbyte * buffer, xuint64 position, xuint64 size);
+/**
+ * 이 함수가 호출되었다는 것은 이미 COMPLETED 상태란 의미이다.
+ * 그렇게 로직을 만들어야 한다. 그래야 작은 작업이지만 두번 이상 수행하지 않는다.
+ */
+static xint64 xredisresdeserialize(xredisres * res, const xbyte * buffer, xuint64 position, xuint64 size)
+{
+    if(res->object == xnil)
+    {
+        xuint64 index = position;
+
+        res->object = xredisobject_deserialize(buffer, xaddressof(index), size);
+
+        xassertion(res->object == xnil, "");
+
+        return res->object ? index - position : 0;
+    }
+
+    return 0;
+}
 
 extern xredisres * xredisresnew(xredisreq * req)
 {
