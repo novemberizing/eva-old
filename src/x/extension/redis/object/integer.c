@@ -59,6 +59,61 @@ extern xredisinteger * xredisintegerrem(xredisinteger * o)
     return xnil;
 }
 
+extern xint64 xredisinteger_predict(xbyte * buffer, xuint64 position, xuint64 size)
+{
+    xassertion(size < position, "");
+
+    if(position < size)
+    {
+        if(position + 3 <= size)
+        {
+            xuint64 index = position;
+            char * next = xstringstr_next(xaddressof(buffer[position]), xaddressof(index), size, "\r\n");
+            if(next)
+            {
+                return 0;
+            }
+        }
+
+        if(position + 1 == size)
+        {
+            return 2;
+        }
+        else
+        {
+            if(buffer[size - 1] == '\r')
+            {
+                return 1;
+            }
+            else
+            {
+                return 2;
+            }
+        }
+    }
+
+    return 3;   // 타입은 1 바이트이다.
+}
+
+extern xint64 xredisinteger_complete(xbyte * buffer, xuint64 position, xuint64 size)
+{
+    xassertion(size < position, "");
+
+    if(position < size)
+    {
+        if(position + 3 <= size)
+        {
+            xuint64 index = position;
+            char * next = xstringstr_next(xaddressof(buffer[position]), xaddressof(index), size, "\r\n");
+            if(next)
+            {
+                return index - position;
+            }
+        }
+    }
+    return 0;
+}
+
 
 // extern xredisinteger * xredisinteger_new(xint64 value)
 // {

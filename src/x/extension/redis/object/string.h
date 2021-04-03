@@ -25,4 +25,7 @@ struct xredisstring
 extern xredisstring * xredisstringnew(const char * s);
 extern xredisstring * xredisstringrem(xredisstring * o);
 
+extern xint64 xredisstring_predict(xbyte * buffer, xuint64 position, xuint64 size);
+extern xint64 xredisstring_complete(xbyte * buffer, xuint64 position, xuint64 size);
+
 #endif // __NOVEMBERIZING_X__EXTENSION__REDIS_OBJECT_STRING__H__

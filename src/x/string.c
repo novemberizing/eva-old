@@ -195,3 +195,17 @@ extern char * xstringcapacity_set(char * s, xuint64 * index, xuint64 * capacity,
 
     return s;
 }
+
+extern xuint64 xstringtouint64(char * s, xuint64 limit)
+{
+    xassertion(s == xnil || limit == 0, "");
+    xuint64 ret = 0;
+    for(xuint64 i = 0; i < limit; i++)
+    {
+        char c = s[i];
+        xassertion(c < 48 || c > 57, "");
+        ret = ret * 10 + (c - 48);
+    }
+
+    return ret;
+}

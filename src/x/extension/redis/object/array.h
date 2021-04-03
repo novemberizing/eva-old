@@ -26,6 +26,9 @@ extern xredisarray * xredisarraynew(void);
 extern xredisarray * xredisarrayrem(xredisarray * o);
 extern void xredisarray_push(xredisarray * o, xredisobject * object);
 
+extern xint64 xredisarray_predict(xbyte * buffer, xuint64 position, xuint64 size);
+extern xint64 xredisarray_complete(xbyte * buffer, xuint64 position, xuint64 size);
+
 // struct xredisarray;
 
 // typedef struct xredisarray xredisarray;

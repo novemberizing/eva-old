@@ -12,8 +12,8 @@ typedef struct xechores xechores;
 
 typedef xechores * (*xechoresdestructor)(xechores *);
 typedef xint64 (*xechoresserializer)(xechores *, xbyte **, xuint64 *, xuint64 *, xuint64 *);
-typedef xint64 (*xechoressizepredictor)(xechores *, const xbyte *, xuint64, xuint64);
-typedef xint64 (*xechoresdeserializer)(xechores *, const xbyte *, xuint64, xuint64);
+typedef xint64 (*xechoressizepredictor)(xechores *, xbyte *, xuint64, xuint64);
+typedef xint64 (*xechoresdeserializer)(xechores *, xbyte *, xuint64, xuint64);
 
 struct xechores
 {

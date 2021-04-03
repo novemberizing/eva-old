@@ -73,3 +73,90 @@ extern void xredisarray_push(xredisarray * o, xredisobject * object)
         xlistpushback(o->objects, xvalobject(object));
     }
 }
+
+extern xint64 xredisarray_predict(xbyte * buffer, xuint64 position, xuint64 size)
+{
+    xassertion(size < position, "");
+
+    if(position < size)
+    {
+        if(position + 3 <= size)
+        {
+            xuint64 index = position;
+            char * next = xstringstr_next(xaddressof(buffer[position]), xaddressof(index), size, "\r\n");
+            if(next)
+            {
+                xuint64 totallen = 0;
+                xuint64 arraylen = index - position;
+                xassertion(arraylen < 3, "");
+
+                xuint64 size = xstringtouint64(xaddressof(buffer[position + 1]), arraylen - 3);
+
+                for(xuint64 i = 0; i < size; i++)
+                {
+                    xuint64 len = xredisobject_complete(buffer, index, size);
+                    if(len == 0)
+                    {
+                        return xredisobject_predict(buffer, index, size);
+                    }
+                    index = index + len;
+                    totallen = totallen + len;
+                }
+
+                return arraylen + totallen;
+            }
+        }
+
+        if(position + 1 == size)
+        {
+            return 2;
+        }
+        else
+        {
+            if(buffer[size - 1] == '\r')
+            {
+                return 1;
+            }
+            else
+            {
+                return 2;
+            }
+        }
+    }
+
+    return 1;   // 타입을 받는다.
+}
+
+extern xint64 xredisarray_complete(xbyte * buffer, xuint64 position, xuint64 size)
+{
+    xassertion(size < position, "");
+
+    if(position + 3 <= size)
+    {
+        xuint64 index = position;
+        char * next = xstringstr_next(xaddressof(buffer[position]), xaddressof(index), size, "\r\n");
+
+        if(next)
+        {
+            xuint64 totallen = 0;
+            xuint64 arraylen = index - position;
+            xassertion(arraylen < 3, "");
+
+            xuint64 size = xstringtouint64(xaddressof(buffer[position + 1]), arraylen - 3);
+
+            for(xuint64 i = 0; i < size; i++)
+            {
+                xuint64 len = xredisobject_complete(buffer, index, size);
+                if(len == 0)
+                {
+                    return 0;
+                }
+                index = index + len;
+                totallen = totallen + len;
+            }
+
+            return arraylen + totallen;
+        }
+    }
+    return 0;
+}

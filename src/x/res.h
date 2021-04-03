@@ -19,8 +19,8 @@ typedef struct xres xres;
 
 typedef xres * (*xresdestructor)(xres *);
 typedef xint64 (*xresserializer)(xres *, xbyte **, xuint64 *, xuint64 *, xuint64 *);
-typedef xint64 (*xressizepredictor)(xres *, const xbyte *, xuint64, xuint64);
-typedef xint64 (*xresdeserializer)(xres *, const xbyte *, xuint64, xuint64);
+typedef xint64 (*xressizepredictor)(xres *, xbyte *, xuint64, xuint64);
+typedef xint64 (*xresdeserializer)(xres *, xbyte *, xuint64, xuint64);
 
 struct xres
 {

@@ -21,7 +21,7 @@ static xint64 xechoresserialize(xechores * res, xbyte ** buffer, xuint64 * posit
     return res->size;
 }
 
-static xint64 xechoressizepredict(xechores * res, const xbyte * buffer, xuint64 position, xuint64 size)
+static xint64 xechoressizepredict(xechores * res, xbyte * buffer, xuint64 position, xuint64 size)
 {
     if((res->status & xresponsestatus_complete) == xresponsestatus_void)
     {
@@ -30,7 +30,7 @@ static xint64 xechoressizepredict(xechores * res, const xbyte * buffer, xuint64 
     return 0;
 }
 
-static xint64 xechoresdeserialize(xechores * res, const xbyte * buffer, xuint64 position, xuint64 size)
+static xint64 xechoresdeserialize(xechores * res, xbyte * buffer, xuint64 position, xuint64 size)
 {
     if((res->status & xresponsestatus_complete) == xresponsestatus_void)
     {

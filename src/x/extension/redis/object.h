@@ -32,4 +32,18 @@ extern xredisobject * xredisobjectrem(xredisobject * o);
 
 extern xint64 xredisobjectto_stream(xredisobject * o, xstream * stream);
 
+extern xint64 xredisobject_predict(xbyte * buffer, xuint64 position, xuint64 size);
+extern xint64 xredisobject_complete(xbyte * buffer, xuint64 position, xuint64 size);
+
+extern xredisobject * xredisresdeserialize(const xbyte * buffer, xuint64 position, xuint64 size);
+
+// static xint64 xredisressizepredict(xredisres * res, const xbyte * buffer, xuint64 position, xuint64 size);
+// static xint64 xredisresdeserialize(xredisres * res, const xbyte * buffer, xuint64 position, xuint64 size);
+
+#include <x/extension/redis/object/string.h>
+#include <x/extension/redis/object/error.h>
+#include <x/extension/redis/object/integer.h>
+#include <x/extension/redis/object/bulk.h>
+#include <x/extension/redis/object/array.h>
+
 #endif // __NOVEMBERIZING_X__EXTENSION__REDIS_OBJECT__H__

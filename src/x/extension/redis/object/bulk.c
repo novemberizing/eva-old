@@ -57,3 +57,75 @@ extern xredisbulk * xredisbulkrem(xredisbulk * o)
     }
     return xnil;
 }
+
+extern xint64 xredisbulk_predict(xbyte * buffer, xuint64 position, xuint64 size)
+{
+    xassertion(size < position, "");
+
+    if(position < size)
+    {
+        if(position + 3 <= size)
+        {
+            xuint64 index = position;
+            char * next = xstringstr_next(xaddressof(buffer[position]), xaddressof(index), size, "\r\n");
+            if(next)
+            {
+                xuint64 sizelen = index - position;
+                xassertion(sizelen < 3, "");
+
+                // 잘못된 프로토콜을 받으면 어떻게 해야 하는가?
+                xuint64 size = xstringtouint64(xaddressof(buffer[position + 1]), sizelen - 3);
+
+                xuint64 packetlen = size - position;
+
+                return sizelen + size + 2 <= packetlen ? 0 : packetlen - (sizelen + size + 2);
+            }
+        }
+
+        if(position + 1 == size)
+        {
+            return 2;
+        }
+        else
+        {
+            if(buffer[size - 1] == '\r')
+            {
+                return 1;
+            }
+            else
+            {
+                return 2;
+            }
+        }
+    }
+
+    return 1;   // 타입을 받는다.
+}
+
+extern xint64 xredisbulk_complete(xbyte * buffer, xuint64 position, xuint64 size)
+{
+    xassertion(size < position, "");
+
+    if(position < size)
+    {
+        if(position + 3 <= size)
+        {
+            xuint64 index = position;
+            char * next = xstringstr_next(xaddressof(buffer[position]), xaddressof(index), size, "\r\n");
+            if(next)
+            {
+                xuint64 sizelen = index - position;
+                xassertion(sizelen < 3, "");
+
+                // 잘못된 프로토콜을 받으면 어떻게 해야 하는가?
+                xuint64 size = xstringtouint64(xaddressof(buffer[position + 1]), sizelen - 3);
+
+                xuint64 packetlen = size - position;
+
+                return sizelen + size + 2 <= packetlen ? sizelen + size + 2 : 0;
+            }
+        }
+    }
+
+    return 0;
+}
