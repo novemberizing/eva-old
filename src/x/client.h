@@ -42,7 +42,7 @@ extern xint64 xclientrecv(xclient * client, char * buffer, xuint64 size);
 
 extern xint64 xclientsendf(xclient * client, xstringserializer serialize, const char * format, ...);
 
-extern xres * xclientreq(xclient * client, xreq * request);
+extern xres * xclientreq(xclient * client, xreq * req);
 
 extern xstream * xclientstreamin_get(xclient * client);
 extern xstream * xclientstreamout_get(xclient * client);

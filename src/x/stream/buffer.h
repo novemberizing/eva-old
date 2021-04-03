@@ -50,4 +50,7 @@ extern void xstreambuffer_clear(xstreambuffer * o);
 
 extern xint64 xstreambufferpush_serializable(xstreambuffer * o, xserializable * object);
 
+extern xint64 xstreambufferressize_predict(xstreambuffer * o, xres * object);
+extern xint64 xstreambufferres_deserialize(xstreambuffer * o, xres * res);
+
 #endif // __NOVEMBERIZING_X__STREAM__BUFFER__H__

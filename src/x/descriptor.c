@@ -200,6 +200,14 @@ extern xint32 xdescriptornonblock(xdescriptor * descriptor, xint32 on)
             }
             if(fcntl(descriptor->handle.f, F_SETFL, value) == xsuccess)
             {
+                if(value & O_NONBLOCK)
+                {
+                    descriptor->status |= xdescriptorstatus_nonblock;
+                }
+                else
+                {
+                    descriptor->status &= (~xdescriptorstatus_nonblock);
+                }
                 return xsuccess;
             }
             xdescriptorexception(descriptor, fcntl, errno, xexceptiontype_sys, "");
@@ -209,6 +217,7 @@ extern xint32 xdescriptornonblock(xdescriptor * descriptor, xint32 on)
             xdescriptorexception(descriptor, fcntl, errno, xexceptiontype_sys, "");
         }
     }
+    // TODO 실패 시에 어떻게 처리해야 하는지 알아보자.
     return xfail;
 }
 

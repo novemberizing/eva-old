@@ -18,3 +18,8 @@ extern xint64 xredisobjectto_stream(xredisobject * o, xstream * stream)
 {
     return xstreampush_serializable(stream, (xserializable *) o);
 }
+
+extern xredisobject * xredisobjectrem(xredisobject * o)
+{
+    return o ? o->rem(o) : xnil;
+}

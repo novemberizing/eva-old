@@ -23,6 +23,7 @@
 #define xdescriptorstatus_writeend      0x00004000u
 #define xdescriptorstatus_listen        0x00008000u
 #define xdescriptorstatus_connect       0x00010000u
+#define xdescriptorstatus_nonblock      0x00020000u
 
 #define xdescriptorstatus_alloff        (xdescriptorstatus_readoff | xdescriptorstatus_writeoff)
 

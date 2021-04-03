@@ -396,3 +396,24 @@ extern xint64 xstreambufferpush_serializable(xstreambuffer * o, xserializable * 
 
     return object->serialize(object, xaddressof(o->buffer), xaddressof(o->position), xaddressof(o->size), xaddressof(o->capacity));
 }
+
+extern xint64 xstreambufferressize_predict(xstreambuffer * o, xres * res)
+{
+    xassertion(res == xnil || o == xnil, "");
+
+    return res->predict(res, o->buffer, o->position, o->size);
+}
+
+extern xint64 xstreambufferres_deserialize(xstreambuffer * o, xres * res)
+{
+    xassertion(res == xnil || o == xnil, "");
+
+    xint64 ret = res->deserialize(res, o->buffer, o->position, o->size);
+
+    if(ret > 0)
+    {
+        o->position = o->position + ret;
+    }
+
+    return ret;
+}

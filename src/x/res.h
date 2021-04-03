@@ -9,25 +9,30 @@
 #define xresponsestatus_complete        0x00000001u
 #define xresponsestatus_exception       0x00000002u
 #define xresponsestatus_timeout         0x00000004u
+#define xresponsestatus_progress        0x00000008u
 
-struct xres;
 struct xreq;
+struct xres;
 
-typedef struct xres xres;
 typedef struct xreq xreq;
+typedef struct xres xres;
 
 typedef xres * (*xresdestructor)(xres *);
-typedef xint64 (*xresdeserializer)(xres *, xstream *);
-typedef xuint64 (*xrespredictor)(xres *, xuint64);
+typedef xint64 (*xresserializer)(xres *, xbyte **, xuint64 *, xuint64 *, xuint64 *);
+typedef xint64 (*xressizepredictor)(xres *, const xbyte *, xuint64, xuint64);
+typedef xint64 (*xresdeserializer)(xres *, const xbyte *, xuint64, xuint64);
 
 struct xres
 {
-    xresdestructor   rem;
-    xtime            end;
-    xreq *           req;
-    xuint32          status;
-    xresdeserializer deserialize;
-    xrespredictor    predict;
+    /** INHERITED SERIALIZABLE */
+    xresdestructor    rem;
+    xresserializer    serialize;
+    /** RES MEMBER */
+    xtime             end;
+    xuint32           status;
+    xreq *            req;
+    xressizepredictor predict;
+    xresdeserializer  deserialize;
 };
 
 #define xrescheck_complete(res)     (res->status & xresponsestatus_complete)

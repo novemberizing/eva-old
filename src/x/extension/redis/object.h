@@ -28,6 +28,8 @@ struct xredisobject
     xuint8                 type;
 };
 
+extern xredisobject * xredisobjectrem(xredisobject * o);
+
 extern xint64 xredisobjectto_stream(xredisobject * o, xstream * stream);
 
 #endif // __NOVEMBERIZING_X__EXTENSION__REDIS_OBJECT__H__

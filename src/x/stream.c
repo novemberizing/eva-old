@@ -490,3 +490,21 @@ extern xint64 xstreampush_serializable(xstream * o, xserializable * object)
         default: xassertion(xtrue, ""); break;
     }
 }
+
+extern xint64 xstreamressize_predict(xstream * o, xres * res)
+{
+    switch(o->type)
+    {
+        case xstreamtype_buffer: xstreambufferressize_predict((xstreambuffer *) o, res);  break;
+        default: xassertion(xtrue, ""); break;
+    }
+}
+
+extern xint64 xstreamres_deserialize(xstream * o, xres * res)
+{
+    switch(o->type)
+    {
+        case xstreamtype_buffer: xstreambufferres_deserialize((xstreambuffer *) o, res);  break;
+        default: xassertion(xtrue, ""); break;
+    }
+}

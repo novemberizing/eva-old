@@ -8,8 +8,8 @@ struct xserializable;
 typedef struct xserializable xserializable;
 
 typedef xserializable * (*xserializabledestructor)(xserializable *);
-typedef xint64 (*xserializableserializer)(xserializable *, xbyte ** buffer, xuint64 * pos, xuint64 * size, xuint64 * capacity);
-
+typedef xint64 (*xserializableserializer)(xserializable *, xbyte **, xuint64 *, xuint64 *, xuint64 *);
+typedef xserializable * (*xserializabledeserializer)(const xbyte *, xuint64, xuint64, xuint64 *);
 
 struct xserializable
 {

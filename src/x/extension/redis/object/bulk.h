@@ -8,21 +8,21 @@ struct xredisbulk;
 typedef struct xredisbulk xredisbulk;
 
 typedef xredisbulk * (*xredisbulkdestructor)(xredisbulk *);
+typedef xint64 (*xredisbulkserializer)(xredisbulk *, xbyte ** buffer, xuint64 * pos, xuint64 * size, xuint64 * capacity);
 
 struct xredisbulk
 {
+    /** INHERITED SERIALIZABLE OBJECT */
+    xredisbulkdestructor rem;
+    xredisbulkserializer serialize;
     /** INHERITED REDIS OBJECT */
-    xredisbulkdestructor    rem;
-    xuint8                  type;
-    /** REDIS MEMBER */
-    xint32                  size;
-    char *                  value;
+    xuint8               type;
+    /** REDIS BULK MEMBER */
+    xint32               size;
+    char *               value;
 };
 
-extern xredisbulk * xredisbulk_new(const char * s, xuint64 size);
-extern xredisbulk * xredisbulk_rem(xredisbulk * o);
-
-extern char * xredisbulk_serialize(char * s, xuint64 * index, xuint64 * capacity, xredisbulk * o);
-extern xredisbulk * xredisbulk_deserialize(char * s, xuint64 * index, xuint64 limit);
+extern xredisbulk * xredisbulknew(const char * s, xint32 n);
+extern xredisbulk * xredisbulkrem(xredisbulk * o);
 
 #endif // __NOVEMBERIZING_X__EXTENSION__REDIS_OBJECT_BULK__H__

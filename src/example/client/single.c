@@ -16,6 +16,8 @@ static xint64 on(xclient * client, xuint32 event, xdescriptorparam param, xint64
 
 int main(int argc, char ** argv)
 {
+    xloginit(xnil, xlogtype_assertion, xtrue);
+
     struct sockaddr_in addr;
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = inet_addr("127.0.0.1");
@@ -33,7 +35,7 @@ int main(int argc, char ** argv)
         {
             xtime diff = xtimediff(xaddressof(res->end), xaddressof(res->req->start));
             printf("%ld.%09ld\n", diff.second, diff.nanosecond);
-            printf("%.*s\n", (int) res->size, res->data);
+            printf("%.*s\n", (int) res->size, res->value);
         }
         res = xechoresrem(res);
     }

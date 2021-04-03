@@ -146,32 +146,30 @@ extern xres * xclientreq(xclient * client, xreq * req)
     xassertion(client->descriptor->subscription && client->descriptor->subscription->enginenode.engine, "");
     xassertion(xstreamlen(client->descriptor->stream.out) > 0, "");
 
-    xstream * out = client->descriptor->stream.out;
+    xclientsocket * descriptor = client->descriptor;
+    xstream * out = descriptor->stream.out;
 
     req->start    = xtimeget();
     xuint64 start = xstreamsize_get(out);
-    xuint64 end   = start + req->serialize(req, out);
-    xint64 ret    = 0;
-
+    // xstream
+    xuint64 end   = start + xstreampush_serializable(out, (xserializable *) req);
     xuint64 len   = xstreamlen(out);
+    xint64 ret    = 0;
 
     while(xstreamlen(out) > 0 && ret >= 0)
     {
         xbyte * front = xstreamfront(out);
-        ret = xdescriptorwrite((xdescriptor *) client->descriptor, front, xstreamlen(out));
-
-        if(ret > 0)
+        if((ret = xdescriptorwrite((xdescriptor *) client->descriptor, front, xstreamlen(out))) > 0)
         {
             xstreampos_set(out, xstreampos_get(out) + ret);
-
             ret = xdescriptoron((xdescriptor *) client->descriptor, xdescriptoreventtype_out, xdescriptorparamgen(front), ret);
         }
     }
 
-    req->end      = xtimeget();
-
-    if(xdescriptorstatuscheck_close((xdescriptor *) client->descriptor) == xfalse)
+    if(xdescriptorstatuscheck_close((xdescriptor *) descriptor) == xfalse)
     {
+        req->end = xtimeget();
+
         xstreamadjust(out, streambuffersize, xfalse);  // capacity reset ... 
 
         return req->gen(req);
@@ -270,52 +268,45 @@ extern xuint32 xclientwait(xclient * client, xuint32 status, xint64 millisecond)
 
 extern xres * xclientwaitres(xclient * client, xres * res, xint64 millisecond)
 {
-    xdescriptor * descriptor = (xdescriptor *) client->descriptor;
-    xstream * stream = client->descriptor->stream.in;
-    // response -> 
-    xuint64 capacity = 8192;
+    xclientsocket * descriptor = client->descriptor;
+    xstream * in = descriptor->stream.in;
 
-    while((res->status & xresponsestatus_complete) == xresponsestatus_void && xdescriptorstatuscheck_close(descriptor) == xfalse)
+    while((res->status & xresponsestatus_complete) == xresponsestatus_void && xdescriptorstatuscheck_close((xdescriptor *) descriptor) == xfalse)
     {
         if(xclientwait(client, xdescriptorstatus_in, millisecond) == xdescriptorstatus_in)
         {
-            if(xstreamremain(stream) < capacity)
+            if(xstreamremain(in) < streambuffersize)
             {
-                xstreamcapacity_set(stream, xstreamcapacity_get(stream) + capacity - xstreamremain(stream));
+                xstreamcapacity_set(in, xstreamcapacity_get(in) + streambuffersize - xstreamremain(in));
             }
 
-            xbyte * back = xstreamback(stream);
+            xbyte * back = xstreamback(in);
 
-            xint64 ret = xdescriptorread(descriptor, xstreamback(stream), res->predict(res, xstreamlen(stream)));
+            xuint64 n = (descriptor->status & xdescriptorstatus_nonblock) ? xstreamremain(in) : xstreamressize_predict(in, res);
+
+            xint64 ret = xdescriptorread((xdescriptor *) descriptor, back, n);
 
             if(ret > 0)
             {
-                xstreamsize_set(stream, xstreamsize_get(stream) + ret);
+                xstreamsize_set(in, xstreamsize_get(in) + ret);
+                xdescriptoron((xdescriptor *) descriptor, xdescriptoreventtype_in, xdescriptorparamgen(back), ret);
 
-                xdescriptoron(descriptor, xdescriptoreventtype_in, xdescriptorparamgen(back), ret);
+                ret = xstreamres_deserialize(in, res);
 
-                ret = res->deserialize(res, stream);
-
-                if(ret > 0)
-                {
-                    xstreampos_set(stream, xstreampos_get(stream) + ret);
-                }
-                else if(ret < 0)
+                if(ret < 0)
                 {
                     res->status |= xresponsestatus_exception;
-                    xdescriptorexception(descriptor, res->deserialize, ret, xexceptiontype_user, "");
+                    xdescriptorexception((xdescriptor *) descriptor, res->deserialize, ret, xexceptiontype_user, "");
                 }
             }
         }
 
-        if(millisecond < 0)
+        if(millisecond >= 0)
         {
             res->status |= xresponsestatus_timeout;
             break;
         }
     }
-
-    
 
     return res;
 }

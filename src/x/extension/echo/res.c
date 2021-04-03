@@ -4,72 +4,84 @@
 
 #include "../../thread.h"
 #include "res.h"
+#include "req.h"
 
-static xuint64 xechorespredict(xechores * res, xuint64 len)
+static xint64 xechoresserialize(xechores * res, xbyte ** buffer, xuint64 * position, xuint64 * size, xuint64 * capacity)
 {
-    if(res->status & xresponsestatus_complete)
-    {
-        return 0;
-    }
+    xassertion(res == xnil || buffer == xnil || position == xnil || size == xnil || capacity == xnil, "");
 
-    return res->req->size <= len ? 0 : (res->req->size - len);
+    *buffer = xstringcapacity_set(*buffer, size, capacity, res->size);
+
+    if(res->size > 0)
+    {
+        memcpy(*buffer, res->value, res->size);
+        *size = *size + res->size;
+    }
+    
+    return res->size;
 }
 
-static xint64 xechoresdeserialize(xechores * res, xstream * stream)
+static xint64 xechoressizepredict(xechores * res, const xbyte * buffer, xuint64 position, xuint64 size)
 {
-
-    if(res->req->size > 0)
+    if((res->status & xresponsestatus_complete) == xresponsestatus_void)
     {
-        if(res->req->size <= xstreamlen(stream))
+        return res->req->size;
+    }
+    return 0;
+}
+
+static xint64 xechoresdeserialize(xechores * res, const xbyte * buffer, xuint64 position, xuint64 size)
+{
+    if((res->status & xresponsestatus_complete) == xresponsestatus_void)
+    {
+        xassertion(size < position, "");
+
+        xuint64 len = size - position;
+        if(res->req->size <= len)
         {
-            if(res->data == xnil)
+            if(res->value)
             {
-                free(res->data);
+                free(res->value);
             }
-            res->data = malloc(res->req->size);
-            res->size = res->req->size;
-            memcpy(res->data, xstreamfront(stream), res->size);
-            
+            res->value = xobjectdup(xaddressof(buffer[position]), res->req->size);
+            res->size  = res->req->size;
+            res->status |= xresponsestatus_complete;
             res->end = xtimeget();
 
-            res->status |= xresponsestatus_complete;
-
-            return res->req->size;
+            return res->size;
         }
+        // TODO: NEED MORE BYTES
+        return 0;
     }
-    else
-    {
-        res->status |= xresponsestatus_complete;
-    }
-
     return 0;
 }
 
 extern xechores * xechoresnew(xechoreq * req)
 {
-    xechores * o  = (xechores *) calloc(sizeof(xechores), 1);
+    xechores * o   = (xechores *) calloc(sizeof(xechores), 1);
 
-    o->rem        = xechoresrem;
-    o->req        = req;
-    o->deserialze = xechoresdeserialize;
-    o->predict    = xechorespredict;
+    o->rem         = xechoresrem;
+    o->serialize   = xechoresserialize;
+    o->req         = req;
+    o->predict     = xechoressizepredict;
+    o->deserialize = xechoresdeserialize;
 
     return o;
 }
 
-extern xechores * xechoresrem(xechores * res)
+extern xechores * xechoresrem(xechores * o)
 {
-    if(res)
+    if(o)
     {
-        if(res->req)
+        if(o->value)
         {
-            res->req = res->req->rem(res->req);
+            free(o->value);
         }
-        if(res->data)
+        if(o->req)
         {
-            free(res->data);
+            o->req = xreqrem(o->req);
         }
-        free(res);
+        free(o);
     }
-    return res;
+    return xnil;
 }

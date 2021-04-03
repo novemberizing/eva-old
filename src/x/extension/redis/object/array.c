@@ -6,97 +6,70 @@
 #include "../../../string.h"
 #include "array.h"
 
+static void xredisobjectval_rem(xval * val)
+{
+    if(val)
+    {
+        xredisobjectrem((xredisobject *) val->p);
+    }
+}
 
-// static void xredisobjectarrayitem_rem(xval * value)
-// {
-//     xredisobjectrem((xredisobject *) value->p);
-// }
+static xint64 xredisarrayserialize(xredisarray * o, xbyte ** buffer, xuint64 * pos, xuint64 * size, xuint64 * capacity)
+{
+    char str[256];
+    xint32 n = snprintf(str, 256, "%lu", o->objects->size);
+    str[n] = 0;
 
-// typedef void (*xvalfunc)(xval *);
+    *buffer = xstringcapacity_set(*buffer, size, capacity, 6 + n);
 
-// extern xredisarray * xredisarray_new(void)
-// {
-//     xredisarray * o = (xredisarray *) calloc(sizeof(xredisarray), 1);
+    printf("%ld\n", *size);
 
-//     o->rem = xredisarray_rem;
-//     o->type = xredisobjecttype_array;
-//     o->values = xlistnew();
+    (*buffer)[(*size)++] = o->type;
+    memcpy(xaddressof((*buffer)[*size]), str, n);
+    *size = *size + n;
+    *((xuint32 *) xaddressof((*buffer)[*size])) = xredisprotocolend;
+    *size = *size + 2;
 
-//     return o;
-// }
+    printf("%ld\n", *size);
 
-// extern xredisarray * xredisarray_rem(xredisarray * o)
-// {
-//     if(o)
-//     {
-//         if(o->values)
-//         {
-//             o->values = xlistrem(o->values, xredisobjectarrayitem_rem);
-//         }
-//         free(o);
-//     }
-//     return xnil;
-// }
+    for(xlistnode * node = xlistbegin(o->objects); node != xnil; node = xlistnext(node))
+    {
+        xredisobject * child = (xredisobject *) node->value.p;
+        if(child->serialize(child, buffer, pos, size, capacity) != xsuccess)
+        {
+            return xfail;
+        }
+    }
 
-// extern void xredisarray_push(xredisarray * array, xredisobject * o)
-// {
-//     xassertion(array == xnil, "");
+    return xsuccess;
+}
 
-//     xlistpushback(array->values, xvalobject(o));
-// }
+extern xredisarray * xredisarraynew(void)
+{
+    xredisarray * o = (xredisarray *) calloc(sizeof(xredisarray), 1);
 
-// extern xuint64 xredisarray_size(xredisarray * array)
-// {
-//     xassertion(array == xnil || array->values == xnil, "");
-    
-//     return array->values->size;
-// }
+    o->rem = xredisarrayrem;
+    o->serialize = xredisarrayserialize;
+    o->type = xredisobjecttype_array;
+    o->objects = xlistnew();
 
-// extern xlistnode * xredisarray_front(xredisarray * array)
-// {
-//     xassertion(array == xnil || array->values == xnil, "");
+    return o;
+}
 
-//     return array->values->head;
-// }
+extern xredisarray * xredisarrayrem(xredisarray * o)
+{
+    if(o)
+    {
+        o->objects = xlistrem(o->objects, xredisobjectval_rem);
+        free(o);
+    }
+    return xnil;
+}
 
-// extern xlistnode * xredisarray_next(xlistnode * node)
-// {
-//     xassertion(node == xnil, "");
-
-//     return node ? node->next : xnil;
-// }
-
-
-// extern char * xredisarray_serialize(char * s, xuint64 * index, xuint64 * capacity, xredisarray * o)
-// {
-//     xassertion(index == xnil || capacity == xnil, "");
-//     xassertion(*capacity < *index, "");
-
-
-//     char str[256];
-//     xint32 n = snprintf(str, 256, "%lu", o->values->size);
-//     str[n] = 0;
-
-//     s = xstringcapacity_set(s, index, capacity, 6 + n);
-
-
-//     s[(*index)++] = o->type;
-//     memcpy(xaddressof(s[*index]), str, n);
-//     *index = *index + n;
-//     *((xuint32 *) xaddressof(s[*index])) = xredisprotocolend;
-//     *index = *index + 2;
-
-//     for(xlistnode * node = xredisarray_front(o); node != xnil; node = xredisarray_next(node))
-//     {
-//         s = xredisobject_serialize(s, index, capacity, (xredisobject *) node->value.p);
-//     }
-
-//     return s;
-// }
-
-// extern xredisarray * xredisarray_deserialize(char * s, xuint64 * index, xuint64 limit)
-// {
-//     xassertion(xtrue, "");
-
-//     return xnil;
-// }
+extern void xredisarray_push(xredisarray * o, xredisobject * object)
+{
+    if(o)
+    {
+        xlistpushback(o->objects, xvalobject(object));
+    }
+}
