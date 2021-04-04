@@ -223,3 +223,34 @@ extern xint64 xstringtoint64(char * s, xuint64 limit)
 
     return s[0] == '-' ? -ret : ret;
 }
+
+extern void xstringset(xstring * o, const char * value, xuint64 len)
+{
+    if(len > 0)
+    {
+        if(o->capacity < len)
+        {
+            o->capacity = (len / page + 1) * page;
+
+            if(o->value)
+            {
+                free(o->value);
+            }
+
+            o->value = malloc(o->capacity);
+        }
+
+        memcpy(o->value, value, len);
+        o->value[len] = 0;
+        o->size = len;
+    }
+    else
+    {
+        if(o->value == xnil)
+        {
+            o->value = malloc(page);
+        }
+        o->size = 0;
+        o->capacity = 0;
+    }
+}

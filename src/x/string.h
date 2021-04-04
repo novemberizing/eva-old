@@ -3,6 +3,19 @@
 
 #include <x/std.h>
 
+struct xstring;
+
+typedef struct xstring xstring;
+
+struct xstring
+{
+    xuint64 size;
+    xuint64 capacity;
+    char *  value;
+};
+
+extern void xstringset(xstring * o, const char * value, xuint64 len);
+
 extern char * xstringdup(const char * source, xuint64 len);
 extern char * xstringcpy(char * o, xuint64 * index, xuint64 * capacity, const char * source);
 extern char * xstringncpy(char * o, xuint64 * index, xuint64 * capacity, const char * source, xuint64 n);

@@ -45,6 +45,31 @@ extern xredisbulk * xredisbulknew(const char * s, xint32 n)
     return o;
 }
 
+extern xredisbulk * xredisbulkfrom_format(const char * format, xuint64 formatlen, va_list ap)
+{
+    xredisbulk * o = (xredisbulk *) calloc(sizeof(xredisbulk), 1);
+
+    o->rem       = xredisbulkrem;
+    o->serialize = xredisbulkserialize;
+    o->type      = xredisobjecttype_bulk;
+    o->value     = xnil;
+    o->size      = 0;
+
+
+
+
+    // xuint64 total = formatlen / sizeof(xuint64);
+    // register xuint64 i = 0;
+    // register xuint64 * form = (xuint64 *) format;
+    // for(; i < total; i++)
+    // {
+    //     char * s = (char *) form;
+    //     printf("character[8] => %c%c%c%c%c%c%c%c\n", s[0], s[1], s[2], s[3], s[4], s[5], s[6], s[7]);
+    // }
+
+    return o;
+}
+
 extern xredisbulk * xredisbulkfrom_int64(xint64 value)
 {
     char s[256];

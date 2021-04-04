@@ -100,7 +100,8 @@ noinst_PROGRAMS = example-helloworld$(EXEEXT) \
 	example-redis-protocol$(EXEEXT) example-redis-set$(EXEEXT) \
 	example-redis-client$(EXEEXT) example-redis-req$(EXEEXT) \
 	example-server-simple$(EXEEXT) benchmark-server$(EXEEXT) \
-	benchmark-client$(EXEEXT) benchmark-string$(EXEEXT)
+	benchmark-client$(EXEEXT) benchmark-string$(EXEEXT) \
+	benchmark-format$(EXEEXT)
 subdir = src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -209,6 +210,9 @@ AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+am_benchmark_format_OBJECTS = example/benchmark/format.$(OBJEXT)
+benchmark_format_OBJECTS = $(am_benchmark_format_OBJECTS)
+benchmark_format_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_benchmark_server_OBJECTS = example/benchmark/server.$(OBJEXT)
 benchmark_server_OBJECTS = $(am_benchmark_server_OBJECTS)
 benchmark_server_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -274,6 +278,7 @@ depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = example/$(DEPDIR)/helloworld.Po \
 	example/benchmark/$(DEPDIR)/client.Po \
+	example/benchmark/$(DEPDIR)/format.Po \
 	example/benchmark/$(DEPDIR)/server.Po \
 	example/benchmark/$(DEPDIR)/string.Po \
 	example/client/$(DEPDIR)/pool.Po \
@@ -360,8 +365,9 @@ am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
 SOURCES = $(libnovemberizing_a_SOURCES) $(benchmark_client_SOURCES) \
-	$(benchmark_server_SOURCES) $(benchmark_string_SOURCES) \
-	$(example_client_pool_SOURCES) $(example_client_redis_SOURCES) \
+	$(benchmark_format_SOURCES) $(benchmark_server_SOURCES) \
+	$(benchmark_string_SOURCES) $(example_client_pool_SOURCES) \
+	$(example_client_redis_SOURCES) \
 	$(example_client_single_SOURCES) \
 	$(example_console_engine_SOURCES) \
 	$(example_helloworld_SOURCES) $(example_redis_client_SOURCES) \
@@ -372,9 +378,9 @@ SOURCES = $(libnovemberizing_a_SOURCES) $(benchmark_client_SOURCES) \
 	$(example_string_simple_SOURCES) \
 	$(example_string_uint64_SOURCES)
 DIST_SOURCES = $(libnovemberizing_a_SOURCES) \
-	$(benchmark_client_SOURCES) $(benchmark_server_SOURCES) \
-	$(benchmark_string_SOURCES) $(example_client_pool_SOURCES) \
-	$(example_client_redis_SOURCES) \
+	$(benchmark_client_SOURCES) $(benchmark_format_SOURCES) \
+	$(benchmark_server_SOURCES) $(benchmark_string_SOURCES) \
+	$(example_client_pool_SOURCES) $(example_client_redis_SOURCES) \
 	$(example_client_single_SOURCES) \
 	$(example_console_engine_SOURCES) \
 	$(example_helloworld_SOURCES) $(example_redis_client_SOURCES) \
@@ -606,6 +612,8 @@ libnovemberizing_a_SOURCES = x/std.c                                          \
                              x/eva.c                                          \
                              x/eva/cli.c
 
+benchmark_format_SOURCES = example/benchmark/format.c
+benchmark_format_LDADD = $(LIBS)
 benchmark_string_SOURCES = example/benchmark/string.c
 benchmark_string_LDADD = $(LIBS)
 benchmark_server_SOURCES = example/benchmark/server.c
@@ -1057,6 +1065,12 @@ example/benchmark/client.$(OBJEXT): example/benchmark/$(am__dirstamp) \
 benchmark-client$(EXEEXT): $(benchmark_client_OBJECTS) $(benchmark_client_DEPENDENCIES) $(EXTRA_benchmark_client_DEPENDENCIES) 
 	@rm -f benchmark-client$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(benchmark_client_OBJECTS) $(benchmark_client_LDADD) $(LIBS)
+example/benchmark/format.$(OBJEXT): example/benchmark/$(am__dirstamp) \
+	example/benchmark/$(DEPDIR)/$(am__dirstamp)
+
+benchmark-format$(EXEEXT): $(benchmark_format_OBJECTS) $(benchmark_format_DEPENDENCIES) $(EXTRA_benchmark_format_DEPENDENCIES) 
+	@rm -f benchmark-format$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(benchmark_format_OBJECTS) $(benchmark_format_LDADD) $(LIBS)
 example/benchmark/server.$(OBJEXT): example/benchmark/$(am__dirstamp) \
 	example/benchmark/$(DEPDIR)/$(am__dirstamp)
 
@@ -1236,6 +1250,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@example/$(DEPDIR)/helloworld.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/benchmark/$(DEPDIR)/client.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@example/benchmark/$(DEPDIR)/format.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/benchmark/$(DEPDIR)/server.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/benchmark/$(DEPDIR)/string.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/client/$(DEPDIR)/pool.Po@am__quote@ # am--include-marker
@@ -1589,6 +1604,7 @@ clean-am: clean-generic clean-libLIBRARIES clean-libtool \
 distclean: distclean-am
 		-rm -f example/$(DEPDIR)/helloworld.Po
 	-rm -f example/benchmark/$(DEPDIR)/client.Po
+	-rm -f example/benchmark/$(DEPDIR)/format.Po
 	-rm -f example/benchmark/$(DEPDIR)/server.Po
 	-rm -f example/benchmark/$(DEPDIR)/string.Po
 	-rm -f example/client/$(DEPDIR)/pool.Po
@@ -1722,6 +1738,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-am
 		-rm -f example/$(DEPDIR)/helloworld.Po
 	-rm -f example/benchmark/$(DEPDIR)/client.Po
+	-rm -f example/benchmark/$(DEPDIR)/format.Po
 	-rm -f example/benchmark/$(DEPDIR)/server.Po
 	-rm -f example/benchmark/$(DEPDIR)/string.Po
 	-rm -f example/client/$(DEPDIR)/pool.Po

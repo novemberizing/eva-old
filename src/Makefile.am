@@ -99,7 +99,11 @@ noinst_PROGRAMS = example-helloworld                                         \
                   example-server-simple                                      \
                   benchmark-server                                           \
                   benchmark-client                                           \
-                  benchmark-string
+                  benchmark-string                                           \
+                  benchmark-format
+
+benchmark_format_SOURCES       = example/benchmark/format.c
+benchmark_format_LDADD         = $(LIBS)
 
 benchmark_string_SOURCES       = example/benchmark/string.c
 benchmark_string_LDADD         = $(LIBS)

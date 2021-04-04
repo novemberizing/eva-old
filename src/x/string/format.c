@@ -7,7 +7,7 @@
 
 static xuint64 page = 16;
 
-const char * specifiers = "diouxXeEfFgGaAcspnm% ";
+static const char * specifiers = "diouxXeEfFgGaAcspnm% ";
 
 static char * xstringserialize_str(char * s, xuint64 * index, xuint64 * capacity, const char * format, va_list ap)
 {
