@@ -35,17 +35,12 @@ int main(int argc, char ** argv)
 
     for(xint32 i = 0; i < total; i++)
     {
+        // xredisres * res = xredisclientsync_set(client, "");
         xredisres * res = (xredisres *) xclientwaitres(client, xclientreq(client, (xreq *) xredisreqgen_set("foo", "bar")), -1);
-        // xechores * res = (xechores *) xclientwaitres(client, xclientreq(client, (xreq *) xechoreqnew("PING\r\n")), -1);
         if(xrescheck_complete(res))
         {
             diff[i] = xtimediff(xaddressof(res->end), xaddressof(res->req->start));
-            // xtime diff = xtimediff(xaddressof(res->end), xaddressof(res->req->start));
-            // printf("%ld.%09ld\n", res->req->start.second, res->req->start.nanosecond);
-            // printf("%ld.%09ld\n", diff.second, diff.nanosecond);
 
-            // printf("%s\n", res->)
-            // printf("%.*s\n", (int) res->size, res->value);
         }
         res = xredisresrem(res);
     }
