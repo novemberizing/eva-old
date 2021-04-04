@@ -195,8 +195,10 @@ am_libnovemberizing_a_OBJECTS = x/std.$(OBJEXT) x/log.$(OBJEXT) \
 	x/extension/redis/object/bulk.$(OBJEXT) \
 	x/extension/redis/object/array.$(OBJEXT) \
 	x/extension/redis/client.$(OBJEXT) \
-	x/extension/echo/req.$(OBJEXT) x/extension/echo/res.$(OBJEXT) \
-	x/eva.$(OBJEXT) x/eva/cli.$(OBJEXT)
+	x/extension/redis/req.$(OBJEXT) \
+	x/extension/redis/res.$(OBJEXT) x/extension/echo/req.$(OBJEXT) \
+	x/extension/echo/res.$(OBJEXT) x/eva.$(OBJEXT) \
+	x/eva/cli.$(OBJEXT)
 libnovemberizing_a_OBJECTS = $(am_libnovemberizing_a_OBJECTS)
 am_benchmark_client_OBJECTS = example/benchmark/client.$(OBJEXT)
 benchmark_client_OBJECTS = $(am_benchmark_client_OBJECTS)
@@ -308,6 +310,8 @@ am__depfiles_remade = example/$(DEPDIR)/helloworld.Po \
 	x/extension/echo/$(DEPDIR)/res.Po \
 	x/extension/redis/$(DEPDIR)/client.Po \
 	x/extension/redis/$(DEPDIR)/object.Po \
+	x/extension/redis/$(DEPDIR)/req.Po \
+	x/extension/redis/$(DEPDIR)/res.Po \
 	x/extension/redis/object/$(DEPDIR)/array.Po \
 	x/extension/redis/object/$(DEPDIR)/bulk.Po \
 	x/extension/redis/object/$(DEPDIR)/error.Po \
@@ -578,6 +582,8 @@ libnovemberizing_a_SOURCES = x/std.c                                          \
                              x/extension/redis/object/bulk.c                  \
                              x/extension/redis/object/array.c                 \
                              x/extension/redis/client.c                       \
+                             x/extension/redis/req.c                          \
+                             x/extension/redis/res.c                          \
                              x/extension/echo/req.c                           \
                              x/extension/echo/res.c                           \
                              x/eva.c                                          \
@@ -980,6 +986,10 @@ x/extension/redis/object/array.$(OBJEXT):  \
 	x/extension/redis/object/$(DEPDIR)/$(am__dirstamp)
 x/extension/redis/client.$(OBJEXT): x/extension/redis/$(am__dirstamp) \
 	x/extension/redis/$(DEPDIR)/$(am__dirstamp)
+x/extension/redis/req.$(OBJEXT): x/extension/redis/$(am__dirstamp) \
+	x/extension/redis/$(DEPDIR)/$(am__dirstamp)
+x/extension/redis/res.$(OBJEXT): x/extension/redis/$(am__dirstamp) \
+	x/extension/redis/$(DEPDIR)/$(am__dirstamp)
 x/extension/echo/$(am__dirstamp):
 	@$(MKDIR_P) x/extension/echo
 	@: > x/extension/echo/$(am__dirstamp)
@@ -1239,6 +1249,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@x/extension/echo/$(DEPDIR)/res.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/extension/redis/$(DEPDIR)/client.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/extension/redis/$(DEPDIR)/object.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/extension/redis/$(DEPDIR)/req.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@x/extension/redis/$(DEPDIR)/res.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/extension/redis/object/$(DEPDIR)/array.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/extension/redis/object/$(DEPDIR)/bulk.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/extension/redis/object/$(DEPDIR)/error.Po@am__quote@ # am--include-marker
@@ -1584,6 +1596,8 @@ distclean: distclean-am
 	-rm -f x/extension/echo/$(DEPDIR)/res.Po
 	-rm -f x/extension/redis/$(DEPDIR)/client.Po
 	-rm -f x/extension/redis/$(DEPDIR)/object.Po
+	-rm -f x/extension/redis/$(DEPDIR)/req.Po
+	-rm -f x/extension/redis/$(DEPDIR)/res.Po
 	-rm -f x/extension/redis/object/$(DEPDIR)/array.Po
 	-rm -f x/extension/redis/object/$(DEPDIR)/bulk.Po
 	-rm -f x/extension/redis/object/$(DEPDIR)/error.Po
@@ -1711,6 +1725,8 @@ maintainer-clean: maintainer-clean-am
 	-rm -f x/extension/echo/$(DEPDIR)/res.Po
 	-rm -f x/extension/redis/$(DEPDIR)/client.Po
 	-rm -f x/extension/redis/$(DEPDIR)/object.Po
+	-rm -f x/extension/redis/$(DEPDIR)/req.Po
+	-rm -f x/extension/redis/$(DEPDIR)/res.Po
 	-rm -f x/extension/redis/object/$(DEPDIR)/array.Po
 	-rm -f x/extension/redis/object/$(DEPDIR)/bulk.Po
 	-rm -f x/extension/redis/object/$(DEPDIR)/error.Po

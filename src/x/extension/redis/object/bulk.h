@@ -29,4 +29,6 @@ extern xint64 xredisbulk_predict(xbyte * buffer, xuint64 position, xuint64 size)
 extern xint64 xredisbulk_complete(xbyte * buffer, xuint64 position, xuint64 size);
 extern xredisbulk * xredisbulk_deserialize(xbyte * buffer, xuint64 * position, xuint64 size);
 
+extern void xredisbulk_print(xredisbulk * bulk);  // 디버깅
+
 #endif // __NOVEMBERIZING_X__EXTENSION__REDIS_OBJECT_BULK__H__

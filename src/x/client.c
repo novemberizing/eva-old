@@ -293,10 +293,16 @@ extern xres * xclientwaitres(xclient * client, xres * res, xint64 millisecond)
 
                 ret = xstreamres_deserialize(in, res);
 
+                xassertion(ret == 0, "");
+
                 if(ret < 0)
                 {
                     res->status |= xresponsestatus_exception;
                     xdescriptorexception((xdescriptor *) descriptor, res->deserialize, ret, xexceptiontype_user, "");
+                }
+                else if(ret > 0)
+                {
+                    xstreamadjust(in, streambuffersize, xfalse);
                 }
             }
         }

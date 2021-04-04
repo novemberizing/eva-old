@@ -106,7 +106,7 @@ extern xint64 xredisstring_complete(xbyte * buffer, xuint64 position, xuint64 si
 
 extern xredisstring * xredisstring_deserialize(xbyte * buffer, xuint64 * position, xuint64 size)
 {
-    xuint64 index = *position;
+    xuint64 index = 0;
     char * next = xstringstr_next(xaddressof(buffer[*position]), xaddressof(index), size, "\r\n");
 
     xassertion(next == xnil, "");
@@ -116,10 +116,15 @@ extern xredisstring * xredisstring_deserialize(xbyte * buffer, xuint64 * positio
     o->rem       = xredisstringrem;
     o->serialize = xredisstringserialize;
     o->type      = xredisobjecttype_string;
-    o->size      = index - *position - 3;
+    o->size      = index - 3;
     o->value     = xstringdup(xaddressof(buffer[*position + 1]), o->size);
 
     *position = index;
 
     return o;
+}
+
+extern void xredisstring_print(xredisstring * string)
+{
+    printf("%s\n", string->value);
 }

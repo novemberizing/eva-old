@@ -36,6 +36,7 @@ extern xint64 xredisobject_predict(xbyte * buffer, xuint64 position, xuint64 siz
 extern xint64 xredisobject_complete(xbyte * buffer, xuint64 position, xuint64 size);
 
 extern xredisobject * xredisobject_deserialize(xbyte * buffer, xuint64 * position, xuint64 size);
+extern void xredisobject_print(xredisobject * o);
 
 // static xint64 xredisressizepredict(xredisres * res, const xbyte * buffer, xuint64 position, xuint64 size);
 // static xint64 xredisresdeserialize(xredisres * res, const xbyte * buffer, xuint64 position, xuint64 size);

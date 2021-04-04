@@ -173,4 +173,6 @@ extern xint64 xrandominteger64(xuint64 max);
 
 extern xuint64 xunsigned64from_integer32(xint32 first, xint32 second);
 
+extern xuint64 xuint64decimalstringlen(xuint64 n);
+
 #endif // __NOVEMBERIZING_X__STD__H__

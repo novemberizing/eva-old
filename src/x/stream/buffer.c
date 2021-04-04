@@ -268,7 +268,7 @@ extern xuint64 xstreambufferpos_set(xstreambuffer * o, xuint64 n)
 {
     xlogfunction_start("%s(%p, %lu)", __func__, o, n);
 
-    xassertion(o->size < n, "");
+    xassertion(o->size < n, "size => %lu, n => %lu", o->size, n);
     xuint64 ret = (o->position = n);
 
     xlogfunction_end("%s(...) => %lu", __func__, ret);

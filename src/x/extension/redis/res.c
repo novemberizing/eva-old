@@ -1,3 +1,8 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "../../thread.h"
 #include "res.h"
 
 static xint64 xredisresserialize(xredisres * res, xbyte ** buffer, xuint64 * position, xuint64 * size, xuint64 * capacity)
@@ -7,7 +12,7 @@ static xint64 xredisresserialize(xredisres * res, xbyte ** buffer, xuint64 * pos
     return res->object->serialize(res->object, buffer, position, size, capacity);
 }
 
-static xint64 xredisressizepredict(xredisres * res, const xbyte * buffer, xuint64 position, xuint64 size)
+static xint64 xredisressizepredict(xredisres * res, xbyte * buffer, xuint64 position, xuint64 size)
 {
     xint64 n = xredisobject_predict(buffer, position, size);
     if(n > 0)
@@ -21,13 +26,19 @@ static xint64 xredisressizepredict(xredisres * res, const xbyte * buffer, xuint6
  * 이 함수가 호출되었다는 것은 이미 COMPLETED 상태란 의미이다.
  * 그렇게 로직을 만들어야 한다. 그래야 작은 작업이지만 두번 이상 수행하지 않는다.
  */
-static xint64 xredisresdeserialize(xredisres * res, const xbyte * buffer, xuint64 position, xuint64 size)
+static xint64 xredisresdeserialize(xredisres * res, xbyte * buffer, xuint64 position, xuint64 size)
 {
     if(res->object == xnil)
     {
         xuint64 index = position;
 
         res->object = xredisobject_deserialize(buffer, xaddressof(index), size);
+
+        res->status |= xresponsestatus_complete;
+
+//        xredisobject_print(res->object);
+
+        res->end = xtimeget();
 
         xassertion(res->object == xnil, "");
 

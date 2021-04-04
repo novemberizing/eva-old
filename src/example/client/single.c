@@ -5,8 +5,10 @@
 #include <arpa/inet.h>
 
 #include <x/client.h>
-#include <x/extension/echo/req.h>
-#include <x/extension/echo/res.h>
+#include <x/extension/redis/req.h>
+#include <x/extension/redis/res.h>
+// #include <x/extension/echo/req.h>
+// #include <x/extension/echo/res.h>
 
 static xint64 on(xclient * client, xuint32 event, xdescriptorparam param, xint64 result)
 {
@@ -28,16 +30,29 @@ int main(int argc, char ** argv)
     xclientconnect(client);
     xclientwait(client, xdescriptorstatus_open, -1);
 
-    for(xint32 i = 0; i < 32; i++)
+    const xint32 total = 65536;
+    xtime diff[total];
+
+    for(xint32 i = 0; i < total; i++)
     {
-        xechores * res = (xechores *) xclientwaitres(client, xclientreq(client, (xreq *) xechoreqnew("PING\r\n")), -1);
+        xredisres * res = (xredisres *) xclientwaitres(client, xclientreq(client, (xreq *) xredisreqgen_set("foo", "bar")), -1);
+        // xechores * res = (xechores *) xclientwaitres(client, xclientreq(client, (xreq *) xechoreqnew("PING\r\n")), -1);
         if(xrescheck_complete(res))
         {
-            xtime diff = xtimediff(xaddressof(res->end), xaddressof(res->req->start));
-            printf("%ld.%09ld\n", diff.second, diff.nanosecond);
-            printf("%.*s\n", (int) res->size, res->value);
+            diff[i] = xtimediff(xaddressof(res->end), xaddressof(res->req->start));
+            // xtime diff = xtimediff(xaddressof(res->end), xaddressof(res->req->start));
+            // printf("%ld.%09ld\n", res->req->start.second, res->req->start.nanosecond);
+            // printf("%ld.%09ld\n", diff.second, diff.nanosecond);
+
+            // printf("%s\n", res->)
+            // printf("%.*s\n", (int) res->size, res->value);
         }
-        res = xechoresrem(res);
+        res = xredisresrem(res);
+    }
+
+    for(xint32 i = 0; i < total; i++)
+    {
+        printf("%ld.%09ld\n", diff[i].second, diff[i].nanosecond);
     }
 
     xclientrem(client);

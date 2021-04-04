@@ -30,6 +30,8 @@ extern xint64 xredisarray_predict(xbyte * buffer, xuint64 position, xuint64 size
 extern xint64 xredisarray_complete(xbyte * buffer, xuint64 position, xuint64 size);
 extern xredisarray * xredisarray_deserialize(xbyte * buffer, xuint64 * position, xuint64 size);
 
+extern void xredisarray_print(xredisarray * array);  // 디버깅
+
 // struct xredisarray;
 
 // typedef struct xredisarray xredisarray;

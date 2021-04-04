@@ -132,7 +132,7 @@ extern xint64 xredisbulk_complete(xbyte * buffer, xuint64 position, xuint64 size
 
 extern xredisbulk * xredisbulk_deserialize(xbyte * buffer, xuint64 * position, xuint64 size)
 {
-    xuint64 index = *position;
+    xuint64 index = 0;
     char * next = xstringstr_next(xaddressof(buffer[*position]), xaddressof(index), size, "\r\n");
 
     xassertion(next == xnil, "");
@@ -142,11 +142,16 @@ extern xredisbulk * xredisbulk_deserialize(xbyte * buffer, xuint64 * position, x
     o->rem       = xredisbulkrem;
     o->serialize = xredisbulkserialize;
     o->type      = xredisobjecttype_bulk;
-    o->size      = xstringtoint64(xaddressof(buffer[*position + 1]), index - *position - 3);
+    o->size      = xstringtoint64(xaddressof(buffer[*position + 1]), index - 3);
     o->value     = xstringdup(xaddressof(buffer[index]), o->size);
 
     *position = index + o->size + 2;
 
     return o;
 
+}
+
+extern void xredisbulk_print(xredisbulk * bulk)
+{
+    printf("%.*s\n", bulk->size, bulk->value);
 }

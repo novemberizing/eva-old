@@ -22,15 +22,11 @@ static xint64 xredisarrayserialize(xredisarray * o, xbyte ** buffer, xuint64 * p
 
     *buffer = xstringcapacity_set(*buffer, size, capacity, 6 + n);
 
-    printf("%ld\n", *size);
-
     (*buffer)[(*size)++] = o->type;
     memcpy(xaddressof((*buffer)[*size]), str, n);
     *size = *size + n;
     *((xuint32 *) xaddressof((*buffer)[*size])) = xredisprotocolend;
     *size = *size + 2;
-
-    printf("%ld\n", *size);
 
     for(xlistnode * node = xlistbegin(o->objects); node != xnil; node = xlistnext(node))
     {
@@ -163,7 +159,7 @@ extern xint64 xredisarray_complete(xbyte * buffer, xuint64 position, xuint64 siz
 
 extern xredisarray * xredisarray_deserialize(xbyte * buffer, xuint64 * position, xuint64 size)
 {
-    xuint64 index = *position;
+    xuint64 index = 0;
     char * next = xstringstr_next(xaddressof(buffer[*position]), xaddressof(index), size, "\r\n");
 
     xassertion(next == xnil, "");
@@ -175,7 +171,7 @@ extern xredisarray * xredisarray_deserialize(xbyte * buffer, xuint64 * position,
     o->type = xredisobjecttype_array;
     o->objects = xlistnew();
 
-    xuint64 n = xstringtoint64(xaddressof(buffer[*position + 1]), index - *position - 3);
+    xuint64 n = xstringtoint64(xaddressof(buffer[*position + 1]), index - 3);
 
     *position = index;
 
@@ -185,4 +181,12 @@ extern xredisarray * xredisarray_deserialize(xbyte * buffer, xuint64 * position,
     }
 
     return o;
+}
+
+extern void xredisarray_print(xredisarray * array)
+{
+    for(xlistnode * node = xlistbegin(array->objects); node != xnil; node = xlistnext(node))
+    {
+        xredisobject_print((xredisobject *) node->value.p);
+    }
 }

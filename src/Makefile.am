@@ -70,6 +70,8 @@ libnovemberizing_a_SOURCES = x/std.c                                          \
                              x/extension/redis/object/bulk.c                  \
                              x/extension/redis/object/array.c                 \
                              x/extension/redis/client.c                       \
+                             x/extension/redis/req.c                          \
+                             x/extension/redis/res.c                          \
                              x/extension/echo/req.c                           \
                              x/extension/echo/res.c                           \
                              x/eva.c                                          \

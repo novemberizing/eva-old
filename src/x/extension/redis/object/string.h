@@ -30,4 +30,6 @@ extern xint64 xredisstring_complete(xbyte * buffer, xuint64 position, xuint64 si
 
 extern xredisstring * xredisstring_deserialize(xbyte * buffer, xuint64 * position, xuint64 size);
 
+extern void xredisstring_print(xredisstring * string);  // 디버깅
+
 #endif // __NOVEMBERIZING_X__EXTENSION__REDIS_OBJECT_STRING__H__

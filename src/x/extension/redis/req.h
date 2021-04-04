@@ -33,6 +33,6 @@ struct xredisreq
 extern xredisreq * xredisreqnew(xredisobject * object);
 extern xredisreq * xredisreqrem(xredisreq * o);
 
-extern xredisreq * xredisreq_set(const char * key, const char * value);
+extern xredisreq * xredisreqgen_set(const char * key, const char * value);
 
 #endif // __NOVEMBERIZING_X__REDIS__REQ__H__

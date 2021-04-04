@@ -116,7 +116,7 @@ extern xint64 xredisinteger_complete(xbyte * buffer, xuint64 position, xuint64 s
 
 extern xredisinteger * xredisinteger_deserialize(xbyte * buffer, xuint64 * position, xuint64 size)
 {
-    xuint64 index = *position;
+    xuint64 index = 0;
     char * next = xstringstr_next(xaddressof(buffer[*position]), xaddressof(index), size, "\r\n");
 
     xassertion(next == xnil, "");
@@ -126,9 +126,14 @@ extern xredisinteger * xredisinteger_deserialize(xbyte * buffer, xuint64 * posit
     o->rem = xredisintegerrem;
     o->serialize = xredisintegerserialize;
     o->type = xredisobjecttype_integer;
-    o->value = xstringtoint64(xaddressof(buffer[*position + 1]), index - *position - 3);
+    o->value = xstringtoint64(xaddressof(buffer[*position + 1]), index - 3);
 
     *position = index;
 
     return o;
+}
+
+extern void xredisinteger_print(xredisinteger * integer)
+{
+    printf("%ld\n", integer->value);
 }

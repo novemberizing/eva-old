@@ -79,3 +79,16 @@ extern xredisobject * xredisobject_deserialize(xbyte * buffer, xuint64 * positio
     }
 //    xassertion(xtrue, "implement this");
 }
+
+extern void xredisobject_print(xredisobject * o)
+{
+    switch(o->type)
+    {
+        case xredisobjecttype_string:       xredisstring_print((xredisstring *) o); break;
+        case xredisobjecttype_error:        xrediserror_print((xrediserror *) o); break;
+        case xredisobjecttype_integer:      xredisinteger_print((xredisinteger *) o); break;
+        case xredisobjecttype_bulk:         xredisbulk_print((xredisbulk *) o); break;
+        case xredisobjecttype_array:        xredisarray_print((xredisarray *) o); break;
+        default: xassertion(xtrue, "");     break;
+    }
+}

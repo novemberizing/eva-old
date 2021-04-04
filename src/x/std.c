@@ -49,3 +49,13 @@ extern xuint64 xunsigned64from_integer32(xint32 first, xint32 second)
 
     return ret;
 }
+
+extern xuint64 xuint64decimalstringlen(xuint64 n)
+{
+    xuint64 count = 1;
+    while(n / 10)
+    {
+        count = count + 1;
+    }
+    return count;
+}
