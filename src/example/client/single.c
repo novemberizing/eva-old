@@ -30,26 +30,6 @@ int main(int argc, char ** argv)
     xclientconnect(client);
     xclientwait(client, xdescriptorstatus_open, -1);
 
-    const xint32 total = 65536;
-    xtime diff[total];
-
-    for(xint32 i = 0; i < total; i++)
-    {
-        // xredisres * res = xredisclientsync_set(client, "");
-        xredisres * res = (xredisres *) xclientwaitres(client, xclientreq(client, (xreq *) xredisreqgen_set("foo", "bar")), -1);
-        if(xrescheck_complete(res))
-        {
-            diff[i] = xtimediff(xaddressof(res->end), xaddressof(res->req->start));
-
-        }
-        res = xredisresrem(res);
-    }
-
-    for(xint32 i = 0; i < total; i++)
-    {
-        printf("%ld.%09ld\n", diff[i].second, diff[i].nanosecond);
-    }
-
     xclientrem(client);
     return 0;
 }

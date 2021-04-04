@@ -33,6 +33,19 @@ struct xredisreq
 extern xredisreq * xredisreqnew(xredisobject * object);
 extern xredisreq * xredisreqrem(xredisreq * o);
 
-extern xredisreq * xredisreqgen_set(const char * key, const char * value);
+extern xredisreq * xredisreqfrom_format(const char * format, ...);
+
+// extern xredisreq * xredisreqgen_set(const char * key, const char * value);
+// extern xredisreq * xredisreqgen_get(const char * key);
+// extern xredisreq * xredisreqgen_del(xuint64 total, ...);
+// extern xredisreq * xredisreqgen_append(const char * key, const char * value);
+// extern xredisreq * xredisreqgen_getrange(const char * key, xint64 start, xint64 end);
+// extern xredisreq * xredisreqgen_bitcount(const char * key);
+// extern xredisreq * xredisreqgen_bitcount_range(const char * key, xint64 start, xint64 end);
+// extern xredisreq * xredisreqgen_exists(xuint64 total, ...);
+
+// EXISTS key [key ...]
+
+// https://redis.io/commands/append
 
 #endif // __NOVEMBERIZING_X__REDIS__REQ__H__

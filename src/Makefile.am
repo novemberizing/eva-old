@@ -63,6 +63,7 @@ libnovemberizing_a_SOURCES = x/std.c                                          \
                              x/client/socket.c                                \
                              x/client/socket/event/avail.c                    \
                              x/client/socket/event/process/tcp.c              \
+                             x/extension/redis.c                              \
                              x/extension/redis/object.c                       \
                              x/extension/redis/object/string.c                \
                              x/extension/redis/object/error.c                 \
@@ -93,6 +94,7 @@ noinst_PROGRAMS = example-helloworld                                         \
                   example-redis-ping                                         \
                   example-redis-protocol                                     \
                   example-redis-set                                          \
+                  example-redis-client                                       \
                   example-server-simple                                      \
                   benchmark-server                                           \
                   benchmark-client
@@ -135,6 +137,9 @@ example_redis_protocol_LDADD   = $(LIBS)
 
 example_redis_set_SOURCES      = example/redis/set.c
 example_redis_set_LDADD        = $(LIBS)
+
+example_redis_client_SOURCES   = example/redis/client.c
+example_redis_client_LDADD     = $(LIBS)
 
 example_server_simple_SOURCES  = example/server/simple.c
 example_server_simple_LDADD    = $(LIBS)

@@ -12,7 +12,7 @@ static xint64 xredisbulkserialize(xredisbulk * o, xbyte ** buffer, xuint64 * pos
     xint32 n = snprintf(str, 256, "%d", o->size);
     str[n] = 0;
 
-    *buffer = xstringcapacity_set(*buffer, size, capacity, 10 + n);
+    *buffer = xstringcapacity_set(*buffer, size, capacity, 16 + n);
 
     (*buffer)[(*size)++] = o->type;
     memcpy(xaddressof((*buffer)[*size]), str, n);
@@ -43,6 +43,13 @@ extern xredisbulk * xredisbulknew(const char * s, xint32 n)
     o->value     = xobjectdup(s, n);
 
     return o;
+}
+
+extern xredisbulk * xredisbulkfrom_int64(xint64 value)
+{
+    char s[256];
+    int n = snprintf(s, 256, "%ld", value);
+    return xredisbulknew(s, n);
 }
 
 extern xredisbulk * xredisbulkrem(xredisbulk * o)

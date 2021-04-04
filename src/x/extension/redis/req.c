@@ -61,50 +61,27 @@ extern xredisreq * xredisreqrem(xredisreq * o)
     return xnil;
 }
 
-extern xredisreq * xredisreqgen_set(const char * key, const char * value)
+extern xredisreq * xredisreqfrom_format(const char * format, ...)
 {
-    xassertion(key == xnil, "");
+    xassertion(format == xnil, "");
 
-    xuint64 keylen = key ? strlen(key) : 0;
+    xredisreq * req = xredisreqnew(xnil);
 
-    if(keylen > 0)
+    xuint64 capacity = 0;
+    xuint64 index = 0;
+    xuint64 formatlen = strlen(format);
+
+    req->packet.data = xstringcapacity_set(req->packet.data, xaddressof(index), xaddressof(capacity), strlen(format));
+
+    for(xuint64 i = 0; i < formatlen; i++)
     {
-        xredisreq * req = xredisreqnew(xnil);
-        xuint64 total = 13 + xuint64decimalstringlen(keylen) + 3 + keylen + 2;
-
-        if(value)
+        if(strchr(" \r\n\t", format[i]))
         {
-            xuint64 valuelen = value ? strlen(value) : 0;
-            if(valuelen > 0)
-            {
-                total = total + xuint64decimalstringlen(valuelen) + 3 + valuelen + 2;                
-                req->packet.data = malloc(total + 1);
-                req->packet.size = snprintf(req->packet.data, total, "*3\r\n$3\r\nset\r\n$%lu\r\n%s\r\n$%lu\r\n%s\r\n",
-                                                                     keylen,
-                                                                     key,
-                                                                     valuelen,
-                                                                     value);
-            }
-            else
-            {
-                total = total + 6;
-                req->packet.data = malloc(total + 1);
-                req->packet.size = snprintf(req->packet.data, total, "*3\r\n$3\r\nset\r\n$%lu\r\n%s\r\n$0\r\n\r\n",
-                                                                     keylen,
-                                                                     key);
-            }
-        }
-        else
-        {
-            total = total + 5;
-            req->packet.data = malloc(total + 1);
-            req->packet.size = snprintf(req->packet.data, total, "*3\r\n$3\r\nset\r\n$%lu\r\n%s\r\n$-1\r\n",
-                                                                 keylen,
-                                                                 key);
-        }
 
-        return req;
+        }
     }
+    // x::redis::req()
+    // req->packet.data = malloc(capacity);
 
-    return xnil;
+    return req;
 }

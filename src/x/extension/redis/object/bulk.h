@@ -23,6 +23,7 @@ struct xredisbulk
 };
 
 extern xredisbulk * xredisbulknew(const char * s, xint32 n);
+extern xredisbulk * xredisbulkfrom_int64(xint64 value);
 extern xredisbulk * xredisbulkrem(xredisbulk * o);
 
 extern xint64 xredisbulk_predict(xbyte * buffer, xuint64 position, xuint64 size);
