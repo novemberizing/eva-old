@@ -19,8 +19,8 @@ AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIRS([m4])
 
 
-dnl CFLAGS=-O3
-CFLAGS=-g
+CFLAGS=-O3
+dnl CFLAGS=-g
 
 dnl ----------------------------------------------------------
 dnl AUTOMAKE

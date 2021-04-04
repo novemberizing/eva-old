@@ -73,13 +73,30 @@ extern xredisreq * xredisreqfrom_format(const char * format, ...)
 
     req->packet.data = xstringcapacity_set(req->packet.data, xaddressof(index), xaddressof(capacity), strlen(format));
 
+
     for(xuint64 i = 0; i < formatlen; i++)
     {
-        if(strchr(" \r\n\t", format[i]))
+        if(format[i] == '\"')
         {
-
+            printf("= 1 =\n");
+            char * next = strchr(xaddressof(format[i + 1]), '\"');
+        }
+        else if(format[i] == '%')
+        {
+            printf("= 2 =\n");
+        }
+        else if(strchr(" \r\n\t", format[i]))
+        {
+            printf("= 3 =\n");
+            // SKIP
+        }
+        else
+        {
+            printf("= 4 =\n");
         }
     }
+
+    // xredisreqfrom_format("set hello world");
     // x::redis::req()
     // req->packet.data = malloc(capacity);
 

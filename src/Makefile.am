@@ -95,9 +95,14 @@ noinst_PROGRAMS = example-helloworld                                         \
                   example-redis-protocol                                     \
                   example-redis-set                                          \
                   example-redis-client                                       \
+                  example-redis-req                                          \
                   example-server-simple                                      \
                   benchmark-server                                           \
-                  benchmark-client
+                  benchmark-client                                           \
+                  benchmark-string
+
+benchmark_string_SOURCES       = example/benchmark/string.c
+benchmark_string_LDADD         = $(LIBS)
 
 benchmark_server_SOURCES       = example/benchmark/server.c
 benchmark_server_LDADD         = $(LIBS)
@@ -137,6 +142,9 @@ example_redis_protocol_LDADD   = $(LIBS)
 
 example_redis_set_SOURCES      = example/redis/set.c
 example_redis_set_LDADD        = $(LIBS)
+
+example_redis_req_SOURCES      = example/redis/req.c
+example_redis_req_LDADD        = $(LIBS)
 
 example_redis_client_SOURCES   = example/redis/client.c
 example_redis_client_LDADD     = $(LIBS)

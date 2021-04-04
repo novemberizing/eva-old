@@ -98,8 +98,9 @@ noinst_PROGRAMS = example-helloworld$(EXEEXT) \
 	example-string-format$(EXEEXT) example-string-uint64$(EXEEXT) \
 	example-console-engine$(EXEEXT) example-redis-ping$(EXEEXT) \
 	example-redis-protocol$(EXEEXT) example-redis-set$(EXEEXT) \
-	example-redis-client$(EXEEXT) example-server-simple$(EXEEXT) \
-	benchmark-server$(EXEEXT) benchmark-client$(EXEEXT)
+	example-redis-client$(EXEEXT) example-redis-req$(EXEEXT) \
+	example-server-simple$(EXEEXT) benchmark-server$(EXEEXT) \
+	benchmark-client$(EXEEXT) benchmark-string$(EXEEXT)
 subdir = src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -211,6 +212,9 @@ am__v_lt_1 =
 am_benchmark_server_OBJECTS = example/benchmark/server.$(OBJEXT)
 benchmark_server_OBJECTS = $(am_benchmark_server_OBJECTS)
 benchmark_server_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_benchmark_string_OBJECTS = example/benchmark/string.$(OBJEXT)
+benchmark_string_OBJECTS = $(am_benchmark_string_OBJECTS)
+benchmark_string_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_example_client_pool_OBJECTS = example/client/pool.$(OBJEXT)
 example_client_pool_OBJECTS = $(am_example_client_pool_OBJECTS)
 example_client_pool_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -235,6 +239,9 @@ example_redis_ping_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_example_redis_protocol_OBJECTS = example/redis/protocol.$(OBJEXT)
 example_redis_protocol_OBJECTS = $(am_example_redis_protocol_OBJECTS)
 example_redis_protocol_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_example_redis_req_OBJECTS = example/redis/req.$(OBJEXT)
+example_redis_req_OBJECTS = $(am_example_redis_req_OBJECTS)
+example_redis_req_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_example_redis_set_OBJECTS = example/redis/set.$(OBJEXT)
 example_redis_set_OBJECTS = $(am_example_redis_set_OBJECTS)
 example_redis_set_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -268,6 +275,7 @@ am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = example/$(DEPDIR)/helloworld.Po \
 	example/benchmark/$(DEPDIR)/client.Po \
 	example/benchmark/$(DEPDIR)/server.Po \
+	example/benchmark/$(DEPDIR)/string.Po \
 	example/client/$(DEPDIR)/pool.Po \
 	example/client/$(DEPDIR)/redis.Po \
 	example/client/$(DEPDIR)/single.Po \
@@ -275,7 +283,7 @@ am__depfiles_remade = example/$(DEPDIR)/helloworld.Po \
 	example/redis/$(DEPDIR)/client.Po \
 	example/redis/$(DEPDIR)/ping.Po \
 	example/redis/$(DEPDIR)/protocol.Po \
-	example/redis/$(DEPDIR)/set.Po \
+	example/redis/$(DEPDIR)/req.Po example/redis/$(DEPDIR)/set.Po \
 	example/server/$(DEPDIR)/simple.Po \
 	example/string/$(DEPDIR)/format.Po \
 	example/string/$(DEPDIR)/simple.Po \
@@ -352,26 +360,27 @@ am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
 SOURCES = $(libnovemberizing_a_SOURCES) $(benchmark_client_SOURCES) \
-	$(benchmark_server_SOURCES) $(example_client_pool_SOURCES) \
-	$(example_client_redis_SOURCES) \
-	$(example_client_single_SOURCES) \
-	$(example_console_engine_SOURCES) \
-	$(example_helloworld_SOURCES) $(example_redis_client_SOURCES) \
-	$(example_redis_ping_SOURCES) \
-	$(example_redis_protocol_SOURCES) $(example_redis_set_SOURCES) \
-	$(example_server_simple_SOURCES) \
-	$(example_string_format_SOURCES) \
-	$(example_string_simple_SOURCES) \
-	$(example_string_uint64_SOURCES)
-DIST_SOURCES = $(libnovemberizing_a_SOURCES) \
-	$(benchmark_client_SOURCES) $(benchmark_server_SOURCES) \
+	$(benchmark_server_SOURCES) $(benchmark_string_SOURCES) \
 	$(example_client_pool_SOURCES) $(example_client_redis_SOURCES) \
 	$(example_client_single_SOURCES) \
 	$(example_console_engine_SOURCES) \
 	$(example_helloworld_SOURCES) $(example_redis_client_SOURCES) \
 	$(example_redis_ping_SOURCES) \
-	$(example_redis_protocol_SOURCES) $(example_redis_set_SOURCES) \
-	$(example_server_simple_SOURCES) \
+	$(example_redis_protocol_SOURCES) $(example_redis_req_SOURCES) \
+	$(example_redis_set_SOURCES) $(example_server_simple_SOURCES) \
+	$(example_string_format_SOURCES) \
+	$(example_string_simple_SOURCES) \
+	$(example_string_uint64_SOURCES)
+DIST_SOURCES = $(libnovemberizing_a_SOURCES) \
+	$(benchmark_client_SOURCES) $(benchmark_server_SOURCES) \
+	$(benchmark_string_SOURCES) $(example_client_pool_SOURCES) \
+	$(example_client_redis_SOURCES) \
+	$(example_client_single_SOURCES) \
+	$(example_console_engine_SOURCES) \
+	$(example_helloworld_SOURCES) $(example_redis_client_SOURCES) \
+	$(example_redis_ping_SOURCES) \
+	$(example_redis_protocol_SOURCES) $(example_redis_req_SOURCES) \
+	$(example_redis_set_SOURCES) $(example_server_simple_SOURCES) \
 	$(example_string_format_SOURCES) \
 	$(example_string_simple_SOURCES) \
 	$(example_string_uint64_SOURCES)
@@ -597,6 +606,8 @@ libnovemberizing_a_SOURCES = x/std.c                                          \
                              x/eva.c                                          \
                              x/eva/cli.c
 
+benchmark_string_SOURCES = example/benchmark/string.c
+benchmark_string_LDADD = $(LIBS)
 benchmark_server_SOURCES = example/benchmark/server.c
 benchmark_server_LDADD = $(LIBS)
 benchmark_client_SOURCES = example/benchmark/client.c
@@ -623,6 +634,8 @@ example_redis_protocol_SOURCES = example/redis/protocol.c
 example_redis_protocol_LDADD = $(LIBS)
 example_redis_set_SOURCES = example/redis/set.c
 example_redis_set_LDADD = $(LIBS)
+example_redis_req_SOURCES = example/redis/req.c
+example_redis_req_LDADD = $(LIBS)
 example_redis_client_SOURCES = example/redis/client.c
 example_redis_client_LDADD = $(LIBS)
 example_server_simple_SOURCES = example/server/simple.c
@@ -1050,6 +1063,12 @@ example/benchmark/server.$(OBJEXT): example/benchmark/$(am__dirstamp) \
 benchmark-server$(EXEEXT): $(benchmark_server_OBJECTS) $(benchmark_server_DEPENDENCIES) $(EXTRA_benchmark_server_DEPENDENCIES) 
 	@rm -f benchmark-server$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(benchmark_server_OBJECTS) $(benchmark_server_LDADD) $(LIBS)
+example/benchmark/string.$(OBJEXT): example/benchmark/$(am__dirstamp) \
+	example/benchmark/$(DEPDIR)/$(am__dirstamp)
+
+benchmark-string$(EXEEXT): $(benchmark_string_OBJECTS) $(benchmark_string_DEPENDENCIES) $(EXTRA_benchmark_string_DEPENDENCIES) 
+	@rm -f benchmark-string$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(benchmark_string_OBJECTS) $(benchmark_string_LDADD) $(LIBS)
 example/client/$(am__dirstamp):
 	@$(MKDIR_P) example/client
 	@: > example/client/$(am__dirstamp)
@@ -1122,6 +1141,12 @@ example/redis/protocol.$(OBJEXT): example/redis/$(am__dirstamp) \
 example-redis-protocol$(EXEEXT): $(example_redis_protocol_OBJECTS) $(example_redis_protocol_DEPENDENCIES) $(EXTRA_example_redis_protocol_DEPENDENCIES) 
 	@rm -f example-redis-protocol$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(example_redis_protocol_OBJECTS) $(example_redis_protocol_LDADD) $(LIBS)
+example/redis/req.$(OBJEXT): example/redis/$(am__dirstamp) \
+	example/redis/$(DEPDIR)/$(am__dirstamp)
+
+example-redis-req$(EXEEXT): $(example_redis_req_OBJECTS) $(example_redis_req_DEPENDENCIES) $(EXTRA_example_redis_req_DEPENDENCIES) 
+	@rm -f example-redis-req$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_redis_req_OBJECTS) $(example_redis_req_LDADD) $(LIBS)
 example/redis/set.$(OBJEXT): example/redis/$(am__dirstamp) \
 	example/redis/$(DEPDIR)/$(am__dirstamp)
 
@@ -1212,6 +1237,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@example/$(DEPDIR)/helloworld.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/benchmark/$(DEPDIR)/client.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/benchmark/$(DEPDIR)/server.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@example/benchmark/$(DEPDIR)/string.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/client/$(DEPDIR)/pool.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/client/$(DEPDIR)/redis.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/client/$(DEPDIR)/single.Po@am__quote@ # am--include-marker
@@ -1219,6 +1245,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@example/redis/$(DEPDIR)/client.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/redis/$(DEPDIR)/ping.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/redis/$(DEPDIR)/protocol.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@example/redis/$(DEPDIR)/req.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/redis/$(DEPDIR)/set.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/server/$(DEPDIR)/simple.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/string/$(DEPDIR)/format.Po@am__quote@ # am--include-marker
@@ -1563,6 +1590,7 @@ distclean: distclean-am
 		-rm -f example/$(DEPDIR)/helloworld.Po
 	-rm -f example/benchmark/$(DEPDIR)/client.Po
 	-rm -f example/benchmark/$(DEPDIR)/server.Po
+	-rm -f example/benchmark/$(DEPDIR)/string.Po
 	-rm -f example/client/$(DEPDIR)/pool.Po
 	-rm -f example/client/$(DEPDIR)/redis.Po
 	-rm -f example/client/$(DEPDIR)/single.Po
@@ -1570,6 +1598,7 @@ distclean: distclean-am
 	-rm -f example/redis/$(DEPDIR)/client.Po
 	-rm -f example/redis/$(DEPDIR)/ping.Po
 	-rm -f example/redis/$(DEPDIR)/protocol.Po
+	-rm -f example/redis/$(DEPDIR)/req.Po
 	-rm -f example/redis/$(DEPDIR)/set.Po
 	-rm -f example/server/$(DEPDIR)/simple.Po
 	-rm -f example/string/$(DEPDIR)/format.Po
@@ -1694,6 +1723,7 @@ maintainer-clean: maintainer-clean-am
 		-rm -f example/$(DEPDIR)/helloworld.Po
 	-rm -f example/benchmark/$(DEPDIR)/client.Po
 	-rm -f example/benchmark/$(DEPDIR)/server.Po
+	-rm -f example/benchmark/$(DEPDIR)/string.Po
 	-rm -f example/client/$(DEPDIR)/pool.Po
 	-rm -f example/client/$(DEPDIR)/redis.Po
 	-rm -f example/client/$(DEPDIR)/single.Po
@@ -1701,6 +1731,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f example/redis/$(DEPDIR)/client.Po
 	-rm -f example/redis/$(DEPDIR)/ping.Po
 	-rm -f example/redis/$(DEPDIR)/protocol.Po
+	-rm -f example/redis/$(DEPDIR)/req.Po
 	-rm -f example/redis/$(DEPDIR)/set.Po
 	-rm -f example/server/$(DEPDIR)/simple.Po
 	-rm -f example/string/$(DEPDIR)/format.Po
