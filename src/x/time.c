@@ -30,3 +30,26 @@ extern xtime xtimediff(const xtime * x, const xtime * y)
 
     return o;
 }
+
+extern xint64 xtimecmp(const xtime * x, const xtime * y)
+{
+    xint64 ret = x->second - y->second;
+    if(ret == 0)
+    {
+        return x->nanosecond - y->nanosecond;
+    }
+    return ret;
+}
+
+extern xtime xtimeavg(const xtime * sum, xuint64 n)
+{
+    xtime ret = { sum->second / n, sum->nanosecond / n };
+
+    if(ret.nanosecond > 1000000000)
+    {
+        ret.second = ret.second + ret.nanosecond / 1000000000; 
+        ret.nanosecond = ret.nanosecond - ret.nanosecond / 1000000000;
+    }
+
+    return ret;
+}

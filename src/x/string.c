@@ -254,3 +254,24 @@ extern void xstringset(xstring * o, const char * value, xuint64 len)
         o->capacity = 0;
     }
 }
+
+#define hasNulByte(x) ((x - 0x0101010101010101UL) & ~x & 0x8080808080808080UL)
+#define SW (sizeof (unsigned long int) / sizeof (char))
+
+extern xuint64 xstrlen2 (const char *s) {
+const char *p;
+unsigned long int d;
+
+    p = s - 1;
+    do {
+        p++;
+        if ((((unsigned long int) p) & (SW - 1)) == 0) {
+            do {
+                d  = *((unsigned long int *) p);
+                p += SW;
+            } while (!hasNulByte (d));
+            p -= SW;
+        }
+    } while (*p != 0);
+    return p - s;
+}

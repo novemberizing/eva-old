@@ -96,12 +96,12 @@ noinst_PROGRAMS = example-helloworld$(EXEEXT) \
 	example-client-redis$(EXEEXT) example-client-pool$(EXEEXT) \
 	example-client-single$(EXEEXT) example-string-simple$(EXEEXT) \
 	example-string-format$(EXEEXT) example-string-uint64$(EXEEXT) \
-	example-console-engine$(EXEEXT) example-redis-ping$(EXEEXT) \
-	example-redis-protocol$(EXEEXT) example-redis-set$(EXEEXT) \
-	example-redis-client$(EXEEXT) example-redis-req$(EXEEXT) \
-	example-server-simple$(EXEEXT) benchmark-server$(EXEEXT) \
-	benchmark-client$(EXEEXT) benchmark-string$(EXEEXT) \
-	benchmark-format$(EXEEXT)
+	example-string-new$(EXEEXT) example-console-engine$(EXEEXT) \
+	example-redis-ping$(EXEEXT) example-redis-protocol$(EXEEXT) \
+	example-redis-set$(EXEEXT) example-redis-client$(EXEEXT) \
+	example-redis-req$(EXEEXT) example-server-simple$(EXEEXT) \
+	benchmark-server$(EXEEXT) benchmark-client$(EXEEXT) \
+	benchmark-string$(EXEEXT) benchmark-format$(EXEEXT)
 subdir = src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -255,6 +255,9 @@ example_server_simple_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_example_string_format_OBJECTS = example/string/format.$(OBJEXT)
 example_string_format_OBJECTS = $(am_example_string_format_OBJECTS)
 example_string_format_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_example_string_new_OBJECTS = example/string/new.$(OBJEXT)
+example_string_new_OBJECTS = $(am_example_string_new_OBJECTS)
+example_string_new_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_example_string_simple_OBJECTS = example/string/simple.$(OBJEXT)
 example_string_simple_OBJECTS = $(am_example_string_simple_OBJECTS)
 example_string_simple_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -291,6 +294,7 @@ am__depfiles_remade = example/$(DEPDIR)/helloworld.Po \
 	example/redis/$(DEPDIR)/req.Po example/redis/$(DEPDIR)/set.Po \
 	example/server/$(DEPDIR)/simple.Po \
 	example/string/$(DEPDIR)/format.Po \
+	example/string/$(DEPDIR)/new.Po \
 	example/string/$(DEPDIR)/simple.Po \
 	example/string/$(DEPDIR)/uint64.Po x/$(DEPDIR)/array.Po \
 	x/$(DEPDIR)/client.Po x/$(DEPDIR)/command.Po \
@@ -374,7 +378,7 @@ SOURCES = $(libnovemberizing_a_SOURCES) $(benchmark_client_SOURCES) \
 	$(example_redis_ping_SOURCES) \
 	$(example_redis_protocol_SOURCES) $(example_redis_req_SOURCES) \
 	$(example_redis_set_SOURCES) $(example_server_simple_SOURCES) \
-	$(example_string_format_SOURCES) \
+	$(example_string_format_SOURCES) $(example_string_new_SOURCES) \
 	$(example_string_simple_SOURCES) \
 	$(example_string_uint64_SOURCES)
 DIST_SOURCES = $(libnovemberizing_a_SOURCES) \
@@ -387,7 +391,7 @@ DIST_SOURCES = $(libnovemberizing_a_SOURCES) \
 	$(example_redis_ping_SOURCES) \
 	$(example_redis_protocol_SOURCES) $(example_redis_req_SOURCES) \
 	$(example_redis_set_SOURCES) $(example_server_simple_SOURCES) \
-	$(example_string_format_SOURCES) \
+	$(example_string_format_SOURCES) $(example_string_new_SOURCES) \
 	$(example_string_simple_SOURCES) \
 	$(example_string_uint64_SOURCES)
 am__can_run_installinfo = \
@@ -634,6 +638,8 @@ example_string_simple_SOURCES = example/string/simple.c
 example_string_simple_LDADD = $(LIBS)
 example_string_uint64_SOURCES = example/string/uint64.c
 example_string_uint64_LDADD = $(LIBS)
+example_string_new_SOURCES = example/string/new.c
+example_string_new_LDADD = $(LIBS)
 example_console_engine_SOURCES = example/console/engine.c
 example_console_engine_LDADD = $(LIBS)
 example_redis_ping_SOURCES = example/redis/ping.c
@@ -1191,6 +1197,12 @@ example/string/format.$(OBJEXT): example/string/$(am__dirstamp) \
 example-string-format$(EXEEXT): $(example_string_format_OBJECTS) $(example_string_format_DEPENDENCIES) $(EXTRA_example_string_format_DEPENDENCIES) 
 	@rm -f example-string-format$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(example_string_format_OBJECTS) $(example_string_format_LDADD) $(LIBS)
+example/string/new.$(OBJEXT): example/string/$(am__dirstamp) \
+	example/string/$(DEPDIR)/$(am__dirstamp)
+
+example-string-new$(EXEEXT): $(example_string_new_OBJECTS) $(example_string_new_DEPENDENCIES) $(EXTRA_example_string_new_DEPENDENCIES) 
+	@rm -f example-string-new$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_string_new_OBJECTS) $(example_string_new_LDADD) $(LIBS)
 example/string/simple.$(OBJEXT): example/string/$(am__dirstamp) \
 	example/string/$(DEPDIR)/$(am__dirstamp)
 
@@ -1264,6 +1276,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@example/redis/$(DEPDIR)/set.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/server/$(DEPDIR)/simple.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/string/$(DEPDIR)/format.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@example/string/$(DEPDIR)/new.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/string/$(DEPDIR)/simple.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/string/$(DEPDIR)/uint64.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/array.Po@am__quote@ # am--include-marker
@@ -1618,6 +1631,7 @@ distclean: distclean-am
 	-rm -f example/redis/$(DEPDIR)/set.Po
 	-rm -f example/server/$(DEPDIR)/simple.Po
 	-rm -f example/string/$(DEPDIR)/format.Po
+	-rm -f example/string/$(DEPDIR)/new.Po
 	-rm -f example/string/$(DEPDIR)/simple.Po
 	-rm -f example/string/$(DEPDIR)/uint64.Po
 	-rm -f x/$(DEPDIR)/array.Po
@@ -1752,6 +1766,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f example/redis/$(DEPDIR)/set.Po
 	-rm -f example/server/$(DEPDIR)/simple.Po
 	-rm -f example/string/$(DEPDIR)/format.Po
+	-rm -f example/string/$(DEPDIR)/new.Po
 	-rm -f example/string/$(DEPDIR)/simple.Po
 	-rm -f example/string/$(DEPDIR)/uint64.Po
 	-rm -f x/$(DEPDIR)/array.Po

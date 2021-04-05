@@ -15,7 +15,7 @@ static xuint64 xstringlen(const char * s)
             {
                 if(*c == 0)
                 {
-                    return c - s;
+                    return (xuint64) (c - s);
                 }
             }
         }
@@ -34,7 +34,7 @@ static char * xstringformat(char * s, xuint64 * index, xuint64 * capacity, const
             {
                 if(*c == 0)
                 {
-                    return c - s;
+                    return (char *) (c - s);
                 }
             }
         }

@@ -31,4 +31,6 @@ extern char * xstringcapacity_set(char * s, xuint64 * index, xuint64 * capacity,
 extern xuint64 xstringtouint64(char * s, xuint64 limit);
 extern xint64 xstringtoint64(char * s, xuint64 limit);
 
+extern xuint64 xstrlen2 (const char *s);
+
 #endif // __NOVEMBERIZING_X__STRING__H__
