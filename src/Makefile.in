@@ -96,12 +96,13 @@ noinst_PROGRAMS = example-helloworld$(EXEEXT) \
 	example-client-redis$(EXEEXT) example-client-pool$(EXEEXT) \
 	example-client-single$(EXEEXT) example-string-simple$(EXEEXT) \
 	example-string-format$(EXEEXT) example-string-uint64$(EXEEXT) \
-	example-string-new$(EXEEXT) example-console-engine$(EXEEXT) \
-	example-redis-ping$(EXEEXT) example-redis-protocol$(EXEEXT) \
-	example-redis-set$(EXEEXT) example-redis-client$(EXEEXT) \
-	example-redis-req$(EXEEXT) example-server-simple$(EXEEXT) \
-	benchmark-server$(EXEEXT) benchmark-client$(EXEEXT) \
-	benchmark-string$(EXEEXT) benchmark-format$(EXEEXT)
+	example-string-new$(EXEEXT) example-string-strlen$(EXEEXT) \
+	example-console-engine$(EXEEXT) example-redis-ping$(EXEEXT) \
+	example-redis-protocol$(EXEEXT) example-redis-set$(EXEEXT) \
+	example-redis-client$(EXEEXT) example-redis-req$(EXEEXT) \
+	example-server-simple$(EXEEXT) benchmark-server$(EXEEXT) \
+	benchmark-client$(EXEEXT) benchmark-string$(EXEEXT) \
+	benchmark-format$(EXEEXT)
 subdir = src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -261,6 +262,9 @@ example_string_new_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_example_string_simple_OBJECTS = example/string/simple.$(OBJEXT)
 example_string_simple_OBJECTS = $(am_example_string_simple_OBJECTS)
 example_string_simple_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_example_string_strlen_OBJECTS = example/string/strlen.$(OBJEXT)
+example_string_strlen_OBJECTS = $(am_example_string_strlen_OBJECTS)
+example_string_strlen_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_example_string_uint64_OBJECTS = example/string/uint64.$(OBJEXT)
 example_string_uint64_OBJECTS = $(am_example_string_uint64_OBJECTS)
 example_string_uint64_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -296,6 +300,7 @@ am__depfiles_remade = example/$(DEPDIR)/helloworld.Po \
 	example/string/$(DEPDIR)/format.Po \
 	example/string/$(DEPDIR)/new.Po \
 	example/string/$(DEPDIR)/simple.Po \
+	example/string/$(DEPDIR)/strlen.Po \
 	example/string/$(DEPDIR)/uint64.Po x/$(DEPDIR)/array.Po \
 	x/$(DEPDIR)/client.Po x/$(DEPDIR)/command.Po \
 	x/$(DEPDIR)/console.Po x/$(DEPDIR)/descriptor.Po \
@@ -380,6 +385,7 @@ SOURCES = $(libnovemberizing_a_SOURCES) $(benchmark_client_SOURCES) \
 	$(example_redis_set_SOURCES) $(example_server_simple_SOURCES) \
 	$(example_string_format_SOURCES) $(example_string_new_SOURCES) \
 	$(example_string_simple_SOURCES) \
+	$(example_string_strlen_SOURCES) \
 	$(example_string_uint64_SOURCES)
 DIST_SOURCES = $(libnovemberizing_a_SOURCES) \
 	$(benchmark_client_SOURCES) $(benchmark_format_SOURCES) \
@@ -393,6 +399,7 @@ DIST_SOURCES = $(libnovemberizing_a_SOURCES) \
 	$(example_redis_set_SOURCES) $(example_server_simple_SOURCES) \
 	$(example_string_format_SOURCES) $(example_string_new_SOURCES) \
 	$(example_string_simple_SOURCES) \
+	$(example_string_strlen_SOURCES) \
 	$(example_string_uint64_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
@@ -640,6 +647,8 @@ example_string_uint64_SOURCES = example/string/uint64.c
 example_string_uint64_LDADD = $(LIBS)
 example_string_new_SOURCES = example/string/new.c
 example_string_new_LDADD = $(LIBS)
+example_string_strlen_SOURCES = example/string/strlen.c
+example_string_strlen_LDADD = $(LIBS)
 example_console_engine_SOURCES = example/console/engine.c
 example_console_engine_LDADD = $(LIBS)
 example_redis_ping_SOURCES = example/redis/ping.c
@@ -1209,6 +1218,12 @@ example/string/simple.$(OBJEXT): example/string/$(am__dirstamp) \
 example-string-simple$(EXEEXT): $(example_string_simple_OBJECTS) $(example_string_simple_DEPENDENCIES) $(EXTRA_example_string_simple_DEPENDENCIES) 
 	@rm -f example-string-simple$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(example_string_simple_OBJECTS) $(example_string_simple_LDADD) $(LIBS)
+example/string/strlen.$(OBJEXT): example/string/$(am__dirstamp) \
+	example/string/$(DEPDIR)/$(am__dirstamp)
+
+example-string-strlen$(EXEEXT): $(example_string_strlen_OBJECTS) $(example_string_strlen_DEPENDENCIES) $(EXTRA_example_string_strlen_DEPENDENCIES) 
+	@rm -f example-string-strlen$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(example_string_strlen_OBJECTS) $(example_string_strlen_LDADD) $(LIBS)
 example/string/uint64.$(OBJEXT): example/string/$(am__dirstamp) \
 	example/string/$(DEPDIR)/$(am__dirstamp)
 
@@ -1278,6 +1293,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@example/string/$(DEPDIR)/format.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/string/$(DEPDIR)/new.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/string/$(DEPDIR)/simple.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@example/string/$(DEPDIR)/strlen.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@example/string/$(DEPDIR)/uint64.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/array.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@x/$(DEPDIR)/client.Po@am__quote@ # am--include-marker
@@ -1633,6 +1649,7 @@ distclean: distclean-am
 	-rm -f example/string/$(DEPDIR)/format.Po
 	-rm -f example/string/$(DEPDIR)/new.Po
 	-rm -f example/string/$(DEPDIR)/simple.Po
+	-rm -f example/string/$(DEPDIR)/strlen.Po
 	-rm -f example/string/$(DEPDIR)/uint64.Po
 	-rm -f x/$(DEPDIR)/array.Po
 	-rm -f x/$(DEPDIR)/client.Po
@@ -1768,6 +1785,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f example/string/$(DEPDIR)/format.Po
 	-rm -f example/string/$(DEPDIR)/new.Po
 	-rm -f example/string/$(DEPDIR)/simple.Po
+	-rm -f example/string/$(DEPDIR)/strlen.Po
 	-rm -f example/string/$(DEPDIR)/uint64.Po
 	-rm -f x/$(DEPDIR)/array.Po
 	-rm -f x/$(DEPDIR)/client.Po

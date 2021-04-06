@@ -19,7 +19,7 @@ AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIRS([m4])
 
 
-CFLAGS=-O3
+CFLAGS="-g -msse4.2"
 dnl CFLAGS=-g
 
 dnl ----------------------------------------------------------

@@ -11148,7 +11148,7 @@ ac_config_headers="$ac_config_headers config.h"
 
 
 
-CFLAGS=-O3
+CFLAGS="-g -msse4.2"
 
 am__api_version='1.16'
 
