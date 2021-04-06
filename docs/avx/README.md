@@ -855,3 +855,219 @@ __m128i _mm256_castsi256_si128 (__m256i a)
 | -           | Description |
 | ----------- | ----------- |
 | CPUID Flags | AVX         |
+
+
+## `_mm256_ceil_pd(a: __m256d): __m256d`
+
+Round the packed double precision (64 bit) floating point elements in a up to an integer value, and store the results as packed double precision floating point elements in destiation.
+
+### __Synopsis__
+
+```c
+#include <immintrin.h>
+
+__m256d _mm256_ceil_pd (__m256d a)
+```
+
+| -           | Description             |
+| ----------- | ----------------------- |
+| Instruction | vroundpd ymm, ymm, imm8 |
+| CPUID Flags | AVX                     |
+
+### __Operation__
+
+```
+FOR j := 0 to 3
+	i := j*64
+	dst[i+63:i] := CEIL(a[i+63:i])
+ENDFOR
+dst[MAX:256] := 0
+```
+
+### __Performance__
+
+| Architecture | Latency | Throughput (CPI) |
+| ------------ | ------- | ---------------- |
+| Icelake      | 8       | 1                |
+| Skylake      | 8       | 1                |
+| Broadwell    | 6       | 2                |
+| Haswell      | 6       | 2                |
+| Ivy Bridge   | 3       | 1                |
+
+## `_mm256_ceil_ps(a: __m256): __m256`
+
+Round the packed single precision (32 bit) floating point elements in a up to an integer value, and store the results as packed single precision floating point elements in destination.
+
+### __Synopsis__
+
+```c
+#include <immintrin.h>
+
+__m256 _mm256_ceil_ps (__m256 a)
+```
+| -           | Description             |
+| ----------- | ----------------------- |
+| Instruction | vroundps ymm, ymm, imm8 |
+| CPUID Flags | AVX                     |
+
+### __Operation__
+
+```
+FOR j := 0 to 7
+	i := j*32
+	dst[i+31:i] := CEIL(a[i+31:i])
+ENDFOR
+dst[MAX:256] := 0
+```
+
+### __Performance__
+
+| Architecture | Latency | Throughput (CPI) |
+| ------------ | ------- | ---------------- |
+| Icelake      | 8       | 1                |
+| Skylake      | 8       | 1                |
+| Broadwell    | 6       | 2                |
+| Haswell      | 6       | 2                |
+| Ivy Bridge   | 3       | 1                |
+
+## `_mm_cmp_pd(a: __m128d, b: __m128d, imm8: const int): __m128d`
+
+Compare packed double precision (64 bit) floating point elements in a and b based on the comparison operand specified by imm8, and store the results in destination.
+
+### __Synopsis__
+
+```c
+#include <immintrin.h>
+
+__m128d _mm_cmp_pd (__m128d a, __m128d b, const int imm8)
+```
+
+| -           | Description                |
+| ----------- | -------------------------- |
+| Instruction | vcmppd xmm, xmm, xmm, imm8 |
+| CPUID Flags | AVX                        |
+
+### __Operation__
+
+```
+CASE (imm8[4:0]) OF
+0: OP := _CMP_EQ_OQ
+1: OP := _CMP_LT_OS
+2: OP := _CMP_LE_OS
+3: OP := _CMP_UNORD_Q 
+4: OP := _CMP_NEQ_UQ
+5: OP := _CMP_NLT_US
+6: OP := _CMP_NLE_US
+7: OP := _CMP_ORD_Q
+8: OP := _CMP_EQ_UQ
+9: OP := _CMP_NGE_US
+10: OP := _CMP_NGT_US
+11: OP := _CMP_FALSE_OQ
+12: OP := _CMP_NEQ_OQ
+13: OP := _CMP_GE_OS
+14: OP := _CMP_GT_OS
+15: OP := _CMP_TRUE_UQ
+16: OP := _CMP_EQ_OS
+17: OP := _CMP_LT_OQ
+18: OP := _CMP_LE_OQ
+19: OP := _CMP_UNORD_S
+20: OP := _CMP_NEQ_US
+21: OP := _CMP_NLT_UQ
+22: OP := _CMP_NLE_UQ
+23: OP := _CMP_ORD_S
+24: OP := _CMP_EQ_US
+25: OP := _CMP_NGE_UQ 
+26: OP := _CMP_NGT_UQ 
+27: OP := _CMP_FALSE_OS 
+28: OP := _CMP_NEQ_OS 
+29: OP := _CMP_GE_OQ
+30: OP := _CMP_GT_OQ
+31: OP := _CMP_TRUE_US
+ESAC
+FOR j := 0 to 1
+	i := j*64
+	dst[i+63:i] := ( a[i+63:i] OP b[i+63:i] ) ? 0xFFFFFFFFFFFFFFFF : 0
+ENDFOR
+dst[MAX:128] := 0
+```
+
+### __Performance__
+
+| Architecture | Latency | Throughput (CPI) |
+| ------------ | ------- | ---------------- |
+| Icelake      | 4       | 0.5              |
+| Skylake      | 4       | 0.5              | 
+| Broadwell    | 3       | 1                |
+| Haswell      | 3       | 1                |
+| Ivy Bridge   | 3       | 1                |
+
+## `_mm256_cmp_pd(a: __m256d, b: __m256d, const int imm8): __m256d`
+
+Compare packed double precision (64 bit) floating point elements in a and b based on the comparison operand specified by imm8, and store the results in destination.
+
+### __Synopsis__
+
+```c
+#include <immintrin.h>
+
+__m256d _mm256_cmp_pd (__m256d a, __m256d b, const int imm8)
+```
+
+| -           | Description                |
+| ----------- | -------------------------- |
+| Instruction | vcmppd ymm, ymm, ymm, imm8 |
+| CPUID Flags | AVX                        |
+
+### __Operation__
+
+```
+CASE (imm8[4:0]) OF
+0: OP := _CMP_EQ_OQ
+1: OP := _CMP_LT_OS
+2: OP := _CMP_LE_OS
+3: OP := _CMP_UNORD_Q 
+4: OP := _CMP_NEQ_UQ
+5: OP := _CMP_NLT_US
+6: OP := _CMP_NLE_US
+7: OP := _CMP_ORD_Q
+8: OP := _CMP_EQ_UQ
+9: OP := _CMP_NGE_US
+10: OP := _CMP_NGT_US
+11: OP := _CMP_FALSE_OQ
+12: OP := _CMP_NEQ_OQ
+13: OP := _CMP_GE_OS
+14: OP := _CMP_GT_OS
+15: OP := _CMP_TRUE_UQ
+16: OP := _CMP_EQ_OS
+17: OP := _CMP_LT_OQ
+18: OP := _CMP_LE_OQ
+19: OP := _CMP_UNORD_S
+20: OP := _CMP_NEQ_US
+21: OP := _CMP_NLT_UQ
+22: OP := _CMP_NLE_UQ
+23: OP := _CMP_ORD_S
+24: OP := _CMP_EQ_US
+25: OP := _CMP_NGE_UQ 
+26: OP := _CMP_NGT_UQ 
+27: OP := _CMP_FALSE_OS 
+28: OP := _CMP_NEQ_OS 
+29: OP := _CMP_GE_OQ
+30: OP := _CMP_GT_OQ
+31: OP := _CMP_TRUE_US
+ESAC
+FOR j := 0 to 3
+	i := j*64
+	dst[i+63:i] := ( a[i+63:i] OP b[i+63:i] ) ? 0xFFFFFFFFFFFFFFFF : 0
+ENDFOR
+dst[MAX:256] := 0
+```
+
+### __Performance__
+
+| Architecture | Latency | Throughput (CPI) |
+| ------------ | ------- | ---------------- |
+| Icelake      | 4       | 0.5              |
+| Skylake      | 4       | 0.5              |
+| Broadwell    | 3       | 1                |
+| Haswell      | 3       | 1                |
+| Ivy Bridge   | 3       | 1                |
