@@ -173,9 +173,3 @@ int main(int argc, char ** argv)
 
     return 0;
 }
-
-
-
-// #pragma GCC push_options #pragma GCC optimize ("O0") //Write your code #pragma GCC pop_options
-
-// 출처: https://sonseungha.tistory.com/522 [Developer's Delight]
