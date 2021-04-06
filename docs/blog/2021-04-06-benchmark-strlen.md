@@ -17,3 +17,16 @@ __OUTPUT__
 | o2 optimize | 0.000021385 |
 | o3 optimize | 0.000019537 |
 
+__SAMPLE CODE__
+
+샘플코드는 65,536 + (0 ~ 64) 바아트의 문자열을 1024 개 생성하여 랜덤하게 STRLEN 을 수행하는 시간을 65536 번 수행하여 평균 시간을 측정하였으며 각각의 테스트 함수 별로 최적화 옵션을 달리하여 간단하게 `gcc strlen.c` 함수를 수행하고 `./a.out` 을 수행하면 결과가 출력됩니다. 
+
+샘플코드를 첨부합니다.
+
+https://github.com/novemberizing/eva/blob/main/src/example/string/strlen.c
+
+----
+
+GCC 9.3 버전에서 SIMD 혹은 AVX 를 사용하는 머신에서는 STRLEN 수행 시에 최적화 옵션을 고민하지 않고 컴파일하면 오히려 STRLEN 함수가 최적화 되어서 더 성능이 좋은 SIMD, AVX 로 구현된 STRLEN 함수를 못쓰게 되고 그 결과 성능 저하로 이어집니다. 언제 버전인지는 모르지만 이전부터 STRLEN 이 최적화 옵션을 통하면 GLIBC 에 함수를 호출하지 않고 최적화된 코드를 생성하였는데, GCC 버전업에 따라서 최적화 시에 SIMD, AVX 등의 지원도 향후에 되어지지 않을까 합니다.
+
+
