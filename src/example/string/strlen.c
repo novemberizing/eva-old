@@ -36,14 +36,9 @@ void init(void)
 
 void __attribute__((optimize("O0"))) experiment_optimize_0(const char * title)
 {
-    struct timespec * x;
-    struct timespec * y;
-    struct timespec * out;
     struct timespec start = { 0, 0};
     struct timespec end = { 0, 0};
     struct timespec diff = { 0, 0};
-    struct timespec max = { 0, 0};
-    struct timespec min = { 0x7FFFFFFFFFFFFFFFUL, 0x7FFFFFFFFFFFFFFFUL };
     struct timespec avg = { 0, 0};
     for(int i = 0; i < experimentmax; i++)
     {
@@ -68,14 +63,9 @@ void __attribute__((optimize("O0"))) experiment_optimize_0(const char * title)
 
 void __attribute__((optimize("O1"))) experiment_optimize_1(const char * title)
 {
-    struct timespec * x;
-    struct timespec * y;
-    struct timespec * out;
     struct timespec start = { 0, 0};
     struct timespec end = { 0, 0};
     struct timespec diff = { 0, 0};
-    struct timespec max = { 0, 0};
-    struct timespec min = { 0x7FFFFFFFFFFFFFFFUL, 0x7FFFFFFFFFFFFFFFUL };
     struct timespec avg = { 0, 0};
     for(int i = 0; i < experimentmax; i++)
     {
@@ -100,14 +90,9 @@ void __attribute__((optimize("O1"))) experiment_optimize_1(const char * title)
 
 void __attribute__((optimize("O2"))) experiment_optimize_2(const char * title)
 {
-    struct timespec * x;
-    struct timespec * y;
-    struct timespec * out;
     struct timespec start = { 0, 0};
     struct timespec end = { 0, 0};
     struct timespec diff = { 0, 0};
-    struct timespec max = { 0, 0};
-    struct timespec min = { 0x7FFFFFFFFFFFFFFFUL, 0x7FFFFFFFFFFFFFFFUL };
     struct timespec avg = { 0, 0};
     for(int i = 0; i < experimentmax; i++)
     {
@@ -132,14 +117,9 @@ void __attribute__((optimize("O2"))) experiment_optimize_2(const char * title)
 
 void __attribute__((optimize("O3"))) experiment_optimize_3(const char * title)
 {
-    struct timespec * x;
-    struct timespec * y;
-    struct timespec * out;
     struct timespec start = { 0, 0 };
     struct timespec end = { 0, 0 };
     struct timespec diff = { 0, 0 };
-    struct timespec max = { 0, 0 };
-    struct timespec min = { 0x7FFFFFFFFFFFFFFFUL, 0x7FFFFFFFFFFFFFFFUL };
     struct timespec avg = { 0, 0};
     for(int i = 0; i < experimentmax; i++)
     {
@@ -164,6 +144,8 @@ void __attribute__((optimize("O3"))) experiment_optimize_3(const char * title)
 
 int main(int argc, char ** argv)
 {
+    (void)(argc);
+    (void)(argv);
     init();
 
     experiment_optimize_0("no optimize => ");
