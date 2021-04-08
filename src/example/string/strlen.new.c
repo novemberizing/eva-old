@@ -13,7 +13,7 @@ static const int experimentmax = 65536;
 static const int experimentalstrcnt = 1024;
 
 static char experimentalstr[1024][65536 + 128];
-static int reallen[1024];
+static unsigned long reallen[1024];
 
 #define timespec_diff(x, y, out) do {                   \
     (out)->tv_sec = (x)->tv_sec - (y)->tv_sec;          \
@@ -33,7 +33,7 @@ void init(void)
     {
         int n = randomuint(64);
         reallen[i] = 65536 + n;
-        for(int j = 0; j < reallen[i]; j++)
+        for(unsigned long j = 0; j < reallen[i]; j++)
         {
             experimentalstr[i][j] = ((((unsigned long) random()) % 26) + 97);
         }
@@ -79,14 +79,9 @@ unsigned long xstringlen(const char * s)
 
 void experiment_strlen(const char * title)
 {
-    struct timespec * x;
-    struct timespec * y;
-    struct timespec * out;
-    struct timespec start = { 0, 0};
-    struct timespec end = { 0, 0};
-    struct timespec diff = { 0, 0};
-    struct timespec max = { 0, 0};
-    struct timespec min = { 0x7FFFFFFFFFFFFFFFUL, 0x7FFFFFFFFFFFFFFFUL };
+    struct timespec start = { 0, 0 };
+    struct timespec end = { 0, 0 };
+    struct timespec diff = { 0, 0 };
     struct timespec avg = { 0, 0};
     for(int i = 0; i < experimentmax; i++)
     {
@@ -116,14 +111,9 @@ void experiment_strlen(const char * title)
 
 void experiment_xstringlen(const char * title)
 {
-    struct timespec * x;
-    struct timespec * y;
-    struct timespec * out;
     struct timespec start = { 0, 0};
     struct timespec end = { 0, 0};
     struct timespec diff = { 0, 0};
-    struct timespec max = { 0, 0};
-    struct timespec min = { 0x7FFFFFFFFFFFFFFFUL, 0x7FFFFFFFFFFFFFFFUL };
     struct timespec avg = { 0, 0};
     for(int i = 0; i < experimentmax; i++)
     {
@@ -152,6 +142,8 @@ void experiment_xstringlen(const char * title)
 
 int main(int argc, char ** argv)
 {
+    (void)(argc);
+    (void)(argv);
     init();
 
     experiment_xstringlen("xstringlen => ");
