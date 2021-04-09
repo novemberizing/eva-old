@@ -52,7 +52,6 @@ union xvector256
     __m256i i256;
     v4u     u64;
     x8c     c8;
-    
 };
 
 typedef union xvector256 xvector256;

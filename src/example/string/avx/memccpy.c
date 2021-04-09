@@ -37,151 +37,146 @@ $ gcc -Wall -Wextra -fno-strict-aliasing -fwrapv -fno-aggressive-loop-optimizati
 
  */
 
+#include "avx.h"
 
+char destination[65536 + 256];
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <time.h>
+#define xcheckzero(x)    ((x - 0x0101010101010101UL) & ~x & 0x8080808080808080UL)
 
-#define timespecdiff(x, y, z) do {                  \
-    (z)->tv_sec = (x)->tv_sec - (y)->tv_sec;        \
-    (z)->tv_nsec = (x)->tv_nsec - (y)->tv_nsec;     \
-    if((z)->tv_nsec < 0)                            \
-    {                                               \
-        (z)->tv_nsec = 1000000000 + (z)->tv_nsec;   \
-        (z)->tv_sec = (z)->tv_sec - 1;              \
-    }                                               \
-} while(0)
-
-#define timespecmax(x, y, z) do {                   \
-    if((x)->tv_sec > (y)->tv_sec)                   \
-    {                                               \
-        (z)->tv_sec = (x)->tv_sec;                  \
-        (z)->tv_nsec = (x)->tv_nsec;                \
-    }                                               \
-    else if((x)->tv_sec < (y)->tv_sec)              \
-    {                                               \
-        (z)->tv_sec = (y)->tv_sec;                  \
-        (z)->tv_sec = (y)->tv_nsec;                 \
-    }                                               \
-    else                                            \
-    {                                               \
-        if((x)->tv_nsec >= (y)->tv_nsec)            \
-        {                                           \
-            (z)->tv_sec = (x)->tv_sec;              \
-            (z)->tv_nsec = (x)->tv_nsec;            \
-        }                                           \
-        else                                        \
-        {                                           \
-            (z)->tv_sec = (y)->tv_sec;              \
-            (z)->tv_nsec = (y)->tv_nsec;            \
-        }                                           \
-    }                                               \
-} while(0)
-
-#define timespecmin(x, y, z) do {                   \
-    if((x)->tv_sec < (y)->tv_sec)                   \
-    {                                               \
-        (z)->tv_sec = (x)->tv_sec;                  \
-        (z)->tv_nsec = (x)->tv_nsec;                \
-    }                                               \
-    else if((x)->tv_sec > (y)->tv_sec)              \
-    {                                               \
-        (z)->tv_sec = (y)->tv_sec;                  \
-        (z)->tv_sec = (y)->tv_nsec;                 \
-    }                                               \
-    else                                            \
-    {                                               \
-        if((x)->tv_nsec <= (y)->tv_nsec)            \
-        {                                           \
-            (z)->tv_sec = (x)->tv_sec;              \
-            (z)->tv_nsec = (x)->tv_nsec;            \
-        }                                           \
-        else                                        \
-        {                                           \
-            (z)->tv_sec = (y)->tv_sec;              \
-            (z)->tv_nsec = (y)->tv_nsec;            \
-        }                                           \
-    }                                               \
-} while(0)
-
-#define randomstrget()      ((((unsigned long) random()) % 26) + 97)
-#define randomuint(max)     (int) (((unsigned long) random()) % max)
-
-static const int experimentmax = 65536;
-static const int experimentstrcnt = 1024;
-
-static char experimentstr[1024][65536 + 128];
-static unsigned long experimentstrlen[1024];
-
-static void init(void)
+static void * xmemorycopy_until(void * __restrict destination, const void * __restrict source, int c, unsigned long n)
 {
-    for(int i = 0; i < experimentstrcnt; ++i)
+    register __m256i * d = (__m256i *) destination;
+    register const __m256i * s = (const __m256i *) source;
+    register __m256i temp;
+    register xvector256 match;
+
+    unsigned long v = c;
+    v |= v << 8;
+    v |= v << 16;
+    v |= v << 32;
+    
+    // __m256i v256 = _mm256_set_epi64x(v, v, v, v);
+    printf("%p => \n", s);
+    printf("%016lx\n", v);
+    for(unsigned long i = 32; i <= n; i = i + 32)
     {
-        unsigned long j = 0;
-        experimentstrlen[i] = 65536 + randomuint(64);
-        for(; j < experimentstrlen[i]; ++j)
+        temp = _mm256_loadu_si256(s++);
+        match.i256 = (((temp & v) - v) & 0xFFFFFFFFFFFFFFFFUL);
+        match.i256 = (temp & v);
+        printf("%016lx %016lx %016lx %016lx\n", match.u64[0], match.u64[1], match.u64[2], match.u64[3]);
+        if(match.u64[0] || match.u64[1] || match.u64[2] || match.u64[3])
         {
-            experimentstr[i][j] = randomstrget();
+            printf("match %p\n", s);
+            break;
         }
-        experimentstr[i][j] = 0;
-        for(j = j + 1; j < 65536 + 64; ++j)
-        {
-            experimentstr[i][j] = randomstrget();
-        }
+        break;
+        _mm256_store_si256(d++, temp);
+        // d->i256 = ;
+        // if xcheckzero ... 
+        // xvector256 v = { .i256 = _mm256_loadu_si256(src) };
     }
+    return 0;
+
+    // for(unsigned long i = 32; i <= n; i = i + 32)
+    // {
+    //     xvector256 v = { .i256 = _mm256_loadu_si256(src) };
+
+    //     v.u64  = xcheckzero(v.u64);
+    //     if(v.u64[0] || v.u64[1] || v.u64[2] || v.u64[3])
+    //     {
+    //         register char * c = &(v.c8[0]);
+    //         while(!*c){ ++c; }
+    //         return ((const char *) data) - s + (c - &(v.c8[0]));
+    //     }
+
+    //     _mm256_store_si256(dest++, _mm256_loadu_si256(src++));
+    // }
+
+    // n = n % 32;
+    // unsigned long * destu64 = (unsigned long *) dest;
+    // unsigned long * srcu64 = (unsigned long *) src;
+    // for(unsigned long i = 0; i < (n / 8); i++)
+    // {
+    //     *((unsigned long *) destu64++) = *((unsigned long *) srcu64++);
+    // }
+
+    // n = n % 8;
+    // char * o = (char *) destu64;
+    // char * i = (char *) srcu64;
+
+    // while(n--)
+    // {
+    //     *(o++) = *(i++);
+    // }
+    // return destination;
 }
 
 void experiment_memccpy(const char * title)
 {
     struct timespec start = { 0, 0 };
     struct timespec end = { 0, 0 };
-    struct timespec avg = { 0, 0 };
     struct timespec diff = { 0, 0 };
-    struct timespec max = { 0, 0 };
-    struct timespec min = { 0x7FFFFFFFFFFFFFFF, 0x7FFFFFFFFFFFFFFF };
-    char buffer[65536 + 128];
+    struct timespec avg = { 0, 0};
     for(int i = 0; i < experimentmax; i++)
     {
-        unsigned long index = randomuint(1024);
-        unsigned long n = experimentstrlen[index];
-        const char * s = experimentstr[index];
-
+        memset(destination, 0, 65536 + 128);
+        int index = randomuint(experimentalstrcnt);
+        char * s = experimentalstr[index];
         clock_gettime(CLOCK_REALTIME, &start);
-        char * p = memccpy(buffer, s, 0, 65536 + 128);
+
+        char * n = memccpy(destination, s, 0, 65536 + 128);
+
         clock_gettime(CLOCK_REALTIME, &end);
-        if(n != (unsigned long) (p - buffer - 1))
-        {
-            printf("assertion long result n => %lu, %p, %p, %lu\n", n, p, buffer, p - buffer - 1);
-            printf("%lu\n", strlen(s));
-            exit(0);
-        }
-        timespecdiff(&end, &start, &diff);
-        timespecmax(&diff, &max, &max);
-        timespecmin(&diff, &min, &min);
+        timespec_diff(&end, &start, &diff);
+        // if(memcmp(destination, s, reallen[index]) || (unsigned long) (n - (char *) destination) != reallen[index] + 1)
+        // {
+        //     printf("assertion\n");
+        //     exit(-1);
+        // }
+        printf("%p %ld %ld.%09ld\r", n, reallen[index], diff.tv_sec, diff.tv_nsec);
         avg.tv_sec = avg.tv_sec + diff.tv_sec;
         avg.tv_nsec = avg.tv_nsec + diff.tv_nsec;
-        printf("%p => \r", p);
     }
-    avg.tv_sec = avg.tv_sec / experimentmax;
+    printf("                                                      \r");
+
+    avg.tv_sec  = avg.tv_sec / experimentmax;
     avg.tv_nsec = avg.tv_nsec / experimentmax;
-    printf("%s %ld.%09ld %ld.%09ld %ld.%09ld\n", title, min.tv_sec, min.tv_nsec,
-                                                        max.tv_sec, max.tv_nsec,
-                                                        avg.tv_sec, avg.tv_nsec);
-}
 
-static void * xmemorycopy_until(void * __restrict destination, const void * __restrict source, int c, unsigned long n)
-{
-    printf("implement this\n");
-    exit(0);
-
-    return 0;
+    printf("%s %ld.%09ld\n", title, avg.tv_sec, avg.tv_nsec);
 }
 
 void experiment_xmemorycopy_until(const char * title)
 {
-    (void)(title);
+    struct timespec start = { 0, 0 };
+    struct timespec end = { 0, 0 };
+    struct timespec diff = { 0, 0 };
+    struct timespec avg = { 0, 0};
+    for(int i = 0; i < experimentmax; i++)
+    {
+        memset(destination, 0, 65536 + 128);
+        int index = randomuint(experimentalstrcnt);
+        char * s = experimentalstr[index];
+        clock_gettime(CLOCK_REALTIME, &start);
+
+        char * n = xmemorycopy_until(destination, s, 0, 65536 + 128);
+
+        clock_gettime(CLOCK_REALTIME, &end);
+        timespec_diff(&end, &start, &diff);
+        // if(memcmp(destination, s, reallen[index]) || (unsigned long) (n - (char *) destination) != reallen[index] + 1)
+        // {
+        //     printf("assertion\n");
+        //     exit(-1);
+        // }
+        printf("%p %ld %ld.%09ld\r", n, reallen[index], diff.tv_sec, diff.tv_nsec);
+        avg.tv_sec = avg.tv_sec + diff.tv_sec;
+        avg.tv_nsec = avg.tv_nsec + diff.tv_nsec;
+    }
+    printf("                                                      \r");
+
+    avg.tv_sec  = avg.tv_sec / experimentmax;
+    avg.tv_nsec = avg.tv_nsec / experimentmax;
+
+    printf("%s %ld.%09ld\n", title, avg.tv_sec, avg.tv_nsec);
 }
 
 int main(int argc, char ** argv)
@@ -191,7 +186,8 @@ int main(int argc, char ** argv)
 
     init();
 
-    experiment_memccpy("memccpy =>");
+    experiment_memccpy          ("memccpy           => ");
+    experiment_xmemorycopy_until("xmemorycopy_until => ");
 
     // printf("hello world\n");
     // char buffer[65536 + 128];
@@ -199,9 +195,8 @@ int main(int argc, char ** argv)
     // printf("ret => %p\n", ret);
     // printf("experimentstr[0] => %p\n", experimentstr[0]);
     // printf("buffer => %p\n", buffer);
-
     // printf("buffer => %s\n", buffer);
-
     // printf("%d\n", *ret);
+
     return 0;
 }
