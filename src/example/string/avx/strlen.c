@@ -6,8 +6,6 @@
  */
 #include "avx.h"
 
-#define xcheckzero(x)   ((x - 0x0101010101010101UL) & ~x & 0x8080808080808080UL)
-
 unsigned long xstringlen(const char * s)
 {
     const __m256i * source = (const __m256i *) s;
