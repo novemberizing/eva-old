@@ -1,5 +1,5 @@
-#ifndef   __EXAMPLE_AVX__H__
-#define   __EXAMPLE_AVX__H__
+#ifndef   __EXAMPLE_STRING_AVX__
+#define   __EXAMPLE_STRING_AVX__
 
 #include <stdio.h>
 #include <string.h>
@@ -7,13 +7,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <immintrin.h>
+#include <string.h>
 
 union xvector256;
 union xvector512;
 
 typedef unsigned long xvector64x4 __attribute__ ((vector_size(32)));
 typedef unsigned char xvector8x32 __attribute__ ((vector_size(32)));
-typedef union xvector256 xvector256;
 
 typedef unsigned long xvector64x8 __attribute__ ((vector_size(64)));
 typedef unsigned char xvector8x64 __attribute__ ((vector_size(64)));
@@ -22,7 +22,6 @@ typedef union xvector512 xvector512;
 union xvector256
 {
     __m256i     i256;
-    __m256d     d256;
     xvector64x4 u64;
     xvector8x32 u8;
 };
@@ -41,16 +40,21 @@ static const int experimentalstrcnt = 1024;
 static char experimentalstr[1024][65536 + 256];
 static unsigned long reallen[1024];
 
-static char buffer[65536 + 256];
+#define timespec_diff(x, y, out) do {                   \
+    (out)->tv_sec = (x)->tv_sec - (y)->tv_sec;          \
+    (out)->tv_nsec = (x)->tv_nsec - (y)->tv_nsec;       \
+    if((out)->tv_nsec < 0) {                            \
+        (out)->tv_sec = (out)->tv_sec - 1;              \
+        (out)->tv_nsec = 1000000000 + (out)->tv_nsec;   \
+    }                                                   \
+} while(0)
 
-#define randomuint(max)     (((unsigned long) random()) % max)
-#define randomcharget()     (char) (randomuint(26) + 97)
+#define randomstrget()      ((((unsigned long) random()) % 26) + 97)
+#define randomuint(max)     (int) (((unsigned long) random()) % max)
 
-static inline void init(int argc, char ** argv)
+static inline void init(void)
 {
-    (void)(argc);
-    (void)(argv);
-    srandom(time(0));
+    srandom(time((void *) 0));
 
     for(int i = 0; i < experimentalstrcnt; i++)
     {
@@ -58,14 +62,13 @@ static inline void init(int argc, char ** argv)
         reallen[i] = 65536 + n;
         for(unsigned long j = 0; j < reallen[i]; j++)
         {
-            experimentalstr[i][j] = randomcharget();
+            experimentalstr[i][j] = ((((unsigned long) random()) % 26) + 97);
         }
         experimentalstr[i][reallen[i]] = 0;
-        for(unsigned long j = reallen[i] + 1; j < 65536 + 256; j++)
+        for(unsigned long j = reallen[i] + 1; j < reallen[i]; j++)
         {
             experimentalstr[i][j] = '!';
         }
-        experimentalstr[i][65536 + 255] = 0;
     }
 }
 
@@ -131,38 +134,7 @@ static inline void init(int argc, char ** argv)
     }                                               \
 } while(0)
 
-#define experiment(title, code, result, validate) do {                      \
-    struct timespec start = { 0, 0 };                                       \
-    struct timespec end   = { 0, 0 };                                       \
-    struct timespec diff  = { 0, 0 };                                       \
-    struct timespec max   = { 0, 0 };                                       \
-    struct timespec min   = { 0x7FFFFFFFFFFFFFFFUL, 0x7FFFFFFFFFFFFFFFUL }; \
-    struct timespec avg   = { 0, 0 };                                       \
-    for(int i = 0; i < experimentmax; i++) {                                \
-        memset(buffer, '@', 65536 + 256);                                   \
-        int index = (int) randomuint(1024);                                 \
-        clock_gettime(CLOCK_REALTIME, &start);                              \
-        code;                                                               \
-        clock_gettime(CLOCK_REALTIME, &end);                                \
-        result;                                                             \
-        if(!validate) {                                                     \
-            printf("                                   \r");                \
-            printf("assertion\n");                                          \
-            exit(0);                                                        \
-        }                                                                   \
-        timespecdiff(&end, &start, &diff);                                  \
-        timespecmax(&diff, &max, &max);                                     \
-        timespecmin(&diff, &min, &min);                                     \
-        avg.tv_sec = avg.tv_sec + diff.tv_sec;                              \
-        avg.tv_nsec = avg.tv_nsec + diff.tv_nsec;                           \
-    }                                                                       \
-    avg.tv_sec  = avg.tv_sec  / experimentmax;                              \
-    avg.tv_nsec = avg.tv_nsec / experimentmax;                              \
-    printf("                                   \r");                        \
-    printf("%s,%ld.%09ld,%ld.%09ld,%ld.%09ld\n", title,                     \
-                                                 min.tv_sec, min.tv_nsec,   \
-                                                 max.tv_sec, max.tv_nsec,   \
-                                                 avg.tv_sec, avg.tv_nsec);  \
-} while(0)
+#define randomstrget()      ((((unsigned long) random()) % 26) + 97)
+#define randomuint(max)     (int) (((unsigned long) random()) % max)
 
-#endif // __EXAMPLE_AVX__H__
+#endif // __EXAMPLE_STRING_AVX__

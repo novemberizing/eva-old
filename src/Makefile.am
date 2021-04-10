@@ -91,7 +91,6 @@ noinst_PROGRAMS = example-helloworld                                         \
                   example-string-format                                      \
                   example-string-uint64                                      \
                   example-string-new                                         \
-                  example-string-strlen                                      \
                   example-console-engine                                     \
                   example-redis-ping                                         \
                   example-redis-protocol                                     \
@@ -139,9 +138,6 @@ example_string_uint64_LDADD    = $(LIBS)
 
 example_string_new_SOURCES     = example/string/new.c
 example_string_new_LDADD       = $(LIBS)
-
-example_string_strlen_SOURCES  = example/string/strlen.c
-example_string_strlen_LDADD    = $(LIBS)
 
 example_console_engine_SOURCES = example/console/engine.c
 example_console_engine_LDADD   = $(LIBS)
