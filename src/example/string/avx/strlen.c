@@ -3,10 +3,16 @@
  * $ gcc -Wall -Wextra -fno-strict-aliasing -fwrapv -fno-aggressive-loop-optimizations  -fsanitize=undefined -mavx memcpy.c
  * 
  * $ gcc -O3 -mavx2 memcpy.c
+ * 
+ * // SEG FAULT -- no inline ...
  */
 #include "avx.h"
 
-unsigned long xstringlen(const char * s)
+// unsigned long xstringlen(const char * s) __attribute__((nothrow));
+
+extern unsigned long __attribute__ ((noinline)) xstringlen(const char * s) __THROW __attribute_pure__ __nonnull ((1));
+
+extern unsigned long __attribute__ ((noinline)) xstringlen(const char * s)
 {
     const __m256i * source = (const __m256i *) s;
     const __m256i zero = (__m256i) (xvector64x4) { 0, 0, 0, 0 };
@@ -106,6 +112,9 @@ void experiment_strlen(const char * title) {
 int main(int argc, char ** argv)
 {
     init(argc, argv);
+
+    // experiment("function xstringlen", unsigned long n = xstringlen(experimentalstr[index]), printf("%ld\r", n), validate(index, n));
+    // experiment("function xstringlen", unsigned long n = strlen(experimentalstr[index]), printf("%ld\r", n), validate(index, n));
 
     experiment_xstringlen("function xstringlen");
     experiment_strlen    ("function strlen    ");
