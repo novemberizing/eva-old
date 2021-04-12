@@ -138,7 +138,7 @@ static inline void init(int argc, char ** argv)
     struct timespec min   = { 0x7FFFFFFFFFFFFFFFUL, 0x7FFFFFFFFFFFFFFFUL }; \
     struct timespec avg   = { 0, 0 };                                       \
     for(int i = 0; i < experimentmax; i++) {                                \
-        memset(buffer, 0, 65536 + 256);                                   \
+        memset(buffer, '@', 65536 + 256);                                   \
         int index = (int) randomuint(1024);                                 \
         clock_gettime(CLOCK_REALTIME, &start);                              \
         code;                                                               \

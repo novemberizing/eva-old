@@ -15,7 +15,7 @@ extern unsigned long __attribute__ ((noinline)) xstringlen(const char * s) __THR
 extern unsigned long __attribute__ ((noinline)) xstringlen(const char * s)
 {
     const __m256i * source = (const __m256i *) s;
-    const __m256i zero = (__m256i) (xvector64x4) { 0, 0, 0, 0 };
+    const __m256i zero = (__m256i) (xvectoru64x4) { 0, 0, 0, 0 };
 
     while(!_mm256_movemask_epi8(_mm256_cmpeq_epi8(_mm256_load_si256(source), zero))){ source++; }
     register xvector256 value = { .i256 = _mm256_loadu_si256(source) };
