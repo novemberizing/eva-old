@@ -34,6 +34,7 @@ static char expermentalcmpstr[1024][65536 + 256];
 static unsigned long realcmplen[1024];
 
 static char buffer[65536 + 256];
+static char original[65536 + 256];
 
 #define randomuint(max)     (((unsigned long) random()) % max)
 #define randomcharget()     (char) (randomuint(26) + 97)
@@ -140,6 +141,7 @@ static inline void init(int argc, char ** argv)
     for(int i = 0; i < experimentmax; i++) {                                \
         memset(buffer, '@', 65536 + 256);                                   \
         int index = (int) randomuint(1024);                                 \
+        memcpy(original, experimentalstr[index], 65536 + 256);              \
         clock_gettime(CLOCK_REALTIME, &start);                              \
         code;                                                               \
         clock_gettime(CLOCK_REALTIME, &end);                                \
