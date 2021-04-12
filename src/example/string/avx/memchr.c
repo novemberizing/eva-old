@@ -19,8 +19,8 @@ extern void * __attribute__ ((noinline)) xmemorychr(const void * __s, int __c, u
     v |= (v << 16);
     v |= (v << 32);
 
-    const __m256i zero = (__m256i) (xvector64x4) { v, v, v, v };
-    while(source <= until && !_mm256_movemask_epi8(_mm256_cmpeq_epi8(_mm256_load_si256(source), zero)))
+    const __m256i value = (__m256i) (xvectoru64x4) { v, v, v, v };
+    while(source <= until && !_mm256_movemask_epi8(_mm256_cmpeq_epi8(_mm256_load_si256(source), value)))
     {
         source++;
     }
@@ -34,11 +34,7 @@ extern void * __attribute__ ((noinline)) xmemorychr(const void * __s, int __c, u
 
 static int validate(int index, void * p)
 {
-    char * __p = (char *) p;
-    char * s = experimentalstr[index];
-    // printf("%016lx - %016lx, %ld, %ld\n", __p, s, __p - s, reallen[index]);
-
-    return __p - s == reallen[index];
+    return ((char *) p) - experimentalstr[index] == reallen[index];
 }
 
 int main(int argc, char ** argv)

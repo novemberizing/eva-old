@@ -11,29 +11,18 @@
 union xvector256;
 union xvector512;
 
-typedef unsigned long xvector64x4 __attribute__ ((vector_size(32)));
-typedef unsigned char xvector8x32 __attribute__ ((vector_size(32)));
+typedef unsigned long xvectoru64x4 __attribute__ ((vector_size(32)));
+typedef unsigned char xvectoru8x32 __attribute__ ((vector_size(32)));
 typedef union xvector256 xvector256;
-
-typedef unsigned long xvector64x8 __attribute__ ((vector_size(64)));
-typedef unsigned char xvector8x64 __attribute__ ((vector_size(64)));
-typedef union xvector512 xvector512;
 
 union xvector256
 {
-    __m256i     i256;
-    __m256d     d256;
-    xvector64x4 u64;
-    xvector8x32 u8;
+    __m256i      i256;
+    __m256d      d256;
+    xvectoru64x4 u64;
+    xvectoru8x32 u8;
 };
 
-union xvector512
-{
-    __m512i     i512;
-    __m512d     d512;
-    xvector64x8 u64;
-    xvector8x64 u8;
-};
 
 static const int experimentmax = 65536;
 static const int experimentalstrcnt = 1024;
@@ -139,7 +128,7 @@ static inline void init(int argc, char ** argv)
     struct timespec min   = { 0x7FFFFFFFFFFFFFFFUL, 0x7FFFFFFFFFFFFFFFUL }; \
     struct timespec avg   = { 0, 0 };                                       \
     for(int i = 0; i < experimentmax; i++) {                                \
-        memset(buffer, '@', 65536 + 256);                                   \
+        memset(buffer, 0, 65536 + 256);                                   \
         int index = (int) randomuint(1024);                                 \
         clock_gettime(CLOCK_REALTIME, &start);                              \
         code;                                                               \
