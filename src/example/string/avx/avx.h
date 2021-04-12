@@ -30,6 +30,9 @@ static const int experimentalstrcnt = 1024;
 static char experimentalstr[1024][65536 + 256];
 static unsigned long reallen[1024];
 
+static char expermentalcmpstr[1024][65536 + 256];
+static unsigned long realcmplen[1024];
+
 static char buffer[65536 + 256];
 
 #define randomuint(max)     (((unsigned long) random()) % max)
@@ -45,16 +48,23 @@ static inline void init(int argc, char ** argv)
     {
         int n = randomuint(64);
         reallen[i] = 65536 + n;
+        realcmplen[i] = 65536/2 + randomuint(64);
         for(unsigned long j = 0; j < reallen[i]; j++)
         {
-            experimentalstr[i][j] = randomcharget();
+            expermentalcmpstr[i][j] = experimentalstr[i][j] = randomcharget();
         }
         experimentalstr[i][reallen[i]] = 0;
+        expermentalcmpstr[i][realcmplen[i]] = 0;
         for(unsigned long j = reallen[i] + 1; j < 65536 + 256; j++)
         {
             experimentalstr[i][j] = '!';
         }
+        for(unsigned long j = realcmplen[i] + 1; j < 65536 + 256; j++)
+        {
+            expermentalcmpstr[i][j] = '!';
+        }
         experimentalstr[i][65536 + 255] = 0;
+        expermentalcmpstr[i][65536 + 255] = 0;
     }
 }
 
