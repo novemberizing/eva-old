@@ -1,33 +1,77 @@
+/**
+ * -- 에 대한 연산이 너무 느리다.
+ * 연산을 더 줄일 수 있는 방법을 찾아야 한다.
+ * 약 400 - 600 나노세컨드 차이가 난다.
+ * 
+ */
 #include "avx.h"
 
 extern void * __attribute__ ((noinline)) xmemorymove(void * __d, const void * __s, unsigned long __n) __THROW __nonnull ((1, 2));
 
 extern void * __attribute__ ((noinline)) xmemorymove(void * __d, const void * __s, unsigned long n)
 {
-    // 메모리가 겹쳐지는 부분에 대한 고민을 해야 한다.
-    // 그리고 그것을 도출해 내어야 한다. (64 바이트 얼라인으로 하면 예외가 발생하지 않으지만 그렇지 않은 경우)
-    // SEGMENT FAULT 가 발생한다. 겹쳐지는 부분에 대해서 고민해야 한다.
-    register __m256i *       destination256 = (__m256i *) __d;
-    register const __m256i * source256      = (const __m256i *) __s;
-    for(register unsigned long i = 32; i <= n; i = i + 32)
+    if(__d < __s)
     {
-        _mm256_store_si256(destination256++, _mm256_loadu_si256(source256++));
-    }
+        __m256i * destination256    = (__m256i *) __d;
+        const __m256i * source256   = (__m256i *) __s;
+        __m256i * destinationend256 = (__m256i *) (((unsigned char *) __d) + (n / 32) * 32);
+        __m256i * sourceend256      = (__m256i *) (((unsigned char *) __s) + (n / 32) * 32);
+        while (destination256 != destinationend256)
+        {
+            _mm256_storeu_si256(destination256++, _mm256_lddqu_si256(source256++));
+        }
 
-    n = n % 32;
-    unsigned long * destination64 = (unsigned long *) destination256;
-    unsigned long * source64 = (unsigned long *) source256;
-    for(register unsigned long i = 8; i <= n; i = i + 8)
-    {
-        *((unsigned long *) destination64++) = *((unsigned long *) source64++);
-    }
+        unsigned long * destination64    = (unsigned long *) destination256;
+        const unsigned long * source64   = (unsigned long *) source256;
+        unsigned long * destinationend64 = (unsigned long *) (((unsigned char *) __d) + (n / 8) * 8);
+        unsigned long * sourceend64      = (unsigned long *) (((unsigned char *) __s) + (n / 8) * 8);
 
-    n = n % 8;
-    unsigned char * destination8 = (unsigned char *) destination64;
-    unsigned char * source8      = (unsigned char *) source64;
-    for(unsigned long i = 0; i < n; i++)
+        while(destination64 != destinationend64)
+        {
+            *(destination64++) = *(source64++);
+        }
+
+        unsigned char * destination8    = (unsigned char *) destination64;
+        const unsigned char * source8   = (unsigned char *) source64;
+        unsigned char * destinationend8 = ((unsigned char *) __d) + n;
+        unsigned char * sourceend8      = ((unsigned char *) __s) + n;
+
+        while(destination8 != destinationend8)
+        {
+            *(destination8++) = *(source8++);
+        }
+        
+    }
+    else
     {
-        *((unsigned char *) destination8++) = *((unsigned char *) source8++);
+        // 256
+        __m256i * destination256     = (__m256i *) (((unsigned char *) __d) + (n % 32));
+        const __m256i * source256    = (__m256i *) (((unsigned char *) __s) + (n % 32));
+        __m256i * destinationend256  = (__m256i *) (((unsigned char *) __d) + n);
+        const __m256i * sourceend256 = (__m256i *) (((unsigned char *) __s) + n);
+        while (destination256 != destinationend256)
+        {
+            _mm256_storeu_si256(--destinationend256, _mm256_lddqu_si256(--sourceend256));
+        }
+        // 64
+        unsigned long * destination64     = (unsigned long *) (((unsigned char *) __d) + (n % 8));
+        const unsigned long * source64    = (unsigned long *) (((unsigned char *) __s) + (n % 8));
+        unsigned long * destinationend64  = (unsigned long *) destinationend256;
+        const unsigned long * sourceend64 = (unsigned long *) sourceend256;
+        while (destination64 != destinationend64)
+        {
+            *(--destinationend64) = *(--sourceend64);
+        }
+        // 8
+        unsigned char * destination8    = ((unsigned char *) __d);
+        const unsigned char * source8   = ((unsigned char *) __s);
+        unsigned char * destinationend8 = ((unsigned char *) destinationend64);
+        unsigned char * sourceend8      = ((unsigned char *) destinationend64);
+
+        while(destination8 != destinationend8)
+        {
+            *(--destinationend8) = *(--sourceend8);
+        }
     }
 
     return __d;
@@ -36,7 +80,17 @@ extern void * __attribute__ ((noinline)) xmemorymove(void * __d, const void * __
 static int validate(int index, void * p)
 {
     memcpy(buffer, experimentalstr[index], 65536 + 256);
-    memmove(buffer + 16384 - 1024 + index, buffer + 32768, 32768);
+    memmove(buffer + 16384 - 1024 + index, buffer + 32768, 32768 - index);
+
+    return memcmp(buffer, original, 65536 + 256) == 0;
+}
+
+
+static int validate2(int index, void * p)
+{
+    memcpy(buffer, experimentalstr[index], 65536 + 256);
+    memmove(buffer + 32768, buffer + 16384 - 1024 + index, 32768 - index);
+//    memmove(buffer + 32768, buffer + 16384 - 1024 + index, 32768 - index);
 
     // return memcmp(buffer, original, 65536 + 256) == 0;
     return 1;
@@ -46,10 +100,11 @@ int main(int argc, char ** argv)
 {
     init(argc, argv);
 
-    // memoryz => // void * p = memmove(buffer + 16384, buffer + 32768, 32768); //
+    experiment("memmove", void * p = memmove(original + 16384 - 1024 + index, original + 32768, 32768 - index), printf("%p\r", p), validate(index, p));
+    experiment("xmemorymove", void * p = xmemorymove(original + 16384 - 1024 + index, original + 32768, 32768 - index), printf("%p\r", p), validate(index, p));
 
-    experiment("memmove", void * p = memmove(original + 16384 - 1024 + index, original + 32768, 32768), printf("%p\r", p), validate(index, p));;
-    experiment("xmemorymove", void * p = xmemorymove(original + 16384 - 1024, original + 32768, 32768), printf("%p\r", p), validate(index, p));;
+    experiment("xmemorymove", void * p = xmemorymove(original + 32768, original + 16384 - 1024 + index, 32768 - index), printf("%p\r", p), validate2(index, p));
+    experiment("memmove", void * p = memmove(original + 32768, original + 16384 - 1024 + index, 32768 - index), printf("%p\r", p), validate2(index, p));
 
     return 0;
 }
