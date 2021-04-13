@@ -38,6 +38,7 @@ static int validate(int index, void * p)
 
 int main(int argc, char ** argv)
 {
+    init(argc, argv);
     printf("hello world\n");
     experiment("xmemoryset", void * p = xmemoryset(original, '%', 65536 - index), printf("%p\r", p), validate(index, p));
     experiment("memset", void * p = memset(original, '%', 65536 - index), printf("%p\r", p), validate(index, p));

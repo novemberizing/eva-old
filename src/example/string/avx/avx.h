@@ -33,8 +33,8 @@ static unsigned long reallen[1024];
 static char expermentalcmpstr[1024][65536 + 256];
 static unsigned long realcmplen[1024];
 
-static char buffer[65536 + 256];
-static char original[65536 + 256];
+static char buffer[65536 + 65536 + 256 + 256];
+static char original[65536 + 65536 + 256 + 256];
 
 #define randomuint(max)     (((unsigned long) random()) % max)
 #define randomcharget()     (char) (randomuint(26) + 97)
@@ -139,9 +139,11 @@ static inline void init(int argc, char ** argv)
     struct timespec min   = { 0x7FFFFFFFFFFFFFFFUL, 0x7FFFFFFFFFFFFFFFUL }; \
     struct timespec avg   = { 0, 0 };                                       \
     for(int i = 0; i < experimentmax; i++) {                                \
-        memset(buffer, '@', 65536 + 256);                                   \
+        memset(buffer, '@', 65536 + 65536 + 256 + 256);                     \
+        memset(original, '@', 65536 + 65536 + 256 + 256);                   \
         int index = (int) randomuint(1024);                                 \
-        memcpy(original, experimentalstr[index], 65536 + 256);              \
+        memcpy(original, experimentalstr[(index + 1) % 1024], 65536 + 256); \
+        memcpy(buffer, experimentalstr[(index + 1) % 1024], 65536 + 256);   \
         clock_gettime(CLOCK_REALTIME, &start);                              \
         code;                                                               \
         clock_gettime(CLOCK_REALTIME, &end);                                \
