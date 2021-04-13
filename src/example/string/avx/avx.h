@@ -64,6 +64,8 @@ static inline void init(int argc, char ** argv)
         {
             expermentalcmpstr[i][j] = '!';
         }
+        experimentalstr[i][65536/2 + 4092 + randomuint(64)] = '@';
+        expermentalcmpstr[i][65536/2 + 4092 + randomuint(64)] = '@';
         experimentalstr[i][65536 + 255] = 0;
         expermentalcmpstr[i][65536 + 255] = 0;
     }
