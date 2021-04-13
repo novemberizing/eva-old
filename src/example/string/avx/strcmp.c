@@ -9,13 +9,11 @@ extern int __attribute__ ((noinline)) xstringcmp(const char * __x, const char * 
 
     while(_mm256_movemask_epi8(_mm256_cmpeq_epi8(_mm256_load_si256(source), _mm256_load_si256(destination))))
     {
-        ++source;
-        ++destination;
+        source++;
+        destination++;
     }
-    --source;
-    --destination;
-    
- 
+    source--;
+    destination--;
     register const char * c = (const char *) (source);
     register const char * d = (const char *) (destination);
 
