@@ -18,13 +18,8 @@ extern int __attribute__ ((noinline)) xstringcmp(const char * __x, const char * 
  
     register const char * c = (const char *) (source);
     register const char * d = (const char *) (destination);
-    int i = 0;
-    while(*(c++) == *(d++)){
-        // printf("%d\n", *c - *d);
-        i++;
-        //printf("%d\n", *d);
-    }
-    // printf("count => %d %d %d %c %c\n", i, *(c-1), *(d-1), *(c-1), *(d-1));
+
+    while(*(c++) == *(d++)){}
 
     return *(d-1) - *(c-1);
 }
@@ -38,9 +33,9 @@ static int validate(int index, int n)
 int main(int argc, char ** argv)
 {
     init(argc, argv);
+
     experiment("xstringcmp", int n = xstringcmp(experimentalstr[index], expermentalcmpstr[index]), printf("%d\r", n), validate(index, n));
     experiment("strcmp", int n = strcmp(experimentalstr[index], expermentalcmpstr[index]), printf("%d\r", n), validate(index, n));
-    
 
     printf("hello world\n");
     return 0;
