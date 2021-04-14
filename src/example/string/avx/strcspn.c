@@ -2,6 +2,8 @@
 
 extern unsigned long __attribute__ ((noinline)) xstringcspn(const char * __s, const char * __reject) __THROW __attribute_pure__ __nonnull ((1, 2));
 
+/**
+ */
 extern unsigned long __attribute__ ((noinline)) xstringcspn(const char * __s, const char * __reject)
 {
     xvector256 table[8] = { 0, };
