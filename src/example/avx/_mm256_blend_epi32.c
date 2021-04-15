@@ -30,15 +30,24 @@ union vector256
 
 int main(int argc, char ** argv)
 {
-    vector256 x = { .i16 = { 0x7FF0, 0x7FF1, 0x7FF2, 0x7FF3, 0x7FF4, 0x7FF5, 0x7FF6, 0x7FF7, 0x7FF8, 0x7FF9, 0x7FFA, 0x7FFB, 0x7FFC, 0x7FFD, 0x7FFE, 0x7FFF } };
-    vector256 y = { .i16 = {      0,      1,      2,      3,      4,      5,      6,      7,      8,      9,     10,     11,     12,     13,     14,     15 } };
+    vector256 x = { .u32 = { 0xFFFFFFFF, 0xFFFFFFFF, 0x00000000, 0x00000000, 0xFFFFFFFF, 0xFFFFFFFF, 0x00000000, 0x00000000 } };
+    vector256 y = { .u32 = { 0x00000000, 0x00000000, 0xFFFFFFFF, 0xFFFFFFFF, 0x00000000, 0x00000000, 0xFFFFFFFF, 0xFFFFFFFF } };
 
-    vector256 z = { .i256 = _mm256_avg_epu16(x.i256, y.i256) };
+    vector256 z = { .i256 = _mm256_blend_epi16(x.i256, y.i256, 0xF0) };
 
     printf("convert => { ");
-    for(int i = 0; i < 16; i++)
+    for(int i = 0; i < 8; i++)
     {
-        printf("%d%s", z.i16[i], i + 1 == 16 ? " }" : ", ");
+        printf("0x%08x%s", z.u32[i], i + 1 == 8 ? " }" : ", ");
+    }
+    printf("\n");
+
+    z.i256 = _mm256_blend_epi16(x.i256, y.i256, 0x0F);
+
+    printf("convert => { ");
+    for(int i = 0; i < 8; i++)
+    {
+        printf("0x%08x%s", z.i32[i], i + 1 == 8 ? " }" : ", ");
     }
     printf("\n");
 

@@ -30,15 +30,24 @@ union vector256
 
 int main(int argc, char ** argv)
 {
-    vector256 x = { .i16 = { 0x7FF0, 0x7FF1, 0x7FF2, 0x7FF3, 0x7FF4, 0x7FF5, 0x7FF6, 0x7FF7, 0x7FF8, 0x7FF9, 0x7FFA, 0x7FFB, 0x7FFC, 0x7FFD, 0x7FFE, 0x7FFF } };
-    vector256 y = { .i16 = {      0,      1,      2,      3,      4,      5,      6,      7,      8,      9,     10,     11,     12,     13,     14,     15 } };
+    vector256 x = { .u16 = { 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0x0000, 0x0000, 0x0000, 0x0000, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0x0000, 0x0000, 0x0000, 0x0000 } };
+    vector256 y = { .u16 = { 0x0000, 0x0000, 0x0000, 0x0000, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0x0000, 0x0000, 0x0000, 0x0000, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF } };
 
-    vector256 z = { .i256 = _mm256_avg_epu16(x.i256, y.i256) };
+    vector256 z = { .i256 = _mm256_blend_epi16(x.i256, y.i256, 0xF0) };
 
     printf("convert => { ");
     for(int i = 0; i < 16; i++)
     {
-        printf("%d%s", z.i16[i], i + 1 == 16 ? " }" : ", ");
+        printf("0x%04x%s", (z.u16[i]), i + 1 == 16 ? " }" : ", ");
+    }
+    printf("\n");
+
+    z.i256 = _mm256_blend_epi16(x.i256, y.i256, 0x0F);
+
+    printf("convert => { ");
+    for(int i = 0; i < 16; i++)
+    {
+        printf("0x%04x%s", z.i16[i], i + 1 == 16 ? " }" : ", ");
     }
     printf("\n");
 
