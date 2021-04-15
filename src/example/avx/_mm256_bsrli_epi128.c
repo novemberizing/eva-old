@@ -58,7 +58,7 @@ int main(int argc, char ** argv)
 {
     vector256 x = { .u64 = { 0xFEDCBA9876543210UL, 0x0123456789ABCDEFUL, 0xFEDCBA9876543210UL, 0x0123456789ABCDEFUL } };
 
-    vector256 z = { .i256 = _mm256_bslli_epi128(x.i256, 6) };
+    vector256 z = { .i256 = _mm256_bsrli_epi128(x.i256, 6) };
 
     for(int i = 0; i < 4; i++)
     {
