@@ -34,15 +34,15 @@ union vector256
 
 int main(int argc, char ** argv)
 {
-    vector256 x = { .f32 = { -7.1f, -6.2f, -5.3f, -4.4f, -3.5f, -2.6f, -1.7f, 0.8f } };
-    vector256 y = { .f32 = {  0.8f,  1.7f,  2.6f,  3.5f,  4.4f,  5.3f,  6.2f, 7.1f  } };
+    vector256 x = { .f64 = { -4.0f, -3.0f, -2.0f,  -1.0f } };
+    vector256 y = { .f64 = {  0.4f,  0.3f,  0.2f,   0.1f } };
 
-    vector256 z = { .f256 = _mm256_add_ps(x.f256, y.f256) };
+    vector256 z = { .d256 = _mm256_addsub_pd(x.d256, y.d256) };
 
-        printf("convert => { ");
-    for(int i = 0; i < 8; i++)
+    printf("convert => { ");
+    for(int i = 0; i < 4; i++)
     {
-        printf("%f%s", z.f32[i], i + 1 == 8 ? " }" : ", ");
+        printf("%f%s", z.f64[i], i + 1 == 8 ? " }" : ", ");
     }
     printf("\n");
 
