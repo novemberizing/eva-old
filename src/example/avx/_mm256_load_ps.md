@@ -1,0 +1,34 @@
+`_mm256_load_ps(mem: float const *): __m256`
+============================================
+
+> Load 256 bits (composed of 8 packed single precision (32 bit) floating point elements) from memory into destination. mem address must be aligned on a 32 byte boundary or general protection exception may be generated.
+
+## Synopsis
+
+```c
+#include <immintrin.h>
+
+__m256 _mm256_load_ps (float const * mem_addr);
+```
+
+| -           | Description       |
+| ----------- | ----------------- |
+| Instruction | vmovaps ymm, m256 |
+| CPUID Flags | AVX               |
+
+## Operation
+
+```
+dst[255:0] := MEM[mem_addr+255:mem_addr]
+dst[MAX:256] := 0
+```
+
+## Performance
+
+| Architecture | Latency | Throughput (CPI) |
+| ------------ | ------- | ---------------- |
+| Icelake      | 7       | 0.5              |
+| Skylake      | 7       | 0.5              |
+| Broadwell    | 1       | 0.5              |
+| Haswell      | 1       | 0.5              |
+| Ivy Bridge   | 1       | 1                |
