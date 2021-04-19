@@ -64,14 +64,14 @@ union vector128
 
 int main(int argc, char ** argv)
 {
-    vector256 x = { .u64 = { 1, 2, 3, 4 } };
-    vector128 z = { .i128 = _mm256_extracti128_si256(x.i256, 1) };
+    vector256 x = { .d256 = { 1.2f, 2.4f, 3.6f, 4.8f } };
 
-    for(int i = 0; i < 2; i++)
+    vector256 z = { .d256 = _mm256_floor_pd(x.d256) };
+
+    for(int i = 0; i < 4; i++)
     {
-        printf("%016lx ", z.u64[i]);
+        printf("%lf\n", z.f64[i]);
     }
-    printf("\n");
 
     return 0;
 }
