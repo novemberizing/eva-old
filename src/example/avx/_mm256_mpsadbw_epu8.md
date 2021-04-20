@@ -8,7 +8,7 @@
 ```c
 #include <immintrin.h>
 
-__m256i _mm256_mpsadbw_epu8 (__m256i a, __m256i b, const int imm8);
+__m256i _mm256_mpsadbw_epu8(__m256i a, __m256i b, const int imm8);
 ```
 
 | -           | Description                  |
@@ -35,3 +35,5 @@ dst[127:0] := MPSADBW(a[127:0], b[127:0], imm8[2:0])
 dst[255:128] := MPSADBW(a[255:128], b[255:128], imm8[5:3])
 dst[MAX:256] := 0
 ```
+
+이것은 기하학적인 연산과 같이 고민해봐야겠다.

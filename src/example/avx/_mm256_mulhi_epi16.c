@@ -64,10 +64,10 @@ union vector128
 
 int main(int argc, char ** argv)
 {
-    vector256 x = { .u8 = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31 } };
-    vector256 y = { .u8 = { 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 } };
+    vector256 x = { .i16 = { 0x7FFF, 0x7FFE, 0x7FFD, 0x7FFC, 0x7FFB, 0x7FFA, 0x7FF9, 0x7FF8, 0x7FF7, 0x7FF6, 0x7FF5, 0x7FF4, 0x7FF3, 0x7FF2, 0x7FF1, 0x7FF0 } };
+    vector256 y = { .i16 = { 0x7FFF, 0x7FFE, 0x7FFD, 0x7FFC, 0x7FFB, 0x7FFA, 0x7FF9, 0x7FF8, 0x7FF7, 0x7FF6, 0x7FF5, 0x7FF4, 0x7FF3, 0x7FF2, 0x7FF1, 0x7FF0 } };
 
-    vector256 z = { .i256 = _mm256_mpsadbw_epu8(x.i256, y.i256, 0x1C) };  // 011100
+    vector256 z = { .i256 = _mm256_mulhi_epi16(x.i256, y.i256) };
 
     for(int i = 0; i < 16; i++)
     {
