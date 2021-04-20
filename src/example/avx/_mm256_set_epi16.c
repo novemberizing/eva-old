@@ -64,13 +64,11 @@ union vector128
 
 int main(int argc, char ** argv)
 {
-    vector256 x = { .f32 = { 1.1f, 2.2f, 3.3f, 4.4f, 5.5f, 6.6f, 7.7f, 8.8f } };
+    vector256 z = { .i256 = _mm256_set_epi16(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16) };
 
-    vector256 z = { .f256 = _mm256_rsqrt_ps(x.f256) };
-
-    for(int i = 0; i < 8; i++)
+    for(int i = 0; i < 16; i++)
     {
-        printf("%lf\n", z.f32[i]);
+        printf("%d\n", z.i16[i]);
     }
 
     return 0;

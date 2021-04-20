@@ -64,9 +64,7 @@ union vector128
 
 int main(int argc, char ** argv)
 {
-    vector256 x = { .f32 = { 1.1f, 2.2f, 3.3f, 4.4f, 5.5f, 6.6f, 7.7f, 8.8f } };
-
-    vector256 z = { .f256 = _mm256_rsqrt_ps(x.f256) };
+    vector256 z = { .f256 = _mm256_set_ps(1.1f, 2.2f, 3.3f, 4.4f, 5.5f, 6.6f, 7.7f, 8.8f) };
 
     for(int i = 0; i < 8; i++)
     {
