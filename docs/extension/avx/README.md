@@ -2,6 +2,12 @@
 
 > https://software.intel.com/sites/landingpage/IntrinsicsGuide/
 
+__Compile__
+
+```
+gcc -mavx2 [filename]
+```
+
 | Function | Description | Example |
 | -------- | ----------- | ------- |
 | [_mm256_abs_epi16](_mm256_abs_epi16.md) | abs | [_mm256_abs_epi16.c](../../../src/example/avx/_mm256_abs_epi16.c) |
