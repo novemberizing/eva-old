@@ -29,6 +29,9 @@ extern unsigned long __attribute__ ((noinline)) xstringcspn(const char * __s, co
         }
     }
 
+    // 127 shift
+    
+
     printf("\n");
 
 // __m256i table[8] = {
