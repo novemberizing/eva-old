@@ -64,12 +64,13 @@ union vector128
 
 int main(int argc, char ** argv)
 {
-    vector256 x = { .u64 = { 0x8FFFFFFFFFFFFFFFUL, 0x8FFFFFFFFFFFFFFFUL, 0x8FFFFFFFFFFFFFFFUL, 0x8FFFFFFFFFFFFFFFUL } };
-    vector256 y = { .u64 = { 0x8000000000000008UL, 0x8000000000000008UL, 0x8000000000000008UL, 0x8000000000000008UL } };
+    vector256 x = { .u64 = { 0x8000000000000000UL, 0x0000000000000000UL, 0x0000000000000000UL, 0x0000000000000000UL } };
+    vector256 y = { .u64 = { 0x8000000000000000UL, 0x8000000000000000UL, 0x0000000000000000UL, 0x0000000000000000UL } };
 
-    int z = _mm256_testnzc_pd(y.d256, x.d256);
+    int z = _mm256_testnzc_pd(x.d256, y.d256);
 
     printf("%08x\n", z);
+    printf("%d\n", z);
 
     return 0;
 }

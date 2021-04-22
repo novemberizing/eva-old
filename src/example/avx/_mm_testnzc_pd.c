@@ -66,10 +66,10 @@ union vector128
 
 int main(int argc, char ** argv)
 {
-    vector128 x = { .u64 = { 0x8000000000000000UL, 0x7000000000000000UL } };
-    vector128 y = { .u64 = { 0x8000000000000000UL, 0x7000000000000000UL } };
+    vector128 a = { .u64 = { 0x8000000000000000UL, 0x0000000000000000UL } };
+    vector128 b = { .u64 = { 0x8000000000000000UL, 0x8000000000000000UL } };
 
-    int z =  _mm_testnzc_pd(x.d128, y.d128);
+    int z =  _mm_testnzc_pd(a.d128, b.d128);
 
     printf("%d\n", z);
 
