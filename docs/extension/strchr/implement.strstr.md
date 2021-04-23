@@ -11,7 +11,3 @@ SSE4.2 introduces 7 new instrictions. These include:
 
 - A general purpose instruction for accelerating cyclic redundancy checksum signature caculations.
 - A general purpose instruction for calculating bit count population of integer numbers.
-
-
-
-

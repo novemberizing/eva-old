@@ -6,11 +6,12 @@ extern unsigned long __attribute__ ((noinline)) xstringcspn(const char * __s, co
  */
 extern unsigned long __attribute__ ((noinline)) xstringcspn(const char * __s, const char * __reject)
 {
-    xvector256 table[8] = { 0, };
+    // xvector256 table[8] = { 0, };
+    char table[256] = { 0, };
 
     for(const char * reject = __reject; *reject; reject++)
     {
-        table[(*reject) / 32].u8[(*reject) % 32] = 1;
+        table[*reject] = 1;
     }
 
     // for(int i = 0; i < 8; i++)
@@ -23,14 +24,14 @@ extern unsigned long __attribute__ ((noinline)) xstringcspn(const char * __s, co
 
     for(const char * s = __s; *s; s++)
     {
-        if(table[(*s) / 32].u8[(*s) % 32])
+        if(table[*s])
         {
-            return 1;
+            return __s - s;
         }
     }
 
     // 127 shift
-    
+
 
     printf("\n");
 
@@ -71,6 +72,7 @@ extern unsigned long __attribute__ ((noinline)) xstringcspn(const char * __s, co
 
 int validate(int index, unsigned long n)
 {
+    // printf("%ld \n", n);
     return 1;
 }
 
