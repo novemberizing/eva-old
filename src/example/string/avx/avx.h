@@ -8,19 +8,66 @@
 #include <stdio.h>
 #include <immintrin.h>
 
+union xvector128;
 union xvector256;
 union xvector512;
 
-typedef unsigned long xvectoru64x4 __attribute__ ((vector_size(32)));
-typedef unsigned char xvectoru8x32 __attribute__ ((vector_size(32)));
+typedef long           xvectori64x2  __attribute__ ((vector_size(16)));
+typedef int            xvectori32x4  __attribute__ ((vector_size(16)));
+typedef short          xvectori16x8  __attribute__ ((vector_size(16)));
+typedef char           xvectori8x16  __attribute__ ((vector_size(16)));
+typedef unsigned long  xvectoru64x2  __attribute__ ((vector_size(16)));
+typedef unsigned int   xvectoru32x4  __attribute__ ((vector_size(16)));
+typedef unsigned short xvectoru16x8  __attribute__ ((vector_size(16)));
+typedef unsigned char  xvectoru8x16  __attribute__ ((vector_size(16)));
+typedef float          xvectorf32x4  __attribute__ ((vector_size(16)));
+typedef double         xvectorf64x2  __attribute__ ((vector_size(16)));
+
+typedef union xvector128 xvector128;
+
+typedef long           xvectori64x4  __attribute__ ((vector_size(32)));
+typedef int            xvectori32x8  __attribute__ ((vector_size(32)));
+typedef short          xvectori16x16 __attribute__ ((vector_size(32)));
+typedef char           xvectori8x32  __attribute__ ((vector_size(32)));
+typedef unsigned long  xvectoru64x4  __attribute__ ((vector_size(32)));
+typedef unsigned int   xvectoru32x8  __attribute__ ((vector_size(32)));
+typedef unsigned short xvectoru16x16 __attribute__ ((vector_size(32)));
+typedef unsigned char  xvectoru8x32  __attribute__ ((vector_size(32)));
+typedef float          xvectorf32x8  __attribute__ ((vector_size(32)));
+typedef double         xvectorf64x4  __attribute__ ((vector_size(32)));
+// typedef __m128i        xvectori128x2 __attribute__ ((vector_size(32)));
+
 typedef union xvector256 xvector256;
 
 union xvector256
 {
-    __m256i      i256;
-    __m256d      d256;
-    xvectoru64x4 u64;
-    xvectoru8x32 u8;
+    __m256i       i256;
+    __m256d       d256;
+    __m256        f256;
+    __m128i       i128[2];
+    xvectoru64x4  u64;
+    xvectoru32x8  u32;
+    xvectoru16x16 u16;
+    xvectoru8x32  u8;
+    xvectori64x4  i64;
+    xvectori32x8  i32;
+    xvectori16x16 i16;
+    xvectori8x32  i8;
+};
+
+union xvector128
+{
+    __m128i       i128;
+    __m128d       d128;
+    __m128        f128;
+    xvectoru64x2  u64;
+    xvectoru32x4  u32;
+    xvectoru16x8 u16;
+    xvectoru8x16  u8;
+    xvectori64x2  i64;
+    xvectori32x4  i32;
+    xvectori16x8 i16;
+    xvectori8x16  i8;
 };
 
 
