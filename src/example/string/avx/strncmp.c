@@ -9,10 +9,11 @@ extern int __attribute__ ((noinline)) xstringncmp(const char * __x, const char *
 
     if(n >= 32)
     {
-        while(_mm256_movemask_epi8(_mm256_cmpeq_epi8(_mm256_load_si256(source), _mm256_load_si256(destination))) && ((n = n -32) >= 0))
+        while(_mm256_movemask_epi8(_mm256_cmpeq_epi8(_mm256_load_si256(source), _mm256_load_si256(destination))) && n >= 32)
         {
             source++;
             destination++;
+            n = n - 32;
         }
         source--;
         destination--;

@@ -19,11 +19,12 @@ char * __attribute__ ((noinline)) xstringcat(char * __restrict __d, const char *
     int c = _mm256_movemask_epi8(_mm256_cmpeq_epi8(v, zero));
     if(n >= 32)
     {
-        while(!c && ((n = n - 32) >= 0))
+        while(!c && n >= 32)
         {
             _mm256_storeu_si256(destination++, v);
             v = _mm256_load_si256(++source);
             c = _mm256_movemask_epi8(_mm256_cmpeq_epi8(v, zero));
+            n = n - 32;
         }
     }
 
