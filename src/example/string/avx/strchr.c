@@ -11,9 +11,9 @@ extern char * __attribute__ ((noinline)) xstringchr(const char * __s, int __c)
     v |= (v << 16);
     v |= (v << 32);
 
-    const __m256i zero = (__m256i) (xvectoru64x4) { v, v, v, v };
+    const __m256i value = (__m256i) (xvectoru64x4) { v, v, v, v };
 
-    while(!_mm256_movemask_epi8(_mm256_cmpeq_epi8(_mm256_load_si256(source), zero))){ source++; }
+    while(!_mm256_movemask_epi8(_mm256_cmpeq_epi8(_mm256_load_si256(source), value))){ source++; }
     char * c = (char *) source;
     while(*c != __c){ c++; }
     return c;
