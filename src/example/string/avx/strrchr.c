@@ -37,40 +37,74 @@ basename = strrchr(name, '/') + 1;
 ```
  */
 
+#include "avx.h"
 
-// #include "avx.h"
-
-// extern char * __attribute__ ((noinline)) xstringrchr(const char * __s, int __c) __THROW;
+extern char * __attribute__ ((noinline)) xstringrchr(const char * __s, int __c) __THROW;
 
 
-// extern char * __attribute__ ((noinline)) xstringrchr(const char * __s, int __c)
-// {
-//     const __m256i * source = (const __m256i *) __s;
-//     unsigned long v = (unsigned char) __c;
-//     v |= (v << 8);
-//     v |= (v << 16);
-//     v |= (v << 32);
+extern char * __attribute__ ((noinline)) xstringrchr(const char * __s, int __c)
+{
+    const __m256i * source = (const __m256i *) __s;
+    unsigned long v = (unsigned char) __c;
+    v |= (v << 8);
+    v |= (v << 16);
+    v |= (v << 32);
 
-//     const __m256i zero = (__m256i) (xvectoru64x4) { v, v, v, v };
+    const __m256i value = (__m256i) (xvectoru64x4) { v, v, v, v };
+    const __m256i zero  = (__m256i) (xvectoru64x4) { 0, 0, 0, 0 };
 
-//     while(!_mm256_movemask_epi8(_mm256_cmpeq_epi8(_mm256_load_si256(source), zero))){ source++; }
-//     char * c = (char *) source;
-//     while(*c != __c){ c++; }
-//     return c;
+    __m256i temp = _mm256_lddqu_si256(source);
+    const __m256i * found = (void *) 0;
 
-// }
+    while(!_mm256_movemask_epi8(_mm256_cmpeq_epi8(temp, zero)))
+    {
+        if(_mm256_movemask_epi8(_mm256_cmpeq_epi8(temp, value)))
+        {
+            found = source;
+        }
 
-// static int validate(int index, char * s)
-// {
-//     char * d = strchr(original, '@');
-//     return d == s;
-// }
+        temp = _mm256_lddqu_si256(++source);
+    }
+    char * cfp = (void *) 0;
+    if(found)
+    {
+        char * c = (char * ) found;
+        for(int i = 0; i <32; i++)
+        {
+            if(*c == __c)
+            {
+                cfp = c;
+            }
+            c++;
+        }
+    }
+    char * c = (char *) source;
+    while(*c)
+    {
+        // *c != __c && 
+        if(*c == __c)
+        {
+            cfp = c;
+        }
+        c++;
+    }
 
-// int main(int argc, char ** argv)
-// {
-//     init(argc, argv);
-//     experiment("strchr", char * s = strrchr(original, '@'), printf("%p\r", s), validate(index, s));
-//     experiment("xstringchr", char * s = xstringrchr(original, '@'), printf("%p\r", s), validate(index, s));
-//     printf("hello world\n");
-//     return 0;
-// }
+    return cfp;
+
+}
+
+static int validate(int index, char * s)
+{
+    char * d = strrchr(original, '@');
+//    printf("%p %p\n", s, d);
+    return d == s;
+}
+
+int main(int argc, char ** argv)
+{
+    init(argc, argv);
+    experiment("strcrhr", char * s = strrchr(original, '@'), printf("%p\r", s), validate(index, s));
+    experiment("xstringchr", char * s = xstringrchr(original, '@'), printf("%p\r", s), validate(index, s));
+    printf("hello world\n");
+    return 0;
+}
