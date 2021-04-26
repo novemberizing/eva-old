@@ -13,6 +13,9 @@ POSIX 표준 `<string.h>` 문서의 것을 토대로 구현하였고, strtok, st
 
 > https://pubs.opengroup.org/onlinepubs/9699919799/
 
+1. GLIBC VERSION: glibc 2.31
+2. gcc version 9.3.0 (Ubuntu 9.3.0–17ubuntu1~20.04)/Acer Aspire V3–372/Intel(R) Core(TM) i5–6200U CPU @ 2.30GHz 4 Core
+
 ```sh
 $ gcc -mavx2 -O3
 ```

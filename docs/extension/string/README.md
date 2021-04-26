@@ -18,6 +18,13 @@ It was implemented based on the POSIX standard `<string.h>` document, and the st
 $ gcc -mavx2 -O3
 ```
 
+__Test Environment__
+
+
+1. GLIBC VERSION: glibc 2.31
+2. gcc version 9.3.0 (Ubuntu 9.3.0–17ubuntu1~20.04)/Acer Aspire V3–372/Intel(R) Core(TM) i5–6200U CPU @ 2.30GHz 4 Core
+
+
 | Posix Func  | Posix       | Custom Func           |  Custom     | Example Code Link |
 | ----------- | ----------- | --------------------- | ----------- | ----------------- |
 | memccpy     | 0.000009281 | __xmemorycopy_until__ | 0.000007570 | [code](../../../src/example/string/avx/memccpy.c) |
