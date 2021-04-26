@@ -64,7 +64,6 @@ extern unsigned long __attribute__ ((noinline)) xstringcspn(const char * __s, co
         }
         if(c)
         {
-            printf("%c\n", c);
             break;
         }
 

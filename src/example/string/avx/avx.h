@@ -119,8 +119,9 @@ static inline void init(int argc, char ** argv)
         experimentalstr[i][65536 + 255] = 0;
         expermentalcmpstr[i][65536 + 255] = 0;
         const char * hello = "hello novemberizing! hello novemberizing!";
-        memcpy(&(experimentalstr[i][(65536/4) * 3 + randomuint(64)]), hello, strlen(hello));
-        memcpy(&(expermentalcmpstr[i][(65536/4) * 3 + randomuint(64)]), hello, strlen(hello));
+        unsigned long k = randomuint(64);
+        memcpy(&(experimentalstr[i][(65536/4) * 3 + k]), hello, strlen(hello));
+        memcpy(&(expermentalcmpstr[i][(65536/4) * 3 + k]), hello, strlen(hello));
     }
 }
 
@@ -185,6 +186,44 @@ static inline void init(int argc, char ** argv)
         }                                           \
     }                                               \
 } while(0)
+
+#define moveexperiment(title, code, result, validate) do {                  \
+    struct timespec start = { 0, 0 };                                       \
+    struct timespec end   = { 0, 0 };                                       \
+    struct timespec diff  = { 0, 0 };                                       \
+    struct timespec max   = { 0, 0 };                                       \
+    struct timespec min   = { 0x7FFFFFFFFFFFFFFFUL, 0x7FFFFFFFFFFFFFFFUL }; \
+    struct timespec avg   = { 0, 0 };                                       \
+    for(int i = 0; i < experimentmax; i++) {                                \
+        memset(buffer, '@', 65536 + 65536 + 256 + 256);                     \
+        memset(original, '@', 65536 + 65536 + 256 + 256);                   \
+        int index = (int) randomuint(1024);                                 \
+        memcpy(original, experimentalstr[(index) % 1024], 65536 + 256); \
+        memcpy(buffer, experimentalstr[(index) % 1024], 65536 + 256);   \
+        clock_gettime(CLOCK_REALTIME, &start);                              \
+        code;                                                               \
+        clock_gettime(CLOCK_REALTIME, &end);                                \
+        result;                                                             \
+        if(!validate) {                                                     \
+            printf("                                   \r");                \
+            printf("assertion\n");                                          \
+            exit(0);                                                        \
+        }                                                                   \
+        timespecdiff(&end, &start, &diff);                                  \
+        timespecmax(&diff, &max, &max);                                     \
+        timespecmin(&diff, &min, &min);                                     \
+        avg.tv_sec = avg.tv_sec + diff.tv_sec;                              \
+        avg.tv_nsec = avg.tv_nsec + diff.tv_nsec;                           \
+    }                                                                       \
+    avg.tv_sec  = avg.tv_sec  / experimentmax;                              \
+    avg.tv_nsec = avg.tv_nsec / experimentmax;                              \
+    printf("                                   \r");                        \
+    printf("%s,%ld.%09ld,%ld.%09ld,%ld.%09ld\n", title,                     \
+                                                 min.tv_sec, min.tv_nsec,   \
+                                                 max.tv_sec, max.tv_nsec,   \
+                                                 avg.tv_sec, avg.tv_nsec);  \
+} while(0)
+
 
 #define experiment(title, code, result, validate) do {                      \
     struct timespec start = { 0, 0 };                                       \

@@ -22,10 +22,12 @@ extern char * __attribute__ ((noinline)) xstringchr(const char * __s, int __c)
     __m256i temp = _mm256_lddqu_si256(source);
     while(!_mm256_movemask_epi8(_mm256_cmpeq_epi8(temp, value)))
     {
-        source++;
+        temp = _mm256_lddqu_si256(++source);
     }
     char * c = (char *) source;
-    while(*c != __c){ c++; }
+    while(*c != __c){
+        c++;
+    }
 
     return c;
 

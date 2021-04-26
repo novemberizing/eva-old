@@ -36,7 +36,10 @@ static int validate(int index)
 {
     const char * s = experimentalstr[index];
     unsigned long len = reallen[index];
-    return (memcmp(buffer, s, len) == 0 && buffer[len] == '@');
+    // printf("                               \n");
+    // printf("%d\n", memcmp(buffer, s, len));
+    // printf("%c\n", buffer[len]);
+    return memcmp(buffer, s, len) == 0;
 }
 
 int main(int argc, char ** argv)

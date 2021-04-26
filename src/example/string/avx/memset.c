@@ -33,7 +33,7 @@ static int validate(int index, void * p)
 {
     memcpy(buffer, experimentalstr[index], 65536 + 256);
     memset(buffer, '%', 65536 - index);
-    return memcmp(buffer, original, 65536 + 256) == 0;
+    return memcmp(buffer, original, 65536 - index) == 0;
 }
 
 int main(int argc, char ** argv)
