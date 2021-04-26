@@ -1,3 +1,8 @@
+[ENGLISH](README.md) |
+[한국어](README.ko.md)
+
+----
+
 Custom string function example using AVX(Advanced Vector Extension)
 ===================================================================
 
