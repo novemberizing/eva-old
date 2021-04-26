@@ -23,7 +23,7 @@ extern int __attribute__ ((noinline)) xmemorycmp(const void * __x, const void * 
     register const char * c = (const char *) (source);
     register const char * d = (const char *) (destination);
     int i = 0;
-    while(*(c++) == *(d++)){
+    while(c < (char *)(__y) + __n && *(c++) == *(d++)){
         // printf("%d\n", *c - *d);
         i++;
         //printf("%d\n", *d);

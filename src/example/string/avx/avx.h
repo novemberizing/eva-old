@@ -111,10 +111,16 @@ static inline void init(int argc, char ** argv)
         {
             expermentalcmpstr[i][j] = '!';
         }
+        // (65536/4) * 3
+        // hello
+
         experimentalstr[i][65536/2 + 4092 + randomuint(64)] = '@';
         expermentalcmpstr[i][65536/2 + 4092 + randomuint(64)] = '@';
         experimentalstr[i][65536 + 255] = 0;
         expermentalcmpstr[i][65536 + 255] = 0;
+        const char * hello = "hello novemberizing! hello novemberizing!";
+        memcpy(&(experimentalstr[i][(65536/4) * 3 + randomuint(64)]), hello, strlen(hello));
+        memcpy(&(expermentalcmpstr[i][(65536/4) * 3 + randomuint(64)]), hello, strlen(hello));
     }
 }
 

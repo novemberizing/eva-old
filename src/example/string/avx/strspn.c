@@ -64,50 +64,55 @@ extern unsigned long __attribute__ ((noinline)) xstringspn(const char * __s, con
         int i32[2];
         long i64;
     } z = { 0, };
-    __m256i rejectv;
+
+    xvector128 test[2];
 
     char c = 0;
     while(!(mask = _mm256_movemask_epi8(_mm256_cmpeq_epi8(value.i256, zero))))
     {
-        for(int i = 0; i < 32; i++)
+        int nonexist = 1;
+        test[0].i128 = (__m128i)(xvectori64x2) { 0, };
+        test[1].i128 = (__m128i)(xvectori64x2) { 0, };
+        for(int i = 0 ; i < n; i++)
         {
-            unsigned long v = value.u8[i];
-            v |= (v << 8);
-            v |= (v << 16);
-            v |= (v << 32);
-            rejectv = (__m256i) (xvectoru64x4) { v, v, v, v };
-            __m256i * p = (__m256i *) (&reject[0]);
-            __m256i temp = _mm256_lddqu_si256(p);
-            printf("= 2 = %08x\n", _mm256_movemask_epi8(_mm256_cmpeq_epi8(temp, zero)));
-            while(!_mm256_movemask_epi8(_mm256_cmpeq_epi8(temp, zero)))
-            {
-                printf("= 3 =\n");
-                int mask = _mm256_movemask_epi8(_mm256_cmpeq_epi8(temp, rejectv));
-                printf("%08x\n", mask);
-                p++;
-            }
+            test[0].i128 |= _mm_cmpistrm(_mm_lddqu_si128((__m128i *) &reject[i * 16]), value.i128[0], _SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY);
+            test[1].i128 |= _mm_cmpistrm(_mm_lddqu_si128((__m128i *) &reject[i * 16]), value.i128[1], _SIDD_UBYTE_OPS | _SIDD_CMP_EQUAL_ANY);
         }
-        exit(0);
+
+        if(test[0].i32[0] != 0x0000FFFF || test[1].i32[0] != 0x0000FFFF)
+        {
+            break;
+        }
 
         value.i256 = _mm256_lddqu_si256(++source);
     }
-    int exist = 0;
+//    printf("%p %p\n", __s, source);
+
+    int nonexist = 0;
     for(int i = 0; i < 32; i++)
     {
-        for(int j = 0; reject[j]; j++)
+        nonexist = 1;
+        for(int j = 0; j < length; j++)
         {
-            if(value.i8[i] == c)
+            if(value.i8[i] == reject[j])
             {
-                exist = c;
+                nonexist = 0;
                 break;
-                
             }
         }
-        if(exist == 0)
+        if(nonexist)
         {
             return ((char *) source) - __s + i;
         }
     }
+
+    // for(int i = 0; i < 32; i++)
+    // {
+    //     if(value.i8[i] == c)
+    //     {
+    //         return ((char *) source) - __s + i;
+    //     }
+    // }
 
     return 0;
 }
@@ -125,7 +130,7 @@ int main(int argc, char ** argv)
 {
     init(argc, argv);
 
-    // experiment("strspn    ", unsigned long n = strspn(experimentalstr[index], re), printf("%ld\r", n), validate(index, n));
+    experiment("strspn    ", unsigned long n = strspn(experimentalstr[index], re), printf("%ld\r", n), validate(index, n));
     experiment("xstringspn", unsigned long n = xstringspn(experimentalstr[index], re), printf("%ld\r", n), validate(index, n));
     
     return 0;
