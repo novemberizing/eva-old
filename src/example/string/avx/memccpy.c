@@ -16,9 +16,9 @@ extern void * xmemorycopy_until(void *__restrict __d, const void *__restrict __s
 
     const __m256i value = _mm256_set1_epi8(__c);
 
-    while(source <= until && !_mm256_movemask_epi8(_mm256_cmpeq_epi8(_mm256_lddqu_si256(source), value)))
+    while(source <= until && !_mm256_movemask_epi8(_mm256_cmpeq_epi8(_mm256_loadu_si256(source), value)))
     {
-        _mm256_store_si256(destination256++, _mm256_load_si256(source++));
+        _mm256_storeu_si256(destination256++, _mm256_loadu_si256(source++));
     }
 
     register const char * s = (const char *) source;
