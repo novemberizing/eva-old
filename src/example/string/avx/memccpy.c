@@ -9,18 +9,14 @@ extern void * __attribute__ ((noinline)) xmemorycopy_until(void *__restrict __de
 
 extern void * xmemorycopy_until(void *__restrict __d, const void *__restrict __s, int __c, size_t __n)
 {
-    const __m256i * until = (const __m256i *) (((const char *) __s) + __n - 32);
+    const __m256i * until = (const __m256i *) (((const char *) __s) + (__n & ~31));
     const __m256i * source = (const __m256i *) __s;
 
     __m256i * destination256 = (__m256i *) __d;
 
-    unsigned long v = (unsigned char) __c;
-    v |= (v << 8);
-    v |= (v << 16);
-    v |= (v << 32);
+    const __m256i value = _mm256_set1_epi8(__c);
 
-    const __m256i value = (__m256i) (xvectoru64x4) { v, v, v, v };
-    while(source <= until && !_mm256_movemask_epi8(_mm256_cmpeq_epi8(_mm256_load_si256(source), value)))
+    while(source <= until && !_mm256_movemask_epi8(_mm256_cmpeq_epi8(_mm256_lddqu_si256(source), value)))
     {
         _mm256_store_si256(destination256++, _mm256_load_si256(source++));
     }
