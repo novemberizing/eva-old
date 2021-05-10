@@ -39,36 +39,256 @@ a.active { text-decoration: none; color: #000; font-weight: bold; cursor: text; 
   <div id="custom-area">
     <p><label for="text">Paste your text below!</label>
     <p><textarea id="text">
-How the Word Cloud Generator Works
-
-The layout algorithm for positioning words without overlap is available on GitHub under an open source license as d3-cloud. Note that this is the only the layout algorithm and any code for converting text into words and rendering the final output requires additional development.
-
-As word placement can be quite slow for more than a few hundred words, the layout algorithm can be run asynchronously, with a configurable time step size. This makes it possible to animate words as they are placed without stuttering. It is recommended to always use a time step even without animations as it prevents the browser’s event loop from blocking while placing the words.
-
-The layout algorithm itself is incredibly simple. For each word, starting with the most “important”:
-
-Attempt to place the word at some starting point: usually near the middle, or somewhere on a central horizontal line.
-If the word intersects with any previously placed words, move it one step along an increasing spiral. Repeat until no intersections are found.
-The hard part is making it perform efficiently! According to Jonathan Feinberg, Wordle uses a combination of hierarchical bounding boxes and quadtrees to achieve reasonable speeds.
-
-Glyphs in JavaScript
-
-There isn’t a way to retrieve precise glyph shapes via the DOM, except perhaps for SVG fonts. Instead, we draw each word to a hidden canvas element, and retrieve the pixel data.
-
-Retrieving the pixel data separately for each word is expensive, so we draw as many words as possible and then retrieve their pixels in a batch operation.
-
-Sprites and Masks
-
-My initial implementation performed collision detection using sprite masks. Once a word is placed, it doesn't move, so we can copy it to the appropriate position in a larger sprite representing the whole placement area.
-
-The advantage of this is that collision detection only involves comparing a candidate sprite with the relevant area of this larger sprite, rather than comparing with each previous word separately.
-
-Somewhat surprisingly, a simple low-level hack made a tremendous difference: when constructing the sprite I compressed blocks of 32 1-bit pixels into 32-bit integers, thus reducing the number of checks (and memory) by 32 times.
-
-In fact, this turned out to beat my hierarchical bounding box with quadtree implementation on everything I tried it on (even very large areas and font sizes). I think this is primarily because the sprite version only needs to perform a single collision test per candidate area, whereas the bounding box version has to compare with every other previously placed word that overlaps slightly with the candidate area.
-
-Another possibility would be to merge a word’s tree with a single large tree once it is placed. I think this operation would be fairly expensive though compared with the analagous sprite mask operation, which is essentially ORing a whole block.
-
+Google I/O Keynote
+Developer Keynote
+What's new in Android
+What's new in Google Play
+What's new for the web platform
+Google I/O Keynote (replay)
+Developer Keynote (replay)
+What's new in Android (replay)
+What's new in Google Play (replay)
+What's new for the web platform (replay)
+What's new in Machine Learning
+What's new in Google Assistant
+What’s new in Material Design
+What's new in Chrome OS
+What's new in Flutter
+What's new in Firebase
+What's new in Google Pay
+New capabilities in ARCore
+What’s new in smart home
+What's new in Machine Learning (replay)
+What's new in Flutter (replay)
+What's new in Firebase (replay)
+Measure and debug performance with Google Analytics 4 and BigQuery
+Preparing for page experience ranking
+What's new in Android TV and Google TV
+What's new in Jetpack Compose
+C interoperability with Dart FFI
+Spotting and solving everyday problems with machine learning
+What's new in Android testing tools
+State of Kotlin on Android
+Preparing for a more private web
+Local development using the new Storage Emulator
+Fix performance pitfalls and level up your app with Firebase
+Crashlytics your way: Your most important crashes with Custom Keys
+Enhancing user experiences within Google Workspace
+Machine learning for next gen web apps with TensorFlow.js
+Building with the Responsible AI Toolkit
+Optimize your TensorFlow Lite models
+Does your app use ML? Make it a product with TFX
+Future-proof web apps with Angular and TensorFlow.js
+Chrome DevTools for designers
+What’s new in Android privacy
+How to drive conversions with Google Pay for Android
+Exposure Notifications: Building infrastructure to serve 1M users
+Reducing bundle size: Previewing a new Firebase for the web
+Refreshing widgets
+Performance after load
+What's new in Android Media
+The business impact of Core Web Vitals
+Now is the time: What's new with Wear
+Go full-stack with Kotlin or Dart on Google Cloud
+What's new in Search
+Driving a successful launch for Conversational Actions
+Take AR anywhere with post capture AR
+Android shortcuts for Assistant
+Build end-to-end AI solutions with Google Cloud
+Power-up your Flutter app with Google APIs
+Top 12 tips to get ready for Android 12
+Increase AR realism and precision with Depth API
+Five tips for your PWA
+Developing AppSheet with Workspace AMP for Gmail and Apps Script apps
+Building platform adaptive apps
+How to voicify your Android app
+Modern Keras design patterns
+Verifying app identity with App Check
+Input matters for Chrome OS
+Using Jetpack libraries in Compose
+The new responsive: Web design in a component-driven world
+Getting started with Project CHIP
+Coral: Expanding the edge AI landscape
+Measuring jank and startup with Macrobenchmark
+Optimize your Android games and apps to run on Chrome OS
+Using Google Maps Platform with idiomatic Kotlin
+List your Progressive Web App in Google Play
+Grow your business with new engagement and monetization features
+New tools to help you build safer apps on Google Play
+The state of Android Security
+Design, manage, and deploy better Maps with Cloud-based Maps styling
+Build powerful, reliable apps with Google Play services
+Firebase for Apple Developers: What you should know
+Build beautiful Material Design apps with Jetpack Compose
+What's new in Android Machine Learning
+5 things you can do to prepare your app for large screens
+What’s new with Android for Cars
+Excalidraw and Fugu: Improving core user journeys
+What's new in Web Vitals
+Enable payments on your PWA with Play Billing using Digital Goods API
+Decision forests in TensorFlow
+TensorFlow Hub for real world impact
+Effective password management
+Machine learning for Accessibility
+ML Kit: Turnkey APIs to use on-device ML in mobile apps
+Lazy Flutter performance
+Effective background tasks on Android
+What's new in design tools
+Immersive storytelling on the web
+What’s new in Jetpack
+What’s new in Android Gradle plugin
+Designing for accessibility in Android Studio and Jetpack Compose
+What’s new in foldables, tablets, and large screens
+Cross platform computer vision made easy with Model Maker
+The women building voice AI and their role in the voice revolution
+Safety and occupancy with AI
+Building a desktop design language with Flutter
+From security as opt-in to security by default
+Why null safety?
+What’s new in Android development tools
+Drive engagement and boost performance in your app with deep links
+Designing A11y with Material Design
+Create your first Tile in Wear
+AMA: Chrome and Web
+Smart home developer Meetup [Americas]
+Build a tech career as a Black professional [early career]
+Google for Startups Women Founders Meetup [Americas]
+Build user-adaptive interfaces with preference media queries
+Women Techmakers community Meetup [Americas]
+AMA: Jetpack
+AMA: Progressive Web Applications and Fugu
+Latin@s en Google I/O
+Dev Library Meetup [Americas]
+Server-side Kotlin developers
+Women in Voice Meetup
+Progressing Progressive Web Apps
+North America developers Meetup
+Google for Startups Accelerator Meetup [APAC]
+Fireside chat with Flutter + Firebase [APAC]
+Dev Library Meetup [APAC]
+AMA: Developer Tools and Languages
+AMA: Privacy sandbox
+Jetpack Compose basics
+Building a web application with Angular and Firebase
+Mentorship: Helping your career and your community [India]
+Vietnamese-speaking ML/AI devs Meetup [hosted in Vietnamese]
+Technical SEO show and tell Meetup
+Build for Africa
+Korean developers Meetup [hosted in Korean]
+Open Source community Meetup [EMEA]
+Cantonese-speaking dev Meetup [hosted in Cantonese]
+AMA: Web Vitals
+AMA: Compose
+Dev Library Meetup [EMEA]
+Build for India
+Taiwan developers lounge [hosted in Mandarin]
+Google for Startups Accelerator Meetup [EMEA]
+Building your first Flutter app
+Fireside chat with Flutter + Firebase [Americas]
+Progressing Progressive Web Apps
+Google Developer Student Clubs Meetup [Americas]
+Learn more about Google Cloud Certifications
+Google for Startups Women Founders Meetup [EMEA]
+LATAM devs online action
+Technical SEO Meetup
+AMA: On-device machine learning in mobile and web apps
+MENA developers come together
+Jetpack Compose basics
+Women Techmakers community Meetup [Americas]
+LatAm web developers
+Meet women Google Developers Experts from around the world
+Anomaly detection with TensorFlow
+TensorFlow Community Team meets OSS developers
+Mentorship: Helping your career and your community [Amer]
+Google for Startups Accelerator Meetup [Americas]
+AMA: App Actions
+Extend an Android app to Google Assistant with App Actions
+Following on the open web discussion & feedback
+AMA: #AskMaterial
+Material's communication principles: Intro to UX Writing
+AMA: Cloud, Dart, and full-stack Flutter
+Google Developer Groups connect
+What's new in Android Accessibility
+Building scrolling experiences in Flutter
+Angular team community Meetup
+AMA: Understanding COGA, W3C's cognitive accessibility guidelines
+Building globally relevant products
+Hands on with Cloud AI
+Serverless demo derby
+AMA: #AskFirebase
+AI/ML demo derby
+AMA: Secure and reliable development with Go
+Get to know Firebase for Flutter
+Measure and grow your app with new innovations in Google Analytics
+AMA: AI in the Cloud
+AMA: Google Pay
+Build a tech career as a Black professional [mid career]
+Open Source community Meetup [Americas]
+Brasucas no Google I/O [hosted in Portuguese]
+Server-side Kotlin developers
+Next generation maps for the web
+Build an AR application using the WebXR API
+AMA: Google Maps Platform
+One-click loyalty signup on Google Pay and Google Maps
+AMA: ARCore
+Machine Learning developers Meetup [Americas/APAC]
+North America developers Meetup
+Favorite I/O announcements
+Open Source community Meetup [APAC]
+Japan developers Meetup [hosted in Japanese]
+Smart home developer Meetup [APAC]
+AMA: Machine Learning on the web with TensorFlow.js
+AMA: How the Assistant Investment Program can help fund your startup
+Building with TensorFlow Lite for microcontrollers
+AMA: Games on Google Assistant
+Debugging the smart home
+AMA: Flutter in production with Stadia and Google Pay
+Create your first Tile in Wear
+Dart null safety in action
+Machine Learning developers Meetup [EMEA/APAC]
+African CMS developers Meetup
+A whirlwind tour through Project Fugu APIs
+The future is Africa: African developers are building for the world
+Jetpack Compose basics
+Women Techmakers community Meetup [EMEA/APAC]
+Build voice bots for mobile with Dialogflow and Flutter
+Build and deploy custom object detection model with TensorFlow Lite
+AMA: Web runtime performance
+AMA: Make your app a product with the TFX team
+Live chat with Android developers
+Dev to prod in 3 easy steps with Google Cloud Run
+Integrating the app distribution SDK in iOS apps
+Vietnamese-speaking women devs Meetup [hosted in Vietnamese]
+Live chat with Flutter developers
+Technical SEO show and tell Meetup
+Live chat with TensorFlow developers
+Google Developer Student Clubs Meetup [EMEA]
+Smart home developer Meetup [EMEA]
+Women Techmakers community Meetup [EMEA/Americas]
+LatAm web developers
+Material Design Meetup [EMEA]
+Russian-speaking developers Meetup [hosted in Russian]
+Supercharge your web app with the modular Firebase JS SDK
+Project Fugu and you
+Georgian developers virtual Meetup [hosted in Georgian]
+Technical SEO Meetup
+Building trusted AI products
+European developers community Meetup
+TensorFlow.js: Make a smart webcam in JS with a pre-trained ML model
+AMA: Google's AI Map
+Turkish, Caucasus, and Central Asian dev communities
+Prepare to grow with tips for Firebase integrations with Ads
+How to manage application states using inherited widgets
+AMA: Integrate Google Workspace with your solutions
+Server-side Kotlin developers
+Women Techmakers community Meetup [Americas]
+Assistant Google Developers Experts Meetup
+MeetupsGoogle AssistantAmericas
+Caribbean @ Google I/O
+Build a tech career as a Black professional [students]
+Material Design Meetup [Americas]
+North America developers Meetup
+Google for Startups Women Founders Meetup [APAC]
     </textarea>
     <button id="go" type="submit">Go!</button>
   </div>
@@ -111,9 +331,8 @@ Another possibility would be to merge a word’s tree with a single large tree o
 
 <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px;margin-left:116px" data-ad-client="ca-pub-2911491153890039" data-ad-slot="2029654015"></ins>
 
-<script src="../d3.min.js"></script>
+<script src="d3.min.js"></script>
 <script src="cloud.min.js"></script>
-<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 <script>
 window.google_analytics_uacct = "UA-54563-3";
 var _gaq = _gaq || [];
